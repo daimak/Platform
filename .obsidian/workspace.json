@@ -185,6 +185,11 @@
   },
   "active": "a684aae5b02884ee",
   "lastOpenFiles": [
+    "HELP.md",
+    "RFC/RFC-003-devops-terminal-basics.md",
+    "RFC/RFC-001-modules-boundary.md",
+    "CHANGELOG.md",
+    "RFC",
     "Core/Architecture.md",
     "Core/Dashboard.md",
     "Core/Glossary.md",
