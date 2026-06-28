@@ -1,0 +1,210 @@
+{
+  "main": {
+    "id": "66f1da09ebeca946",
+    "type": "split",
+    "children": [
+      {
+        "id": "cccf40c8f002fd92",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a684aae5b02884ee",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "2985cc6ab9f7ec2b",
+    "type": "split",
+    "children": [
+      {
+        "id": "b78301f20fea6106",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2210a3dd86961d90",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "9766a0889315cfb7",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Поиск"
+            }
+          },
+          {
+            "id": "65a5f2e050d225d4",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Закладки"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "693d845d510f6abf",
+    "type": "split",
+    "children": [
+      {
+        "id": "7dd9efa670127a6a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f2330fe290b800e9",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Обратные ссылки для README"
+            }
+          },
+          {
+            "id": "d95f0b8b0a711de9",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Исходящие ссылки из README"
+            }
+          },
+          {
+            "id": "c68a0c81268aa970",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Теги"
+            }
+          },
+          {
+            "id": "f58161d4dfde0335",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Все свойства"
+            }
+          },
+          {
+            "id": "b5a1d5e988fe2ff6",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "README.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Структура README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false
+    }
+  },
+  "active": "a684aae5b02884ee",
+  "lastOpenFiles": [
+    "Core/Architecture.md",
+    "Core/Dashboard.md",
+    "Core/Glossary.md",
+    "README.md",
+    "Modules/Carrier.md",
+    "Notes/Inbox.md",
+    "Questions.md",
+    "Memory",
+    "Без названия",
+    "Core",
+    "Без названия.base",
+    "Core/Principles.md",
+    "Memory/Migration.md",
+    "Memory/Genesis.md",
+    "Modules",
+    "Memory/Memos/SESSION-NOTES.md",
+    "Memory/Memos/CS-002 - Career selected.md",
+    "Notes/Inbox.md.md",
+    "Notes",
+    "Memory/Memos/CS-001 - Migration created.md",
+    "Memos/CS-002 - Career selected.md.md"
+  ]
+}
