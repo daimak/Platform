@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Platform: Commit & Push",
+      "dependsOn": ["Platform: Add", "Platform: Commit", "Platform: Push"],
+      "dependsOrder": "sequence"
+    },
+    {
+      "label": "Platform: Add",
+      "type": "shell",
+      "command": "git",
+      "args": ["add", "."]
+    },
+    {
+      "label": "Platform: Commit",
+      "type": "shell",
+      "command": "git",
+      "args": ["commit", "-m", "auto: update context"]
+    },
+    {
+      "label": "Platform: Push",
+      "type": "shell",
+      "command": "git",
+      "args": ["push"]
+    }
+  ]
+}

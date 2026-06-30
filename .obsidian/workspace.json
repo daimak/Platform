@@ -200,6 +200,7 @@
   },
   "active": "2210a3dd86961d90",
   "lastOpenFiles": [
+    "CHANGELOG.md",
     "Memory/Decisions/D-001.md",
     "Memory/Commit-map.md",
     "Memory/Context/Snapshots/2026-06-30.md",
@@ -215,7 +216,6 @@
     "README.md",
     "Questions.md",
     "HELP.md",
-    "CHANGELOG.md",
     "RFC/RFC-001-modules-boundary.md",
     "Core/Identity.md",
     "Memory/Timeline",
