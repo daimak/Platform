@@ -13,15 +13,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "Core/Glossary.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "Glossary"
+            }
+          },
+          {
+            "id": "f07c0a491dad6d5f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Core/Identity.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Identity"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -183,32 +198,40 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "a684aae5b02884ee",
+  "active": "2210a3dd86961d90",
   "lastOpenFiles": [
-    "HELP.md",
-    "RFC/RFC-003-devops-terminal-basics.md",
-    "RFC/RFC-001-modules-boundary.md",
-    "CHANGELOG.md",
-    "RFC",
-    "Core/Architecture.md",
-    "Core/Dashboard.md",
-    "Core/Glossary.md",
+    "Memory/Context/Snapshots/2026-06-30.md",
+    "Memory/Context/CURRENT.md",
+    "Memory/Context/Snapshots",
+    "Core/Principles.md",
+    "Memory/Genesis.md",
+    "Memory/Context",
+    "Memory/Decisions",
+    "Memory/Sessions",
+    "Memory/Migration.md",
+    "Memory/Timeline.md",
     "README.md",
+    "Questions.md",
+    "HELP.md",
+    "CHANGELOG.md",
+    "RFC/RFC-001-modules-boundary.md",
+    "Core/Identity.md",
+    "Memory/Timeline",
+    "Core/Glossary.md",
+    "Core/Dashboard.md",
+    "Core/Architecture.md",
     "Modules/Carrier.md",
     "Notes/Inbox.md",
-    "Questions.md",
+    "RFC/RFC-003-devops-terminal-basics.md",
+    "Workspace/CURRENT.md",
+    "Workspace",
+    "RFC",
     "Memory",
-    "Без названия",
     "Core",
     "Без названия.base",
-    "Core/Principles.md",
-    "Memory/Migration.md",
-    "Memory/Genesis.md",
-    "Modules",
     "Memory/Memos/SESSION-NOTES.md",
     "Memory/Memos/CS-002 - Career selected.md",
     "Notes/Inbox.md.md",
-    "Notes",
     "Memory/Memos/CS-001 - Migration created.md",
     "Memos/CS-002 - Career selected.md.md"
   ]

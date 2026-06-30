@@ -1,0 +1,7 @@
+# system
+.DS_Store
+Thumbs.db
+
+# obsidian cache (если не хочешь тащить мусор)
+.obsidian/workspace*
+.obsidian/cache*

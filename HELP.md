@@ -1,4 +1,4 @@
-﻿# Platform HELP
+# Platform HELP
 # Platform HELP
 
 ## 📌 ROOT RULE
