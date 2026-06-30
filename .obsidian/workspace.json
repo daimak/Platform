@@ -200,6 +200,7 @@
   },
   "active": "2210a3dd86961d90",
   "lastOpenFiles": [
+    "Memory/Sessions/SESSION-2026-07-01.md",
     "platform.ps1",
     "Memory/Archive/Memos/SESSION-NOTES.md",
     "Memory/Archive/Memos/CS-002 - Career selected.md",
@@ -234,7 +235,6 @@
     "Core/Glossary.md",
     "Core/Dashboard.md",
     "Core/Architecture.md",
-    "Workspace",
-    "RFC"
+    "Workspace"
   ]
 }
