@@ -17,3 +17,8 @@
 README описывает структуру Platform.
 
 Dashboard отражает текущее состояние Platform.
+
+
+
+
++1
