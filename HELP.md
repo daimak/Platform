@@ -1,5 +1,4 @@
 # Platform HELP
-# Platform HELP
 
 ## 📌 ROOT RULE
 Все команды выполняются относительно:
