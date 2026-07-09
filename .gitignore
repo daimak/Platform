@@ -17,4 +17,5 @@ dist/
 
 # IDE
 .vscode/*.log 
- 
+# Barrymore runtime reports
+tools/barrymore/reports/
