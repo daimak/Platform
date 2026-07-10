@@ -251,3 +251,13 @@ li {
     color:#5eead4;
 
 }
+
+.header-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+}
