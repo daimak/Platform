@@ -225,3 +225,29 @@ li {
     color:#cbd5e1;
 
 }
+
+.language-switch {
+
+    display:flex;
+
+    gap:10px;
+
+    color:#94a3b8;
+
+    font-weight:600;
+
+}
+
+.language-switch span {
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+}
+
+.language-switch span:hover {
+
+    color:#5eead4;
+
+}
