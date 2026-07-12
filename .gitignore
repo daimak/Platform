@@ -19,3 +19,4 @@ dist/
 .vscode/*.log 
 # Barrymore runtime reports
 tools/barrymore/reports/
+eVo/dashboard/projects/marvel_v/assets/test/
