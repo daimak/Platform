@@ -301,7 +301,20 @@ li {
 
 }
 
+/* ---------- Brand ---------- */
 
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.evo-logo {
+    height: 180px;
+    width: auto;
+
+    transform: translate(-30px, -30px);
+}
 
 
 
