@@ -1,36 +1,29 @@
-# DECISION-0001
+DECISION-0001
+Date: 2026-07-09
 
-Date:
-2026-07-09
+Title: Создан управляемый исполнительный помощник Barrymore.
 
-Title:
-Barrymore execution assistant created.
+Status: Accepted
 
-Status:
-Accepted
+Decision
 
+Barrymore начинает работу как управляемый исполнительный помощник.
 
-## Decision
+Его назначение:
 
-Barrymore starts as a controlled execution assistant.
+* принимать утверждённые задачи;
+* выполнять заранее определённые операции;
+* создавать отчёты;
+* сохранять историю выполнения.
 
-Its purpose:
-
-- receive approved tasks;
-- execute predefined operations;
-- create reports;
-- preserve audit history.
-
-
-## Constraints
+Constraints
 
 Barrymore:
 
-- does not make architectural decisions;
-- does not modify the system without instruction;
-- does not receive elevated privileges automatically.
+* не принимает архитектурных решений;
+* не изменяет систему без явного указания;
+* не получает повышенные права автоматически.
 
+Reason
 
-## Reason
-
-The system requires a safe bridge between human intent and Platform operations.
+Системе необходим безопасный мост между намерением человека и операциями Platform.
