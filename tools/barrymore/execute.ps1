@@ -20,6 +20,16 @@ $report = "tools\barrymore\reports\$time-report.md"
 ""
 "Git status:" | Out-File $report -Append
 
+Write-Host ""
+Write-Host "Staging changes..."
+git add .
+
+Write-Host ""
+Write-Host "Creating commit..."
+
+$commitMessage = "Barrymore: $Task $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+git commit -m $commitMessage
+
 git status | Out-File $report -Append
 
 Write-Host "Barrymore report created:"
