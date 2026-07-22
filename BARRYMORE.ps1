@@ -1,0 +1,1 @@
+& "$PSScriptRoot\tools\barrymore\barrymore.ps1"
