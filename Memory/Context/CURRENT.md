@@ -1,39 +1,43 @@
-﻿# CURRENT
+﻿# CURRENT STATE
 
-Version: 0.2
-Updated: 2026-07-24
+Date: 2026-08-05
 
-## State
+## Current Situation
 
-Platform после Pre-Release Stabilization.
+Главная активная линия:
+Переход в новую среду (Узбекистан) и создание устойчивого финансового потока.
 
-Branch:
-refactor/platform-boundaries-v2
+## Strategic Context
 
-Stage:
-Citadel Architecture Foundation
+Текущие ограничения:
+- ограниченный капитал
+- риск блокировки выезда из-за ИП
+- необходимость быстрого восстановления дохода
 
-## Focus
+Цель:
+Создать базу, затем вернуться к росту через IT и международные возможности.
 
-- Platform Command Center
-- Vision development
-- Local AI Agent sandbox
-- Memory system redesign
+## Estate Domains
 
-## Entities
+Active:
+- Barrymore
+- Treasury
+- Career
+- Marketplace experiments
 
-- Barrymore — управление состоянием
-- eVo — экспериментальный контур
-- Researcher — исследование нового
+## Decisions
 
-## Last Change
+- Казначейство выделено как сущность
+- Пока находится внутри Main Estate
+- Управление осуществляет Barrymore
 
-Created:
-- Vision/Entities/The_Researcher.md
-- Vision/Future/Experiments/Local_AI_Agent_Experiment.md
+## Next Action
 
-## Morning Entry
-
-1. Open CURRENT.md
-2. Check Dashboard
-3. Define today's priority
+Создать Morning Brief:
+кнопка Barrymore →
+утренний доклад:
+- состояние поместья
+- деньги
+- задачи
+- риски
+- возможности
