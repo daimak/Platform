@@ -1,165 +1,277 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eVo Command Center</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo Command Center — Level 2</title>
 
-    <link rel="stylesheet" href="style.css">
+  <!-- Шрифты Orbitron и базовые стили -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="app">
+  <!-- Пространственные слои мира Estate (Уровень 1) -->
+  <div class="estate-spatial-backdrop"></div>
+  <div class="spatial-grid-overlay"></div>
 
+  <div class="app">
+
+    <!-- Верхняя панель: Бренд, Стюард Бэрримор, Статус ядра -->
     <header class="top">
+      <div class="brand">
+        <div class="evo-logo-wrap">
+          <img class="evo-logo"
+               src="projects/marvel_v/assets/logo_sunrise.png"
+               alt="eVo Sunrise Logo">
+        </div>
+        <div class="brand-text-group">
+          <div class="brand-title-row">
+            <h1 class="brand-title" id="command-center-title">Command Center</h1>
+            <span class="brand-version-badge">v0.2.0 • Estate L2</span>
+          </div>
+          <p class="brand-subtitle" id="system-subtitle">Персональная операционная система eVo</p>
+        </div>
+      </div>
 
-<div class="brand">
-    <img class="evo-logo"
-         src="projects/marvel_v/assets/logo_sunrise.png"
-         alt="eVo logo">
-
-    <p class="brand-title">Command Center</p>
-</div>
-
-    <div class="platform-status">
-
-    <div class="language-switch">
-        <span>RU</span>
-        <span>EN</span>
-    </div>
-
-        <div class="platform-alive">
-
-            <span class="platform-dot"></span>
-
-            Platform alive
-
+      <!-- Стюард Бэрримор (Основной шлюз управления) -->
+      <div class="barrymore-nexus" id="barrymore-nexus" title="Стюард Бэрримор: нажмите для сводки">
+        <div class="barrymore-avatar">🤖</div>
+        <div class="barrymore-info">
+          <div class="barrymore-name">
+            <span class="barrymore-pulse-dot"></span>
+            <span id="barrymore-name-text">Стюард Бэрримор</span>
+          </div>
+          <div class="barrymore-status" id="barrymore-status-text">Наблюдение активно • 3 вектора в фокусе</div>
         </div>
 
-</div>
+        <!-- Раскрывающийся контекстный брифинг Бэрримора -->
+        <div class="barrymore-briefing-tooltip">
+          <p class="briefing-quote" id="barrymore-briefing-quote">
+            «Сэр, все подсистемы функционируют штатно. Архитектурный переход от Foundation к Interface завершён. Ожидаю указаний по рабочим кабинетам.»
+          </p>
+          <div class="briefing-meta">
+            <span>ADR-0001: Read-Only Steward</span>
+            <span style="color: var(--accent-amber);">Нажмите для перехода в кабинет</span>
+          </div>
+        </div>
+      </div>
 
-        </header>
+      <!-- Элементы управления: язык и телеметрия -->
+      <div class="header-controls">
+        <div class="language-switch">
+          <button class="lang-btn" id="lang-ru">RU</button>
+          <button class="lang-btn" id="lang-en">EN</button>
+        </div>
 
+        <div class="platform-alive">
+          <span class="platform-dot"></span>
+          <span id="platform-alive-text">Платформа активна</span>
+          <span style="opacity: 0.4;">|</span>
+          <span style="color: var(--text-muted); font-size: 0.75rem;" id="heartbeat-text">1.2с</span>
+        </div>
+      </div>
+    </header>
 
     <main>
 
-
-        <section class="hero card">
-
-            <div
-                class="label"
-                id="current-state">
-                CURRENT STATE
-            </div>
-
-            <h2 id="current-title">
-                Foundation → Interface
-            </h2>
-
+      <!-- Главная директива (Hero / Level 2 Core) -->
+      <section class="hero">
+        <div class="hero-content-wrapper">
+          <div class="hero-main-info">
+            <div class="label" id="current-state-label">СОСТОЯНИЕ СИСТЕМЫ</div>
+            <h2 id="current-title">Foundation → Interface</h2>
             <p id="current-text">
-                eVo is evolving from concept into visual system.
+              eVo развивается от идеи и фундаментальных правил к наглядному пространственному интерфейсу.
             </p>
+          </div>
 
-        </section>
+          <!-- Визуальная точка перехода в Рабочий кабинет согласно ESTATE_UI_CONCEPT.md -->
+          <button class="workspace-portal-btn" id="btn-open-workspace">
+            <span id="to-workspace-text">🚪 Перейти в рабочий кабинет</span>
+          </button>
+        </div>
+      </section>
 
+      <!-- Сетка ключевых пространственных узлов (4 Focal Nodes) -->
+      <section class="grid">
 
+        <!-- Узел 1: Git & Состояние инфраструктуры -->
+        <div class="card">
+          <div class="card-top-row">
+            <div class="label" id="git-state-label">GIT-СОСТОЯНИЕ</div>
+            <span class="node-badge">NODE 01</span>
+          </div>
 
-        <section class="grid">
+          <h3 id="branch-title">Ветка experiment</h3>
 
+          <div class="status-line green" id="git-status-line">
+            ● Рабочее дерево чисто
+          </div>
 
-            <div class="card">
+          <div class="git-detail-box">
+            <span id="latest-commit-label">Последний коммит:</span>
+            <span class="commit-code" id="commit-hash">cad8c27 (refactor: boundaries v2)</span>
+          </div>
+        </div>
 
-                <div class="label">
-                    GIT STATE
-                </div>
+        <!-- Узел 2: Точка внимания & Агенты eVo -->
+        <div class="card">
+          <div class="card-top-row">
+            <div class="label" id="attention-label">ТОЧКА ВНИМАНИЯ</div>
+            <span class="node-badge">NODE 02</span>
+          </div>
 
-                <h3>
-                    experiment
-                </h3>
+          <h3 id="attention-title">Command Center</h3>
 
-                <div class="status-line green">
-                    ● Clean
-                </div>
+          <div class="status-line orange" id="attention-status-line">
+            ● В процессе разработки
+          </div>
 
-                <p>
-                    Latest:
-                    cad8c27
-                </p>
+          <p id="attention-desc" style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 8px;">
+            Первый визуальный интерфейс управления системой eVo.
+          </p>
 
+          <div class="agent-list">
+            <div class="agent-item">
+              <span class="agent-dot" style="background: var(--accent-amber); box-shadow: var(--glow-amber);"></span>
+              <span id="agent-barrymore-text">Barrymore: Активен (Steward, Read-Only)</span>
             </div>
-
-
-
-            <div class="card">
-
-                <div class="label">
-                    ATTENTION
-                </div>
-
-                <h3>
-                    Command Center
-                </h3>
-
-                <div class="status-line orange">
-                    ● Building
-                </div>
-
-                <p>
-                    First visual interface
-                </p>
-
+            <div class="agent-item">
+              <span class="agent-dot" style="background: var(--accent-emerald); box-shadow: var(--glow-emerald);"></span>
+              <span id="agent-context-text">Context Engine: Синхронизирован</span>
             </div>
-
-
-
-            <div class="card">
-
-                <div class="label">
-                    NEXT LEVERAGE
-                </div>
-
-                <h3>
-                    Dashboard
-                </h3>
-
-                <ul>
-                    <li>Visual state</li>
-                    <li>Memory connection</li>
-                    <li>System map</li>
-                </ul>
-
+            <div class="agent-item">
+              <span class="agent-dot" style="background: var(--accent-cyan); box-shadow: var(--glow-cyan);"></span>
+              <span id="agent-memory-text">Memory Store: Снимок 2026-07-12 верифицирован</span>
             </div>
+          </div>
+        </div>
 
+        <!-- Узел 3: Ключевые рычаги и интерактивные задачи -->
+        <div class="card">
+          <div class="card-top-row">
+            <div class="label" id="leverage-label">КЛЮЧЕВЫЕ РЫЧАГИ</div>
+            <span class="node-badge">NODE 03</span>
+          </div>
 
+          <h3 id="leverage-title">Задачи панели управления</h3>
 
-            <div class="card">
+          <ul class="task-interactive-list" id="task-list">
+            <li class="task-item" data-id="task-1">
+              <div class="task-checkbox">✓</div>
+              <span class="task-text" id="task-text-1">Визуальное состояние системы (Estate Level 2)</span>
+            </li>
+            <li class="task-item" data-id="task-2">
+              <div class="task-checkbox"></div>
+              <span class="task-text" id="task-text-2">Интеграция долговременной памяти (Context / Decisions)</span>
+            </li>
+            <li class="task-item" data-id="task-3">
+              <div class="task-checkbox"></div>
+              <span class="task-text" id="task-text-3">Пространственная карта Estate и шлюз рабочих кабинетов</span>
+            </li>
+          </ul>
 
-                <div class="label">
-                    EVOLUTION
-                </div>
+          <div class="task-add-row">
+            <input type="text" id="input-new-task" class="task-input" placeholder="Новый рычаг или задача...">
+            <button id="btn-add-task" class="task-btn">+ Добавить</button>
+          </div>
+        </div>
 
-                <h3>
-                    History
-                </h3>
+        <!-- Узел 4: Эволюция и 3-уровневая модель Estate -->
+        <div class="card">
+          <div class="card-top-row">
+            <div class="label" id="evolution-label">ЭВОЛЮЦИЯ СИСТЕМЫ</div>
+            <span class="node-badge">NODE 04</span>
+          </div>
 
-                <p>
-                    Platform → eVo → Command Center
-                </p>
+          <h3 id="evolution-title">Хроника развития</h3>
 
+          <p id="evolution-flow" style="color: #cbd5e1; font-weight: 500; font-size: 0.95rem; margin-bottom: 12px;">
+            Platform → eVo → Command Center → Estate
+          </p>
+
+          <div class="estate-levels-container">
+            <div class="estate-level-row">
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">L1</span>
+              <span id="estate-level-1-text">Уровень 1: Мир Estate (Пространственная модель)</span>
             </div>
+            <div class="estate-level-row active">
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-amber);">L2</span>
+              <span id="estate-level-2-text">Уровень 2: Command Center (Центр управления)</span>
+            </div>
+            <div class="estate-level-row">
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-teal);">L3</span>
+              <span id="estate-level-3-text">Уровень 3: Рабочий кабинет (Фокусное исполнение)</span>
+            </div>
+          </div>
+        </div>
 
-
-        </section>
-
+      </section>
 
     </main>
 
+  </div>
 
-</div>
+  <!-- Уровень 3: Модальный рабочий кабинет (Workspace Cockpit) -->
+  <div class="workspace-modal-overlay" id="workspace-modal">
+    <div class="workspace-cockpit">
+      <div class="cockpit-header">
+        <div>
+          <h3 id="workspace-title-text">Рабочий кабинет: eVo Core Workspace</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);" id="workspace-sub-text">
+            Уровень 3 — Непосредственное выполнение задач и редактирование контекста
+          </p>
+        </div>
+        <button class="back-btn" id="btn-close-workspace">← Вернуться в Центр управления</button>
+      </div>
 
-<script src="app.js"></script>
+      <div class="cockpit-body">
+        <div class="task-card-detail">
+          <div class="cockpit-section-title" id="active-task-section-label">Активная задача</div>
+          <h4 id="active-task-name">Архитектурная сборка Command Center v0.2</h4>
+          <p style="color: #94a3b8; font-size: 0.9rem;" id="active-task-desc">
+            Объединение пространственной метафоры Estate, стюарда Бэрримора и рабочего интерфейса.
+          </p>
+
+          <div style="margin-top: 14px;">
+            <div class="cockpit-section-title" id="checklist-title-label">Контрольный список:</div>
+            <div class="checklist-box">
+              <label class="check-row">
+                <input type="checkbox" checked disabled>
+                <span id="check-1-text">Реализовать атмосферную глубину и визуальную иерархию</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" checked disabled>
+                <span id="check-2-text">Интегрировать стюарда Бэрримора как точку входа</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" checked disabled>
+                <span id="check-3-text">Обеспечить бесшовный переход между уровнями 2 и 3</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cockpit-footer">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);" id="status-select-label">Статус задачи:</span>
+          <select class="status-select" id="task-status-dropdown">
+            <option value="building" id="opt-building">В разработке</option>
+            <option value="operational" selected id="opt-operational">Завершена / Готова</option>
+          </select>
+        </div>
+        <button class="btn-save" id="btn-save-workspace">Сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Подключение логики приложения -->
+  <script src="languages.js"></script>
+  <script src="app.js"></script>
 
 </body>
 </html>
