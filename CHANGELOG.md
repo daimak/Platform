@@ -13,3 +13,5 @@ YYYY-MM-DD | change | reason | RFC
 - Introduced Context Snapshots.
 - Defined thinking versioning concept.
 - Added architectural principle P9 (Evolution through MVP).
+
+2026-10-19 | record first Gemini API test | added learning protocol and experiment log |
