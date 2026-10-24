@@ -1,0 +1,152 @@
+{
+  "dashboard/Backup/active_project.json": {
+    "mtime": 1788544039.949622,
+    "seen": 1792476090.69898,
+    "ast_hash": "133fff0b5e3110aecb42a46b7b04623d",
+    "semantic_hash": "133fff0b5e3110aecb42a46b7b04623d"
+  },
+  "dashboard/Backup/app.js": {
+    "mtime": 1792333844.4867613,
+    "seen": 1792476090.698985,
+    "ast_hash": "c54ce609fd09cde7328d4afb406db2d4",
+    "semantic_hash": "c54ce609fd09cde7328d4afb406db2d4"
+  },
+  "dashboard/Backup/languages.js": {
+    "mtime": 1792333720.773372,
+    "seen": 1792476090.698987,
+    "ast_hash": "3a6dbdd21a84956abfa70012a7b607d1",
+    "semantic_hash": "3a6dbdd21a84956abfa70012a7b607d1"
+  },
+  "dashboard/active_project.json": {
+    "mtime": 1788544039.949622,
+    "seen": 1792476090.6989882,
+    "ast_hash": "133fff0b5e3110aecb42a46b7b04623d",
+    "semantic_hash": "133fff0b5e3110aecb42a46b7b04623d"
+  },
+  "dashboard/app.js": {
+    "mtime": 1792333844.4867613,
+    "seen": 1792476090.6989899,
+    "ast_hash": "c54ce609fd09cde7328d4afb406db2d4",
+    "semantic_hash": "c54ce609fd09cde7328d4afb406db2d4"
+  },
+  "dashboard/languages.js": {
+    "mtime": 1792333720.773372,
+    "seen": 1792476090.6989906,
+    "ast_hash": "3a6dbdd21a84956abfa70012a7b607d1",
+    "semantic_hash": "3a6dbdd21a84956abfa70012a7b607d1"
+  },
+  "dashboard/locales/en/dashboard.json": {
+    "mtime": 1788544039.9575639,
+    "seen": 1792476090.6989915,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "dashboard/locales/fr/dashboard.json": {
+    "mtime": 1788544039.9575639,
+    "seen": 1792476090.6989925,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "dashboard/locales/ru/dashboard.json": {
+    "mtime": 1788544039.9575639,
+    "seen": 1792476090.6989932,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "dashboard/projects/marvel_v/project.json": {
+    "mtime": 1788544039.9656527,
+    "seen": 1792476090.698994,
+    "ast_hash": "218bb080a5fef08452b504daad90847a",
+    "semantic_hash": "218bb080a5fef08452b504daad90847a"
+  },
+  "dashboard/projects/minimalism/project.json": {
+    "mtime": 1788544039.9656527,
+    "seen": 1792476090.6989949,
+    "ast_hash": "f64aaff42de32ee760915aa827b6c4ed",
+    "semantic_hash": "f64aaff42de32ee760915aa827b6c4ed"
+  },
+  "dashboard/projects/organica/project.json": {
+    "mtime": 1788544039.9656527,
+    "seen": 1792476090.698996,
+    "ast_hash": "45f1d89692109cbedb488e59123c94ec",
+    "semantic_hash": "45f1d89692109cbedb488e59123c94ec"
+  },
+  "scripts/bootstrap.ps1": {
+    "mtime": 1788544039.9656527,
+    "seen": 1792476090.6989968,
+    "ast_hash": "3d8b7ded12e01240f240686b5f11a5a6",
+    "semantic_hash": "3d8b7ded12e01240f240686b5f11a5a6"
+  },
+  "README.md": {
+    "mtime": 1788544039.949622,
+    "seen": 1792476090.6989975,
+    "ast_hash": "01870d3b857078e01f8af0d5341a1c8b",
+    "semantic_hash": "01870d3b857078e01f8af0d5341a1c8b"
+  },
+  "dashboard/Backup/history.md": {
+    "mtime": 1788544039.9575639,
+    "seen": 1792476090.6989982,
+    "ast_hash": "ba51ed5faebe7dfa4cb67c05c44e15a4",
+    "semantic_hash": "ba51ed5faebe7dfa4cb67c05c44e15a4"
+  },
+  "dashboard/Backup/index.html": {
+    "mtime": 1792346360.661175,
+    "seen": 1792476090.698999,
+    "ast_hash": "353ab9daf770c6ce176c7372107a1faa",
+    "semantic_hash": "353ab9daf770c6ce176c7372107a1faa"
+  },
+  "dashboard/Backup/workspace.html": {
+    "mtime": 1792283993.07179,
+    "seen": 1792476090.699,
+    "ast_hash": "e99883aa0237dd15a33867c68fd10548",
+    "semantic_hash": "e99883aa0237dd15a33867c68fd10548"
+  },
+  "dashboard/history.md": {
+    "mtime": 1788544039.9575639,
+    "seen": 1792476090.699001,
+    "ast_hash": "ba51ed5faebe7dfa4cb67c05c44e15a4",
+    "semantic_hash": "ba51ed5faebe7dfa4cb67c05c44e15a4"
+  },
+  "dashboard/index.html": {
+    "mtime": 1792346360.661175,
+    "seen": 1792476090.6990018,
+    "ast_hash": "353ab9daf770c6ce176c7372107a1faa",
+    "semantic_hash": "353ab9daf770c6ce176c7372107a1faa"
+  },
+  "dashboard/workspace.html": {
+    "mtime": 1792283993.07179,
+    "seen": 1792476090.699003,
+    "ast_hash": "e99883aa0237dd15a33867c68fd10548",
+    "semantic_hash": "e99883aa0237dd15a33867c68fd10548"
+  },
+  "graphify-out/memory/query_20261020_055340_8839c33d_estate_command.md": {
+    "mtime": 1792475620.715388,
+    "seen": 1792476090.6990037,
+    "ast_hash": "ed59d1d618cf827edb72dd95bf52455f",
+    "semantic_hash": "ed59d1d618cf827edb72dd95bf52455f"
+  },
+  "project-tree.txt": {
+    "mtime": 1788544039.9656527,
+    "seen": 1792476090.6990044,
+    "ast_hash": "06f8d5bd93eb1b8b0fa958939629b0bd",
+    "semantic_hash": "06f8d5bd93eb1b8b0fa958939629b0bd"
+  },
+  "dashboard/assets/estate_bg.png": {
+    "mtime": 1792346828.3901649,
+    "seen": 1792476090.6990056,
+    "ast_hash": "e784022228960e8fe82c7bdd63c79184",
+    "semantic_hash": "e784022228960e8fe82c7bdd63c79184"
+  },
+  "dashboard/assets/estate_bg_original.png": {
+    "mtime": 1788594776.6518378,
+    "seen": 1792476090.6990068,
+    "ast_hash": "c97476f55e67dccc0f550af4969e5027",
+    "semantic_hash": "c97476f55e67dccc0f550af4969e5027"
+  },
+  "dashboard/projects/marvel_v/assets/logo_sunrise.png": {
+    "mtime": 1788544039.9656527,
+    "seen": 1792476090.6990075,
+    "ast_hash": "e501249522a2e317ae4bd16f05fce1c3",
+    "semantic_hash": "e501249522a2e317ae4bd16f05fce1c3"
+  }
+}

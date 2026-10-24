@@ -1,0 +1,597 @@
+/* ==========================================================================
+   Platform Evo (eVo) — Estate World (Level 1) & Command Center (Level 2)
+   ========================================================================== */
+
+:root {
+  --bg-space: #030712;
+  --bg-glass: rgba(10, 18, 36, 0.88);
+  --bg-glass-card: rgba(15, 27, 54, 0.82);
+  --border-glass: rgba(94, 234, 212, 0.22);
+  --border-gold: rgba(245, 158, 11, 0.4);
+  
+  --accent-cyan: #38bdf8;
+  --accent-teal: #2dd4bf;
+  --accent-emerald: #34d399;
+  --accent-amber: #f59e0b;
+  --accent-gold: #fbbf24;
+  --accent-rose: #fb7185;
+  --accent-purple: #c084fc;
+
+  --text-main: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --font-display: "Orbitron", -apple-system, sans-serif;
+
+  --shadow-window: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 1px 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-space);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Estate World Viewport (Level 1 Canvas)
+   ========================================================================== */
+
+.estate-viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #020617;
+}
+
+/* Центрирующий контейнер карты */
+.estate-map-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Жестко фиксированный фрейм с пропорциями исходной картины (1672 x 941 = 1.7768) */
+.estate-map-frame {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: calc(100vh * (1672 / 941));
+  max-height: calc(100vw / (1672 / 941));
+  aspect-ratio: 1672 / 941;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.estate-canvas-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: contrast(1.04) saturate(1.06);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+}
+
+/* При открытии модального окна карта слегка затемняется и мягко размывается */
+.estate-viewport.modal-active .estate-canvas-img {
+  filter: contrast(1.02) saturate(0.9) brightness(0.65) blur(3px);
+  transform: scale(1.015);
+}
+
+/* ==========================================================================
+   Top HUD Bar (Стеклянная полоса управления сверху)
+   ========================================================================== */
+
+.estate-top-hud {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  right: 20px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: rgba(8, 16, 32, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hud-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.hud-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fef08a;
+  text-transform: uppercase;
+}
+
+.hud-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.hud-center {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.hud-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+}
+
+.status-dot-green {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-emerald);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-emerald);
+  animation: pulseBeacon 2s infinite ease-in-out;
+}
+
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lang-switch {
+  display: flex;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lang-btn:hover {
+  color: #fff;
+}
+
+.lang-btn.active {
+  background: var(--accent-teal);
+  color: #04121a;
+  box-shadow: 0 0 8px rgba(45, 212, 191, 0.4);
+}
+
+/* ==========================================================================
+   Island Hotspots & Beacons (Круглые иконки над островами)
+   ========================================================================== */
+
+.island-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 20;
+}
+
+/* Пульсирующий тактический маяк */
+.beacon-core {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(8, 16, 32, 0.88);
+  border: 1.5px solid var(--accent-cyan);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.beacon-core::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-cyan);
+  opacity: 0.45;
+  animation: rippleRing 2.4s infinite ease-out;
+}
+
+@keyframes rippleRing {
+  0% { transform: scale(0.85); opacity: 0.85; }
+  100% { transform: scale(1.75); opacity: 0; }
+}
+
+@keyframes pulseBeacon {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+.beacon-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* Цветовые вариации маяков */
+.beacon-gold .beacon-core { border-color: var(--accent-gold); box-shadow: 0 0 18px rgba(251, 191, 36, 0.55); }
+.beacon-gold .beacon-core::after { border-color: var(--accent-gold); }
+
+.beacon-emerald .beacon-core { border-color: var(--accent-emerald); box-shadow: 0 0 18px rgba(52, 211, 153, 0.55); }
+.beacon-emerald .beacon-core::after { border-color: var(--accent-emerald); }
+
+.beacon-purple .beacon-core { border-color: var(--accent-purple); box-shadow: 0 0 18px rgba(192, 132, 252, 0.55); }
+.beacon-purple .beacon-core::after { border-color: var(--accent-purple); }
+
+.beacon-amber .beacon-core { border-color: var(--accent-amber); box-shadow: 0 0 18px rgba(245, 158, 11, 0.55); }
+.beacon-amber .beacon-core::after { border-color: var(--accent-amber); }
+
+/* При наведении маяк слегка увеличивается */
+.island-hotspot:hover .beacon-core {
+  transform: scale(1.22);
+  background: rgba(14, 26, 52, 0.98);
+}
+
+/* Всплывающая карточка при наведении (Hover Tooltip) */
+.island-hover-card {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  width: 280px;
+  background: rgba(9, 18, 36, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 20px rgba(56, 189, 248, 0.15);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 30;
+}
+
+.island-hover-card::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: rgba(9, 18, 36, 0.94);
+}
+
+/* Для верхних иконок карточка всплывает СНИЗУ, чтобы не срезаться шапкой */
+.island-hotspot.tooltip-down .island-hover-card {
+  bottom: auto;
+  top: calc(100% + 14px);
+  transform: translateX(-50%) translateY(-8px);
+}
+
+.island-hotspot.tooltip-down .island-hover-card::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: rgba(9, 18, 36, 0.94);
+}
+
+.island-hotspot:hover .island-hover-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.hover-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent-teal);
+  margin-bottom: 4px;
+}
+
+.hover-title {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.hover-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.hover-action-hint {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-gold);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ==========================================================================
+   Semi-transparent Modal Windows (Полупрозрачные окна при клике на остров)
+   ========================================================================== */
+
+.island-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 18, 0.58);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.island-modal-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.island-modal-window {
+  width: 100%;
+  max-width: 780px;
+  max-height: 88vh;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  box-shadow: var(--shadow-window);
+  backdrop-filter: blur(24px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: windowPop 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes windowPop {
+  from { opacity: 0; transform: scale(0.95) translateY(14px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  background: rgba(14, 25, 50, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.modal-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+}
+
+.modal-title-group h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.modal-title-group p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.modal-body {
+  padding: 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Внутренние блоки карточек модального окна */
+.glass-panel {
+  background: var(--bg-glass-card);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.glass-panel h4 {
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.panel-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent-teal);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.status-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  background: rgba(10, 20, 40, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Кнопка действия */
+.btn-action-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.45) 100%);
+  border: 1px solid var(--border-gold);
+  color: #fffbeb;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-action-primary:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.4) 0%, rgba(217, 119, 6, 0.65) 100%);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Level 3: Workspace Cockpit Modal
+   ========================================================================== */
+
+.workspace-cockpit-window {
+  width: 100%;
+  max-width: 840px;
+  background: #091326;
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  box-shadow: var(--shadow-window);
+  overflow: hidden;
+}
+
+/* Список задач в окне рычагов */
+.task-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.task-item-row:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(94, 234, 212, 0.3);
+}
+
+.task-check-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 1px solid var(--accent-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.task-item-row.done .task-check-box {
+  background: var(--accent-teal);
+  color: #04121a;
+}
+
+.task-item-row.done .task-title-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}

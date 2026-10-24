@@ -15,3 +15,5 @@ YYYY-MM-DD | change | reason | RFC
 - Added architectural principle P9 (Evolution through MVP).
 
 2026-10-19 | record first Gemini API test | added learning protocol and experiment log |
+
+2026-10-22 | consolidate root docs into README, Docs, Notes | stop competing entry points |

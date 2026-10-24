@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "chief-of-staff": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/in-progress/chief-of-staff/SKILL.md",
+      "computedHash": "2af2854f3897f94cfd9b6a084859009a95b1d8ce27ca25d15b617edc1eb9bd34"
+    }
+  }
+}

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo Estate — World & Command Center</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Полноэкранный интерактивный мир Estate (Уровень 1) -->
+  <div class="estate-viewport" id="estate-viewport">
+
+    <!-- Верхняя стеклянная панель управления (HUD) -->
+    <header class="estate-top-hud">
+      <div class="hud-left">
+        <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+        <div class="hud-title-group">
+          <span class="hud-title" id="hud-brand-title">PLATFORM ESTATE</span>
+          <span class="hud-subtitle" id="hud-brand-subtitle">Персональная операционная система eVo</span>
+        </div>
+      </div>
+
+      <div class="hud-center">
+        <div class="hud-stat-item">
+          <span class="status-dot-green"></span>
+          <span id="hud-platform-alive">Платформа активна</span>
+          <span style="opacity: 0.35;">|</span>
+          <span style="color: var(--text-muted); font-size: 0.72rem;" id="hud-heartbeat">1.2с</span>
+        </div>
+        <div class="hud-stat-item" style="color: var(--text-muted);">
+          <span style="color: var(--accent-emerald);">●</span>
+          <span id="hud-status-quiet">Спокойно</span>
+        </div>
+        <div class="hud-stat-item" style="color: var(--text-muted);">
+          <span id="hud-active-processes">Активные процессы: 5</span>
+        </div>
+        <div class="hud-stat-item" style="color: var(--accent-amber);">
+          <span id="hud-attention-count">Ожидают внимания: 2</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div class="lang-switch">
+          <button class="lang-btn" id="lang-ru">RU</button>
+          <button class="lang-btn" id="lang-en">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Центрированный контейнер с точным сохранением пропорций 1672x941 -->
+    <div class="estate-map-container" id="estate-map-container">
+      <div class="estate-map-frame" id="estate-map-frame">
+        <img src="assets/estate_bg.png" alt="Platform Estate World" class="estate-canvas-img" id="estate-img">
+
+        <!-- ================= ИКОНКИ СУЩНОСТЕЙ ОСТРОВОВ ================= -->
+        <!-- Каждая иконка расположена строго по центру над своим островом на высоте ~0.5-1 см -->
+
+        <!-- 1. Главная Усадьба (Main Estate) — строго по центру над шпилем замка -->
+        <div class="island-hotspot beacon-gold tooltip-down" style="top: 26.5%; left: 50.0%;" data-island="mainEstate">
+          <div class="beacon-core">
+            <span class="beacon-icon">🏰</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">CORE NEXUS</div>
+            <div class="hover-title">MAIN ESTATE</div>
+            <div class="hover-subtitle">Главная усадьба • Управление и принятие решений</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть консоль ядра</div>
+          </div>
+        </div>
+
+        <!-- 2. Стюард Бэрримор (Barrymore) — верхний сектор в утреннем небе -->
+        <div class="island-hotspot beacon-amber tooltip-down" style="top: 12.0%; left: 8.5%;" data-island="barrymore">
+          <div class="beacon-core">
+            <span class="beacon-icon">🤖</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">STEWARD BRIEF</div>
+            <div class="hover-title">СТЮАРД БЭРРИМОР</div>
+            <div class="hover-subtitle">Хранитель состояния eVo • Утренний отчет</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть брифинг Бэрримора</div>
+          </div>
+        </div>
+
+        <!-- 3. Мастерская eVo (eVo Workshop) — строго над трубами мастерской -->
+        <div class="island-hotspot beacon-amber" style="top: 28.5%; left: 72.4%;" data-island="workshop">
+          <div class="beacon-core">
+            <span class="beacon-icon">⚙️</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">NODE 01: GIT & INFRA</div>
+            <div class="hover-title">eVo WORKSHOP</div>
+            <div class="hover-subtitle">Эксперименты, Git-состояние и инструменты сборки</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть Git-состояние</div>
+          </div>
+        </div>
+
+        <!-- 4. Обсерватория Навигатора (Navigator Observatory) — строго над куполом телескопа -->
+        <div class="island-hotspot beacon-cyan" style="top: 38.5%; left: 17.9%;" data-island="navigator">
+          <div class="beacon-core">
+            <span class="beacon-icon">🔭</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">VISION & ROADMAP</div>
+            <div class="hover-title">NAVIGATOR OBSERVATORY</div>
+            <div class="hover-subtitle">Исследования, разведка и дорожная карта мира</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть дорожную карту</div>
+          </div>
+        </div>
+
+        <!-- 5. Песочница ИИ (AI Sandbox) — строго над башней со шпилем -->
+        <div class="island-hotspot beacon-emerald" style="top: 37.5%; left: 83.1%;" data-island="aiSandbox">
+          <div class="beacon-core">
+            <span class="beacon-icon">🔮</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">NODE 02: AGENTS</div>
+            <div class="hover-title">AI SANDBOX</div>
+            <div class="hover-subtitle">Безопасная среда агентов и точка внимания</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть консоль агентов</div>
+          </div>
+        </div>
+
+        <!-- 6. Библиотека Памяти (Memory Library) — строго над золотым куполом дворца -->
+        <div class="island-hotspot beacon-purple" style="top: 53.5%; left: 12.8%;" data-island="memoryLibrary">
+          <div class="beacon-core">
+            <span class="beacon-icon">📚</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">NODE 04: MEMORY</div>
+            <div class="hover-title">MEMORY LIBRARY</div>
+            <div class="hover-subtitle">Память, хроника решений (ADR) и история эволюции</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть хронику системы</div>
+          </div>
+        </div>
+
+        <!-- 7. Архив Знаний (Knowledge Archive) — строго над дворцом с круглым садом -->
+        <div class="island-hotspot beacon-purple" style="top: 56.5%; left: 75.6%;" data-island="knowledgeArchive">
+          <div class="beacon-core">
+            <span class="beacon-icon">🏛️</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">KNOWLEDGE VAULT</div>
+            <div class="hover-title">KNOWLEDGE ARCHIVE</div>
+            <div class="hover-subtitle">Документация, концепты и принципы королевства</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть базу знаний</div>
+          </div>
+        </div>
+
+        <!-- 8. Гавань (The Harbor) — строго над постройками и мачтами порта -->
+        <div class="island-hotspot beacon-cyan" style="top: 67.0%; left: 33.2%;" data-island="harbor">
+          <div class="beacon-core">
+            <span class="beacon-icon">⚓</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">CONNECTIONS</div>
+            <div class="hover-title">THE HARBOR</div>
+            <div class="hover-subtitle">Интеграции, внешние API и корабли связи</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть статус связей</div>
+          </div>
+        </div>
+
+        <!-- 9. Гильдия / Ключевые рычаги (Career Guild) — строго над домиками острова и галеоном -->
+        <div class="island-hotspot beacon-gold" style="top: 65.0%; left: 56.8%;" data-island="careerGuild">
+          <div class="beacon-core">
+            <span class="beacon-icon">⚔️</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">NODE 03: LEVERAGE</div>
+            <div class="hover-title">CAREER GUILD & LEVERAGE</div>
+            <div class="hover-subtitle">Приоритетные векторы, задачи и точки роста</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть список задач</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= ПОЛУПРОЗРАЧНЫЕ ОКНА КОНСОЛЕЙ ОСТРОВОВ ================= -->
+  <div class="island-modal-backdrop" id="island-modal-backdrop">
+    <div class="island-modal-window" id="island-modal-window">
+      <!-- Заголовок окна -->
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge" id="modal-island-icon">🏰</div>
+          <div class="modal-title-group">
+            <span class="panel-label" id="modal-island-badge">CORE NEXUS</span>
+            <h3 id="modal-island-title">MAIN ESTATE</h3>
+            <p id="modal-island-subtitle">Главная усадьба • Управление и принятие решений</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btn-close-island-modal">✕ Закрыть</button>
+      </div>
+
+      <!-- Содержимое окна (динамически подставляется в зависимости от острова) -->
+      <div class="modal-body" id="modal-island-content">
+        <!-- Генерируется из app.js -->
+      </div>
+
+      <!-- Нижняя панель окна -->
+      <div class="modal-footer" id="modal-island-footer">
+        <button class="modal-close-btn" id="btn-back-to-map">← Вернуться к карте островов</button>
+        <div id="modal-island-actions">
+          <!-- Специфические кнопки действий -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= УРОВЕНЬ 3: МОДАЛЬНЫЙ РАБОЧИЙ КАБИНЕТ ================= -->
+  <div class="island-modal-backdrop" id="workspace-modal-backdrop" style="z-index: 150;">
+    <div class="workspace-cockpit-window">
+      <div class="modal-header">
+        <div>
+          <h3 id="workspace-title-text" style="color: #fffbeb;">Рабочий кабинет: eVo Core Workspace</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted);" id="workspace-sub-text">
+            Уровень 3 — Непосредственное выполнение задач и редактирование контекста
+          </p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-workspace">← Вернуться в Command Center</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="glass-panel">
+          <div class="panel-label" id="active-task-section-label">Активная задача</div>
+          <h4 id="active-task-name">Архитектурная сборка Command Center v0.2</h4>
+          <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 16px;" id="active-task-desc">
+            Объединение пространственной метафоры Estate, стюарда Бэрримора и интерактивных островов.
+          </p>
+
+          <div class="panel-label" id="checklist-title-label">Контрольный список:</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-1-text">Полноэкранная стартовая картина мира Estate с островами</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-2-text">Всплывающие карточки с краткой инфой при наведении на острова</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-3-text">Полупрозрачные консоли с конкретной инфой при клике на остров</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);" id="status-select-label">Статус:</span>
+          <select class="status-select" id="task-status-dropdown" style="background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 6px;">
+            <option value="building" id="opt-building">В разработке</option>
+            <option value="operational" selected id="opt-operational">Завершена / Готова</option>
+          </select>
+        </div>
+        <button class="btn-action-primary" id="btn-save-workspace">Сохранить и вернуться</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="languages.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
