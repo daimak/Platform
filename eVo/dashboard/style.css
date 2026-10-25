@@ -595,3 +595,61 @@ body {
   text-decoration: line-through;
   color: var(--text-muted);
 }
+/* ===== Barrymore plaque: interactive zone over the painted artwork (replaces beacon) ===== */
+.plaque-zone {
+  position: absolute;
+  top: 11%;
+  left: 1%;
+  width: 22%;
+  height: 16%;
+  cursor: pointer;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  z-index: 5;
+}
+
+.plaque-zone:hover,
+.plaque-zone:focus-visible {
+  background: rgba(251, 191, 36, 0.07);
+  border-color: rgba(251, 191, 36, 0.35);
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.15);
+  outline: none;
+}
+
+.plaque-brief-link {
+  position: absolute;
+  left: 8px;
+  bottom: -24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: #fde68a;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  animation: briefLinkPulse 2.4s ease-in-out infinite;
+}
+
+.plaque-brief-link:hover {
+  background: rgba(30, 41, 59, 0.95);
+}
+
+.plaque-brief-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-amber, #f59e0b);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.9);
+}
+
+@keyframes briefLinkPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+  50% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.35); }
+}

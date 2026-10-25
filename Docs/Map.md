@@ -60,7 +60,7 @@
 
 Поведение: клик по острову открывает модалку. Задачи рычагов живут в `localStorage`. Morning Brief на острове Barrymore — захардкоженный текст, не чтение Memory.
 
-Острова на карте: Main Estate, Barrymore, Navigator, Memory Library, Harbor, Career Guild, Knowledge Archive, AI Sandbox, Workshop.
+Острова на карте: Main Estate, Navigator, Memory Library, Harbor, Career Guild, Knowledge Archive, AI Sandbox, Workshop. Бэрримор — не маячок, а кликабельная плашка с его лицом в верхнем левом секторе (нарисована на арте); под ней ссылка «Morning Brief» при новом непрочитанном докладе. Инструкция — `Docs/Barrymore.md`.
 
 ### Vue-каркас — удалён (25.10.2026)
 
@@ -85,7 +85,8 @@
 Отдельного сервера приложения нет.
 
 1. **Главный интерфейс:** открыть `eVo/dashboard/index.html` в браузере.
-2. **Состояние системы** смотреть в файлах, не в UI: `Memory/Context/CURRENT.md`; инженерный контекст работ — `Memory/Engineering/STATE.md`.
+2. **Morning Brief (Баррримор):** `python tools/barrymore/morning-brief-agent.py` (данные + доклад LLM) или `powershell tools/barrymore/morning-brief.ps1` (только данные); инструкция пользователя — `Docs/Barrymore.md`.
+3. **Состояние системы** смотреть в файлах, не в UI: `Memory/Context/CURRENT.md`; инженерный контекст работ — `Memory/Engineering/STATE.md`.
 
 Чтение markdown с диска из статического `index.html` через `file://` ограничено браузером. Для живой подгрузки Memory нужен простой static server или встроенный снимок файла.
 

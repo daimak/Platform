@@ -30,6 +30,7 @@ let activeIslandKey = null;
 document.addEventListener("DOMContentLoaded", () => {
   initLanguageControls();
   initIslandHotspots();
+  initBarrymorePlaque();
   initModalControls();
   updateLanguage();
 });
@@ -75,10 +76,48 @@ function initIslandHotspots() {
 }
 
 /**
+ * Плашка Баррримора (нарисована на арте) — кликабельная зона вместо маячка.
+ * Ссылка «Morning Brief» под плашкой появляется при новом (непрочитанном)
+ * докладе и исчезает после его открытия (localStorage: evo_brief_seen).
+ * Точка расширения: вместо брифа ссылка может нести краткое имя другого
+ * события (1–2 слова) — когда появятся другие типы событий.
+ */
+function initBarrymorePlaque() {
+  const plaque = document.getElementById("barrymore-plaque");
+  if (plaque) {
+    plaque.addEventListener("click", () => openIslandModal("barrymore"));
+    plaque.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") openIslandModal("barrymore");
+    });
+  }
+  updateBriefLink();
+}
+
+function markBriefSeen() {
+  if (typeof EVO_BRIEF !== "undefined" && EVO_BRIEF && EVO_BRIEF.generatedAt) {
+    localStorage.setItem("evo_brief_seen", EVO_BRIEF.generatedAt);
+  }
+}
+
+function updateBriefLink() {
+  const link = document.getElementById("barrymore-brief-link");
+  if (!link) return;
+  const brief = (typeof EVO_BRIEF !== "undefined") ? EVO_BRIEF : null;
+  const fresh = !!(brief && brief.generatedAt &&
+    localStorage.getItem("evo_brief_seen") !== brief.generatedAt);
+  link.hidden = !fresh;
+}
+
+/**
  * Открытие модального окна конкретного острова
  */
 function openIslandModal(islandKey) {
   activeIslandKey = islandKey;
+
+  if (islandKey === "barrymore") {
+    markBriefSeen();
+    updateBriefLink();
+  }
   const lang = (typeof LANG !== 'undefined' && LANG[currentLanguage]) ? LANG[currentLanguage] : {};
   const islandData = (lang.islands && lang.islands[islandKey]) ? lang.islands[islandKey] : {};
 

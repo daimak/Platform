@@ -29,3 +29,5 @@ YYYY-MM-DD | change | reason | RFC
 2026-10-25 | audit report archived: Memory/Archive/Reports/Report-2026-10-25-audit.md | record E-008 deliverable | —
 
 2026-10-25 | Barrymore Morning Brief: deterministic generator + autonomous LLM agent (local FreeLLMAPI gateway, stdlib-only, ADR-003/004 compliant) | give Barrymore its own brains | —
+
+2026-10-25 | Barrymore UX: map beacon removed, painted plaque is now the clickable entry; unread "Morning Brief" link under the plaque; user guide Docs/Barrymore.md | user request | —

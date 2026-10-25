@@ -73,16 +73,12 @@
           </div>
         </div>
 
-        <!-- 2. Стюард Бэрримор (Barrymore) — верхний сектор в утреннем небе -->
-        <div class="island-hotspot beacon-amber tooltip-down" style="top: 12.0%; left: 8.5%;" data-island="barrymore">
-          <div class="beacon-core">
-            <span class="beacon-icon">🤖</span>
-          </div>
-          <div class="island-hover-card">
-            <div class="hover-badge">STEWARD BRIEF</div>
-            <div class="hover-title">СТЮАРД БЭРРИМОР</div>
-            <div class="hover-subtitle">Хранитель состояния eVo • Утренний отчет</div>
-            <div class="hover-action-hint">👆 Нажмите, чтобы открыть брифинг Бэрримора</div>
+        <!-- 2. Стюард Бэрримор — плашка нарисована на арте; живая кликабельная зона вместо маячка.
+             Под плашкой — ссылка на новый (непрочитанный) Morning Brief; после открытия исчезает. -->
+        <div class="plaque-zone" id="barrymore-plaque" role="button" aria-label="Стюард Бэрримор — Morning Brief" tabindex="0">
+          <div class="plaque-brief-link" id="barrymore-brief-link" hidden>
+            <span class="plaque-brief-dot"></span>
+            <span>Morning Brief</span><span class="plaque-brief-arrow">→</span>
           </div>
         </div>
 
