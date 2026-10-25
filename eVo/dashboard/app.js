@@ -386,6 +386,8 @@ function buildMorningBriefHTML(brief, lang) {
       <h4 style="font-size: 1.25rem; color: #fef08a;">${lang.barrymoreGreeting || "Доброе утро, Дмитрий."}</h4>
       <p style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 14px;">Сформировано: ${escapeHtml(brief.generatedAt || "")}</p>
 
+      ${buildAgentBlock(brief.agent)}
+
       <div class="panel-label">ТЕКУЩИЙ ФОКУС — CURRENT.md${currentDate}</div>
       <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 8px 0 14px;">${escMulti(brief.current && brief.current.nextAction) || "—"}</p>
 
@@ -401,8 +403,39 @@ function buildMorningBriefHTML(brief, lang) {
       </div>
 
       <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px;">
-        Источники: ${escapeHtml((brief.sources || []).join(", "))}. Обновить: tools/barrymore/morning-brief.ps1
+        Источники: ${escapeHtml((brief.sources || []).join(", "))}. Обновить: tools/barrymore/morning-brief-agent.py (данные + доклад LLM) или morning-brief.ps1 (только данные)
       </div>
+    </div>
+  `;
+}
+
+/**
+ * Блок доклада Баррримора от локального LLM (morning-brief-agent.py).
+ * agent = { model, summary, nextStep } | { error } | null.
+ */
+function buildAgentBlock(agent) {
+  if (!agent) return "";
+
+  if (agent.error) {
+    return `
+      <div class="glass-panel" style="border-left: 4px solid var(--accent-amber); margin: 0 0 14px 0;">
+        <div class="panel-label">ДОКЛАД БАРРИМОРА (LLM)</div>
+        <p style="color: #fca5a5; font-size: 0.9rem; margin: 8px 0;">Мозги недоступны: ${escapeHtml(agent.error)}</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Ниже — детерминированный снимок без LLM (morning-brief.ps1 совместим).</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="glass-panel" style="border-left: 4px solid var(--accent-amber); margin: 0 0 14px 0;">
+      <div class="panel-label">ДОКЛАД БАРРИМОРА — ЛОКАЛЬНЫЙ LLM (${escapeHtml(agent.model || "")})</div>
+      <p style="font-style: italic; color: #fed7aa; font-size: 1.0rem; line-height: 1.65; margin: 10px 0;">
+        ${escapeHtml(agent.summary || "").replace(/\r?\n/g, "<br>")}
+      </p>
+      ${agent.nextStep ? `
+        <div class="panel-label">ПРЕДЛОЖЕНИЕ СЛЕДУЮЩЕГО ШАГА</div>
+        <p style="color: #5eead4; font-size: 0.95rem; line-height: 1.6; margin: 8px 0 0 0;">${escapeHtml(agent.nextStep).replace(/\r?\n/g, "<br>")}</p>
+      ` : ""}
     </div>
   `;
 }
