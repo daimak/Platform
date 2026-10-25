@@ -104,7 +104,7 @@
 Что есть:
 
 - **Barrymore** — роль стюарда и протокол задач (`tools/barrymore/`). Код: git-commit скрипт. Приватная память агента не реализована (`Memory/Barrymore/README.md`).
-- Дашборд показывает статусы агентов **статичными строками** (ADR-0001 read-only, ADR-0002 только через tools).
+- Дашборд показывает статусы агентов **статичными строками** (ADR-003 read-only, ADR-004 доступ только через tools; индекс ADR — `Core/Architecture/ADR/INDEX.md`).
 - Концепты команды: `Memory/New_ideas/estate_archipelago_agents.md`, `Memory/New_ideas/syndicate_architecture.md`.
 - Идея локального агента: `Vision/Future/Experiments/Local_AI_Agent_Experiment.md`.
 - Gemini: лог ручного теста `Memory/Context/2026-10-19-gemini-api-first-test.md`, в приложение не вшит.

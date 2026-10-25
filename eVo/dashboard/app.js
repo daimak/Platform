@@ -224,7 +224,7 @@ function buildIslandContentHTML(islandKey, data, lang) {
     case "barrymore":
       return `
         <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
-          <div class="panel-label">ЛИЧНЫЙ СТЮАРД ПЛАТФОРМЫ (ADR-0001)</div>
+          <div class="panel-label">ЛИЧНЫЙ СТЮАРД ПЛАТФОРМЫ (ADR-003)</div>
           <h4 style="font-size: 1.25rem; color: #fef08a;">${lang.barrymoreGreeting || "Доброе утро, Дмитрий."}</h4>
           <p style="font-style: italic; color: #fed7aa; font-size: 1.05rem; line-height: 1.6; margin: 12px 0;">
             ${lang.barrymoreFullBrief || ""}

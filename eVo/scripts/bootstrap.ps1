@@ -26,7 +26,6 @@ $folders = @(
     "memory\knowledge",
 
     "docs",
-    "docs\adr",
     "docs\architecture",
     "docs\agents",
     "docs\runtime",
@@ -53,34 +52,9 @@ $files = @{
     "docs\architecture\README.md" = "# Architecture"
     "docs\security\README.md" = "# Security"
     "docs\runtime\README.md" = "# Runtime"
-
-    "docs\adr\ADR-0001-Barrymore-Is-ReadOnly.md" =
-@"
-# ADR-0001
-
-Barrymore is Read Only.
-
-Status: Accepted
-"@
-
-    "docs\adr\ADR-0002-Agents-Never-Access-OS.md" =
-@"
-# ADR-0002
-
-Agents never access the operating system directly.
-
-Status: Accepted
-"@
-
-    "docs\adr\ADR-0003-Everything-Is-A-Tool.md" =
-@"
-# ADR-0003
-
-Everything is a Tool.
-
-Status: Accepted
-"@
 }
+
+# ADR с 2026-10-25 bootstrap'ом не создаются: единый каталог решений — Core\Architecture\ADR\ (INDEX.md).
 
 foreach($file in $files.Keys)
 {
