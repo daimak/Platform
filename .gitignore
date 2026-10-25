@@ -1,6 +1,7 @@
 # System
 .DS_Store
 Thumbs.db
+__pycache__/
 
 # Obsidian temporary files
 .obsidian/workspace*
@@ -14,6 +15,7 @@ dist/
 # Environment
 .env
 .env.*
+!.env.example
 
 # IDE
 .vscode/*.log 
