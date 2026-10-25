@@ -77,10 +77,11 @@ function initIslandHotspots() {
 
 /**
  * Плашка Баррримора (нарисована на арте) — кликабельная зона вместо маячка.
- * Ссылка «Morning Brief» под плашкой появляется при новом (непрочитанном)
- * докладе и исчезает после его открытия (localStorage: evo_brief_seen).
- * Точка расширения: вместо брифа ссылка может нести краткое имя другого
- * события (1–2 слова) — когда появятся другие типы событий.
+ * Живой контент: приветствие по времени суток + строка данных из Morning Brief
+ * (brief.js). Ссылка «Morning Brief» под плашкой появляется при новом
+ * (непрочитанном) докладе и исчезает после его открытия (localStorage:
+ * evo_brief_seen). Точка расширения: вместо брифа ссылка может нести краткое
+ * имя другого события (1–2 слова) — когда появятся другие типы событий.
  */
 function initBarrymorePlaque() {
   const plaque = document.getElementById("barrymore-plaque");
@@ -90,7 +91,58 @@ function initBarrymorePlaque() {
       if (e.key === "Enter" || e.key === " ") openIslandModal("barrymore");
     });
   }
+  renderPlaqueContent();
+  setInterval(renderPlaqueContent, 60000); // приветствие следует за временем суток
   updateBriefLink();
+}
+
+/**
+ * Живой текст на плашке: приветствие по часам + счётчик задач из EVO_TASKS
+ * (tasks.js). Если задач нет — самая полезная строка из EVO_BRIEF
+ * (дайджест агента → следующий шаг → git).
+ */
+function renderPlaqueContent() {
+  const greetingEl = document.getElementById("plaque-greeting");
+  const infoEl = document.getElementById("plaque-info");
+  const brief = (typeof EVO_BRIEF !== "undefined") ? EVO_BRIEF : null;
+  const tasks = (typeof EVO_TASKS !== "undefined") ? EVO_TASKS : null;
+
+  if (greetingEl) {
+    const h = new Date().getHours();
+    const word = h < 5 ? "Доброй ночи" : h < 12 ? "Доброе утро" : h < 18 ? "Добрый день" : "Добрый вечер";
+    greetingEl.textContent = word + ", Дмитрий";
+  }
+
+  if (infoEl) {
+    let line = "";
+    let tip = "";
+    const urgent = (tasks && tasks.urgent) ? tasks.urgent.length : 0;
+    const regular = (tasks && tasks.regular) ? tasks.regular.length : 0;
+    if (urgent > 0 || regular > 0) {
+      const parts = [];
+      if (urgent > 0) parts.push("Срочных: " + urgent);
+      if (regular > 0) parts.push("Постоянных: " + regular);
+      line = parts.join(" • ");
+      tip = "";
+      if (urgent > 0) tip += "Срочные:\n" + tasks.urgent.map(t => "• " + t.title + " (" + t.source + ")").join("\n") + "\n\n";
+      if (regular > 0) tip += "Постоянные:\n" + tasks.regular.map(t => "• " + t.title + " (" + t.source + ")").join("\n");
+    } else if (brief && brief.agent && brief.agent.summary) {
+      line = brief.agent.summary;
+      tip = line;
+    } else if (brief && brief.current && brief.current.nextAction) {
+      line = brief.current.nextAction;
+      tip = line;
+    } else if (brief && brief.state && brief.state.nextStep) {
+      line = brief.state.nextStep;
+      tip = line;
+    } else if (brief && brief.git) {
+      line = "Ветка " + brief.git.branch + " • " +
+        (brief.git.dirtyFiles === 0 ? "рабочее дерево чистое" : "изменено файлов: " + brief.git.dirtyFiles);
+      tip = line;
+    }
+    infoEl.textContent = line;
+    infoEl.title = tip.trim();
+  }
 }
 
 function markBriefSeen() {

@@ -60,7 +60,7 @@
 
 Поведение: клик по острову открывает модалку. Задачи рычагов живут в `localStorage`. Morning Brief на острове Barrymore — захардкоженный текст, не чтение Memory.
 
-Острова на карте: Main Estate, Navigator, Memory Library, Harbor, Career Guild, Knowledge Archive, AI Sandbox, Workshop. Бэрримор — не маячок, а кликабельная плашка с его лицом в верхнем левом секторе (нарисована на арте); под ней ссылка «Morning Brief» при новом непрочитанном докладе. Инструкция — `Docs/Barrymore.md`.
+Острова на карте: Main Estate, Navigator, Memory Library, Harbor, Career Guild, Knowledge Archive, AI Sandbox, Workshop. Бэрримор — не маячок, а кликабельная HTML-плашка в верхнем левом секторе: деревянная панель + отдельный слой-портрет `assets/barrymore.png`, приветствие по времени суток и счётчик задач (`tasks.js`); под ней ссылка «Review» при новом непрочитанном докладе. Фон карты — чистый арт без нарисованного текста (исходник `Vision/First_evo_pictures/Good_references/Clear_main.png`). Инструкция — `Docs/Barrymore.md`.
 
 ### Vue-каркас — удалён (25.10.2026)
 

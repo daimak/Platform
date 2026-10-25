@@ -31,3 +31,5 @@ YYYY-MM-DD | change | reason | RFC
 2026-10-25 | Barrymore Morning Brief: deterministic generator + autonomous LLM agent (local FreeLLMAPI gateway, stdlib-only, ADR-003/004 compliant) | give Barrymore its own brains | —
 
 2026-10-25 | Barrymore UX: map beacon removed, painted plaque is now the clickable entry; unread "Morning Brief" link under the plaque; user guide Docs/Barrymore.md | user request | —
+
+2026-10-25 | Barrymore plaque becomes pure HTML over clean art: background swapped to Clear_main (painted text gone), portrait barrymore.png as separate layer, live greeting + task counter (tasks.js), "Review" link, geometry on CSS variables | user request | —

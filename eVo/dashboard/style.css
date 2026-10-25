@@ -595,26 +595,102 @@ body {
   text-decoration: line-through;
   color: var(--text-muted);
 }
-/* ===== Barrymore plaque: interactive zone over the painted artwork (replaces beacon) ===== */
+/* ===== Barrymore plaque: HTML-плашка поверх чистого арта (replaces beacon) =====
+   Фон (estate_bg.png) больше не содержит нарисованной таблички — плашка живёт
+   в HTML: тёмная деревянная панель + отдельный слой-портрет assets/barrymore.png
+   (готов к будущей анимации). Геометрия правится в одном месте — переменные
+   ниже. Размер и позиция заданы в % от фрейма карты (дизайн-размер 1672x941),
+   текст масштабируется вместе с плашкой через container-query единицы (cqw). */
+:root {
+  --plaque-top: 11%;      /* верхняя кромка плашки */
+  --plaque-left: 1%;      /* левая кромка */
+  --plaque-width: 22%;    /* ширина плашки */
+  --plaque-height: 16%;   /* высота плашки */
+  --portrait-width: 32%;  /* портрет: доля от ширины плашки */
+  --plaque-text-left: 38%;   /* текстовый блок: справа от портрета */
+  --plaque-text-top: 15%;
+  --plaque-text-width: 56%;
+}
+
 .plaque-zone {
   position: absolute;
-  top: 11%;
-  left: 1%;
-  width: 22%;
-  height: 16%;
+  top: var(--plaque-top);
+  left: var(--plaque-left);
+  width: var(--plaque-width);
+  height: var(--plaque-height);
   cursor: pointer;
-  border-radius: 14px;
-  border: 1px solid transparent;
-  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 16px;
+  background: linear-gradient(165deg, rgba(24, 16, 8, 0.88) 0%, rgba(38, 26, 14, 0.76) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 235, 190, 0.12);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
   z-index: 5;
 }
 
 .plaque-zone:hover,
 .plaque-zone:focus-visible {
-  background: rgba(251, 191, 36, 0.07);
-  border-color: rgba(251, 191, 36, 0.35);
-  box-shadow: 0 0 24px rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.55);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(251, 191, 36, 0.2);
   outline: none;
+}
+
+/* Портрет Бэрримора — отдельный круглый слой с золотым кольцом */
+.plaque-portrait {
+  position: absolute;
+  left: 3%;
+  top: 50%;
+  width: var(--portrait-width);
+  aspect-ratio: 1 / 1;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  border: 2px solid rgba(251, 191, 36, 0.55);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
+  filter: sepia(0.12) saturate(1.05);
+  object-fit: cover;
+  pointer-events: none;
+  transition: transform 0.25s ease;
+}
+
+.plaque-zone:hover .plaque-portrait,
+.plaque-zone:focus-visible .plaque-portrait {
+  transform: translateY(-50%) scale(1.04);
+}
+
+/* Живой текст на плашке: контейнер-query — шрифт тянется от ширины блока,
+   поэтому при изменении --plaque-width / --plaque-text-width масштабируется сам. */
+.plaque-content {
+  position: absolute;
+  left: var(--plaque-text-left);
+  top: var(--plaque-text-top);
+  width: var(--plaque-text-width);
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4%;
+  container-type: inline-size;
+  pointer-events: none;
+}
+
+.plaque-greeting {
+  font-family: var(--font-display);
+  font-size: 8cqw;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #f7e8c9;
+  text-shadow: 0 1px 3px rgba(20, 10, 0, 0.65);
+}
+
+.plaque-info {
+  font-family: var(--font-mono);
+  font-size: 5.6cqw;
+  line-height: 1.3;
+  color: #e8cf9a;
+  text-shadow: 0 1px 2px rgba(20, 10, 0, 0.6);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .plaque-brief-link {
