@@ -113,3 +113,18 @@ Append-only журнал фактически выполненных дейст�
 - Ограничения: ротация ключей — за пользователем; `feature_1.8.2` не запушена (пуш требовался только для release/v1.8.1); старые ветки не тронуты; пустые заглушки (locales, Carrier.md, Timeline.md) и mojibake-файлы — вне этого блока (R7/R12).
 - Git (после COMMIT3, до коммита журнала): ветка `feature_1.8.2`, HEAD `cdbbebc`; untracked — `.graphifyignore`, `Memory/Engineering/`.
 - Next: по D-002 — слияние `feature_1.8.2` → `develop` → `release_1.8.2` (после указания); продуктовые шаги R3/R4.
+
+---
+
+## E-010 | 2026-10-25 19:06 | Morning Brief MVP (R4) + ключи в KeePassXC
+
+- Цель: «займемся агентами» (пользователь). Первый шаг выбран по собственным документам системы: Map.md:137-143, DECISION-0003 («Первый шаг: Morning Brief»), INITIATIVE-0001, R4 отчёта.
+- Действия (KeePassXC, вне репозитория): создана база `C:/Users/temp/Vault/Platform.kdbx` (ключ-файл `platform.key`, без мастер-пароля — пользователю рекомендовано добавить через GUI); группа «Platform eVo»; записи «LangSmith API» и «FreeLLMAPI gateway»; значения переданы через stdin из `Workspace/.env`, в терминал не выводились. Проверка: `ls -R` (структура) + `show` (Password: PROTECTED).
+- Действия (Morning Brief):
+  - `tools/barrymore/morning-brief.ps1` — генератор (read-only, ADR-003): CURRENT.md (Date, Next Action), Engineering/STATE.md (Следующий шаг), CHANGELOG (последние 5 датированных строк), git (branch/HEAD/dirty) → `eVo/dashboard/brief.js` (`window.EVO_BRIEF`, UTF-8 без BOM).
+  - Дашборд: `index.html` подключает `brief.js`; `app.js` — остров Barrymore рендерит `buildMorningBriefHTML(brief)` при наличии `EVO_BRIEF`, иначе прежний статичный текст (fallback).
+  - Генератор запущен; снимок проверен валидатором (node eval): date=2026-08-05, changes=5, branch=feature_1.8.2.
+- Неудача и фикс: PowerShell 5.1 читает `.ps1` без BOM как ANSI — кириллический паттерн «Следующий шаг» не срабатывал (state.nextStep=null); добавлен UTF-8 BOM (ADR-001), повторная генерация успешна. Побочный урок: PS-скрипты с кириллицей требуют BOM для PS 5.1.
+- Ограничения: снимок статичен между запусками генератора (честно подписан `generatedAt`); бриф показывает устаревший CURRENT (2026-08-05) — это не баг, а видимое следствие R3; секреты генератором не читаются; в vault нет мастер-пароля (только ключ-файл).
+- Next: указание пользователя — R5 (честные статусы HUD), запуск генератора по расписанию, LLM-эксперимент (localhost:31415) или иное.
+- Git: `feature_1.8.2`, коммит E-010 (см. git log -1).

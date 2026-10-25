@@ -222,6 +222,9 @@ function buildIslandContentHTML(islandKey, data, lang) {
       `;
 
     case "barrymore":
+      if (typeof EVO_BRIEF !== "undefined" && EVO_BRIEF && EVO_BRIEF.current) {
+        return buildMorningBriefHTML(EVO_BRIEF, lang);
+      }
       return `
         <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
           <div class="panel-label">ЛИЧНЫЙ СТЮАРД ПЛАТФОРМЫ (ADR-003)</div>
@@ -359,6 +362,49 @@ function buildIslandContentHTML(islandKey, data, lang) {
     default:
       return `<p style="color: #cbd5e1;">${data.shortDesc || ""}</p>`;
   }
+}
+
+/**
+ * Morning Brief из источников истины (ADR-003, read-only).
+ * Снимок генерируется tools/barrymore/morning-brief.ps1 в brief.js.
+ */
+function buildMorningBriefHTML(brief, lang) {
+  const escMulti = (s) => escapeHtml(s || "").replace(/\r?\n/g, "<br>");
+  const changes = (brief.changes || []).map(c => `
+      <div style="padding: 5px 10px; background: rgba(0,0,0,0.25); border-radius: 4px; font-size: 0.8rem; color: #cbd5e1;">${escapeHtml(c)}</div>
+    `).join("");
+
+  const currentDate = (brief.current && brief.current.date) ? ` (${escapeHtml(brief.current.date)})` : "";
+  const stateNext = (brief.state && brief.state.nextStep) ? brief.state.nextStep : "";
+  const dirtyInfo = brief.git && brief.git.dirtyFiles > 0
+    ? `изменений в дереве: ${brief.git.dirtyFiles}`
+    : "рабочее дерево чистое";
+
+  return `
+    <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
+      <div class="panel-label">MORNING BRIEF — ИЗ ИСТОЧНИКОВ ИСТИНЫ (ADR-003, READ-ONLY)</div>
+      <h4 style="font-size: 1.25rem; color: #fef08a;">${lang.barrymoreGreeting || "Доброе утро, Дмитрий."}</h4>
+      <p style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 14px;">Сформировано: ${escapeHtml(brief.generatedAt || "")}</p>
+
+      <div class="panel-label">ТЕКУЩИЙ ФОКУС — CURRENT.md${currentDate}</div>
+      <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 8px 0 14px;">${escMulti(brief.current && brief.current.nextAction) || "—"}</p>
+
+      <div class="panel-label">СЛЕДУЮЩИЙ ШАГ РАБОТ — Engineering/STATE.md</div>
+      <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 8px 0 14px;">${escMulti(stateNext) || "—"}</p>
+
+      <div class="panel-label">ПОСЛЕДНИЕ ИЗМЕНЕНИЯ — CHANGELOG.md</div>
+      <div style="display: flex; flex-direction: column; gap: 6px; margin: 8px 0 14px;">${changes || "—"}</div>
+
+      <div class="panel-label">GIT</div>
+      <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #5eead4; margin: 8px 0 14px;">
+        ${escapeHtml((brief.git && brief.git.branch) || "")} · ${escapeHtml((brief.git && brief.git.lastCommit) || "")} · ${dirtyInfo}
+      </div>
+
+      <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px;">
+        Источники: ${escapeHtml((brief.sources || []).join(", "))}. Обновить: tools/barrymore/morning-brief.ps1
+      </div>
+    </div>
+  `;
 }
 
 /**
