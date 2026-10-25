@@ -22,3 +22,6 @@ dist/
 # Barrymore runtime reports
 tools/barrymore/reports/
 eVo/dashboard/projects/marvel_v/assets/test/
+
+# Generated code-graph cache (rebuildable via `graphify`)
+eVo/graphify-out/
