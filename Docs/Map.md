@@ -1,6 +1,6 @@
 # Карта репозитория Platform Evo
 
-Дата съёмки: 2026-10-22  
+Дата съёмки: 2026-10-22; обновлён 2026-10-25 (реструктуризация контура — RFC-001)  
 Назначение: не изучать дерево проекта с нуля. Это фактическое состояние репозитория, а не целевая архитектура.
 
 Смежные точки входа:
@@ -28,15 +28,16 @@
 | `Core/` | Ядро: принципы, глоссарий, ADR | Документы, не runtime |
 | `eVo/` | Стюард: состояние, планирование, Command Center | Живой UI: `dashboard/`; `agents/` нет |
 | `Memory/` | Долговременный контекст системы | Markdown: CURRENT, сессии, решения, идеи |
-| `Interface/` | Способы взаимодействия с системой | Каркас Vue 3 + Vite, заглушка |
+| `Memory/Engineering/` | — (создан 25.10.2026) | Инженерный журнал работ: STATE, LOG, FINDINGS, PLAN |
+| `Interface/` | Способы взаимодействия с системой | Удалён 25.10.2026 (RFC-001): неиспользуемый Vue-шаблон; реальный UI — `eVo/dashboard/` |
 | `Workspace/` | Пользовательские проекты и артефакты | Почти пусто: EPIC-001 |
 | `Modules/` | Предметные домены | Почти пусто (`Carrier.md`) |
 | `Vision/` | Концепты, визуал, истории Estate | Идеи и изображения |
 | `Tools/` | Скрипты обслуживания, протокол Barrymore | PowerShell + markdown-задачи |
 | `Docs/` | Архитектурные документы | Structure / Principles / Decisions, Map, Ops |
-| `RFC/` | Предложения изменений | Черновики, мало заполнены |
+| `RFC/` | Предложения изменений | Создан 25.10.2026: README + процесс; RFC-001 (границы контура) — Accepted |
 | `Notes/` | Входящий поток | Inbox, открытые вопросы |
-| `Backup/` | Старые визуалы Estate | Не runtime |
+| `Backup/` | Старые визуалы Estate | Вынесен за контур 25.10.2026 в `C:/Work/Platform-archive/` (RFC-001) |
 | `.obsidian/` | Настройки Obsidian | Репозиторий ещё и как knowledge base |
 
 В корне остаются только `README.md`, `CHANGELOG.md` и git/редактор мета. Остальные бывшие корневые точки входа разнесены по `Docs/` и `Notes/`.
@@ -61,27 +62,21 @@
 
 Острова на карте: Main Estate, Barrymore, Navigator, Memory Library, Harbor, Career Guild, Knowledge Archive, AI Sandbox, Workshop.
 
-### Vue-каркас (не Estate)
+### Vue-каркас — удалён (25.10.2026)
 
-Путь: `Interface/`
-
-- `src/App.vue` — статичный экран «PLATFORM»
-- `src/main.ts` — точка входа
-- запуск задуман как `npm run dev` (Vite)
-
-Это шаблон, не текущий Command Center.
+`Interface/` был неиспользуемым шаблоном Vite+Vue и удалён по RFC-001. Реальный UI — `eVo/dashboard/`.
 
 ### Инструменты
 
 - `tools/evo-check.ps1` — git release-gate (ветка, dirty, последний коммит)
 - `tools/evo-save.ps1` — интерактивные add / commit / push
 - `tools/barrymore/execute.ps1` — add + commit + отчёт в `tools/barrymore/reports/`
-- `eVo/scripts/bootstrap.ps1` — **создаёт** папки `agents/`, `runtime/` и ADR; не запускать без нужды
+- `eVo/scripts/bootstrap.ps1` — **создаёт** папки `agents/`, `runtime/` (ADR больше не создаёт — решения в `Core/Architecture/ADR/`); не запускать без нужды
 - `.vscode/tasks.json` — Add / Commit / Push
 
 ### Сгенерированный граф кода
 
-`eVo/graphify-out/` — кэш Graphify, не исходники. Для навигации по связям файлов, не для правки.
+`eVo/graphify-out/` — кэш Graphify, не исходники; с 25.10.2026 не отслеживается Git (пересобирается). Для навигации по связям файлов, не для правки.
 
 ---
 
@@ -90,8 +85,7 @@
 Отдельного сервера приложения нет.
 
 1. **Главный интерфейс:** открыть `eVo/dashboard/index.html` в браузере.
-2. **Vue-каркас:** каталог `Interface/`, скрипт `npm run dev` (пакеты могут быть не установлены).
-3. **Состояние системы** смотреть в файлах, не в UI: `Memory/Context/CURRENT.md`.
+2. **Состояние системы** смотреть в файлах, не в UI: `Memory/Context/CURRENT.md`; инженерный контекст работ — `Memory/Engineering/STATE.md`.
 
 Чтение markdown с диска из статического `index.html` через `file://` ограничено браузером. Для живой подгрузки Memory нужен простой static server или встроенный снимок файла.
 
