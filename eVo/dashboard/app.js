@@ -14,7 +14,8 @@ const ISLAND_ICONS = {
   careerGuild: "⚔️",
   knowledgeArchive: "🏛️",
   aiSandbox: "🔮",
-  workshop: "⚙️"
+  workshop: "⚙️",
+  holmesStudy: "🔍"
 };
 
 // Задачи для острова рычагов (сохраняются в localStorage)
@@ -32,8 +33,19 @@ document.addEventListener("DOMContentLoaded", () => {
   initIslandHotspots();
   initBarrymorePlaque();
   initModalControls();
+  initSidebarsToggle();
   updateLanguage();
 });
+
+function initSidebarsToggle() {
+  const btn = document.getElementById("btn-toggle-sidebars");
+  const leftSidebar = document.getElementById("left-sidebar");
+  if (btn && leftSidebar) {
+    btn.addEventListener("click", () => {
+      leftSidebar.classList.toggle("sidebar-hidden");
+    });
+  }
+}
 
 /**
  * Инициализация языкового переключателя
@@ -426,15 +438,19 @@ function buildIslandContentHTML(islandKey, data, lang) {
         </div>
       `;
 
-    case "harbor":
+    case "holmesStudy":
       return `
-        <div class="glass-panel">
-          <div class="panel-label">ШЛЮЗЫ И ВНЕШНИЕ СВЯЗИ</div>
-          <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 12px;">
-            ${data.harborInfo || ""}
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-rose);">
+          <div class="panel-label">${data.investigationHeading || "Активное расследование"}</div>
+          <h4 style="color: #fb7185;">${data.activeBranch || "Ветка: feature/1.8.2"}</h4>
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #a7f3d0; margin-top: 10px;">
+            ${data.treeStatus || "● Проверка завершена"}
+          </div>
+          <p style="color: #cbd5e1; font-size: 0.95rem; margin: 12px 0;">
+            ${data.agentHolmes || ""}
           </p>
-          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-emerald);">
-            ${data.status || ""}
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #fef08a; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-top: 10px;">
+            ${data.securityVerdict || ""}
           </div>
         </div>
       `;

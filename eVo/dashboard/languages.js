@@ -113,6 +113,17 @@ const LANG = {
         badge: "KNOWLEDGE",
         docsInfo: "Документы: The_Kingdom_Map_Principle.md, The_Citadel_and_Roads.md, Digital_World_Map.md.",
         quote: "«Dashboard — это не украшение. Dashboard — это карта текущего состояния королевства»."
+      },
+      holmesStudy: {
+        title: "HOLMES STUDY",
+        subtitle: "Кабинет Шерлок Холмса • Аудит и Безопасность",
+        shortDesc: "Инспекция репозитория, поиск аномалий, проверка чистоты ветки и расследования.",
+        badge: "SECURITY & AUDIT",
+        investigationHeading: "Активное расследование",
+        activeBranch: "Текущая ветка: feature_1.8.2",
+        treeStatus: "● Рабочее дерево проверено (паспорта агентов добавлены)",
+        agentHolmes: "Sherlock Holmes: На посту (Инспектор безопасности — Memory/Agents/Holmes.md)",
+        securityVerdict: "Вердикт: Нарушений целостности нет. Архитектурный контур под контролем."
       }
     },
 
@@ -241,6 +252,17 @@ const LANG = {
         badge: "KNOWLEDGE",
         docsInfo: "Documents: The_Kingdom_Map_Principle.md, The_Citadel_and_Roads.md, Digital_World_Map.md.",
         quote: "\"A dashboard is not a decoration. A dashboard is a map of the kingdom's current state.\""
+      },
+      holmesStudy: {
+        title: "HOLMES STUDY",
+        subtitle: "Sherlock Holmes Study • Audit & Security",
+        shortDesc: "Repository inspection, anomaly detection, branch cleanliness check, and investigations.",
+        badge: "SECURITY & AUDIT",
+        investigationHeading: "Active Investigation",
+        activeBranch: "Current branch: feature_1.8.2",
+        treeStatus: "● Working tree verified (agent passports added)",
+        agentHolmes: "Sherlock Holmes: On duty (Security Inspector — Memory/Agents/Holmes.md)",
+        securityVerdict: "Verdict: No integrity violations. Architecture contour under control."
       }
     },
 
