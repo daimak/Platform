@@ -36,10 +36,11 @@
 
 body {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: var(--bg-space);
   color: var(--text-main);
   font-family: var(--font-main);
@@ -54,41 +55,63 @@ body {
 .estate-viewport {
   position: relative;
   width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: #020617;
 }
 
-/* Центрирующий контейнер карты */
+/* Центрирующий контейнер карты. Свободное место (если окно «ниже» карты по
+   пропорции) заливает размытый атмосферный задник из самой карты — чёрных
+   полос не бывает ни при каком соотношении сторон. */
 .estate-map-container {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  background-color: #020617;
+  background-image: url('assets/estate_bg.png');
+  background-size: cover;
+  background-position: center;
 }
 
-/* Жестко фиксированный фрейм с пропорциями исходной картины (1672 x 941 = 1.7768) */
+/* Вуаль поверх задника: затемняет и размывает его, чтобы не отвлекал */
+.estate-map-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(2, 6, 23, 0.4) 0%, rgba(2, 6, 23, 0.88) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Фрейм карты: всегда 100% ширины окна, высоту задаёт пропорция картины.
+   Карту не обрезаем никогда (плашка Бэрримора и маячки у краёв обязаны
+   оставаться на экране); если окно ультраширокое — редкий вертикальный скролл. */
 .estate-map-frame {
   position: relative;
   width: 100vw;
-  height: 100vh;
-  max-width: calc(100vh * (1672 / 941));
-  max-height: calc(100vw / (1672 / 941));
+  height: auto;
   aspect-ratio: 1672 / 941;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  z-index: 2;
 }
 
 .estate-canvas-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* пропорции фрейма = пропорциям арта: contain никогда не режет */
   display: block;
   filter: contrast(1.04) saturate(1.06);
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
@@ -100,9 +123,41 @@ body {
   transform: scale(1.015);
 }
 
-/* ==========================================================================
-   Top HUD Bar (Стеклянная полоса управления сверху)
-   ========================================================================== */
+/* Боковые панели */
+.sidebar-panel {
+  position: absolute;
+  top: 80px;
+  bottom: 20px;
+  width: 240px;
+  background: rgba(8, 16, 32, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.left-sidebar { left: 20px; }
+.sidebar-hidden { opacity: 0; pointer-events: none; transform: translateX(-20px); }
+
+.panel-header { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 1px; color: var(--accent-cyan); margin-bottom: 8px; }
+.agent-item { font-family: var(--font-mono); font-size: 0.85rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.toggle-sidebars-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 0.8rem;
+}
+.toggle-sidebars-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
 .estate-top-hud {
   position: absolute;
