@@ -15,7 +15,9 @@ const ISLAND_ICONS = {
   knowledgeArchive: "🏛️",
   aiSandbox: "🔮",
   workshop: "⚙️",
-  holmesStudy: "🔍"
+  holmesStudy: "🔍",
+  leonardoStudy: "🎨",
+  sinbadMarket: "🏺"
 };
 
 // Задачи для острова рычагов (сохраняются в localStorage)
@@ -126,33 +128,21 @@ function renderPlaqueContent() {
   }
 
   if (infoEl) {
-    let line = "";
-    let tip = "";
     const urgent = (tasks && tasks.urgent) ? tasks.urgent.length : 0;
     const regular = (tasks && tasks.regular) ? tasks.regular.length : 0;
-    if (urgent > 0 || regular > 0) {
-      const parts = [];
-      if (urgent > 0) parts.push("Срочных: " + urgent);
-      if (regular > 0) parts.push("Постоянных: " + regular);
-      line = parts.join(" • ");
-      tip = "";
-      if (urgent > 0) tip += "Срочные:\n" + tasks.urgent.map(t => "• " + t.title + " (" + t.source + ")").join("\n") + "\n\n";
-      if (regular > 0) tip += "Постоянные:\n" + tasks.regular.map(t => "• " + t.title + " (" + t.source + ")").join("\n");
-    } else if (brief && brief.agent && brief.agent.summary) {
-      line = brief.agent.summary;
-      tip = line;
-    } else if (brief && brief.current && brief.current.nextAction) {
-      line = brief.current.nextAction;
-      tip = line;
-    } else if (brief && brief.state && brief.state.nextStep) {
-      line = brief.state.nextStep;
-      tip = line;
-    } else if (brief && brief.git) {
-      line = "Ветка " + brief.git.branch + " • " +
-        (brief.git.dirtyFiles === 0 ? "рабочее дерево чистое" : "изменено файлов: " + brief.git.dirtyFiles);
-      tip = line;
-    }
-    infoEl.textContent = line;
+    const analytical = 1; // Заглушка
+    const other = 6;     // Заглушка
+
+    infoEl.innerHTML = `
+      <div style="display: block;">Срочные задачи: ${urgent}</div>
+      <div style="display: block;">Активные задачи: ${regular}</div>
+      <div style="display: block;">Задачи в аналитике: ${analytical}</div>
+      <div style="display: block;">Прочая информация: ${other}</div>
+    `;
+
+    let tip = "";
+    if (urgent > 0) tip += "Срочные:\n" + tasks.urgent.map(t => "• " + t.title + " (" + t.source + ")").join("\n") + "\n\n";
+    if (regular > 0) tip += "Постоянные:\n" + tasks.regular.map(t => "• " + t.title + " (" + t.source + ")").join("\n");
     infoEl.title = tip.trim();
   }
 }
@@ -451,6 +441,68 @@ function buildIslandContentHTML(islandKey, data, lang) {
           </p>
           <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #fef08a; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-top: 10px;">
             ${data.securityVerdict || ""}
+          </div>
+        </div>
+      `;
+
+    case "leonardoStudy":
+      return `
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-cyan); background: radial-gradient(circle at center, rgba(56, 189, 248, 0.05) 0%, rgba(0,0,0,0) 100%);">
+          <div class="panel-label">${data.conceptHeading || "Витрувианский человек"}</div>
+          <h4 style="color: #38bdf8; font-family: var(--font-display);">${data.activeExperiment || "Исследование закономерностей"}</h4>
+          <div style="margin: 20px 0; text-align: center; opacity: 0.8;">
+             <span style="font-size: 4rem;">🧍</span>
+          </div>
+          <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6;">
+            ${data.agentLeonardo || ""}
+          </p>
+          <div style="font-style: italic; color: #fed7aa; font-size: 0.9rem; margin-top: 16px; padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
+            ${data.quote || ""}
+          </div>
+        </div>
+      `;
+
+    case "sinbadMarket":
+      return `
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
+          <div class="panel-label">МОРСКОЙ РЫНОК СИНДБАДА</div>
+          <h4 style="color: #f59e0b; font-family: var(--font-display);">${data.title || "SINBAD MARKET"}</h4>
+          <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6; margin: 12px 0;">
+            ${data.marketInfo || ""}
+          </p>
+          <div class="status-badge-row" style="color: var(--accent-emerald);">
+            <span>${data.status || "● Пути открыты"}</span>
+          </div>
+        </div>
+      `;
+
+    case "leonardoStudy":
+      return `
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-cyan); background: radial-gradient(circle at center, rgba(56, 189, 248, 0.05) 0%, rgba(0,0,0,0) 100%);">
+          <div class="panel-label">${data.conceptHeading || "Витрувианский человек"}</div>
+          <h4 style="color: #38bdf8; font-family: var(--font-display);">${data.activeExperiment || "Исследование закономерностей"}</h4>
+          <div style="margin: 20px 0; text-align: center; opacity: 0.8;">
+             <span style="font-size: 4rem;">🧍</span>
+          </div>
+          <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6;">
+            ${data.agentLeonardo || ""}
+          </p>
+          <div style="font-style: italic; color: #fed7aa; font-size: 0.9rem; margin-top: 16px; padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
+            ${data.quote || ""}
+          </div>
+        </div>
+      `;
+
+    case "sinbadMarket":
+      return `
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
+          <div class="panel-label">МОРСКОЙ РЫНОК СИНДБАДА</div>
+          <h4 style="color: #f59e0b; font-family: var(--font-display);">${data.title || "SINBAD MARKET"}</h4>
+          <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6; margin: 12px 0;">
+            ${data.marketInfo || ""}
+          </p>
+          <div class="status-badge-row" style="color: var(--accent-emerald);">
+            <span>${data.status || "● Пути открыты"}</span>
           </div>
         </div>
       `;

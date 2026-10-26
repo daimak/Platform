@@ -124,6 +124,24 @@ const LANG = {
         treeStatus: "● Рабочее дерево проверено (паспорта агентов добавлены)",
         agentHolmes: "Sherlock Holmes: На посту (Инспектор безопасности — Memory/Agents/Holmes.md)",
         securityVerdict: "Вердикт: Нарушений целостности нет. Архитектурный контур под контролем."
+      },
+      leonardoStudy: {
+        title: "LEONARDO STUDY",
+        subtitle: "Резиденция Леонардо да Винчи • Исследования",
+        shortDesc: "Междисциплинарные исследования, изобретательство и поиск скрытых закономерностей.",
+        badge: "RESEARCH & DISCOVERY",
+        conceptHeading: "Витрувианский человек: Концепт",
+        activeExperiment: "Текущий эксперимент: Карта Maelstorm (Визуальный горизонт)",
+        agentLeonardo: "Leonardo da Vinci: Потенциальный житель (Универсальный исследователь)",
+        quote: "«Знание — это дочь опыта. Истина была единственной дочерью времени»."
+      },
+      sinbadMarket: {
+        title: "SINBAD MARKET",
+        subtitle: "Рынок Синдбада • Торговля контекстом и ресурсами",
+        shortDesc: "Морской рынок, где Синдбад-мореход обменивает накопленный контекст и редкие артефакты.",
+        badge: "MARITIME MARKET",
+        marketInfo: "Синдбад-мореход предлагает уникальные контекстные корабли и ресурсы, найденные в дальних странах.",
+        status: "● Торговые пути Maelstorm открыты."
       }
     },
 
@@ -263,6 +281,24 @@ const LANG = {
         treeStatus: "● Working tree verified (agent passports added)",
         agentHolmes: "Sherlock Holmes: On duty (Security Inspector — Memory/Agents/Holmes.md)",
         securityVerdict: "Verdict: No integrity violations. Architecture contour under control."
+      },
+      leonardoStudy: {
+        title: "LEONARDO STUDY",
+        subtitle: "Leonardo da Vinci Residence • Research",
+        shortDesc: "Interdisciplinary research, invention, and seeking hidden patterns.",
+        badge: "RESEARCH & DISCOVERY",
+        conceptHeading: "Vitruvian Man: Concept",
+        activeExperiment: "Current Experiment: Maelstorm Map (Visual Horizon)",
+        agentLeonardo: "Leonardo da Vinci: Potential Resident (Universal Researcher)",
+        quote: "\"Knowledge is the daughter of experience. Truth was the only daughter of time.\""
+      },
+      sinbadMarket: {
+        title: "SINBAD MARKET",
+        subtitle: "Sinbad Market • Context & Resource Trading",
+        shortDesc: "A maritime market where Sinbad the Sailor trades accumulated context and rare artifacts.",
+        badge: "MARITIME MARKET",
+        marketInfo: "Sinbad the Sailor offers unique context-ships and resources discovered in distant lands.",
+        status: "● Maelstorm trade routes open."
       }
     },
 

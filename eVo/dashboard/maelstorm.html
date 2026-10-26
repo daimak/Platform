@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo Maelstorm — Research Archipelago</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Полноэкранный интерактивный мир Maelstorm (Уровень 1.1) -->
+  <div class="estate-viewport" id="estate-viewport">
+
+    <!-- Верхняя стеклянная панель управления (HUD) -->
+    <header class="estate-top-hud">
+      <div class="hud-left">
+        <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 14px;">
+          <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+          <div class="hud-title-group">
+            <span class="hud-title">MAELSTORM ARCHIPELAGO</span>
+            <span class="hud-subtitle">Исследовательский горизонт Plarform eVo</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="hud-center">
+        <div class="hud-stat-item">
+          <span class="status-dot-green"></span>
+          <span id="hud-platform-alive">Платформа активна</span>
+          <span style="opacity: 0.35;">|</span>
+          <span style="color: var(--text-muted); font-size: 0.72rem;" id="hud-heartbeat">1.2с</span>
+        </div>
+        <div class="hud-stat-item" style="color: var(--accent-rose);">
+          <span style="color: var(--accent-rose);">🌀</span>
+          <span id="hud-maelstorm-status">Центральный шторм: Стабилен</span>
+        </div>
+        <div class="hud-stat-item" style="color: var(--text-muted);">
+          <span id="hud-active-agents">Активных жителей: 1</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div style="display: flex; align-items: center; gap: 14px; margin-right: 20px;">
+          <a href="index.html" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(56, 189, 248, 0.15); border-color: var(--accent-cyan); color: #38bdf8; display: flex; align-items: center; gap: 8px;">
+            <span>🏰</span> ESTATE
+          </a>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn" id="lang-ru">RU</button>
+          <button class="lang-btn" id="lang-en">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Контейнер карты Maelstorm -->
+    <div class="estate-map-container" id="estate-map-container">
+      <div class="estate-map-frame" id="estate-map-frame">
+        <img src="assets/maelstorm_bg.png" alt="Maelstorm Archipelago" class="estate-canvas-img" id="estate-img">
+
+        <!-- ================= ИКОНКИ СУЩНОСТЕЙ MAELSTORM ================= -->
+
+        <!-- 1. Резиденция Леонардо да Винчи — на змеевидном острове у шторма -->
+        <!-- Координаты требуют уточнения на глаз, ставлю пока в центр/слева -->
+        <div class="island-hotspot beacon-cyan tooltip-down" style="top: 45.0%; left: 35.0%;" data-island="leonardoStudy">
+          <div class="beacon-core">
+            <span class="beacon-icon">🎨</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">RESEARCH & DISCOVERY</div>
+            <div class="hover-title">LEONARDO STUDY</div>
+            <div class="hover-subtitle">Леонардо да Винчи • Междисциплинарные исследования</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть окно Леонардо</div>
+          </div>
+        </div>
+
+        <!-- 3. Рынок Синдбада (Sinbad Market) — восточный архипелаг Maelstorm -->
+        <div class="island-hotspot beacon-amber" style="top: 55.0%; left: 62.0%;" data-island="sinbadMarket">
+          <div class="beacon-core">
+            <span class="beacon-icon">🏺</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">MARITIME MARKET</div>
+            <div class="hover-title">SINBAD MARKET</div>
+            <div class="hover-subtitle">Синдбад-мореход • Торговля контекстом и ресурсами</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть рынок</div>
+          </div>
+        </div>
+
+        <!-- 2. Стюард Бэрримор — Неизменный спутник и на Maelstorm -->
+        <div class="plaque-zone" id="barrymore-plaque" role="button" aria-label="Стюард Бэрримор — Morning Brief" tabindex="0">
+          <img class="plaque-portrait" src="assets/barrymore.png" alt="" aria-hidden="true">
+          <div class="plaque-content" aria-hidden="true">
+            <div class="plaque-greeting" id="plaque-greeting"></div>
+            <div class="plaque-info" id="plaque-info"></div>
+          </div>
+          <div class="plaque-brief-link" id="barrymore-brief-link" hidden>
+            <span class="plaque-brief-dot"></span>
+            <span>Review</span><span class="plaque-brief-arrow">→</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Кнопка возврата в Estate -->
+    <!-- Removed temporarily to clean up -->
+
+    <!-- Быстрый переход к другим мирам -->
+    <!-- Removed temporarily to clean up -->
+
+  </div>
+
+  <!-- ================= ОКНА КОНСОЛЕЙ ================= -->
+  <div class="island-modal-backdrop" id="island-modal-backdrop">
+    <div class="island-modal-window" id="island-modal-window">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge" id="modal-island-icon">🌀</div>
+          <div class="modal-title-group">
+            <span class="panel-label" id="modal-island-badge">RESEARCH NODE</span>
+            <h3 id="modal-island-title">MAELSTORM</h3>
+            <p id="modal-island-subtitle">Исследовательский горизонт</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btn-close-island-modal">✕ Закрыть</button>
+      </div>
+
+      <div class="modal-body" id="modal-island-content">
+        <!-- Генерируется из app.js -->
+      </div>
+
+      <div class="modal-footer" id="modal-island-footer">
+        <button class="modal-close-btn" id="btn-back-to-map">← Вернуться к карте</button>
+        <div id="modal-island-actions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="languages.js"></script>
+  <script src="brief.js"></script>
+  <script src="tasks.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
