@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-10-25 19:15",
+  "generatedAt": "2026-10-27 13:59",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -14,20 +14,20 @@ window.EVO_BRIEF = {
     "nextStep": "По указанию пользователя: слияние веток по D-002 (после проверки) либо продуктовые шаги (R4 — Morning Brief read-only MVP)."
   },
   "changes": [
-    "2026-10-25 | engineering journal Memory/Engineering/ (protocol E-000, full audit E-001–E-008, secrets fix S-3) | durable cross-session engineering context | —",
-    "2026-10-25 | contour restructure: claude-chief-of-staff/ and Backup/ moved out of repo; graphify-out untracked; Interface/ removed; byte-identical duplicates dropped; Workspace/CURRENT.md renamed to notes-memory-design.md | one repository = one system | RFC-001",
-    "2026-10-25 | ADR consolidated into Core/Architecture/ADR (ADR-001..005 + INDEX); dangling ADR refs fixed | single ADR numbering space | RFC-001",
-    "2026-10-25 | RFC/ process created (README + RFC-001); D-002 branch model (develop / feature_X.Y.Z / release_X.Y.Z) | agreed change and release process | RFC-001",
-    "2026-10-25 | audit report archived: Memory/Archive/Reports/Report-2026-10-25-audit.md | record E-008 deliverable | —"
+    "2026-10-25 | Barrymore Morning Brief: deterministic generator + autonomous LLM agent (local FreeLLMAPI gateway, stdlib-only, ADR-003/004 compliant) | give Barrymore its own brains | —",
+    "2026-10-25 | Barrymore UX: map beacon removed, painted plaque is now the clickable entry; unread \"Morning Brief\" link under the plaque; user guide Docs/Barrymore.md | user request | —",
+    "2026-10-25 | Barrymore plaque becomes pure HTML over clean art: background swapped to Clear_main (painted text gone), portrait barrymore.png as separate layer, live greeting + task counter (tasks.js), \"Review\" link, geometry on CSS variables | user request | —",
+    "2026-10-26 | map layout: full-width frame with atmospheric blurred backdrop (no black bars, nothing cropped, plaque stays on-screen on 16:10); agent passports introduced in Memory/Agents (Barrymore partial-active, Solomon & Holmes drafts aligned with ADR-003/004) | user request + co-worked with second AI | —",
+    "2026-10-26 | new island \"Holmes Study\" on the map (beacon + modal + RU/EN), sidebars toggle; all 10 modals verified clickable | co-worked with second AI | —"
   ],
   "git": {
     "branch": "feature_1.8.2",
-    "lastCommit": "0e454e1 Barrymore Morning Brief MVP (R4 / INITIATIVE-0001, ADR-003 read-only): generator reads CURRENT/STATE/CHANGELOG/git into eVo/dashboard/brief.js; dashboard renders live brief with static fallback; journal E-010",
-    "dirtyFiles": 3
+    "lastCommit": "fa06f26 Move accidental ~/the-agency folder into tools/the-agency",
+    "dirtyFiles": 6
   },
   "agent": {
     "model": "auto",
-    "summary": "Дата отчёта: 2026‑08‑05.\nТекущая ветка репозитория: feature_1.8.2.\nПоследний коммит: 0e454e1 – \"Barrymore Morning Brief MVP (R4 / INITIATIVE‑0001, ADR‑003 read‑only)\".\nВ репозитории 3 грязных файла.\nИнформация о состоянии поместья, деньгах, задачах, рисках и возможностях в предоставленных источниках отсутствует.",
-    "nextStep": "Запросить у пользователя недостающие данные о состоянии поместья, деньгах, задачах, рисках и возможностях для составления полноценного Morning Brief."
+    "summary": "Доброе утро, Дмитрий. Позвольте представить утренний доклад. Обращаю ваше внимание, что системные данные датированы 5 августа 2026 года, что может указывать на их устаревание относительно даты генерации снимка (27 октября 2026 года). В репозитории активна ветка feature_1.8.2, зафиксировано 6 измененных файлов. Из недавних изменений: обновлен мой интерфейс, добавлен остров «Кабинет Холмса» и настроен автономный агент для генерации докладов. Сведения о состоянии поместья, финансах и рисках в предоставленных источниках отсутствуют. Нам необходимо определиться с дальнейшими шагами.",
+    "nextStep": "Проверить изменения в ветке feature_1.8.2 для принятия решения о слиянии по задаче D-002 или переходе к шагам R4 (Morning Brief MVP)."
   }
 };
