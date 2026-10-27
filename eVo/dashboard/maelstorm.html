@@ -140,6 +140,58 @@
     </div>
   </div>
 
+  <!-- ================= УРОВЕНЬ 3: МОДАЛЬНЫЙ РАБОЧИЙ КАБИНЕТ ================= -->
+  <div class="island-modal-backdrop" id="workspace-modal-backdrop" style="z-index: 150;">
+    <div class="workspace-cockpit-window">
+      <div class="modal-header">
+        <div>
+          <h3 id="workspace-title-text" style="color: #fffbeb;">Рабочий кабинет: eVo Core Workspace</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted);" id="workspace-sub-text">
+            Уровень 3 — Непосредственное выполнение задач и редактирование контекста
+          </p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-workspace">← Вернуться в Command Center</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="glass-panel">
+          <div class="panel-label" id="active-task-section-label">Активная задача</div>
+          <h4 id="active-task-name">Архитектурная сборка Command Center v0.2</h4>
+          <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 16px;" id="active-task-desc">
+            Объединение пространственной метафоры Estate, стюарда Бэрримора и интерактивных островов.
+          </p>
+
+          <div class="panel-label" id="checklist-title-label">Контрольный список:</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-1-text">Полноэкранная стартовая картина мира Estate с островами</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-2-text">Всплывающие карточки с краткой инфой при наведении на острова</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-3-text">Полупрозрачные консоли с конкретной инфой при клике на остров</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);" id="status-select-label">Статус:</span>
+          <select class="status-select" id="task-status-dropdown" style="background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 6px;">
+            <option value="building" id="opt-building">В разработке</option>
+            <option value="operational" selected id="opt-operational">Завершена / Готова</option>
+          </select>
+        </div>
+        <button class="btn-action-primary" id="btn-save-workspace">Сохранить и вернуться</button>
+      </div>
+    </div>
+  </div>
+
   <script src="languages.js"></script>
   <script src="brief.js"></script>
   <script src="tasks.js"></script>

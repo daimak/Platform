@@ -461,6 +461,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   animation: windowPop 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: text;
 }
 
 @keyframes windowPop {
@@ -602,11 +603,107 @@ body {
 .workspace-cockpit-window {
   width: 100%;
   max-width: 840px;
+  max-height: 90vh;
   background: #091326;
   border: 1px solid var(--border-gold);
   border-radius: 20px;
   box-shadow: var(--shadow-window);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  animation: windowPop 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Компактные разделы Бэрримора */
+.brief-section {
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.brief-section-header {
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+
+.brief-section-header:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.brief-section-header .arrow {
+  transition: transform 0.2s;
+  font-size: 0.7rem;
+}
+
+.brief-section.open .brief-section-header .arrow {
+  transform: rotate(90deg);
+}
+
+.brief-section-content {
+  display: none;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.brief-section.open .brief-section-content {
+  display: block;
+}
+
+.brief-task-item {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.brief-task-item:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.brief-task-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.brief-task-details {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.brief-task-item.open .brief-task-details {
+  display: block;
+}
+
+.brief-task-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin-top: 6px;
+}
+
+.brief-task-meta span:first-child {
+  color: var(--text-muted);
 }
 
 /* Список задач в окне рычагов */
@@ -658,101 +755,100 @@ body {
    ниже. Размер и позиция заданы в % от фрейма карты (дизайн-размер 1672x941),
    текст масштабируется вместе с плашкой через container-query единицы (cqw). */
 :root {
-  --plaque-top: 11%;      /* верхняя кромка плашки */
-  --plaque-left: 1%;      /* левая кромка */
-  --plaque-width: 22%;    /* ширина плашки */
-  --plaque-height: 16%;   /* высота плашки */
-  --portrait-width: 32%;  /* портрет: доля от ширины плашки */
-  --plaque-text-left: 38%;   /* текстовый блок: справа от портрета */
-  --plaque-text-top: 15%;
-  --plaque-text-width: 56%;
+  --plaque-top: 12%;      /* позиция круглого портрета Бэрримора */
+  --plaque-left: 2%;
 }
 
 .plaque-zone {
   position: absolute;
   top: var(--plaque-top);
   left: var(--plaque-left);
-  width: var(--plaque-width);
-  height: var(--plaque-height);
+  width: 58px;
+  height: 58px;
   cursor: pointer;
-  border-radius: 16px;
-  background: linear-gradient(165deg, rgba(24, 16, 8, 0.88) 0%, rgba(38, 26, 14, 0.76) 100%);
-  border: 1px solid rgba(251, 191, 36, 0.28);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 235, 190, 0.12);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  z-index: 5;
+  border-radius: 50%;
+  background: rgba(14, 25, 50, 0.9);
+  border: 2px solid var(--accent-gold);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .plaque-zone:hover,
 .plaque-zone:focus-visible {
-  border-color: rgba(251, 191, 36, 0.55);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(251, 191, 36, 0.2);
+  transform: scale(1.15);
+  box-shadow: 0 0 28px rgba(251, 191, 36, 0.7);
   outline: none;
 }
 
-/* Портрет Бэрримора — отдельный круглый слой с золотым кольцом */
+/* Портрет Бэрримора — заполняет круглый хотспот */
 .plaque-portrait {
-  position: absolute;
-  left: 3%;
-  top: 50%;
-  width: var(--portrait-width);
-  aspect-ratio: 1 / 1;
-  transform: translateY(-50%);
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  border: 2px solid rgba(251, 191, 36, 0.55);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
-  filter: sepia(0.12) saturate(1.05);
   object-fit: cover;
+  filter: sepia(0.1) saturate(1.1);
   pointer-events: none;
-  transition: transform 0.25s ease;
 }
 
-.plaque-zone:hover .plaque-portrait,
-.plaque-zone:focus-visible .plaque-portrait {
-  transform: translateY(-50%) scale(1.04);
-}
-
-/* Живой текст на плашке: контейнер-query — шрифт тянется от ширины блока,
-   поэтому при изменении --plaque-width / --plaque-text-width масштабируется сам. */
+/* Текстовая панель и информация появляются при наведении (как hover card) */
 .plaque-content {
   position: absolute;
-  left: var(--plaque-text-left);
-  top: var(--plaque-text-top);
-  width: var(--plaque-text-width);
-  height: 70%;
+  top: calc(100% + 1px);
+  left: 0;
+  width: 260px;
+  background: rgba(9, 18, 36, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 20px rgba(251, 191, 36, 0.15);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 4%;
-  container-type: inline-size;
+  gap: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
+  z-index: 30;
+  margin-left: 10px;
+}
+
+.plaque-zone:hover .plaque-content,
+.plaque-zone:focus-visible .plaque-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .plaque-greeting {
   font-family: var(--font-display);
-  font-size: 8cqw;
+  font-size: 0.9rem;
   font-weight: 700;
-  line-height: 1.15;
-  color: #f7e8c9;
-  text-shadow: 0 1px 3px rgba(20, 10, 0, 0.65);
+  color: #fffbeb;
 }
 
 .plaque-info {
   font-family: var(--font-mono);
-  font-size: 5.2cqw;
-  line-height: 1.35;
-  color: #e8cf9a;
-  text-shadow: 0 1px 2px rgba(20, 10, 0, 0.6);
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  overflow: hidden;
 }
 
 .plaque-brief-link {
   position: absolute;
-  left: 8px;
   bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -765,6 +861,21 @@ body {
   border: 1px solid rgba(251, 191, 36, 0.45);
   border-radius: 8px;
   white-space: nowrap;
+  cursor: pointer;
+  animation: briefLinkPulse 2.4s ease-in-out infinite;
+}
+
+.plaque-brief-link:hover {
+  background: rgba(245, 158, 11, 0.3);
+}
+
+.plaque-brief-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-amber, #f59e0b);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.9);
+}
   cursor: pointer;
   animation: briefLinkPulse 2.4s ease-in-out infinite;
 }
