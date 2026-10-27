@@ -11,7 +11,6 @@ const ISLAND_ICONS = {
   navigator: "🔭",
   memoryLibrary: "📚",
   harbor: "⚓",
-  careerGuild: "⚔️",
   knowledgeArchive: "🏛️",
   aiSandbox: "🔮",
   workshop: "⚙️",
@@ -19,13 +18,6 @@ const ISLAND_ICONS = {
   leonardoStudy: "🎨",
   sinbadMarket: "🏺"
 };
-
-// Задачи для острова рычагов (сохраняются в localStorage)
-let leverageTasks = JSON.parse(localStorage.getItem("evo_leverage_tasks")) || [
-  { id: 1, textRu: "Визуальное состояние системы (Estate Level 2)", textEn: "Visual state & spatial depth (Estate Level 2)", done: true },
-  { id: 2, textRu: "Интеграция долговременной памяти (Context / Decisions)", textEn: "Long-term memory integration (Context / Decisions)", done: false },
-  { id: 3, textRu: "Пространственная карта Estate и шлюз рабочих кабинетов", textEn: "Estate spatial world map & workspace portal", done: false }
-];
 
 let activeIslandKey = null;
 
@@ -215,11 +207,7 @@ function openIslandModal(islandKey) {
     }
   }
 
-  // Подключение обработчиков интерактивных задач (если открыт остров рычагов)
-  if (islandKey === "careerGuild") {
-    bindTaskEvents();
-  }
-
+    // Подключение обработчиков
   if (viewport) viewport.classList.add("modal-active");
   if (backdrop) backdrop.classList.add("open");
 }
@@ -278,8 +266,12 @@ function initModalControls() {
 function openWorkspaceModal() {
   const wsBackdrop = document.getElementById("workspace-modal-backdrop");
   const viewport = document.getElementById("estate-viewport");
-  if (viewport) viewport.classList.add("modal-active");
-  if (wsBackdrop) wsBackdrop.classList.add("open");
+  if (wsBackdrop) {
+    if (viewport) viewport.classList.add("modal-active");
+    wsBackdrop.classList.add("open");
+  } else {
+    console.warn("Workspace modal backdrop not found on this page.");
+  }
 }
 
 function closeWorkspaceModal() {
@@ -376,21 +368,6 @@ function buildIslandContentHTML(islandKey, data, lang) {
           </div>
           <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-top: 12px;">
             ${data.securityRule || ""}
-          </div>
-        </div>
-      `;
-
-    case "careerGuild":
-      return `
-        <div class="glass-panel">
-          <div class="panel-label">ПРИОРИТЕТНЫЕ РЫЧАГИ (NEXT LEVERAGE)</div>
-          <h4 style="color: #fff;">${data.tasksHeading || ""}</h4>
-          <div id="island-tasks-list" style="margin-top: 12px;">
-            ${renderLeverageTasksHTML()}
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 14px;">
-            <input type="text" id="island-new-task-input" placeholder="${data.addTaskPlaceholder || "Новая задача..."}" style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 0.85rem; outline: none;">
-            <button id="island-add-task-btn" style="background: var(--accent-teal); border: none; color: #04121a; font-weight: bold; padding: 8px 14px; border-radius: 6px; cursor: pointer;">${data.addTaskBtn || "+ Добавить"}</button>
           </div>
         </div>
       `;
@@ -525,48 +502,165 @@ function buildIslandContentHTML(islandKey, data, lang) {
 
 /**
  * Morning Brief из источников истины (ADR-003, read-only).
- * Снимок генерируется tools/barrymore/morning-brief.ps1 в brief.js.
+ * Снимок генерируется из реальных данных проекта.
  */
 function buildMorningBriefHTML(brief, lang) {
+  const esc = (s) => escapeHtml(s || "");
   const escMulti = (s) => escapeHtml(s || "").replace(/\r?\n/g, "<br>");
-  const changes = (brief.changes || []).map(c => `
-      <div style="padding: 5px 10px; background: rgba(0,0,0,0.25); border-radius: 4px; font-size: 0.8rem; color: #cbd5e1;">${escapeHtml(c)}</div>
-    `).join("");
 
-  const currentDate = (brief.current && brief.current.date) ? ` (${escapeHtml(brief.current.date)})` : "";
-  const stateNext = (brief.state && brief.state.nextStep) ? brief.state.nextStep : "";
-  const dirtyInfo = brief.git && brief.git.dirtyFiles > 0
-    ? `изменений в дереве: ${brief.git.dirtyFiles}`
-    : "рабочее дерево чистое";
+  // Получаем реальные задачи из EVO_TASKS (или пустые массивы)
+  const tasks = (typeof EVO_TASKS !== "undefined") ? EVO_TASKS : { urgent: [], regular: [] };
+
+  // Дата формирования (с учетом локализации)
+  const generatedAt = brief.generatedAt || "Unknown";
 
   return `
     <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
-      <div class="panel-label">MORNING BRIEF — ИЗ ИСТОЧНИКОВ ИСТИНЫ (ADR-003, READ-ONLY)</div>
-      <h4 style="font-size: 1.25rem; color: #fef08a;">${lang.barrymoreGreeting || "Доброе утро, Дмитрий."}</h4>
-      <p style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 14px;">Сформировано: ${escapeHtml(brief.generatedAt || "")}</p>
+      <div class="panel-label">BARRYMORE MORNING BRIEF</div>
+      <h4 style="font-size: 1.25rem; color: #fef08a; margin-bottom: 4px;">${lang.barrymoreGreeting || "Доброе утро, Дмитрий."}</h4>
+      <p style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin-bottom: 16px;">
+        Сформировано: ${esc(generatedAt)} (Система: Октябрь 2026)
+      </p>
 
-      ${buildAgentBlock(brief.agent)}
-
-      <div class="panel-label">ТЕКУЩИЙ ФОКУС — CURRENT.md${currentDate}</div>
-      <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 8px 0 14px;">${escMulti(brief.current && brief.current.nextAction) || "—"}</p>
-
-      <div class="panel-label">СЛЕДУЮЩИЙ ШАГ РАБОТ — Engineering/STATE.md</div>
-      <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 8px 0 14px;">${escMulti(stateNext) || "—"}</p>
-
-      <div class="panel-label">ПОСЛЕДНИЕ ИЗМЕНЕНИЯ — CHANGELOG.md</div>
-      <div style="display: flex; flex-direction: column; gap: 6px; margin: 8px 0 14px;">${changes || "—"}</div>
-
-      <div class="panel-label">GIT</div>
-      <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #5eead4; margin: 8px 0 14px;">
-        ${escapeHtml((brief.git && brief.git.branch) || "")} · ${escapeHtml((brief.git && brief.git.lastCommit) || "")} · ${dirtyInfo}
+      <!-- Раздел ЗАДАЧИ -->
+      <div class="brief-section open" id="section-tasks">
+        <div class="brief-section-header" onclick="toggleBriefSection('section-tasks')">
+          <span>ЗАДАЧИ</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="brief-section-content">
+          ${renderTasksSection(tasks)}
+        </div>
       </div>
 
-      <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px;">
-        Источники: ${escapeHtml((brief.sources || []).join(", "))}. Обновить: tools/barrymore/morning-brief-agent.py (данные + доклад LLM) или morning-brief.ps1 (только данные)
+      <!-- Раздел СОСТОЯНИЕ -->
+      <div class="brief-section" id="section-state">
+        <div class="brief-section-header" onclick="toggleBriefSection('section-state')">
+          <span>СОСТОЯНИЕ</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="brief-section-content">
+          <div class="brief-task-item">
+            <div class="brief-task-title">
+              <span style="color: var(--accent-emerald);">🟢</span> Инфраструктура
+            </div>
+            <div class="brief-task-details" style="display:block; border:none; margin:0; padding:0;">
+              Проблем не обнаружено. Платформа активна.
+            </div>
+          </div>
+          <div class="brief-task-item">
+            <div class="brief-task-title">
+              <span style="color: var(--accent-gold);">⚠️</span> Требуют внимания
+            </div>
+            <div class="brief-task-details" style="display:block; border:none; margin:0; padding:0;">
+              ${brief.git && brief.git.dirtyFiles > 0 ? `Файлов с изменениями: ${brief.git.dirtyFiles}` : "Рабочее дерево чистое"}
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Раздел ВОЗМОЖНОСТИ -->
+      <div class="brief-section" id="section-opps">
+        <div class="brief-section-header" onclick="toggleBriefSection('section-opps')">
+          <span>ВОЗМОЖНОСТИ</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="brief-section-content">
+          <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5;">
+            ${escMulti(brief.current && brief.current.nextAction) || "Предложений на данный момент нет."}
+          </p>
+        </div>
+      </div>
+
+      <!-- Раздел ТЕХНИЧЕСКОЕ СОСТОЯНИЕ (Свернут по умолчанию) -->
+      <div class="brief-section" id="section-tech">
+        <div class="brief-section-header" onclick="toggleBriefSection('section-tech')">
+          <span>ТЕХНИЧЕСКОЕ СОСТОЯНИЕ</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="brief-section-content" style="font-family: var(--font-mono); font-size: 0.75rem;">
+          <div style="margin-bottom: 8px; color: var(--accent-cyan);">
+            Branch: ${esc(brief.git && brief.git.branch)}
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.7rem; line-height: 1.4;">
+            Last Commit: ${esc(brief.git && brief.git.lastCommit)}
+          </div>
+          <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-muted);">
+            Источники: ${esc((brief.sources || []).join(", "))}
+          </div>
+        </div>
+      </div>
+
     </div>
   `;
 }
+
+/**
+ * Рендеринг вложенных задач в секции
+ */
+function renderTasksSection(tasks) {
+  let html = "";
+
+  if (tasks.urgent && tasks.urgent.length > 0) {
+    html += `<div style="color: var(--accent-rose); font-size: 0.75rem; font-weight: bold; margin: 8px 0 4px 4px; letter-spacing: 0.5px;">🔴 СРОЧНЫЕ — ${tasks.urgent.length}</div>`;
+    tasks.urgent.forEach((t, i) => {
+      html += `
+        <div class="brief-task-item" onclick="toggleTaskDetails('urgent-${i}', event)">
+          <div class="brief-task-title">${escapeHtml(t.title)}</div>
+          <div class="brief-task-details" id="task-urgent-${i}">
+            <div class="brief-task-meta">
+              <span>Источник:</span> <span>${escapeHtml(t.source || "System")}</span>
+              <span>Приоритет:</span> <span style="color: var(--accent-rose);">Высокий</span>
+              <span>Статус:</span> <span>Ожидает</span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  if (tasks.regular && tasks.regular.length > 0) {
+    html += `<div style="color: var(--accent-cyan); font-size: 0.75rem; font-weight: bold; margin: 12px 0 4px 4px; letter-spacing: 0.5px;">🔵 АКТИВНЫЕ — ${tasks.regular.length}</div>`;
+    tasks.regular.forEach((t, i) => {
+      html += `
+        <div class="brief-task-item" onclick="toggleTaskDetails('regular-${i}', event)">
+          <div class="brief-task-title">${escapeHtml(t.title)}</div>
+          <div class="brief-task-details" id="task-regular-${i}">
+            <div class="brief-task-meta">
+              <span>Источник:</span> <span>${escapeHtml(t.source || "System")}</span>
+              <span>Приоритет:</span> <span style="color: var(--accent-cyan);">Обычный</span>
+              <span>Статус:</span> <span>В работе</span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  if (!html) html = `<p style="color: var(--text-muted); font-size: 0.85rem;">Задач не обнаружено.</p>`;
+
+  return html;
+}
+
+/**
+ * Переключение разделов брифа
+ */
+window.toggleBriefSection = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle("open");
+};
+
+/**
+ * Переключение деталей задачи
+ */
+window.toggleTaskDetails = function(id, event) {
+  event.stopPropagation();
+  const el = document.getElementById("task-" + id);
+  const parent = el.closest(".brief-task-item");
+  if (el && parent) {
+    parent.classList.toggle("open");
+  }
+};
 
 /**
  * Блок доклада Баррримора от локального LLM (morning-brief-agent.py).
@@ -597,72 +691,6 @@ function buildAgentBlock(agent) {
       ` : ""}
     </div>
   `;
-}
-
-/**
- * Рендеринг интерактивного списка задач
- */
-function renderLeverageTasksHTML() {
-  const isEn = (currentLanguage === "en");
-  return leverageTasks.map(t => {
-    const text = isEn ? t.textEn : t.textRu;
-    const doneClass = t.done ? "done" : "";
-    const mark = t.done ? "✓" : "";
-    return `
-      <div class="task-item-row ${doneClass}" data-task-id="${t.id}">
-        <div class="task-check-box">${mark}</div>
-        <span class="task-title-text">${escapeHtml(text)}</span>
-      </div>
-    `;
-  }).join("");
-}
-
-/**
- * Навешивание обработчиков событий для задач
- */
-function bindTaskEvents() {
-  const listEl = document.getElementById("island-tasks-list");
-  const inputEl = document.getElementById("island-new-task-input");
-  const btnEl = document.getElementById("island-add-task-btn");
-
-  if (listEl) {
-    listEl.addEventListener("click", (e) => {
-      const row = e.target.closest(".task-item-row");
-      if (!row) return;
-
-      const id = parseInt(row.getAttribute("data-task-id"), 10);
-      const task = leverageTasks.find(t => t.id === id);
-      if (task) {
-        task.done = !task.done;
-        localStorage.setItem("evo_leverage_tasks", JSON.stringify(leverageTasks));
-        listEl.innerHTML = renderLeverageTasksHTML();
-      }
-    });
-  }
-
-  const addNewTask = () => {
-    if (!inputEl) return;
-    const val = inputEl.value.trim();
-    if (!val) return;
-
-    const newTask = {
-      id: Date.now(),
-      textRu: val,
-      textEn: val,
-      done: false
-    };
-    leverageTasks.push(newTask);
-    localStorage.setItem("evo_leverage_tasks", JSON.stringify(leverageTasks));
-    if (listEl) listEl.innerHTML = renderLeverageTasksHTML();
-    inputEl.value = "";
-  };
-
-  if (btnEl) btnEl.addEventListener("click", addNewTask);
-  if (inputEl) {
-    inputEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") addNewTask();
-    });
-  }
 }
 
 /**

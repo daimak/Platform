@@ -63,18 +63,6 @@ const LANG = {
         agentMemory: "Memory Store: Снимок 2026-07-12 верифицирован",
         securityRule: "Правило ADR-0002: Агенты никогда не обращаются к ОС напрямую, всё через Tools."
       },
-      careerGuild: {
-        title: "CAREER GUILD & LEVERAGE",
-        subtitle: "Гильдия развития • Точки роста и ключевые рычаги",
-        shortDesc: "Управление приоритетными векторами и задачами следующего шага.",
-        badge: "NODE 03: LEVERAGE",
-        tasksHeading: "Приоритетные рычаги (Next Leverage)",
-        task1: "Визуальное состояние системы (Estate Level 2)",
-        task2: "Интеграция долговременной памяти (Context / Decisions)",
-        task3: "Пространственная карта Estate и шлюз рабочих кабинетов",
-        addTaskPlaceholder: "Новый рычаг или задача...",
-        addTaskBtn: "+ Добавить"
-      },
       memoryLibrary: {
         title: "MEMORY LIBRARY",
         subtitle: "Библиотека памяти • Контекст, решения и хроника",
@@ -219,18 +207,6 @@ const LANG = {
         agentContext: "Context Engine: Synchronized",
         agentMemory: "Memory Store: Snapshot 2026-07-12 verified",
         securityRule: "Rule ADR-0002: Agents never access the OS directly, everything through Tools."
-      },
-      careerGuild: {
-        title: "CAREER GUILD & LEVERAGE",
-        subtitle: "Guild of Growth • Vectors & Key Leverage Points",
-        shortDesc: "Managing priority vectors, leverage actions, and tactical deliverables.",
-        badge: "NODE 03: LEVERAGE",
-        tasksHeading: "Priority Vectors (Next Leverage)",
-        task1: "Visual state & spatial depth (Estate Level 2)",
-        task2: "Long-term memory integration (Context / Decisions)",
-        task3: "Estate spatial world map & workspace portal",
-        addTaskPlaceholder: "New leverage vector or task...",
-        addTaskBtn: "+ Add"
       },
       memoryLibrary: {
         title: "MEMORY LIBRARY",
