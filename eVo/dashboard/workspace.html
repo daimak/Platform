@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo Workspace — Level 3 Cockpit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; padding: 24px;">
+
+  <div class="estate-spatial-backdrop"></div>
+  <div class="spatial-grid-overlay"></div>
+
+  <div class="workspace-cockpit" style="max-width: 900px; width: 100%; position: relative; z-index: 2;">
+    <div class="cockpit-header">
+      <div>
+        <h3 id="workspace-title-text">Рабочий кабинет: eVo Core Workspace</h3>
+        <p style="font-size: 0.82rem; color: var(--text-secondary);" id="workspace-sub-text">
+          Уровень 3 — Непосредственное выполнение задач и редактирование контекста
+        </p>
+      </div>
+      <a href="index.html" class="back-btn" id="btn-close-workspace" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        ← Вернуться в Центр управления
+      </a>
+    </div>
+
+    <div class="cockpit-body">
+      <div class="task-card-detail">
+        <div class="cockpit-section-title" id="active-task-section-label">Активная задача</div>
+        <h4 id="active-task-name">Архитектурная сборка Command Center v0.2</h4>
+        <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 16px;" id="active-task-desc">
+          Объединение пространственной метафоры Estate, стюарда Бэрримора и рабочего интерфейса.
+        </p>
+
+        <div class="cockpit-section-title" id="checklist-title-label">Контрольный список:</div>
+        <div class="checklist-box">
+          <label class="check-row">
+            <input type="checkbox" checked>
+            <span id="check-1-text">Реализовать атмосферную глубину и визуальную иерархию</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" checked>
+            <span id="check-2-text">Интегрировать стюарда Бэрримора как точку входа</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" checked>
+            <span id="check-3-text">Обеспечить бесшовный переход между уровнями 2 и 3</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="cockpit-footer">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);" id="status-select-label">Статус задачи:</span>
+        <select class="status-select" id="task-status-dropdown">
+          <option value="building" id="opt-building">В разработке</option>
+          <option value="operational" selected id="opt-operational">Завершена / Готова</option>
+        </select>
+      </div>
+      <a href="index.html" class="btn-save" id="btn-save-workspace" style="text-decoration: none; display: inline-block;">
+        Сохранить и вернуться
+      </a>
+    </div>
+  </div>
+
+  <script src="languages.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

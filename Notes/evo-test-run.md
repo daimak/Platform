@@ -1,0 +1,1 @@
+"Тестовый прогон EPIC-001. Проверка evo-save после исправления UTF-8." | Set-Content .\Notes\evo-test-run.md -Encoding UTF8
