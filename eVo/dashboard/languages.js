@@ -62,7 +62,7 @@ const LANG = {
         agentBarrymore: "Barrymore: Активен (Steward, Read-Only — ADR-0001)",
         agentContext: "Context Engine: Синхронизирован",
         agentMemory: "Memory Store: Снимок 2026-07-12 верифицирован",
-        securityRule: "Правило ADR-0002: Агенты никогда не обращаются к ОС напрямую, всё через Tools."
+        securityRule: "Правило ADR-0002: Агенты никогда не обращаются к ОС напрямую, всё через Tools.",
       },
       memoryLibrary: {
         title: "MEMORY LIBRARY",
@@ -126,11 +126,32 @@ const LANG = {
       },
       sinbadMarket: {
         title: "SINBAD MARKET",
-        subtitle: "Рынок Синдбада • Торговля контекстом и ресурсами",
-        shortDesc: "Морской рынок, где Синдбад-мореход обменивает накопленный контекст и редкие артефакты.",
+        subtitle: "Рынок Синдбада • Обмен находками экспедиций",
+        shortDesc: "Торговый остров архипелага. Здесь Синдбад может сводить экспедиции, находки и ресурсы, привезённые из неизвестных земель.",
         badge: "MARITIME MARKET",
-        marketInfo: "Синдбад-мореход предлагает уникальные контекстные корабли и ресурсы, найденные в дальних странах.",
-        status: "● Торговые пути Maelstorm открыты."
+        marketInfo: "Идея острова — место встречи мореплавателей и обмена тем, что удалось узнать в дальних плаваниях.",
+        status: "Концепция острова; торговые механики пока не определены."
+      },
+      maelstormAtlas: {
+        title: "ATLAS OUTPOST",
+        subtitle: "Картографический форпост • Цитадель наблюдения",
+        shortDesc: "Высокая цитадель на западном острове — удобная точка для карт, наблюдений и сопоставления уже известных земель.",
+        badge: "CHARTS & OBSERVATION",
+        status: "Исследовательская концепция; функции форпоста можно уточнить позже."
+      },
+      lifeTreeSanctuary: {
+        title: "LIFE TREE SANCTUARY",
+        subtitle: "Древо жизни • Исследование живых систем",
+        shortDesc: "Остров с Древом жизни можно посвятить изучению природы, взаимосвязей и закономерностей живого мира.",
+        badge: "LIFE & NATURAL SYSTEMS",
+        status: "Исследовательская концепция; отдельный функционал пока не задан."
+      },
+      maelstromObservatory: {
+        title: "MAELSTROM OBSERVATORY",
+        subtitle: "Центральный водоворот • Граница неизведанного",
+        shortDesc: "Пост на кольце вокруг водоворота — место для вопросов о неизвестном, проверки гипотез и осторожного исследования опасных явлений.",
+        badge: "UNKNOWN & DEEP STUDY",
+        status: "Исследовательская концепция; никаких активных измерений пока нет."
       }
     },
 
@@ -208,7 +229,7 @@ const LANG = {
         agentBarrymore: "Barrymore: Active (Steward, Read-Only — ADR-0001)",
         agentContext: "Context Engine: Synchronized",
         agentMemory: "Memory Store: Snapshot 2026-07-12 verified",
-        securityRule: "Rule ADR-0002: Agents never access the OS directly, everything through Tools."
+        securityRule: "Rule ADR-0002: Agents never access the OS directly, everything through Tools.",
       },
       memoryLibrary: {
         title: "MEMORY LIBRARY",
@@ -272,11 +293,32 @@ const LANG = {
       },
       sinbadMarket: {
         title: "SINBAD MARKET",
-        subtitle: "Sinbad Market • Context & Resource Trading",
-        shortDesc: "A maritime market where Sinbad the Sailor trades accumulated context and rare artifacts.",
+        subtitle: "Sinbad Market • Trading expedition discoveries",
+        shortDesc: "The archipelago's trading island. Sinbad can bring together expeditions, discoveries, and resources brought back from unknown lands.",
         badge: "MARITIME MARKET",
-        marketInfo: "Sinbad the Sailor offers unique context-ships and resources discovered in distant lands.",
-        status: "● Maelstorm trade routes open."
+        marketInfo: "The island concept is a meeting place for sailors to exchange what they have learned on distant voyages.",
+        status: "Island concept; trading mechanics are not defined yet."
+      },
+      maelstormAtlas: {
+        title: "ATLAS OUTPOST",
+        subtitle: "Cartography Outpost • Citadel of Observation",
+        shortDesc: "The tall citadel on the western island is a natural place for maps, observations, and comparing already known lands.",
+        badge: "CHARTS & OBSERVATION",
+        status: "Research concept; the outpost's functions can be refined later."
+      },
+      lifeTreeSanctuary: {
+        title: "LIFE TREE SANCTUARY",
+        subtitle: "The Life Tree • Study of living systems",
+        shortDesc: "The island with the Life Tree could be dedicated to studying nature, interconnections, and patterns of the living world.",
+        badge: "LIFE & NATURAL SYSTEMS",
+        status: "Research concept; no dedicated functionality has been set."
+      },
+      maelstromObservatory: {
+        title: "MAELSTROM OBSERVATORY",
+        subtitle: "Central Vortex • The Unknown Frontier",
+        shortDesc: "A station on the ring around the vortex is a place for questions about the unknown, testing hypotheses, and carefully studying dangerous phenomena.",
+        badge: "UNKNOWN & DEEP STUDY",
+        status: "Research concept; no active measurements are being made."
       }
     },
 

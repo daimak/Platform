@@ -292,6 +292,7 @@ body {
   background: rgba(8, 16, 32, 0.88);
   border: 1.5px solid var(--accent-cyan);
   box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
+  opacity: 0.5;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -337,6 +338,7 @@ body {
 .island-hotspot:hover .beacon-core {
   transform: scale(1.22);
   background: rgba(14, 26, 52, 0.98);
+  opacity: 1;
 }
 
 /* Всплывающая карточка при наведении (Hover Tooltip) */
