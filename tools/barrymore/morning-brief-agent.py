@@ -30,6 +30,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from ai_usage import data_for_barrymore, record_request, settings as ai_usage_settings
 from task_store import dashboard_tasks
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -46,7 +47,17 @@ SYSTEM_PROMPT = (
     "источников; ничего не выдумывай; если данные устарели — прямо отметь это; "
     "пиши по-русски, спокойно и по делу, 5–9 строк; завершай конкретным "
     "следующим шагом. Ответ дай СТРОГО в JSON: "
-    '{"summary": "текст доклада", "nextStep": "конкретный следующий шаг"}'
+    '{"summary": "текст доклада", "nextStep": "конкретный следующий шаг"}. '
+    "Если передана секция aiUsage, сообщи только измеренные значения и явно "
+    "отделяй неизвестное от нуля; не делай выводов о расходах без подтверждённых сумм."
+)
+
+AI_USAGE_SYSTEM_PROMPT = (
+    "Ты — Баррримор, аналитик учёта AI Platform eVo. Суммируй только переданные "
+    "снимки и агрегаты. Не подменяй unknown нулём, не выводи стоимость по токенам "
+    "без тарифа. Различай подписочные кредиты и API-токены. Пиши кратко по-русски "
+    "и укажи, какие сведения отсутствуют. Ответ дай строго в JSON: "
+    '{"summary": "краткий обзор", "nextStep": "полезное действие или пустая строка"}'
 )
 
 try:
@@ -108,7 +119,7 @@ def collect_sources() -> dict:
             continue
         dirty_files += 1
 
-    return {
+    brief = {
         "generatedAt": datetime.now(TASHKENT).strftime("%Y-%m-%d %H:%M"),
         "sources": [
             "Memory/Context/CURRENT.md",
@@ -129,6 +140,9 @@ def collect_sources() -> dict:
             "dirtyFiles": dirty_files,
         },
     }
+    if ai_usage_settings()["include_in_morning_brief"]:
+        brief["aiUsage"] = data_for_barrymore()
+    return brief
 
 
 def source_fingerprint(brief: dict) -> str:
@@ -150,20 +164,31 @@ def read_cached_brief() -> dict | None:
     return cached if isinstance(cached, dict) else None
 
 
-def ask_brain(brief: dict, env: dict) -> dict:
+def ask_brain(
+    brief: dict,
+    env: dict,
+    system_prompt: str = SYSTEM_PROMPT,
+    purpose: str = "Morning Brief",
+) -> dict:
     base = env.get("FREE_LLM_BASE_URL", "http://localhost:31415/v1").rstrip("/")
     key = env.get("FREE_LLM_API_KEY", "")
     model = env.get("FREE_LLM_MODEL", "auto")
 
+    instruction = (
+        "Составь Morning Brief по правилам системы."
+        if purpose == "Morning Brief"
+        else "Подготовь обзор AI-использования по правилам системы."
+    )
     user_prompt = (
         "Источники истины Platform eVo (снимок):\n"
         + json.dumps(brief, ensure_ascii=False, indent=2)
-        + "\n\nСоставь Morning Brief по правилам системы."
+        + "\n\n"
+        + instruction
     )
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         "temperature": 0.3,
@@ -197,17 +222,57 @@ def ask_brain(brief: dict, env: dict) -> dict:
 
     cleaned = re.sub(r"^```(?:json)?|```$", "", text, flags=re.M).strip()
     m = re.search(r"\{.*\}", cleaned, re.S)
+    agent_result = None
     if m:
         try:
             obj = json.loads(m.group(0))
-            return {
-                "model": model,
+            agent_result = {
+                "model": str(data.get("model") or model),
                 "summary": str(obj.get("summary", "")).strip() or cleaned,
                 "nextStep": str(obj.get("nextStep", "")).strip(),
             }
         except Exception:
             pass
-    return {"model": model, "summary": cleaned, "nextStep": ""}
+    if agent_result is None:
+        agent_result = {"model": str(data.get("model") or model), "summary": cleaned, "nextStep": ""}
+
+    usage = data.get("usage")
+    usage = usage if isinstance(usage, dict) else {}
+    reported_cost = data.get("cost")
+    if not isinstance(reported_cost, dict):
+        reported_cost = usage.get("cost")
+    cost = reported_cost if isinstance(reported_cost, dict) else {}
+    if isinstance(reported_cost, (int, float)) and not isinstance(reported_cost, bool):
+        cost = {
+            "amount": reported_cost,
+            "currency": data.get("currency") or usage.get("currency"),
+            "source": "provider_response",
+        }
+    elif isinstance(cost, dict) and cost.get("amount") is not None:
+        cost = {**cost, "source": cost.get("source", "provider_response")}
+    try:
+        record_request(
+            "freellmapi",
+            agent_result["model"],
+            usage,
+            cost,
+            purpose,
+            "Доклад сформирован" if purpose == "Morning Brief" else agent_result["summary"],
+        )
+    except (OSError, ValueError) as error:
+        print("[Barrymore] Не удалось сохранить метаданные usage: %s" % error, file=sys.stderr)
+    return agent_result
+
+
+def review_ai_usage() -> dict:
+    report = data_for_barrymore()
+    result = ask_brain(
+        {"aiUsage": report},
+        load_env(ENV_PATH),
+        system_prompt=AI_USAGE_SYSTEM_PROMPT,
+        purpose="AI usage review",
+    )
+    return {"summary": result["summary"], "nextStep": result["nextStep"]}
 
 
 def main(retry_llm_error: bool = False) -> int:
@@ -241,4 +306,9 @@ def main(retry_llm_error: bool = False) -> int:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--retry-llm-error", action="store_true")
-    sys.exit(main(retry_llm_error=parser.parse_args().retry_llm_error))
+    parser.add_argument("--ai-usage-review", action="store_true")
+    args = parser.parse_args()
+    if args.ai_usage_review:
+        print(json.dumps(review_ai_usage(), ensure_ascii=False))
+        sys.exit(0)
+    sys.exit(main(retry_llm_error=args.retry_llm_error))

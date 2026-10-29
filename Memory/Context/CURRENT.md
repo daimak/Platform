@@ -1,4 +1,4 @@
-﻿# CURRENT STATE
+# CURRENT STATE
 
 Date: 2026-08-05
 
@@ -33,11 +33,10 @@ Active:
 
 ## Next Action
 
-Создать Morning Brief:
-кнопка Barrymore →
-утренний доклад:
-- состояние поместья
-- деньги
-- задачи
-- риски
-- возможности
+Актуализировать контекст Barrymore:
+- сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md;
+- устранить устаревшие указания на создание Morning Brief;
+- проверить качество доклада после обновления контекста;
+- отдельно разобраться с неотслеживаемым tools/barrymore/logger.py.
+
+Не выполнять merge, commit или удаление файлов без отдельного решения Sovereign.

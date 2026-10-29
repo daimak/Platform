@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>История ИИ в Platform/eVo — AI Sandbox</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ai-usage.css">
+</head>
+<body>
+  <main class="usage-page">
+    <header class="usage-header">
+      <div>
+        <p class="panel-label">AI SANDBOX · ИСТОРИЯ ПРОЕКТА</p>
+        <h1>История участия ИИ в Platform/eVo</h1>
+        <p class="usage-muted">Снимок на 29 октября 2026 года. Это история разработки, а не журнал токенов, затрат или всех переписок.</p>
+      </div>
+      <nav class="usage-actions">
+        <a class="btn-action-primary" href="index.html?island=aiSandbox">← В AI Sandbox</a>
+      </nav>
+    </header>
+
+    <section class="glass-panel usage-panel">
+      <p class="panel-label">КАК ЧИТАТЬ СВЕДЕНИЯ ОБ АВТОРСТВЕ</p>
+      <ul>
+        <li>Пользователь задаёт направление, подтверждает решения и принимает результат.</li>
+        <li>Git надёжно показывает даты, файлы и коммиты, но большинство коммитов подписаны <code>daimak</code>. Это <strong>не доказывает</strong>, какой ИИ писал или проверял код.</li>
+        <li>Название модели фиксируется только там, где оно подтверждено. Неизвестного автора не угадываем; ниже приведены итоги работ, а не дословные переписки.</li>
+        <li>Проверка Gemini API 19 октября 2026 года подтверждает эксперимент с API, но не доказывает, что Gemini создавал код Platform.</li>
+      </ul>
+    </section>
+
+    <section class="glass-panel usage-panel">
+      <p class="panel-label">ЭТАПЫ И РЕЗУЛЬТАТЫ В ПРОЕКТЕ</p>
+      <div class="usage-table-wrap">
+        <table class="usage-table">
+          <thead>
+            <tr><th>Период</th><th>ИИ и задача</th><th>Что появилось / где искать</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Июнь—июль 2026</td>
+              <td>Раннее развитие Platform/eVo. По Git установить конкретный ИИ нельзя.</td>
+              <td>Основа eVo и панели управления, исполнитель задач Barrymore, интерфейс на русском и английском, протокол задач и документация. Коммиты <code>f7c0982</code>, <code>0b75c27</code>, <code>caf9213</code>; автор Git — пользователь.</td>
+            </tr>
+            <tr>
+              <td>19 октября 2026</td>
+              <td>Gemini API проверялся отдельно; участие в написании кода не подтверждено.</td>
+              <td>Протокол обучения и запись первого испытания API, коммит <code>a62d943</code>.</td>
+            </tr>
+            <tr>
+              <td>24—26 октября 2026</td>
+              <td>Архитектурная работа с помощью ИИ; в двух коммитах прямо упоминается совместная работа со «вторым ИИ», имя и модель неизвестны.</td>
+              <td>Аудит контура, RFC-001, упорядочивание ADR и границ; утренний доклад Barrymore через локальный FreeLLMAPI; оформление Estate/Barrymore и Holmes Study. Коммиты <code>fbffd54</code>, <code>032eb57</code>, <code>cdbbebc</code>, <code>0e454e1</code>, <code>1168312</code>, <code>e054a7d</code>.</td>
+            </tr>
+            <tr>
+              <td>29 октября 2026</td>
+              <td>Copilot SDK в VS Code — этот ассистент, работающий по указаниям пользователя.</td>
+              <td>Доработки Barrymore и постоянной истории задач; локальный учёт использования ИИ; третий архипелаг Engine Core; маячки Estate/Maelstorm и визуальная доводка; краткая карта для следующего ИИ. Сверяйте фактический статус с Git и рабочим деревом: часть этого набора может быть не закоммичена.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="glass-panel usage-panel">
+      <p class="panel-label">РАБОТА ТЕКУЩЕГО АССИСТЕНТА · 29 ОКТЯБРЯ 2026</p>
+      <ul>
+        <li><strong>Утренний доклад:</strong> <code>brief.js</code> — генерируемый снимок <code>window.EVO_BRIEF</code>, а не отдельный текстовый отчёт и не сам генератор. Сборка выполняется через <code>tools/barrymore/morning-brief-agent.py</code>.</li>
+        <li><strong>Barrymore:</strong> добавлено ручное обновление доклада, сокращены повторные вызовы языковой модели при неизменных источниках, настроен тихий запуск локального сервера loopback и постоянные записи задач с историей статусов и архивированием. Результат описан в <code>Docs/Releases/v1.8.3.md</code>, <code>Docs/Barrymore.md</code> и коммите <code>89038e8</code>.</li>
+        <li><strong>Учёт использования ИИ:</strong> локальный журнал и страница статистики в AI Sandbox, ручные снимки там, где поставщик не предоставляет доступные данные об использовании, отдельная сводка Barrymore и настройка включения в утренний доклад. Неизвестные данные об использовании и стоимости обозначаются как неизвестные, а не как нулевые; стоимость не вычисляется по числу токенов. Реализация находится в <code>tools/barrymore/ai_usage.py</code>, <code>eVo/dashboard/ai-usage.*</code>, <code>tools/barrymore/dashboard-server.py</code> и <code>morning-brief-agent.py</code>.</li>
+        <li><strong>Визуальная карта:</strong> создан Engine Core Atoll на предоставленном изображении-образце; добавлен Trading Quarter для острова Estate без выдуманной функциональности; предложены исследовательские роли для пяти островов Maelstorm. Назначения новых островов — концепции, а не работающие подсистемы.</li>
+        <li><strong>Маячки:</strong> обычные иконки сделаны полупрозрачными и возвращают полную непрозрачность при наведении. Изменения Maelstorm и CSS опубликованы коммитом <code>ddd621b</code>.</li>
+        <li><strong>Передача контекста:</strong> создан <code>Docs/AI-ONBOARDING.md</code> с описанием каталогов, точек входа, проверок и предупреждением об устаревшей карте <code>Docs/Map.md</code>.</li>
+      </ul>
+    </section>
+
+    <section class="glass-panel usage-panel">
+      <p class="panel-label">ПОДТВЕРЖДЁННЫЕ ИИ-СЕРВИСЫ</p>
+      <ul>
+        <li><strong>FreeLLMAPI</strong> — шлюз Barrymore к локальной языковой модели. Это компонент приложения, а не доказательство, что конкретный поставщик создал весь проект.</li>
+        <li><strong>Gemini API</strong> — зафиксирован ручной эксперимент 19 октября 2026 года.</li>
+        <li><strong>Второй ИИ</strong> — совместная проверка или работа явно упоминается в коммитах <code>e47595e</code> и <code>e054a7d</code>; поставщик и модель не указаны.</li>
+        <li><strong>Copilot SDK в VS Code</strong> — ассистент, участвовавший в работе 29 октября 2026 года.</li>
+        <li><strong>Подписки Copilot / ChatGPT</strong> — сведения об их лимитах можно внести в раздел учёта использования ИИ вручную. Это не подтверждает их участие в написании кода и не означает автоматического доступа к полной истории запросов.</li>
+      </ul>
+    </section>
+
+    <section class="glass-panel usage-panel">
+      <p class="panel-label">ЧТО НАМЕРЕННО НЕ ЗАПИСЫВАЕТСЯ</p>
+      <p>Сырые запросы и ответы, секреты, личные данные, непроверенные названия моделей и выдуманные суммы. Для будущих работ добавляйте короткую запись: дата, ассистент/модель (только если известны), цель, принятый результат, ключевые файлы или коммит и способ проверки.</p>
+    </section>
+  </main>
+</body>
+</html>

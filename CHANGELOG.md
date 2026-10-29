@@ -44,4 +44,6 @@ YYYY-MM-DD | change | reason | RFC
 
 2026-10-29 | Platform v1.8.3: Tashkent time, silent Windows startup, cached Morning Brief, durable Barrymore task history and Graphify project report | on-demand, low-noise project overview | —
 
-2026-10-29 | Maelstorm research beacons and translucent island markers | clarify island roles and reduce map clutter until hover | -
+2026-10-29 | Maelstorm research beacons and translucent island markers | clarify island roles and reduce map clutter until hover | —
+
+2026-10-29 | Platform v1.8.4: AI Sandbox usage ledger and security contour, Hunter cabinet in Core Citadel, project onboarding and context handoff | improve AI visibility, controlled safety checks, and continuity between sessions | —

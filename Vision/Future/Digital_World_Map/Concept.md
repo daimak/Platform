@@ -73,16 +73,30 @@ Purpose:
 
 ---
 
-## Hunter Island
+## Hunter at Core Citadel
 
-The exploration outpost.
+For now, Hunter is based in the Core Citadel rather than on a separate island.
 
 Purpose:
 
 - external opportunities;
 - jobs;
-- market;
-- connections.
+- orders and market signals;
+- connections and leads for the whole archipelago;
+- information that helps relevant islands assess the production capacity needed
+  to pursue an opportunity.
+- urgent focus on vacancies with a realistic fast hiring path and income sources
+  with a short time to first payment;
+- grouping, verification, freshness tracking, storage, and ranking by time to
+  money, likelihood, fit, complexity, and source reliability.
+
+Hunter's direct integration with AI Sandbox on Estate is planned. A separate
+Hunter Island may be considered later if the role and its capabilities grow
+enough to need a dedicated domain.
+
+The Core Citadel cabinet can receive and store user assignments locally. This
+does not mean an autonomous Hunter agent, live vacancy collection, or automatic
+refresh is already running.
 
 ---
 
