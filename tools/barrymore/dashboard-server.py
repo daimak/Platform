@@ -5,9 +5,11 @@ import json
 import logging
 import os
 import re
+import socket
 import subprocess
 import sys
 import threading
+import time
 from datetime import datetime, timedelta, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -29,6 +31,22 @@ USAGE_LOCK = threading.Lock()
 SECURITY_LOCK = threading.Lock()
 LOG_DIR = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "Barrymore"
 TASHKENT = timezone(timedelta(hours=5), "Tashkent")
+
+
+class DashboardHTTPServer(ThreadingHTTPServer):
+    """Один порт — один владелец: 8765 каноничен (Docs/Barrymore.md).
+
+    stdlib ставит SO_REUSEADDR, и на Windows второй экземпляр молча цепляется
+    на тот же порт и отдаёт устаревший код; SO_EXCLUSIVEADDRUSE дополнительно
+    запрещает захват порта чужим процессом.
+    """
+
+    allow_reuse_address = False
+
+    def server_bind(self):
+        if os.name == "nt":
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
 
 
 class TashkentFormatter(logging.Formatter):
@@ -386,11 +404,27 @@ def main() -> None:
     handler = logging.FileHandler(LOG_DIR / "dashboard-server.log", encoding="utf-8")
     handler.setFormatter(TashkentFormatter("%(asctime)s UZT %(levelname)s %(message)s"))
     logging.basicConfig(level=logging.INFO, handlers=[handler])
-    try:
-        server = ThreadingHTTPServer(("127.0.0.1", PORT), DashboardHandler)
-    except OSError:
-        logging.exception("Could not bind dashboard server to 127.0.0.1:%s", PORT)
-        raise
+    server = None
+    for attempt in range(5):
+        try:
+            server = DashboardHTTPServer(("127.0.0.1", PORT), DashboardHandler)
+            break
+        except OSError:
+            if attempt == 4:
+                logging.exception("Could not bind dashboard server to 127.0.0.1:%s", PORT)
+                if sys.stdout is not None:
+                    print(
+                        f"Порт 127.0.0.1:{PORT} занят — второй экземпляр дашборда не запускаю.",
+                        file=sys.stderr,
+                    )
+                    print(
+                        f"Канонический адрес один: http://127.0.0.1:{PORT} — сервер, вероятно, уже работает.",
+                        file=sys.stderr,
+                    )
+                    print(f"Найти владельца порта: netstat -ano | findstr :{PORT}", file=sys.stderr)
+                raise SystemExit(1)
+            logging.warning("Port %s busy, retry %d/5 in 2s", PORT, attempt + 1)
+            time.sleep(2)
     logging.info("Barrymore dashboard server started at http://127.0.0.1:%s", PORT)
     if sys.stdout is not None:
         print(f"Estate dashboard: http://127.0.0.1:{PORT}")
