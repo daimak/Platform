@@ -218,6 +218,7 @@ function openIslandModal(islandKey) {
   }
   if (islandKey === "tradingQuarter") {
     initTradingQuarterGroups();
+    initTradingQuarterTabs();
   }
 
   // Генерация кнопок действий в футере
@@ -740,11 +741,11 @@ function initTradingQuarterGroups() {
 }
 
 /**
- * Рынок вакансий и заказов (Trading Quarter).
+ * Вкладка «Вакансии» Trading Quarter.
  * Данные приходят из vacancies.js (EVO_VACANCIES), который генерирует
  * tools/job_search.py --js. Пустая лента — подсказка, как её обновить.
  */
-function buildTradingQuarterHTML(data) {
+function buildTQVacanciesHTML(data) {
   const vac = (typeof EVO_VACANCIES !== "undefined") ? EVO_VACANCIES : null;
   const header = `
     <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
@@ -817,6 +818,170 @@ function buildTradingQuarterHTML(data) {
     `;
   }
   return header + updatedLine + body;
+}
+
+/**
+ * Рынок вакансий и заказов (Trading Quarter): две вкладки.
+ * «Вакансии» - лента (buildTQVacanciesHTML), «Заказы» - справочник фриланс-бирж:
+ * что продавать, тактика, живые заказы (FL.ru - скрап ленты, Kwork - репосты TG).
+ */
+function buildTradingQuarterHTML(data) {
+  const isEn = currentLanguage === "en";
+  const vacanciesTab = data.vacanciesTab || (isEn ? "Vacancies" : "Вакансии");
+  const ordersTab = data.ordersTab || (isEn ? "Gig platforms" : "Заказы");
+  return `
+    <div class="ai-sandbox-tabs" role="tablist" aria-label="${isEn ? "Trading Quarter sections" : "Разделы рынка"}">
+      <button class="ai-sandbox-tab is-active" id="tq-vacancies-tab" type="button" role="tab"
+              aria-selected="true" aria-controls="tq-panel-vacancies" data-tq-tab>
+        ${vacanciesTab}
+      </button>
+      <button class="ai-sandbox-tab" id="tq-orders-tab" type="button" role="tab"
+              aria-selected="false" aria-controls="tq-panel-orders" data-tq-tab tabindex="-1">
+        ${ordersTab}
+      </button>
+    </div>
+    <section class="ai-sandbox-tab-panel" id="tq-panel-vacancies" role="tabpanel" aria-labelledby="tq-vacancies-tab">
+      ${buildTQVacanciesHTML(data)}
+    </section>
+    <section class="ai-sandbox-tab-panel" id="tq-panel-orders" role="tabpanel" aria-labelledby="tq-orders-tab" hidden>
+      ${buildTQMarketplacesHTML()}
+    </section>
+  `;
+}
+
+const TQ_MARKETPLACES = [
+  { key: "kwork", name: "Kwork", url: "https://kwork.ru/", badge: "RU-БИРЖА",
+    sell: "4–6 пакетов: «Kubernetes под ключ», «CI/CD с нуля», «Мониторинг Prometheus+Grafana». Первые 2–3 недели цены ниже рынка ради отзывов.",
+    tactic: "Создать кворки-пакеты, отвечать на входящие заказы в течение часа.",
+    live: "tg:@kwork_orders" },
+  { key: "flru", name: "FL.ru", url: "https://www.fl.ru/projects/", badge: "RU-БИРЖА",
+    sell: "Проекты крупнее кворка; для нормальных откликов нужен платный PRO.",
+    tactic: "Ежедневные отклики, первые заказы — ради рейтинга.",
+    live: "freelance:flru" },
+  { key: "workzilla", name: "Workzilla", url: "https://work-zilla.com/", badge: "RU-МИКРО",
+    sell: "Мелкие задачи для быстрого набора рейтинга.",
+    tactic: "Заходить на свежие задания (уходят за минуты); для постоянного потока — не место." },
+  { key: "weblancer", name: "Weblancer", url: "https://www.weblancer.net/freelance/", badge: "RU-БИРЖА",
+    sell: "Профиль «пусть висит»; поток средний.",
+    tactic: "Регистрация + подписка на категории IT/DevOps." },
+  { key: "upwork", name: "Upwork", url: "https://www.upwork.com/", badge: "GLOBAL · ГЛАВНЫЙ",
+    sell: "3 кейса из энтерпрайза (PB-хранилище, EE→контейнеры, enterprise CI/CD), английский B2+.",
+    tactic: "Первые 2–4 недели тишина — норма. Откликаться на свежие jobs (<24ч), первые заказы дёшево ради отзывов. Вывод из UZ: Payoneer." },
+  { key: "toptal", name: "Toptal", url: "https://www.toptal.com/", badge: "SCREENING",
+    sell: "$60–120+/час после скрининга, enterprise-клиенты.",
+    tactic: "Скрининг жёсткий (язык + тесты + live-интервью), готовиться 1–2 недели. Заявку подать сразу — процесс небыстрый." },
+  { key: "proxify", name: "Proxify", url: "https://proxify.io/", badge: "SCREENING",
+    sell: "$40–80/час, европейские клиенты.",
+    tactic: "Скрининг мягче Toptal; поток клиентов не мгновенный — профиль пусть живёт." },
+  { key: "lemonio", name: "Lemon.io", url: "https://lemon.io/", badge: "POOL",
+    sell: "Стартапы US/EU, DevOps берут регулярно.",
+    tactic: "Заявка + интервью, дальше пул подбирает проекты." },
+  { key: "arc", name: "Arc.dev", url: "https://arc.dev/", badge: "POOL",
+    sell: "Remote-пул сеньоров.",
+    tactic: "Заполнить профиль на английском полностью — без этого не зовут." },
+  { key: "gunio", name: "Gun.io", url: "https://www.gun.io/", badge: "POOL",
+    sell: "US-фриланс для разработчиков и DevOps.",
+    tactic: "Заявка + короткое интервью." },
+  { key: "braintrust", name: "Braintrust", url: "https://www.usebraintrust.com/", badge: "GLOBAL",
+    sell: "Комиссию платит клиент, много enterprise-проектов.",
+    tactic: "Профиль + отклик на проекты раз в пару дней." },
+  { key: "catalant", name: "Catalant", url: "https://gocatalant.com/", badge: "CONSULTING",
+    sell: "Консалтинговая биржа для людей с 12+ годами в больших корпорациях — твой калибр.",
+    tactic: "CV на английском с акцентом на enterprise-масштаб (Сбер/Роснефть/X5/ВТБ, PB-хранилища)." },
+  { key: "malt", name: "Malt", url: "https://www.malt.com/", badge: "EU",
+    sell: "Европейский фриланс-рынок.",
+    tactic: "Понадобится EU-подключение/резидентство — держать в уме на будущее." },
+  { key: "habrfreelance", name: "Habr Freelance", url: "", badge: "ЗАКРЫЛСЯ",
+    sell: "Сервис закрылся навсегда (проверено 30.10.2026, отдаёт 410).",
+    tactic: "Не тратить время. Вместо него — Habr Career для вакансий.", closed: true }
+];
+
+function buildTQOrderItem(job) {
+  const meta = [job.salary, job.date ? String(job.date).slice(0, 16).replace("T", " ") : ""]
+    .filter(Boolean).map(escapeHtml).join(" · ");
+  return `
+    <div class="brief-task-item" style="cursor: default;">
+      <a href="${escapeHtml(job.url || "#")}" target="_blank" rel="noopener noreferrer"
+         style="color: #5eead4; text-decoration: none;">
+        <div class="brief-task-title">${escapeHtml(job.title || "")}</div>
+      </a>
+      ${meta ? `<div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">${meta}</div>` : ""}
+    </div>
+  `;
+}
+
+function buildTQMarketplacesHTML() {
+  const vac = (typeof EVO_VACANCIES !== "undefined") ? EVO_VACANCIES : null;
+  const isEn = currentLanguage === "en";
+  let html = `
+    <p style="color: var(--text-muted); font-size: 0.84rem; margin: 0 0 14px 2px;">
+      ${isEn ? "Expand a platform: what to sell there, entry tactics and live gigs where the feed is available." : "Раскрой биржу: что на ней продавать, тактика входа и живые заказы, если биржа отдаёт ленту."}
+    </p>
+  `;
+  for (const mk of TQ_MARKETPLACES) {
+    let live = [];
+    let liveLabel = "";
+    if (!mk.closed && mk.live) {
+      if (mk.live.startsWith("freelance:")) {
+        const key = mk.live.slice("freelance:".length);
+        live = (vac && vac.freelance && Array.isArray(vac.freelance[key])) ? vac.freelance[key].slice(0, 8) : [];
+        liveLabel = isEn ? "LIVE GIGS FROM THE PLATFORM" : "ЖИВЫЕ ЗАКАЗЫ С БИРЖИ";
+      } else if (mk.live.startsWith("tg:@")) {
+        const channel = mk.live.slice("tg:@".length).toLowerCase();
+        live = ((vac && Array.isArray(vac.jobs)) ? vac.jobs : [])
+          .filter((job) => (job.source || "").toLowerCase().includes("@" + channel))
+          .slice(0, 8);
+        liveLabel = isEn ? "ORDER REPOSTS (TELEGRAM)" : "РЕПОСТЫ ЗАКАЗОВ (TELEGRAM)";
+      }
+    }
+    const countText = mk.closed ? "" : (live.length ? live.length + (isEn ? " gigs" : " заказов") : "");
+    const openAttr = (mk.key === "flru" || mk.key === "upwork") ? " open" : "";
+    html += `
+      <details class="tq-acc"${openAttr}>
+        <summary>
+          <span class="tq-name">${escapeHtml(mk.name)}</span>
+          <span class="tq-badge"${mk.closed ? ' style="color: var(--accent-rose); border-color: var(--accent-rose);"' : ""}>${escapeHtml(mk.badge)}</span>
+          ${countText ? `<span class="tq-count">${escapeHtml(countText)}</span>` : ""}
+        </summary>
+        <div class="tq-body">
+          <div class="tq-line"><b>${isEn ? "What to sell:" : "Что продавать:"}</b> ${escapeHtml(mk.sell)}</div>
+          <div class="tq-line"><b>${isEn ? "Tactics:" : "Тактика:"}</b> ${escapeHtml(mk.tactic)}</div>
+          ${mk.url ? `<div class="tq-line" style="margin-top: 8px;"><a href="${escapeHtml(mk.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(mk.url.replace(/^https:\/\//, ""))} ↗</a></div>` : ""}
+          ${(!mk.closed && mk.live && live.length)
+            ? `<div class="tq-live-head">${liveLabel} · ${live.length}</div>` + live.map(buildTQOrderItem).join("")
+            : ""}
+          ${(!mk.closed && mk.live && live.length === 0)
+            ? `<div class="tq-live-head">${isEn ? "No live feed - check the platform manually or refresh vacancies.js" : "Ленты нет — проверь биржу вручную или обнови vacancies.js"}</div>`
+            : ""}
+        </div>
+      </details>
+    `;
+  }
+  return html;
+}
+
+/**
+ * Переключение вкладок Trading Quarter (та же механика, что в aiSandbox).
+ */
+function initTradingQuarterTabs() {
+  const tabs = Array.from(document.querySelectorAll('[data-tq-tab][role="tab"]'));
+  if (!tabs.length) return;
+
+  const selectTab = (selectedTab, focus = false) => {
+    tabs.forEach((tab) => {
+      const selected = tab === selectedTab;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      tab.classList.toggle("is-active", selected);
+      const panel = document.getElementById(tab.getAttribute("aria-controls"));
+      if (panel) panel.hidden = !selected;
+    });
+    if (focus) selectedTab.focus();
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => selectTab(tab));
+  });
 }
 
 /**
