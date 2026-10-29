@@ -1,0 +1,12 @@
+﻿kind,time,model,prompt_tokens,completion_tokens,latency_ms,context
+codex-tui,ответ 1,"29.10.2026, 18:06",,1500,,,Анализ файлов Barrymore.md и v1.8.4.md.
+codex-tui,ответ 2,"29.10.2026, 18:11",,136,,,Проверка формата файла и логирования.
+freellm-api,18:35:32,,mistral-code-latest,38200,536,5900 мс,
+freellm-api,18:37:00,,mistral-code-latest,38700,35,4082 мс,
+freellm-api,18:37:12,,mistral-code-latest,38800,540,5648 мс,
+freellm-api,18:38:44,,mistral-code-latest,39100,200,8266 мс,
+freellm-api,18:38:57,,mistral-code-latest,39500,699,11185 мс,
+freellm-api,18:40:27,,mistral-code-latest,39900,35,5061 мс,
+freellm-api,18:40:36,,mistral-code-latest,40100,729,7195 мс,
+freellm-api,18:42:24,,mistral-code-latest,40700,59,4054 мс,
+freellm-api,18:42:35,,mistral-code-latest,40900,701,9794 мс,
