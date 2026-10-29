@@ -17,6 +17,7 @@ const ISLAND_ICONS = {
   holmesStudy: "🔍",
   leonardoStudy: "🎨",
   sinbadMarket: "🏺",
+  tradingQuarter: "🏺",
   maelstormAtlas: "🧭",
   lifeTreeSanctuary: "🌳",
   maelstromObservatory: "🌀"
@@ -32,6 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initModalControls();
   initSidebarsToggle();
   updateLanguage();
+  if (new URLSearchParams(window.location.search).get("island") === "aiSandbox") {
+    openIslandModal("aiSandbox");
+  }
   if (window.location.protocol !== "file:") {
     loadBarrymoreTasks().finally(() => refreshBarrymoreBrief({ automatic: true }));
     window.setInterval(async () => {
@@ -207,6 +211,11 @@ function openIslandModal(islandKey) {
   if (bodyEl) {
     bodyEl.innerHTML = buildIslandContentHTML(islandKey, islandData, lang);
   }
+  if (islandKey === "aiSandbox") {
+    initAiSandboxTabs();
+    initAiSandboxControls();
+    initSecurityContourControls();
+  }
 
   // Генерация кнопок действий в футере
   if (actionsEl) {
@@ -243,6 +252,38 @@ function closeIslandModal() {
 
   if (viewport) viewport.classList.remove("modal-active");
   if (backdrop) backdrop.classList.remove("open");
+}
+
+function initAiSandboxTabs() {
+  const tabs = Array.from(document.querySelectorAll('[data-ai-sandbox-tab][role="tab"]'));
+  if (!tabs.length) return;
+
+  const selectTab = (selectedTab, focus = false) => {
+    tabs.forEach((tab) => {
+      const selected = tab === selectedTab;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      tab.classList.toggle("is-active", selected);
+      const panel = document.getElementById(tab.getAttribute("aria-controls"));
+      if (panel) panel.hidden = !selected;
+    });
+    if (focus) selectedTab.focus();
+  };
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectTab(tab));
+    tab.addEventListener("keydown", (event) => {
+      let nextIndex;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+      else if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+      else if (event.key === "Home") nextIndex = 0;
+      else if (event.key === "End") nextIndex = tabs.length - 1;
+      else return;
+
+      event.preventDefault();
+      selectTab(tabs[nextIndex], true);
+    });
+  });
 }
 
 /**
@@ -351,6 +392,293 @@ async function refreshBarrymoreBrief(options = {}) {
   }
 }
 
+function initAiSandboxControls() {
+  const askButton = document.getElementById("btn-ask-ai-usage");
+  const optIn = document.getElementById("include-ai-usage-in-brief");
+  const status = document.getElementById("ai-usage-action-status");
+  if (!askButton || !optIn || !status) return;
+
+  fetch("/api/ai-usage", { cache: "no-store" })
+    .then((response) => response.json().then((data) => {
+      if (!response.ok) throw new Error(data.error || `Ошибка сервера (${response.status}).`);
+      optIn.checked = data.settings.include_in_morning_brief;
+    }))
+    .catch((error) => {
+      status.textContent = `Не удалось загрузить настройки AI-статистики: ${error.message}`;
+    });
+
+  askButton.addEventListener("click", async () => {
+    askButton.disabled = true;
+    status.textContent = "Бэрримор проверяет сохранённые данные…";
+    try {
+      const response = await fetch("/api/ai-usage/ask-barrymore", {
+        method: "POST",
+        headers: { "X-Estate-Action": "ai-usage" }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || `Ошибка сервера (${response.status}).`);
+      status.textContent = [data.summary, data.nextStep].filter(Boolean).join("\n\n");
+    } catch (error) {
+      status.textContent = `Не удалось получить обзор: ${error.message}`;
+    } finally {
+      askButton.disabled = false;
+    }
+  });
+
+  optIn.addEventListener("change", async () => {
+    optIn.disabled = true;
+    try {
+      const response = await fetch("/api/ai-usage/settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Estate-Action": "ai-usage"
+        },
+        body: JSON.stringify({ include_in_morning_brief: optIn.checked })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || `Ошибка сервера (${response.status}).`);
+      optIn.checked = data.settings.include_in_morning_brief;
+      status.textContent = optIn.checked
+        ? "AI-сводка будет добавляться к докладу по включённой настройке."
+        : "AI-сводка отключена для Morning Brief.";
+    } catch (error) {
+      optIn.checked = !optIn.checked;
+      status.textContent = `Не удалось сохранить настройку: ${error.message}`;
+    } finally {
+      optIn.disabled = false;
+    }
+  });
+}
+
+/**
+ * «Защищённый контур» (ADR-003/004): статус изоляции, allowlist-цели и
+ * ручной запуск пассивных проверок с LLM-заключением. Наружу уходит ровно
+ * один GET / к выбранной цели; всё остальное — локально.
+ */
+function initSecurityContourControls() {
+  const isolationEl = document.getElementById("security-isolation");
+  const targetsEl = document.getElementById("security-targets");
+  const resultsPanel = document.getElementById("security-results-panel");
+  const resultsEl = document.getElementById("security-results");
+  if (!isolationEl || !targetsEl || !resultsPanel || !resultsEl) return;
+
+  const langData = typeof LANG !== "undefined" && LANG[currentLanguage] && LANG[currentLanguage].islands
+    ? LANG[currentLanguage].islands.aiSandbox || {}
+    : {};
+  const t = (key, fallback) => langData[key] || fallback;
+  const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (ch) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]
+  ));
+  const fmt = (value) => (value == null ? "?" : String(value));
+
+  const renderStatus = (payload) => {
+    const iso = payload.isolation || {};
+    const rows = [];
+    rows.push(iso.loopback_only
+      ? `<div class="security-fact is-ok">✓ ${esc(t("securityBindOk", "Сервер привязан к 127.0.0.1 — доступ только с этого компьютера"))}</div>`
+      : `<div class="security-fact is-bad">✗ ${esc(t("securityBindFail", "ВНИМАНИЕ: сервер отвечает не только на loopback — проверьте привязку"))}</div>`);
+    const probe = iso.external_probe;
+    if (probe && probe.result === "blocked") {
+      rows.push(`<div class="security-fact is-ok">✓ ${esc(t("securityProbeOk", "Внешний интерфейс"))} <span class="security-mono">${esc(probe.address || "")}</span> — ${esc(t("securityProbeBlocked", "не отвечает — снаружи внутрь не пройти"))}</div>`);
+    } else if (probe && probe.result === "open") {
+      rows.push(`<div class="security-fact is-bad">✗ ${esc(t("securityProbeOpen", "Внешний интерфейс ОТВЕЧАЕТ — контур открыт наружу!"))} <span class="security-mono">${esc(probe.address || "")}</span></div>`);
+    } else {
+      rows.push(`<div class="security-fact is-warn">● ${esc(t("securityProbeUnknown", "Внешний интерфейс не определён — статус неизвестен"))}</div>`);
+    }
+    rows.push(`<div class="security-fact">● ${esc(t("securityRouteGuard", "Изменяющие маршруты принимают запросы только из локального дашборда (Origin/Host)"))}</div>`);
+    rows.push(payload.llm_analysis
+      ? `<div class="security-fact">● ${esc(t("securityLLMEnabled", "LLM-анализ включён: заключение готовит локальный шлюз FreeLLMAPI"))}</div>`
+      : `<div class="security-fact is-warn">● ${esc(t("securityLLMDisabled", "LLM-анализ отключён в security-targets.json"))}</div>`);
+    if (payload.audit && payload.audit.event_count) {
+      const last = payload.audit.last || {};
+      const lastTime = last.recorded_at ? new Date(last.recorded_at).toLocaleString() : "";
+      rows.push(`<div class="security-fact">● ${esc(t("securityAuditCount", "Запусков в журнале аудита:"))} ${payload.audit.event_count}${lastTime ? ` · ${esc(lastTime)}` : ""}</div>`);
+    }
+    isolationEl.innerHTML = rows.join("");
+    renderTargets(payload.targets || []);
+  };
+
+  const state = { targets: [], running: false };
+
+  const selectedHosts = () => Array.from(targetsEl.querySelectorAll(".security-target-check:checked"))
+    .map((box) => box.getAttribute("data-security-host"));
+
+  const updateRunButton = () => {
+    const runBtn = document.getElementById("security-run-btn");
+    if (!runBtn || state.running) return;
+    const count = selectedHosts().length;
+    runBtn.disabled = count === 0;
+    runBtn.textContent = `${t("securityRunCheck", "Проверить выбранные")}${count ? ` (${count})` : ""}`;
+  };
+
+  const renderTargets = (targets) => {
+    state.targets = Array.isArray(targets) ? targets : [];
+    const rows = state.targets.map((target) => `
+      <div class="security-target">
+        <label class="security-target-pick">
+          <input type="checkbox" class="security-target-check" data-security-host="${esc(target.host)}">
+          <span class="security-target-host">${esc(target.scheme || "https")}://${esc(target.host)}</span>
+        </label>
+        ${target.note ? `<span class="security-target-note">${esc(target.note)}</span>` : ""}
+      </div>`).join("");
+    const listHtml = state.targets.length
+      ? rows
+      : `<div style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">${esc(t("securityTargetsEmpty", "Разрешённых целей нет. Добавьте первую ниже."))}</div>`;
+    targetsEl.innerHTML = `
+      <div class="security-target-head">
+        <label class="security-target-pick"><input type="checkbox" id="security-check-all"> <span>${esc(t("securitySelectAll", "Выбрать все"))}</span></label>
+      </div>
+      ${listHtml}
+      <div class="security-run-row">
+        <button class="btn-action-primary" id="security-run-btn" type="button" disabled>${esc(t("securityRunCheck", "Проверить выбранные"))}</button>
+        <span id="security-progress" style="color: var(--text-muted); font-size: 0.82rem;"></span>
+      </div>
+      <div class="security-add-form">
+        <input id="security-add-host" type="text" placeholder="${esc(t("securityAddHostPlaceholder", "host или IP:порт, например 192.168.1.10:8080"))}">
+        <select id="security-add-scheme" aria-label="scheme"><option value="https">https</option><option value="http">http</option></select>
+        <input id="security-add-note" type="text" placeholder="${esc(t("securityAddNotePlaceholder", "пометка (необязательно)"))}">
+        <button class="btn-action-primary" id="security-add-btn" type="button">${esc(t("securityAddBtn", "Добавить цель"))}</button>
+      </div>
+      <p id="security-add-status" role="status" aria-live="polite" style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem;"></p>`;
+    targetsEl.querySelectorAll(".security-target-check").forEach((box) => {
+      box.addEventListener("change", updateRunButton);
+    });
+    const checkAll = document.getElementById("security-check-all");
+    if (checkAll) {
+      checkAll.addEventListener("change", () => {
+        targetsEl.querySelectorAll(".security-target-check").forEach((box) => { box.checked = checkAll.checked; });
+        updateRunButton();
+      });
+    }
+    document.getElementById("security-run-btn").addEventListener("click", () => runChecks(selectedHosts()));
+    document.getElementById("security-add-btn").addEventListener("click", addTarget);
+    updateRunButton();
+  };
+
+  const renderResultsInto = (container, host, payload) => {
+    const facts = payload.facts || {};
+    const llm = payload.llm;
+    const rows = [];
+    rows.push(`<div class="security-result-host">${esc(host)} — HTTP ${fmt(facts.status)}${facts.final_url ? ` <span class="security-mono">${esc(facts.final_url)}</span>` : ""}</div>`);
+    if (facts.error) rows.push(`<div class="security-fact is-bad">✗ ${esc(facts.error)}</div>`);
+
+    if (facts.tls) {
+      rows.push(`<div class="security-sub">${esc(t("securityTlsTitle", "TLS-сертификат"))}</div>`);
+      rows.push(`<div class="security-fact">${esc(fmt(facts.tls.version))} · ${esc(fmt(facts.tls.issuer_cn))} · ${esc(t("securityTlsExpires", "истекает:"))} ${esc(fmt(facts.tls.not_after))} (${fmt(facts.tls.days_left)} ${esc(t("securityDays", "дн."))})</div>`);
+    } else if (facts.scheme === "https" && !facts.error) {
+      rows.push(`<div class="security-fact is-bad">✗ ${esc(t("securityTlsTitle", "TLS-сертификат"))}: ${esc(t("securityTlsUnavailable", "не получен"))}</div>`);
+    }
+
+    const headers = facts.headers || {};
+    rows.push(`<div class="security-sub">${esc(t("securityHeadersTitle", "Security-заголовки"))}</div>`);
+    (headers.present || []).forEach((name) => rows.push(`<div class="security-fact is-ok">✓ ${esc(name)}</div>`));
+    (headers.missing || []).forEach((name) => rows.push(`<div class="security-fact is-bad">✗ ${esc(name)}</div>`));
+    if (headers.server_banner) rows.push(`<div class="security-fact">● ${esc(t("securityServerBanner", "Баннер сервера:"))} ${esc(headers.server_banner)}</div>`);
+
+    if ((facts.redirects || []).length) {
+      rows.push(`<div class="security-sub">${esc(t("securityRedirectsTitle", "Цепочка редиректов"))}</div>`);
+      facts.redirects.forEach((redirect) => rows.push(`<div class="security-fact">${fmt(redirect.status)} → ${esc(redirect.to || "")}${redirect.note ? ` — ${esc(redirect.note)}` : ""}</div>`));
+    }
+
+    if ((facts.cookies || []).length) {
+      rows.push(`<div class="security-sub">Cookies</div>`);
+      facts.cookies.forEach((cookie) => rows.push(`<div class="security-fact ${cookie.secure && cookie.http_only ? "is-ok" : "is-warn"}">${esc(cookie.name)}: Secure ${cookie.secure ? "✓" : "✗"} · HttpOnly ${cookie.http_only ? "✓" : "✗"} · SameSite ${esc(fmt(cookie.same_site))}</div>`));
+    }
+
+    if (llm && !llm.error) {
+      rows.push(`<div class="security-sub">${esc(t("securityLLMTitle", "Заключение ИИ"))} (${esc(llm.model || "?")})</div>`);
+      if (llm.summary) rows.push(`<div class="security-llm-summary">${esc(llm.summary)}</div>`);
+      (llm.findings || []).forEach((finding) => rows.push(`<div class="security-fact severity-${esc(String(finding.severity || "info").toLowerCase())}">[${esc(finding.severity || "info")}] ${esc(finding.title)}${finding.detail ? ` — ${esc(finding.detail)}` : ""}</div>`));
+      if (llm.next_step) rows.push(`<div class="security-fact">→ ${esc(t("securityNextStep", "Следующий шаг:"))} ${esc(llm.next_step)}</div>`);
+    } else if (llm && llm.error) {
+      rows.push(`<div class="security-fact is-warn">● ${esc(t("securityLLMTitle", "Заключение ИИ"))}: ${esc(llm.error)}</div>`);
+    } else {
+      rows.push(`<div class="security-fact is-warn">● ${esc(t("securityLLMSkipped", "LLM-анализ отключён — показаны только факты."))}</div>`);
+    }
+
+    rows.push(`<div class="security-audit-note">${esc(t("securityAuditNote", "Запуск зафиксирован в журнале аудита:"))} <span class="security-mono">${esc(payload.audit_event_id || "")}</span></div>`);
+    container.innerHTML = rows.join("");
+  };
+
+  const runChecks = async (hosts) => {
+    if (state.running || !hosts.length) return;
+    const runBtn = document.getElementById("security-run-btn");
+    const progress = document.getElementById("security-progress");
+    state.running = true;
+    if (runBtn) runBtn.disabled = true;
+    resultsPanel.hidden = false;
+    resultsEl.innerHTML = "";
+    let done = 0;
+    for (const host of hosts) {
+      done += 1;
+      if (progress) progress.textContent = `${t("securityChecking", "Идёт проверка:")} ${done}/${hosts.length} — ${host}`;
+      const block = document.createElement("div");
+      block.className = "security-result-block";
+      resultsEl.appendChild(block);
+      try {
+        const response = await fetch("/api/security/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ host })
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || `Ошибка сервера (${response.status}).`);
+        renderResultsInto(block, host, payload);
+      } catch (error) {
+        block.innerHTML = `<div class="security-result-host">${esc(host)}</div><div class="security-fact is-bad">✗ ${esc(t("securityCheckError", "Проверка не удалась:"))} ${esc(error.message)}</div>`;
+      }
+    }
+    if (progress) progress.textContent = `${t("securityDone", "Готово:")} ${hosts.length}`;
+    state.running = false;
+    updateRunButton();
+  };
+
+  const addTarget = async () => {
+    const hostInput = document.getElementById("security-add-host");
+    const schemeSel = document.getElementById("security-add-scheme");
+    const noteInput = document.getElementById("security-add-note");
+    const addStatus = document.getElementById("security-add-status");
+    const addBtn = document.getElementById("security-add-btn");
+    if (!hostInput || !addBtn || !addStatus) return;
+    const host = hostInput.value.trim();
+    if (!host) {
+      addStatus.textContent = t("securityAddEmpty", "Введите host или IP:порт.");
+      return;
+    }
+    addBtn.disabled = true;
+    addStatus.textContent = "";
+    try {
+      const response = await fetch("/api/security/targets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          host,
+          scheme: schemeSel ? schemeSel.value : "https",
+          note: noteInput ? noteInput.value.trim() : ""
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || `Ошибка сервера (${response.status}).`);
+      renderTargets(data.targets || []);
+      addStatus.textContent = `${t("securityAdded", "Цель добавлена:")} ${host}`;
+    } catch (error) {
+      addStatus.textContent = `${t("securityAddError", "Не удалось добавить цель:")} ${error.message}`;
+    } finally {
+      addBtn.disabled = false;
+    }
+  };
+
+  fetch("/api/security/status", { cache: "no-store" })
+    .then((response) => response.json().then((payload) => {
+      if (!response.ok) throw new Error(payload.error || `Ошибка сервера (${response.status}).`);
+      renderStatus(payload);
+    }))
+    .catch((error) => {
+      isolationEl.innerHTML = `<div class="security-fact is-bad">✗ ${esc(t("securityStatusError", "Не удалось получить состояние изоляции:"))} ${esc(error.message)}</div>`;
+    });
+}
+
 function openWorkspaceModal() {
   const wsBackdrop = document.getElementById("workspace-modal-backdrop");
   const viewport = document.getElementById("estate-viewport");
@@ -431,8 +759,17 @@ function buildIslandContentHTML(islandKey, data, lang) {
 
     case "aiSandbox":
       return `
+        <div class="ai-sandbox-tabs" role="tablist" aria-label="${currentLanguage === "en" ? "AI Sandbox sections" : "Разделы песочницы ИИ"}">
+          <button class="ai-sandbox-tab is-active" id="ai-sandbox-overview-tab" type="button" role="tab" aria-selected="true" aria-controls="ai-sandbox-overview" data-ai-sandbox-tab>
+            ${data.overviewTab || "Обзор"}
+          </button>
+          <button class="ai-sandbox-tab" id="ai-sandbox-security-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-security" data-ai-sandbox-tab tabindex="-1">
+            ${data.securityTab || "Защищённый контур"}
+          </button>
+        </div>
+        <section class="ai-sandbox-tab-panel" id="ai-sandbox-overview" role="tabpanel" aria-labelledby="ai-sandbox-overview-tab">
         <div class="glass-panel">
-          <div class="panel-label">ТОЧКА ВНИМАНИЯ (ATTENTION)</div>
+          <div class="panel-label">${data.attentionLabel || "ТОЧКА ВНИМАНИЯ"}</div>
           <h4 style="color: #fff;">${data.attentionHeading || ""}</h4>
           <div class="status-badge-row" style="color: var(--accent-amber);">
             <span>${data.attentionStatus || "● В процессе разработки"}</span>
@@ -442,7 +779,7 @@ function buildIslandContentHTML(islandKey, data, lang) {
           </p>
         </div>
         <div class="glass-panel">
-          <div class="panel-label">ПОДСИСТЕМЫ И АВТОНОМНЫЕ АГЕНТЫ</div>
+          <div class="panel-label">${data.subsystemsTitle || "ПОДСИСТЕМЫ И АВТОНОМНЫЕ АГЕНТЫ"}</div>
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
             <div style="padding: 8px 12px; background: rgba(0,0,0,0.25); border-radius: 6px; font-size: 0.85rem; color: #fed7aa;">
               ${data.agentBarrymore || ""}
@@ -458,6 +795,48 @@ function buildIslandContentHTML(islandKey, data, lang) {
             ${data.securityRule || ""}
           </div>
         </div>
+        <div class="glass-panel">
+          <div class="panel-label">${data.usageTitle || "AI USAGE"}</div>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin: 8px 0 12px;">
+            ${data.usageDesc || ""}
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <a class="btn-action-primary" href="ai-usage.html">${data.usageOpen || "Открыть статистику AI"}</a>
+            <button class="btn-action-primary" id="btn-ask-ai-usage" type="button">${data.usageAsk || "Попросить Бэрримора проверить"}</button>
+          </div>
+          <label style="display:flex; gap:9px; align-items:flex-start; margin-top:14px; color:var(--text-secondary); font-size:0.85rem;">
+            <input id="include-ai-usage-in-brief" type="checkbox" style="margin-top:3px;">
+            <span>${data.usageOptIn || "Включать AI-статистику в Morning Brief"}</span>
+          </label>
+          <p id="ai-usage-action-status" role="status" aria-live="polite" style="margin-top:10px; color:var(--text-muted); white-space:pre-wrap;"></p>
+        </div>
+        <div class="glass-panel">
+          <div class="panel-label">${data.historyTitle || "AI PROJECT HISTORY"}</div>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin: 8px 0 12px;">
+            ${data.historyDesc || ""}
+          </p>
+          <a class="btn-action-primary" href="ai-sandbox-history.html">${data.historyOpen || "Открыть историю ИИ"}</a>
+        </div>
+        </section>
+        <section class="ai-sandbox-tab-panel" id="ai-sandbox-security" role="tabpanel" aria-labelledby="ai-sandbox-security-tab" tabindex="0" hidden>
+          <div class="glass-panel ai-sandbox-security-placeholder">
+            <div class="panel-label">${data.securityTab || "Защищённый контур"}</div>
+            <h4 style="color: #fff;">${data.securityTitle || "Изоляция и внешние проверки"}</h4>
+            <p style="color: var(--text-secondary); line-height: 1.6;">${data.securityDesc || ""}</p>
+            <div id="security-isolation" class="security-fact-list" role="status" aria-live="polite">
+              <div style="color: var(--text-muted); font-size: 0.85rem;">${data.securityStatusLoading || "Проверяю изоляцию…"}</div>
+            </div>
+          </div>
+          <div class="glass-panel">
+            <div class="panel-label">${data.securityTargetsTitle || "РАЗРЕШЁННЫЕ ЦЕЛИ (ALLOWLIST)"}</div>
+            <div id="security-targets" class="security-target-list"></div>
+            <p style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); margin-top: 10px; line-height: 1.5;">${data.securityTargetsHint || ""}</p>
+          </div>
+          <div class="glass-panel" id="security-results-panel" hidden>
+            <div class="panel-label">${data.securityResultTitle || "РЕЗУЛЬТАТ ПРОВЕРКИ"}</div>
+            <div id="security-results"></div>
+          </div>
+        </section>
       `;
 
     case "memoryLibrary":
@@ -572,6 +951,23 @@ function buildIslandContentHTML(islandKey, data, lang) {
         </div>
       `;
 
+    case "tradingQuarter":
+      return `
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
+          <div class="panel-label">${data.badge || "TRADE DISTRICT"}</div>
+          <h4 style="color: var(--accent-amber); font-family: var(--font-display);">${data.title || "TRADING QUARTER"}</h4>
+          <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 12px 0;">
+            ${data.shortDesc || ""}
+          </p>
+          <div class="status-badge-row" style="color: var(--text-muted);">
+            <span>${data.status || ""}</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.5; margin-top: 12px;">
+            ${data.nextStep || ""}
+          </p>
+        </div>
+      `;
+
     case "maelstormAtlas":
     case "lifeTreeSanctuary":
     case "maelstromObservatory":
@@ -625,6 +1021,8 @@ function buildMorningBriefHTML(brief, lang) {
       <p style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin-bottom: 16px;">
         Сформировано: ${esc(generatedAt)} UZT (Ташкент)
       </p>
+      ${buildAgentBlock(brief.agent)}
+      ${brief.aiUsage ? buildAiUsageSummaryHTML(brief.aiUsage) : ""}
 
       <!-- Раздел ЗАДАЧИ -->
       <div class="brief-section open" id="section-tasks">
@@ -697,6 +1095,28 @@ function buildMorningBriefHTML(brief, lang) {
 
     </div>
   `;
+}
+
+function buildAiUsageSummaryHTML(usage) {
+  const esc = (value) => escapeHtml(value === null || value === undefined ? "нет данных" : String(value));
+  const costs = (usage.costs || []).length
+    ? usage.costs.map((cost) => `${esc(cost.amount)} ${esc(cost.currency)}`).join(", ")
+    : "нет подтверждённых сумм";
+  const tokens = usage.total_tokens === null || usage.total_tokens === undefined
+    ? "нет данных от провайдеров"
+    : new Intl.NumberFormat(currentLanguage === "en" ? "en-US" : "ru-RU").format(usage.total_tokens);
+  return `
+    <div class="glass-panel" style="border-left:4px solid var(--accent-cyan); margin:0 0 14px;">
+      <div class="panel-label">${currentLanguage === "en" ? "AI USAGE · RECORDED DATA" : "УЧЁТ ИИ · ЗАПИСАННЫЕ ДАННЫЕ"}</div>
+      <p style="color:var(--text-secondary); line-height:1.55;">
+        ${currentLanguage === "en" ? "Recorded requests:" : "Записано запросов:"} ${esc(usage.request_count)} ·
+        ${currentLanguage === "en" ? "known token total:" : "известно токенов:"} ${tokens} ·
+        ${currentLanguage === "en" ? "confirmed API cost:" : "подтверждённая стоимость API:"} ${costs}
+      </p>
+      <p style="color:var(--text-muted); font-size:0.8rem; margin-top:6px;">
+        ${currentLanguage === "en" ? "Missing values are unknown, not zero." : "Недостающие значения неизвестны, это не ноль."}
+      </p>
+    </div>`;
 }
 
 /**

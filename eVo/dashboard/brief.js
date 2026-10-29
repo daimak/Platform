@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-10-27 13:59",
+  "generatedAt": "2026-10-29 17:23",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -8,26 +8,109 @@ window.EVO_BRIEF = {
   ],
   "current": {
     "date": "2026-08-05",
-    "nextAction": "Создать Morning Brief:\nкнопка Barrymore →\nутренний доклад:\n- состояние поместья\n- деньги\n- задачи\n- риски\n- возможности"
+    "nextAction": "Актуализировать контекст Barrymore:\n- сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md;\n- устранить устаревшие указания на создание Morning Brief;\n- проверить качество доклада после обновления контекста;\n- отдельно разобраться с неотслеживаемым tools/barrymore/logger.py.\n\nНе выполнять merge, commit или удаление файлов без отдельного решения Sovereign."
   },
   "state": {
     "nextStep": "По указанию пользователя: слияние веток по D-002 (после проверки) либо продуктовые шаги (R4 — Morning Brief read-only MVP)."
   },
   "changes": [
-    "2026-10-25 | Barrymore Morning Brief: deterministic generator + autonomous LLM agent (local FreeLLMAPI gateway, stdlib-only, ADR-003/004 compliant) | give Barrymore its own brains | —",
-    "2026-10-25 | Barrymore UX: map beacon removed, painted plaque is now the clickable entry; unread \"Morning Brief\" link under the plaque; user guide Docs/Barrymore.md | user request | —",
-    "2026-10-25 | Barrymore plaque becomes pure HTML over clean art: background swapped to Clear_main (painted text gone), portrait barrymore.png as separate layer, live greeting + task counter (tasks.js), \"Review\" link, geometry on CSS variables | user request | —",
-    "2026-10-26 | map layout: full-width frame with atmospheric blurred backdrop (no black bars, nothing cropped, plaque stays on-screen on 16:10); agent passports introduced in Memory/Agents (Barrymore partial-active, Solomon & Holmes drafts aligned with ADR-003/004) | user request + co-worked with second AI | —",
-    "2026-10-26 | new island \"Holmes Study\" on the map (beacon + modal + RU/EN), sidebars toggle; all 10 modals verified clickable | co-worked with second AI | —"
+    "2026-10-26 | new island \"Holmes Study\" on the map (beacon + modal + RU/EN), sidebars toggle; all 10 modals verified clickable | co-worked with second AI | —",
+    "2026-10-29 | Barrymore brief refresh button in dashboard; loopback-only local server runs the existing generator and returns the fresh report to the open modal | refresh Morning Brief on demand | —",
+    "2026-10-29 | Barrymore dashboard starts at Windows logon; source fingerprints avoid unchanged LLM runs; explicit Done tasks retain history for 48h before archival | persistent brief and task lifecycle | —",
+    "2026-10-29 | Platform v1.8.3: Tashkent time, silent Windows startup, cached Morning Brief, durable Barrymore task history and Graphify project report | on-demand, low-noise project overview | —",
+    "2026-10-29 | Maelstorm research beacons and translucent island markers | clarify island roles and reduce map clutter until hover | —"
   ],
+  "tasks": {
+    "urgent": [
+      {
+        "id": "keepass-master-password-backup",
+        "title": "Мастер-пароль KeePassXC + бэкап хранилища",
+        "source": "S-4",
+        "priority": "urgent",
+        "status": "active",
+        "createdAt": "2026-10-29T04:26:16Z",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-10-29T04:26:16Z",
+            "note": "Перенесено из текущего списка задач дашборда."
+          }
+        ]
+      },
+      {
+        "id": "rotate-langsmith-freellmapi",
+        "title": "Ротация ключей LangSmith/FreeLLMAPI",
+        "source": "S-1",
+        "priority": "urgent",
+        "status": "active",
+        "createdAt": "2026-10-29T04:26:16Z",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-10-29T04:26:16Z",
+            "note": "Перенесено из текущего списка задач дашборда."
+          }
+        ]
+      }
+    ],
+    "regular": [
+      {
+        "id": "clean-empty-stubs",
+        "title": "Чистка пустых заглушек (locales, Carrier, Timeline)",
+        "source": "R7",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-10-29T04:26:16Z",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-10-29T04:26:16Z",
+            "note": "Перенесено из текущего списка задач дашборда."
+          }
+        ]
+      },
+      {
+        "id": "merge-branches-d002",
+        "title": "Слияние веток по D-002",
+        "source": "R9",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-10-29T04:26:16Z",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-10-29T04:26:16Z",
+            "note": "Перенесено из текущего списка задач дашборда."
+          }
+        ]
+      },
+      {
+        "id": "update-current-context",
+        "title": "Актуализация Memory/Context/CURRENT.md",
+        "source": "R3",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-10-29T04:26:16Z",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-10-29T04:26:16Z",
+            "note": "Перенесено из текущего списка задач дашборда."
+          }
+        ]
+      }
+    ],
+    "done": []
+  },
   "git": {
     "branch": "feature_1.8.2",
-    "lastCommit": "fa06f26 Move accidental ~/the-agency folder into tools/the-agency",
-    "dirtyFiles": 6
+    "lastCommit": "ddd621b Add Maelstorm research beacons and subtle icons",
+    "dirtyFiles": 197
   },
   "agent": {
-    "model": "auto",
-    "summary": "Доброе утро, Дмитрий. Позвольте представить утренний доклад. Обращаю ваше внимание, что системные данные датированы 5 августа 2026 года, что может указывать на их устаревание относительно даты генерации снимка (27 октября 2026 года). В репозитории активна ветка feature_1.8.2, зафиксировано 6 измененных файлов. Из недавних изменений: обновлен мой интерфейс, добавлен остров «Кабинет Холмса» и настроен автономный агент для генерации докладов. Сведения о состоянии поместья, финансах и рисках в предоставленных источниках отсутствуют. Нам необходимо определиться с дальнейшими шагами.",
-    "nextStep": "Проверить изменения в ветке feature_1.8.2 для принятия решения о слиянии по задаче D-002 или переходе к шагам R4 (Morning Brief MVP)."
-  }
+    "model": "openai/gpt-oss-20b",
+    "summary": "Дата отчёта: 2026‑10‑29 (генерация). Дата в CURRENT.md – 2026‑08‑05, следовательно, контекст устарел.\n\nВажные обновления: добавлен остров Holmes Study, кнопка обновления Morning Brief в Dashboard, запуск Barrymore при логине Windows, кэширование Brief.\n\nВерсия платформы v1.8.3: поддержка Tashkent time, silent startup, Graphify project report.\n\nПриоритетные задачи: резервирование мастер‑пароля KeePassXC и ротация ключей LangSmith/FreeLLMAPI.\n\nРегулярные задачи: очистка пустых заглушек, слияние веток D‑002, актуализация CURRENT.md.\n\nGit‑статус: ветка feature_1.8.2, последний коммит ddd621b, 197 грязных файлов.\n\nСледующий шаг: выполнить актуализацию контекста Barrymore и проверить качество отчёта после обновления.",
+    "nextStep": "Выполнить актуализацию контекста Barrymore и проверить качество отчёта после обновления."
+  },
+  "_sourceFingerprint": "23fba76c8663f6ee194074638ed1d15b654830419cb3b91bf19a844b35341255"
 };

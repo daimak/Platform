@@ -1,0 +1,1 @@
+# Barrymore Logger\nimport os\n\ndef log_event(event_type, data):\n    log_path = os.path.join(os.getcwd(), 'tools', 'barrymore', 'barrymore.log')\n    os.makedirs(os.path.dirname(log_path), exist_ok=True)\n    with open(log_path, 'a') as f:\n        f.write(f'{event_type}: {data}\n')\n\n# Test event\nlog_event('test_event', 'This is a test log entry.')

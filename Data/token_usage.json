@@ -1,0 +1,15 @@
+{
+  "availableTokens": 50000,
+  "sources": ["FreeLLMApi", "Anthropic"],
+  "avgUsage": 120,
+  "usageHistory": [
+    { "date": "2026-10-25", "tokensUsed": 150 },
+    { "date": "2026-10-26", "tokensUsed": 120 },
+    { "date": "2026-10-27", "tokensUsed": 100 }
+  ],
+  "suggestions": [
+    "Используйте модель Haiku вместо Opus для дешёвых запросов (FreeLLMApi).",
+    "Уменьшите размер запросов, чтобы сэкономить токены.",
+    "Кэшируйте часто используемые данные."
+  ]
+}

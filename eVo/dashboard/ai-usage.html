@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Учёт использования ИИ — eVo Estate</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ai-usage.css">
+</head>
+<body>
+  <main class="usage-page">
+    <header class="usage-header">
+      <div>
+        <p class="panel-label">ПЕСОЧНИЦА ИИ · ЖУРНАЛ УЧЁТА</p>
+        <h1>Статистика использования ИИ</h1>
+        <p class="usage-muted">Фактические данные отделены от ручных снимков; неизвестные значения не считаются нулём.</p>
+      </div>
+      <nav class="usage-actions">
+        <a class="btn-action-primary" href="index.html?island=aiSandbox">← В AI Sandbox</a>
+        <button class="btn-action-primary" id="refresh-usage" type="button">Обновить</button>
+      </nav>
+    </header>
+
+    <section class="usage-grid" aria-label="Сводка использования">
+      <article class="glass-panel usage-card">
+        <span class="panel-label">ЗАПРОСЫ В ЖУРНАЛЕ</span>
+        <strong id="metric-requests">—</strong>
+        <span class="usage-muted">только зафиксированные вызовы</span>
+      </article>
+      <article class="glass-panel usage-card">
+        <span class="panel-label">ТОКЕНЫ</span>
+        <strong id="metric-tokens">Нет данных</strong>
+        <span id="metric-token-coverage" class="usage-muted">Счётчики провайдера не получены</span>
+      </article>
+      <article class="glass-panel usage-card">
+        <span class="panel-label">СТОИМОСТЬ API-ЗАПРОСОВ</span>
+        <strong id="metric-cost">Нет данных</strong>
+        <span class="usage-muted">только сумма, сообщённая источником</span>
+      </article>
+    </section>
+
+    <section class="glass-panel usage-panel">
+      <div class="usage-panel-heading">
+        <div>
+          <p class="panel-label">ПРОВАЙДЕРЫ И ЛИМИТЫ</p>
+          <h2>Последние снимки использования</h2>
+        </div>
+      </div>
+      <div class="usage-table-wrap">
+        <table class="usage-table">
+          <thead>
+            <tr><th>Источник</th><th>Кредиты</th><th>Токены</th><th>Расход</th><th>Период / примечание</th><th>Зафиксировано</th></tr>
+          </thead>
+          <tbody id="snapshot-rows"></tbody>
+        </table>
+      </div>
+      <p class="usage-muted usage-note">Copilot и подписка ChatGPT показывают только те лимиты, суммы и проценты, которые вы внесли вручную. Подписочный лимит не равен токенам API.</p>
+    </section>
+
+    <section class="glass-panel usage-panel">
+      <div class="usage-panel-heading">
+        <div>
+          <p class="panel-label">ЗАПИСАННЫЕ ВЫЗОВЫ</p>
+          <h2>Запросы к моделям</h2>
+        </div>
+      </div>
+      <div class="usage-table-wrap">
+        <table class="usage-table">
+          <thead>
+            <tr><th>Время</th><th>Сервис / модель</th><th>Назначение</th><th>Токены: вход / выход</th><th>Стоимость</th><th>Результат / статус</th></tr>
+          </thead>
+          <tbody id="request-rows"></tbody>
+        </table>
+      </div>
+      <p id="empty-requests" class="usage-muted" hidden>Запросы пока не записаны. Журнал начнёт собирать метаданные после установки этой версии.</p>
+      <p class="usage-note usage-muted">Исходные запросы и ответы не сохраняются. Краткие описания проходят базовую маскировку; не добавляйте сюда секреты.</p>
+    </section>
+
+    <section class="usage-grid usage-bottom">
+      <article class="glass-panel usage-panel">
+        <p class="panel-label">РУЧНОЙ СНИМОК</p>
+        <h2>Добавить данные провайдера</h2>
+        <form id="snapshot-form" class="usage-form">
+          <label>Источник
+            <select id="snapshot-provider" required></select>
+          </label>
+          <label id="custom-provider-wrap" hidden>Название нового AI-сервиса
+            <input id="custom-provider-name" maxlength="80" autocomplete="off">
+          </label>
+          <div class="usage-form-row">
+            <label>Кредиты использованы, %
+              <input name="credits_used_percent" type="number" min="0" max="100" step="0.1" placeholder="неизвестно">
+            </label>
+            <label>Токены input
+              <input name="input_tokens" type="number" min="0" step="1" placeholder="неизвестно">
+            </label>
+            <label>Токены output
+              <input name="output_tokens" type="number" min="0" step="1" placeholder="неизвестно">
+            </label>
+          </div>
+          <div class="usage-form-row">
+            <label>Подтверждённая сумма
+              <input name="cost_amount" type="number" min="0" step="0.000001" placeholder="неизвестно">
+            </label>
+            <label>Валюта
+              <input name="currency" maxlength="3" pattern="[A-Za-z]{3}" placeholder="USD">
+            </label>
+            <label>Период
+              <input name="period" maxlength="80" placeholder="например, октябрь 2026">
+            </label>
+          </div>
+          <label>Примечание / источник цифр
+            <input name="note" maxlength="240" placeholder="например, GitHub Billing → Usage">
+          </label>
+          <button class="btn-action-primary" type="submit">Сохранить снимок</button>
+          <p id="snapshot-status" class="usage-muted" role="status" aria-live="polite"></p>
+        </form>
+      </article>
+
+      <article class="glass-panel usage-panel">
+        <p class="panel-label">БЭРРИМОР · ТОЛЬКО ЧТЕНИЕ</p>
+        <h2>Обзор по запросу</h2>
+        <p class="usage-muted">Бэрримор прочитает сохранённые снимки и журнал, не обращаясь к аккаунтам провайдеров.</p>
+        <button class="btn-action-primary" id="ask-barrymore" type="button">Попросить проверить AI-статистику</button>
+        <div id="barrymore-usage-result" class="usage-result" role="status" aria-live="polite" hidden></div>
+        <label class="usage-opt-in">
+          <input id="include-in-brief" type="checkbox">
+          <span>Разрешить включать сводку об использовании ИИ в утренний доклад</span>
+        </label>
+        <p class="usage-muted usage-note">Если включить эту настройку, Бэрримор будет учитывать сводку при подготовке утреннего доклада. По умолчанию выключено.</p>
+      </article>
+    </section>
+  </main>
+  <script src="ai-usage.js"></script>
+</body>
+</html>

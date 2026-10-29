@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101a30">
+  <title>Engine Core Atoll — eVo Engineering Archipelago</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="engine-core.css">
+</head>
+<body>
+  <div class="estate-viewport engine-world">
+    <header class="estate-top-hud">
+      <div class="hud-left">
+        <a href="index.html" class="engine-brand" aria-label="Перейти в Estate">
+          <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+          <span class="hud-title-group">
+            <span class="hud-title">ENGINE CORE ATOLL</span>
+            <span class="hud-subtitle">Инженерный горизонт Platform eVo</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="hud-center">
+        <div class="hud-stat-item">
+          <span class="status-dot-green"></span>
+          <span>Платформа активна</span>
+          <span style="opacity: 0.35;">|</span>
+          <span style="color: var(--text-muted); font-size: 0.72rem;">1.2с</span>
+        </div>
+        <div class="hud-stat-item" style="color: var(--accent-amber);">
+          <span>⚙️</span>
+          <span>Инженерный горизонт</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div class="engine-world-links">
+          <a href="index.html" class="btn-action-primary engine-world-link engine-estate-link"><span>🏰</span> ESTATE</a>
+          <a href="maelstorm.html" class="btn-action-primary engine-world-link engine-maelstorm-link"><span>🌀</span> MAELSTORM</a>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn" id="lang-ru" type="button">RU</button>
+          <button class="lang-btn" id="lang-en" type="button">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="estate-map-container engine-map-container">
+      <div class="estate-map-frame engine-map-frame" id="engine-map">
+        <img
+          class="engine-map-image"
+          src="assets/engine-core-bg.png"
+          alt="Engine Core Atoll: центральная инженерная цитадель, мастерские, лаборатории и гавани на закате"
+        >
+        <div class="engine-image-vignette" aria-hidden="true"></div>
+        <div class="plaque-zone" id="barrymore-plaque" role="button" aria-label="Стюард Бэрримор — Morning Brief" tabindex="0">
+          <img class="plaque-portrait" src="assets/barrymore.png" alt="" aria-hidden="true">
+          <div class="plaque-content" aria-hidden="true">
+            <div class="plaque-greeting" id="plaque-greeting"></div>
+            <div class="plaque-info" id="plaque-info"></div>
+          </div>
+          <div class="plaque-brief-link" id="barrymore-brief-link" hidden>
+            <span class="plaque-brief-dot"></span>
+            <span>Review</span><span class="plaque-brief-arrow">→</span>
+          </div>
+        </div>
+
+        <button class="engine-island beacon-gold island-core" type="button" data-island="engine-core" aria-label="Открыть Core Citadel">
+          <span class="beacon-core"><span class="beacon-icon" aria-hidden="true">🏰</span></span>
+          <span class="island-hover-card">
+            <span class="hover-badge">CORE ARCHITECTURE</span>
+            <span class="hover-title">CORE CITADEL</span>
+            <span class="hover-subtitle">Архитектура и правила платформы</span>
+            <span class="hover-action-hint">👆 Открыть инженерную консоль</span>
+          </span>
+        </button>
+        <button class="engine-island beacon-amber island-forge" type="button" data-island="forge" aria-label="Открыть Builder's Forge">
+          <span class="beacon-core"><span class="beacon-icon" aria-hidden="true">⚒️</span></span>
+          <span class="island-hover-card">
+            <span class="hover-badge">TOOLS & AUTOMATION</span>
+            <span class="hover-title">BUILDER'S FORGE</span>
+            <span class="hover-subtitle">Инструменты и автоматизация</span>
+            <span class="hover-action-hint">👆 Открыть инженерную консоль</span>
+          </span>
+        </button>
+        <button class="engine-island beacon-cyan island-harbor" type="button" data-island="harbor" aria-label="Открыть Integration Harbor">
+          <span class="beacon-core"><span class="beacon-icon" aria-hidden="true">⚓</span></span>
+          <span class="island-hover-card">
+            <span class="hover-badge">API & CONNECTIONS</span>
+            <span class="hover-title">INTEGRATION HARBOR</span>
+            <span class="hover-subtitle">API и внешние связи</span>
+            <span class="hover-action-hint">👆 Открыть инженерную консоль</span>
+          </span>
+        </button>
+        <button class="engine-island beacon-emerald island-lab" type="button" data-island="lab" aria-label="Открыть Test & Quality Reef">
+          <span class="beacon-core"><span class="beacon-icon" aria-hidden="true">🧪</span></span>
+          <span class="island-hover-card">
+            <span class="hover-badge">TESTS & RELIABILITY</span>
+            <span class="hover-title">TEST & QUALITY REEF</span>
+            <span class="hover-subtitle">Проверки и надёжность</span>
+            <span class="hover-action-hint">👆 Открыть инженерную консоль</span>
+          </span>
+        </button>
+        <button class="engine-island beacon-purple island-launch" type="button" data-island="launch" aria-label="Открыть Release Beacon">
+          <span class="beacon-core"><span class="beacon-icon" aria-hidden="true">🚀</span></span>
+          <span class="island-hover-card">
+            <span class="hover-badge">VERSIONS & DELIVERY</span>
+            <span class="hover-title">RELEASE BEACON</span>
+            <span class="hover-subtitle">Версии и поставка</span>
+            <span class="hover-action-hint">👆 Открыть инженерную консоль</span>
+          </span>
+        </button>
+        <button class="engine-island beacon-purple island-observatory" type="button" data-island="observatory" aria-label="Открыть AI Observatory">
+          <span class="beacon-core"><span class="beacon-icon" aria-hidden="true">🔮</span></span>
+          <span class="island-hover-card">
+            <span class="hover-badge">AI MODELS & USAGE</span>
+            <span class="hover-title">AI OBSERVATORY</span>
+            <span class="hover-subtitle">Модели, лимиты и учёт</span>
+            <span class="hover-action-hint">👆 Открыть инженерную консоль</span>
+          </span>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <div class="engine-console-backdrop" id="engine-console-backdrop" hidden>
+    <section class="engine-console" role="dialog" aria-modal="true" aria-labelledby="engine-console-title">
+      <header class="engine-console-header">
+        <div>
+          <p class="panel-label" id="engine-console-kicker">ENGINE CORE ATOLL</p>
+          <h1 id="engine-console-title">Остров</h1>
+          <p id="engine-console-subtitle" class="engine-console-subtitle"></p>
+        </div>
+        <button class="modal-close-btn engine-console-close" id="engine-console-close" type="button" aria-label="Закрыть консоль">✕</button>
+      </header>
+      <div class="engine-console-body" id="engine-console-body"></div>
+      <footer class="engine-console-footer">
+        <span>ENGINE CORE ATOLL <span aria-hidden="true">·</span> PLATFORM eVo</span>
+        <button class="btn-action-primary" id="engine-console-back" type="button">← К карте</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="island-modal-backdrop" id="island-modal-backdrop">
+    <div class="island-modal-window" id="island-modal-window">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge" id="modal-island-icon">🤖</div>
+          <div class="modal-title-group">
+            <span class="panel-label" id="modal-island-badge">ESTATE NODE</span>
+            <h3 id="modal-island-title">БЭРРИМОР</h3>
+            <p id="modal-island-subtitle">Персональный стюард eVo</p>
+          </div>
+        </div>
+        <div class="engine-modal-actions">
+          <span id="barrymore-refresh-status" role="status" hidden></span>
+          <button class="modal-close-btn" id="btn-refresh-barrymore" type="button" hidden>↻ Обновить</button>
+          <button class="modal-close-btn" id="btn-close-island-modal" type="button">✕ Закрыть</button>
+        </div>
+      </div>
+      <div class="modal-body" id="modal-island-content"></div>
+      <div class="modal-footer" id="modal-island-footer">
+        <button class="modal-close-btn" id="btn-back-to-map" type="button">← Вернуться к карте</button>
+        <div id="modal-island-actions"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="island-modal-backdrop" id="workspace-modal-backdrop" style="z-index: 150;">
+    <div class="workspace-cockpit-window">
+      <div class="modal-header">
+        <div>
+          <h3 id="workspace-title-text" style="color: #fffbeb;">Рабочий кабинет eVo</h3>
+          <p id="workspace-sub-text" style="font-size: 0.82rem; color: var(--text-muted);">Уровень 3 — рабочее пространство</p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-workspace" type="button">← Вернуться</button>
+      </div>
+      <div class="modal-body">
+        <div class="glass-panel">
+          <div class="panel-label">ENGINE CORE ATOLL</div>
+          <h4>Инженерное рабочее пространство</h4>
+          <p>Переход из консоли Бэрримора в рабочий кабинет.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-primary" id="btn-save-workspace" type="button">Сохранить и вернуться</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="languages.js"></script>
+  <script src="brief.js"></script>
+  <script src="tasks.js"></script>
+  <script src="app.js"></script>
+  <script src="engine-core.js"></script>
+</body>
+</html>
