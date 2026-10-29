@@ -16,7 +16,10 @@ const ISLAND_ICONS = {
   workshop: "⚙️",
   holmesStudy: "🔍",
   leonardoStudy: "🎨",
-  sinbadMarket: "🏺"
+  sinbadMarket: "🏺",
+  maelstormAtlas: "🧭",
+  lifeTreeSanctuary: "🌳",
+  maelstromObservatory: "🌀"
 };
 
 let activeIslandKey = null;
@@ -527,7 +530,7 @@ function buildIslandContentHTML(islandKey, data, lang) {
     case "sinbadMarket":
       return `
         <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
-          <div class="panel-label">МОРСКОЙ РЫНОК СИНДБАДА</div>
+          <div class="panel-label">${data.badge || "MARITIME MARKET"}</div>
           <h4 style="color: #f59e0b; font-family: var(--font-display);">${data.title || "SINBAD MARKET"}</h4>
           <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6; margin: 12px 0;">
             ${data.marketInfo || ""}
@@ -558,13 +561,29 @@ function buildIslandContentHTML(islandKey, data, lang) {
     case "sinbadMarket":
       return `
         <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
-          <div class="panel-label">МОРСКОЙ РЫНОК СИНДБАДА</div>
+          <div class="panel-label">${data.badge || "MARITIME MARKET"}</div>
           <h4 style="color: #f59e0b; font-family: var(--font-display);">${data.title || "SINBAD MARKET"}</h4>
           <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6; margin: 12px 0;">
             ${data.marketInfo || ""}
           </p>
           <div class="status-badge-row" style="color: var(--accent-emerald);">
             <span>${data.status || "● Пути открыты"}</span>
+          </div>
+        </div>
+      `;
+
+    case "maelstormAtlas":
+    case "lifeTreeSanctuary":
+    case "maelstromObservatory":
+      return `
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-cyan);">
+          <div class="panel-label">${data.badge || "RESEARCH FRONTIER"}</div>
+          <h4 style="color: var(--accent-cyan); font-family: var(--font-display);">${data.title || ""}</h4>
+          <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 12px 0;">
+            ${data.shortDesc || ""}
+          </p>
+          <div class="status-badge-row" style="color: var(--text-muted);">
+            <span>${data.status || ""}</span>
           </div>
         </div>
       `;

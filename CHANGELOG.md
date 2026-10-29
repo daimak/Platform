@@ -43,3 +43,5 @@ YYYY-MM-DD | change | reason | RFC
 2026-10-29 | Barrymore dashboard starts at Windows logon; source fingerprints avoid unchanged LLM runs; explicit Done tasks retain history for 48h before archival | persistent brief and task lifecycle | —
 
 2026-10-29 | Platform v1.8.3: Tashkent time, silent Windows startup, cached Morning Brief, durable Barrymore task history and Graphify project report | on-demand, low-noise project overview | —
+
+2026-10-29 | Maelstorm research beacons and translucent island markers | clarify island roles and reduce map clutter until hover | -
