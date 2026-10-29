@@ -29,6 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
   initModalControls();
   initSidebarsToggle();
   updateLanguage();
+  if (window.location.protocol !== "file:") {
+    loadBarrymoreTasks().finally(() => refreshBarrymoreBrief({ automatic: true }));
+    window.setInterval(async () => {
+      if (await loadBarrymoreTasks()) {
+        await refreshBarrymoreBrief({ automatic: true });
+      }
+    }, 60_000);
+  }
 });
 
 function initSidebarsToggle() {
@@ -159,6 +167,16 @@ function updateBriefLink() {
  */
 function openIslandModal(islandKey) {
   activeIslandKey = islandKey;
+  const refreshButton = document.getElementById("btn-refresh-barrymore");
+  const refreshStatus = document.getElementById("barrymore-refresh-status");
+  if (refreshButton) refreshButton.hidden = islandKey !== "barrymore";
+  if (refreshStatus) {
+    refreshStatus.hidden = islandKey !== "barrymore";
+    if (islandKey === "barrymore") {
+      refreshStatus.textContent = "";
+      refreshStatus.classList.remove("is-error");
+    }
+  }
 
   if (islandKey === "barrymore") {
     markBriefSeen();
@@ -229,10 +247,12 @@ function closeIslandModal() {
  */
 function initModalControls() {
   const btnClose = document.getElementById("btn-close-island-modal");
+  const btnRefreshBarrymore = document.getElementById("btn-refresh-barrymore");
   const btnBack = document.getElementById("btn-back-to-map");
   const backdrop = document.getElementById("island-modal-backdrop");
 
   if (btnClose) btnClose.addEventListener("click", closeIslandModal);
+  if (btnRefreshBarrymore) btnRefreshBarrymore.addEventListener("click", refreshBarrymoreBrief);
   if (btnBack) btnBack.addEventListener("click", closeIslandModal);
 
   if (backdrop) {
@@ -261,6 +281,71 @@ function initModalControls() {
       closeWorkspaceModal();
     }
   });
+}
+
+async function refreshBarrymoreBrief(options = {}) {
+  const automatic = options.automatic === true;
+  const button = document.getElementById("btn-refresh-barrymore");
+  const status = document.getElementById("barrymore-refresh-status");
+  if (!button || !status || button.disabled) return;
+
+  button.disabled = true;
+  button.classList.add("is-refreshing");
+  status.hidden = activeIslandKey !== "barrymore";
+  status.classList.remove("is-error");
+  if (activeIslandKey === "barrymore") status.textContent = "Проверяю изменения…";
+
+  try {
+    const headers = automatic ? {} : { "X-Barrymore-Manual": "true" };
+    const response = await fetch("/api/refresh-brief", { method: "POST", headers });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || `Ошибка сервера (${response.status}).`);
+    }
+    if (!result.brief || typeof result.brief !== "object") {
+      throw new Error("Сервер вернул некорректный доклад.");
+    }
+
+    window.EVO_BRIEF = result.brief;
+    updateBriefLink();
+    if (!result.changed) {
+      if (activeIslandKey === "barrymore") {
+        status.hidden = false;
+        status.textContent = "Изменений нет — доклад актуален.";
+      }
+      return;
+    }
+    if (activeIslandKey !== "barrymore") return;
+
+    openIslandModal("barrymore");
+    const refreshedStatus = document.getElementById("barrymore-refresh-status");
+    if (refreshedStatus) {
+      refreshedStatus.hidden = false;
+      refreshedStatus.textContent = result.brief.agent && result.brief.agent.error
+        ? "Данные обновлены без LLM."
+        : `Обновлено: ${result.brief.generatedAt || "сейчас"}`;
+    }
+  } catch (error) {
+    if (automatic && activeIslandKey !== "barrymore") {
+      console.error("Barrymore brief check failed:", error);
+      return;
+    }
+    const message = error instanceof TypeError && window.location.protocol === "file:"
+      ? "Дашборд открыт как файл. Откройте его по адресу http://127.0.0.1:8765."
+      : error instanceof TypeError
+        ? "Не удалось связаться с сервером. Проверьте задание Barrymore Dashboard Server в планировщике Windows."
+        : error.message;
+    if (activeIslandKey === "barrymore") {
+      status.hidden = false;
+      status.classList.add("is-error");
+      status.textContent = message;
+    } else {
+      console.error("Barrymore brief refresh failed:", error);
+    }
+  } finally {
+    button.disabled = false;
+    button.classList.remove("is-refreshing");
+  }
 }
 
 function openWorkspaceModal() {
@@ -519,7 +604,7 @@ function buildMorningBriefHTML(brief, lang) {
       <div class="panel-label">BARRYMORE MORNING BRIEF</div>
       <h4 style="font-size: 1.25rem; color: #fef08a; margin-bottom: 4px;">${lang.barrymoreGreeting || "Доброе утро, Дмитрий."}</h4>
       <p style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin-bottom: 16px;">
-        Сформировано: ${esc(generatedAt)} (Система: Октябрь 2026)
+        Сформировано: ${esc(generatedAt)} UZT (Ташкент)
       </p>
 
       <!-- Раздел ЗАДАЧИ -->
@@ -603,44 +688,108 @@ function renderTasksSection(tasks) {
 
   if (tasks.urgent && tasks.urgent.length > 0) {
     html += `<div style="color: var(--accent-rose); font-size: 0.75rem; font-weight: bold; margin: 8px 0 4px 4px; letter-spacing: 0.5px;">🔴 СРОЧНЫЕ — ${tasks.urgent.length}</div>`;
-    tasks.urgent.forEach((t, i) => {
-      html += `
-        <div class="brief-task-item" onclick="toggleTaskDetails('urgent-${i}', event)">
-          <div class="brief-task-title">${escapeHtml(t.title)}</div>
-          <div class="brief-task-details" id="task-urgent-${i}">
-            <div class="brief-task-meta">
-              <span>Источник:</span> <span>${escapeHtml(t.source || "System")}</span>
-              <span>Приоритет:</span> <span style="color: var(--accent-rose);">Высокий</span>
-              <span>Статус:</span> <span>Ожидает</span>
-            </div>
-          </div>
-        </div>
-      `;
-    });
+    tasks.urgent.forEach((task) => { html += renderTaskItem(task, "urgent", true); });
   }
 
   if (tasks.regular && tasks.regular.length > 0) {
     html += `<div style="color: var(--accent-cyan); font-size: 0.75rem; font-weight: bold; margin: 12px 0 4px 4px; letter-spacing: 0.5px;">🔵 АКТИВНЫЕ — ${tasks.regular.length}</div>`;
-    tasks.regular.forEach((t, i) => {
-      html += `
-        <div class="brief-task-item" onclick="toggleTaskDetails('regular-${i}', event)">
-          <div class="brief-task-title">${escapeHtml(t.title)}</div>
-          <div class="brief-task-details" id="task-regular-${i}">
-            <div class="brief-task-meta">
-              <span>Источник:</span> <span>${escapeHtml(t.source || "System")}</span>
-              <span>Приоритет:</span> <span style="color: var(--accent-cyan);">Обычный</span>
-              <span>Статус:</span> <span>В работе</span>
-            </div>
-          </div>
-        </div>
-      `;
-    });
+    tasks.regular.forEach((task) => { html += renderTaskItem(task, "regular", true); });
+  }
+
+  if (tasks.done && tasks.done.length > 0) {
+    html += `<div style="color: var(--accent-emerald); font-size: 0.75rem; font-weight: bold; margin: 12px 0 4px 4px; letter-spacing: 0.5px;">✅ DONE — ${tasks.done.length}</div>`;
+    tasks.done.forEach((task) => { html += renderTaskItem(task, "done", false); });
   }
 
   if (!html) html = `<p style="color: var(--text-muted); font-size: 0.85rem;">Задач не обнаружено.</p>`;
 
   return html;
 }
+
+function renderTaskItem(task, group, canComplete) {
+  const taskId = escapeHtml(task.id || `${group}-task`);
+  const taskTitle = escapeHtml(task.title);
+  const source = escapeHtml(task.source || "System");
+  const detailId = `task-details-${taskId}`;
+  const isEnglish = currentLanguage === "en";
+  const status = group === "done"
+    ? (isEnglish ? "Done" : "Готово")
+    : group === "urgent"
+      ? (isEnglish ? "Waiting" : "Ожидает")
+      : (isEnglish ? "In progress" : "В работе");
+  const priority = group === "urgent"
+    ? (isEnglish ? "High" : "Высокий")
+    : (isEnglish ? "Normal" : "Обычный");
+  const completed = task.completedAt
+    ? `<span>${isEnglish ? "Completed:" : "Завершена:"}</span> <span>${escapeHtml(formatTashkentTime(task.completedAt, isEnglish))} UZT</span>`
+    : "";
+  const completeButton = canComplete && task.id && window.location.protocol !== "file:"
+    ? `<button class="task-done-btn" type="button" onclick="completeBarrymoreTask('${taskId}', event)">${isEnglish ? "Mark Done" : "Отметить Done"}</button>`
+    : "";
+
+  return `
+    <div class="brief-task-item" onclick="toggleTaskDetails('${detailId}', event)">
+      <div class="brief-task-title">${group === "done" ? "✅ " : ""}${taskTitle}</div>
+      <div class="brief-task-details" id="${detailId}">
+        <div class="brief-task-meta">
+          <span>${isEnglish ? "Source:" : "Источник:"}</span> <span>${source}</span>
+          <span>${isEnglish ? "Priority:" : "Приоритет:"}</span> <span>${priority}</span>
+          <span>${isEnglish ? "Status:" : "Статус:"}</span> <span>${status}</span>
+          ${completed}
+        </div>
+        ${completeButton}
+      </div>
+    </div>
+  `;
+}
+
+function formatTashkentTime(value, isEnglish) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat(isEnglish ? "en-GB" : "ru-RU", {
+    timeZone: "Asia/Tashkent",
+    dateStyle: "short",
+    timeStyle: "short"
+  }).format(date);
+}
+
+async function loadBarrymoreTasks() {
+  try {
+    const previous = JSON.stringify(window.EVO_TASKS || null);
+    const response = await fetch("/api/tasks");
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || `Ошибка сервера (${response.status}).`);
+    window.EVO_TASKS = result.tasks;
+    renderPlaqueContent();
+    if (activeIslandKey === "barrymore") openIslandModal("barrymore");
+    return previous !== JSON.stringify(result.tasks);
+  } catch (error) {
+    console.error("Barrymore task list could not be loaded:", error);
+    return false;
+  }
+}
+
+window.completeBarrymoreTask = async function(taskId, event) {
+  event.stopPropagation();
+  try {
+    const response = await fetch(`/api/tasks/${encodeURIComponent(taskId)}/done`, { method: "POST" });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || `Ошибка сервера (${response.status}).`);
+    window.EVO_TASKS = result.tasks;
+    renderPlaqueContent();
+    if (activeIslandKey === "barrymore") openIslandModal("barrymore");
+    await refreshBarrymoreBrief({ automatic: true });
+  } catch (error) {
+    const status = document.getElementById("barrymore-refresh-status");
+    if (status && activeIslandKey === "barrymore") {
+      status.hidden = false;
+      status.classList.add("is-error");
+      status.textContent = error.message || "Не удалось обновить статус задачи.";
+    } else {
+      console.error("Barrymore task update failed:", error);
+    }
+  }
+};
 
 /**
  * Переключение разделов брифа
@@ -655,11 +804,10 @@ window.toggleBriefSection = function(id) {
  */
 window.toggleTaskDetails = function(id, event) {
   event.stopPropagation();
-  const el = document.getElementById("task-" + id);
+  const el = document.getElementById(id);
+  if (!el) return;
   const parent = el.closest(".brief-task-item");
-  if (el && parent) {
-    parent.classList.toggle("open");
-  }
+  if (parent) parent.classList.toggle("open");
 };
 
 /**
@@ -708,6 +856,11 @@ function updateLanguage() {
   // HUD
   setText("hud-brand-title", lang.estateTitle);
   setText("hud-brand-subtitle", lang.systemSubtitle);
+  const refreshBriefButton = document.getElementById("btn-refresh-barrymore");
+  if (refreshBriefButton && lang.refreshBriefBtn) {
+    refreshBriefButton.setAttribute("aria-label", lang.refreshBriefBtn);
+    refreshBriefButton.title = lang.refreshBriefBtn;
+  }
   setText("hud-platform-alive", lang.platformAlive);
   setText("hud-heartbeat", lang.heartbeat);
   setText("hud-status-quiet", lang.estateStatusQuiet);

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """Barrymore Morning Brief Agent — автономный утренний доклад (ADR-003, read-only).
 
-Читает те же источники истины, что и morning-brief.ps1 (CURRENT.md, Engineering/STATE.md,
-CHANGELOG.md, git), добавляет к ним «мозги»: запрос к локальному LLM-шлюзу FreeLLMAPI
+Читает CURRENT.md, Engineering/STATE.md, CHANGELOG.md, Git и журнал задач Barrymore,
+добавляет к ним «мозги»: запрос к локальному LLM-шлюзу FreeLLMAPI
 (http://localhost:31415/v1) в роли стюарда Баррримора. Результат — тот же
 eVo/dashboard/brief.js с дополнительным полем agent.
 
@@ -18,19 +18,26 @@ eVo/dashboard/brief.js с дополнительным полем agent.
 Запуск: python tools/barrymore/morning-brief-agent.py
 """
 
+import argparse
 import json
+import hashlib
+import os
 import re
 import subprocess
 import sys
 import urllib.error
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+from task_store import dashboard_tasks
 
 ROOT = Path(__file__).resolve().parents[2]
 ENV_PATH = ROOT / "Workspace" / ".env"
 OUT_PATH = ROOT / "eVo" / "dashboard" / "brief.js"
 LLM_TIMEOUT_SEC = 90
+BRIEF_PREFIX = "window.EVO_BRIEF = "
+TASHKENT = timezone(timedelta(hours=5), "Tashkent")
 
 SYSTEM_PROMPT = (
     "Ты — Баррримор, стюард персональной операционной системы Platform eVo. "
@@ -78,6 +85,7 @@ def git(*args: str) -> str:
             ["git", "-C", str(ROOT)] + list(args),
             capture_output=True, text=True, timeout=15,
             encoding="utf-8", errors="replace",
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
         )
         return r.stdout.strip()
     except Exception:
@@ -89,8 +97,19 @@ def collect_sources() -> dict:
     state = read("Memory/Engineering/STATE.md")
     changes = [l for l in read("CHANGELOG.md").splitlines() if re.match(r"^\d{4}-\d{2}-\d{2}", l)]
     dm = re.search(r"(?m)^\s*Date:\s*(.+?)\s*$", current)
+    status_lines = git("status", "--porcelain", "--untracked-files=all").splitlines()
+    runtime_paths = {
+        "eVo/dashboard/brief.js",
+    }
+    dirty_files = 0
+    for line in status_lines:
+        path = line[3:].replace("\\", "/").strip()
+        if path.startswith("Memory/Engineering/Tasks/") or path in runtime_paths:
+            continue
+        dirty_files += 1
+
     return {
-        "generatedAt": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "generatedAt": datetime.now(TASHKENT).strftime("%Y-%m-%d %H:%M"),
         "sources": [
             "Memory/Context/CURRENT.md",
             "Memory/Engineering/STATE.md",
@@ -103,12 +122,32 @@ def collect_sources() -> dict:
         },
         "state": {"nextStep": section(state, "Следующий шаг")},
         "changes": changes[-5:],
+        "tasks": dashboard_tasks(archive_expired=False),
         "git": {
             "branch": git("branch", "--show-current"),
             "lastCommit": git("log", "-1", "--pretty=format:%h %s"),
-            "dirtyFiles": len([l for l in git("status", "--porcelain").splitlines() if l.strip()]),
+            "dirtyFiles": dirty_files,
         },
     }
+
+
+def source_fingerprint(brief: dict) -> str:
+    source_data = {key: value for key, value in brief.items() if key != "generatedAt"}
+    serialized = json.dumps(source_data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def read_cached_brief() -> dict | None:
+    if not OUT_PATH.exists():
+        return None
+    content = OUT_PATH.read_text(encoding="utf-8")
+    if not content.startswith(BRIEF_PREFIX) or not content.rstrip().endswith(";"):
+        return None
+    try:
+        cached = json.loads(content[len(BRIEF_PREFIX):].rstrip()[:-1])
+    except json.JSONDecodeError:
+        return None
+    return cached if isinstance(cached, dict) else None
 
 
 def ask_brain(brief: dict, env: dict) -> dict:
@@ -171,8 +210,16 @@ def ask_brain(brief: dict, env: dict) -> dict:
     return {"model": model, "summary": cleaned, "nextStep": ""}
 
 
-def main() -> int:
+def main(retry_llm_error: bool = False) -> int:
     brief = collect_sources()
+    fingerprint = source_fingerprint(brief)
+    cached = read_cached_brief()
+    if cached and cached.get("_sourceFingerprint") == fingerprint:
+        previous_agent = cached.get("agent") or {}
+        if not (retry_llm_error and previous_agent.get("error")):
+            print("[Barrymore] Источники не изменились; существующий доклад актуален.")
+            return 0
+
     env = load_env(ENV_PATH)
     try:
         brief["agent"] = ask_brain(brief, env)
@@ -182,8 +229,9 @@ def main() -> int:
         brief["agent"] = {"error": str(e)}
         print("[Barrymore] LLM недоступен (%s); записан детерминированный снимок" % e)
 
+    brief["_sourceFingerprint"] = fingerprint
     OUT_PATH.write_text(
-        "window.EVO_BRIEF = " + json.dumps(brief, ensure_ascii=False, indent=2) + ";",
+        BRIEF_PREFIX + json.dumps(brief, ensure_ascii=False, indent=2) + ";",
         encoding="utf-8",
     )
     print("[Barrymore] Morning Brief written: %s (%s)" % (OUT_PATH, brief["generatedAt"]))
@@ -191,4 +239,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--retry-llm-error", action="store_true")
+    sys.exit(main(retry_llm_error=parser.parse_args().retry_llm_error))

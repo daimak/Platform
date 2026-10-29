@@ -1,0 +1,15 @@
+{
+  "id": "update-current-context",
+  "title": "Актуализация Memory/Context/CURRENT.md",
+  "source": "R3",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-10-29T04:26:16Z",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-10-29T04:26:16Z",
+      "note": "Перенесено из текущего списка задач дашборда."
+    }
+  ]
+}

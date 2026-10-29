@@ -1,0 +1,15 @@
+{
+  "runs": [
+    {
+      "date": "2026-10-29T03:49:35.087592+00:00",
+      "input_tokens": null,
+      "output_tokens": null,
+      "files": 150,
+      "usage_status": "unavailable",
+      "usage_note": "Agent usage counters were not provided; null means unknown, not zero."
+    }
+  ],
+  "total_input_tokens": null,
+  "total_output_tokens": null,
+  "usage_status": "incomplete"
+}
