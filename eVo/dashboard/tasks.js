@@ -6,12 +6,12 @@
 window.EVO_TASKS = {
   generatedAt: "2026-10-25T12:00:00",
   urgent: [
-    { title: "Ротация ключей LangSmith/FreeLLMAPI", source: "S-1" },
-    { title: "Мастер-пароль KeePassXC + бэкап хранилища", source: "S-4" }
+    { id: "rotate-langsmith-freellmapi", title: "Ротация ключей LangSmith/FreeLLMAPI", source: "S-1" },
+    { id: "keepass-master-password-backup", title: "Мастер-пароль KeePassXC + бэкап хранилища", source: "S-4" }
   ],
   regular: [
-    { title: "Актуализация Memory/Context/CURRENT.md", source: "R3" },
-    { title: "Слияние веток по D-002", source: "R9" },
-    { title: "Чистка пустых заглушек (locales, Carrier, Timeline)", source: "R7" }
+    { id: "update-current-context", title: "Актуализация Memory/Context/CURRENT.md", source: "R3" },
+    { id: "merge-branches-d002", title: "Слияние веток по D-002", source: "R9" },
+    { id: "clean-empty-stubs", title: "Чистка пустых заглушек (locales, Carrier, Timeline)", source: "R7" }
   ]
 };

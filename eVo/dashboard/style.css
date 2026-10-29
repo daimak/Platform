@@ -525,6 +525,77 @@ body {
   color: #fca5a5;
 }
 
+.modal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.modal-toolbar-status {
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--accent-teal);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal-toolbar-status.is-error {
+  color: #fca5a5;
+}
+
+.modal-refresh-btn {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  color: var(--accent-teal);
+  background: rgba(45, 212, 191, 0.08);
+  border: 1px solid rgba(45, 212, 191, 0.24);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.modal-refresh-btn:hover:not(:disabled) {
+  color: #ccfbf1;
+  background: rgba(45, 212, 191, 0.18);
+  border-color: rgba(45, 212, 191, 0.5);
+}
+
+.modal-refresh-btn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.modal-refresh-btn[hidden],
+.modal-toolbar-status[hidden] {
+  display: none;
+}
+
+.modal-refresh-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.modal-refresh-btn.is-refreshing svg {
+  animation: refreshSpin 0.9s linear infinite;
+}
+
+@keyframes refreshSpin {
+  to { transform: rotate(360deg); }
+}
+
 .modal-body {
   padding: 28px;
   overflow-y: auto;
@@ -704,6 +775,26 @@ body {
 
 .brief-task-meta span:first-child {
   color: var(--text-muted);
+}
+
+.task-done-btn {
+  margin-top: 10px;
+  padding: 6px 10px;
+  color: #ccfbf1;
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+.task-done-btn:hover {
+  background: rgba(45, 212, 191, 0.22);
+}
+
+.task-done-btn:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 /* Список задач в окне рычагов */

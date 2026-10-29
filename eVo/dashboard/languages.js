@@ -15,6 +15,7 @@ const LANG = {
     attentionQueueLabel: "Ожидают внимания: 2",
     clickToOpenConsole: "Нажмите, чтобы открыть консоль острова",
     closeBtnText: "✕ Закрыть окно",
+    refreshBriefBtn: "Обновить утренний доклад",
     backToMapBtn: "← Вернуться к карте островов",
 
     // Стюард Бэрримор
@@ -160,6 +161,7 @@ const LANG = {
     attentionQueueLabel: "Awaiting attention: 2",
     clickToOpenConsole: "Click to open island console",
     closeBtnText: "✕ Close Window",
+    refreshBriefBtn: "Refresh Morning Brief",
     backToMapBtn: "← Return to Islands Map",
 
     // Steward Barrymore

@@ -204,7 +204,15 @@
             <p id="modal-island-subtitle">Главная усадьба • Управление и принятие решений</p>
           </div>
         </div>
-        <button class="modal-close-btn" id="btn-close-island-modal">✕ Закрыть</button>
+        <div class="modal-toolbar">
+          <span class="modal-toolbar-status" id="barrymore-refresh-status" role="status" aria-live="polite" hidden></span>
+          <button class="modal-refresh-btn" id="btn-refresh-barrymore" type="button" aria-label="Обновить утренний доклад" title="Обновить утренний доклад" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 7v5h-5M4.93 9A8 8 0 0 1 19.07 7L20 12M4 17v-5h5m10.07 3A8 8 0 0 1 4.93 17L4 12"></path>
+            </svg>
+          </button>
+          <button class="modal-close-btn" id="btn-close-island-modal">✕ Закрыть</button>
+        </div>
       </div>
 
       <!-- Содержимое окна (динамически подставляется в зависимости от острова) -->

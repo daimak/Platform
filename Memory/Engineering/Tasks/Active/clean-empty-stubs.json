@@ -1,0 +1,15 @@
+{
+  "id": "clean-empty-stubs",
+  "title": "Чистка пустых заглушек (locales, Carrier, Timeline)",
+  "source": "R7",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-10-29T04:26:16Z",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-10-29T04:26:16Z",
+      "note": "Перенесено из текущего списка задач дашборда."
+    }
+  ]
+}
