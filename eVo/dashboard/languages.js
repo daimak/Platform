@@ -155,7 +155,9 @@ const LANG = {
         status: "● Лента обновляется скриптом tools/job_search.py",
         nextStep: "Лента пуста. Запусти: python tools/job_search.py --js ../eVo/dashboard/vacancies.js",
         vacUpdated: "Лента обновлена:",
-        vacPositions: "позиций"
+        vacPositions: "позиций",
+        vacanciesTab: "Вакансии",
+        ordersTab: "Заказы"
       },
       knowledgeArchive: {
         title: "KNOWLEDGE ARCHIVE",
@@ -384,7 +386,9 @@ const LANG = {
         status: "● The feed is refreshed by tools/job_search.py",
         nextStep: "The feed is empty. Run: python tools/job_search.py --js ../eVo/dashboard/vacancies.js",
         vacUpdated: "Feed updated:",
-        vacPositions: "positions"
+        vacPositions: "positions",
+        vacanciesTab: "Vacancies",
+        ordersTab: "Gig platforms"
       },
       knowledgeArchive: {
         title: "KNOWLEDGE ARCHIVE",

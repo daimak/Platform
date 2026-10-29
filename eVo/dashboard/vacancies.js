@@ -1,7 +1,7 @@
 /* Автогенерация tools/job_search.py --js. Не править руками. */
 const EVO_VACANCIES = {
-  "generatedAt": "2026-10-29 18:48 UTC",
-  "total": 213,
+  "generatedAt": "2026-10-29 20:13 UTC",
+  "total": 63,
   "jobs": [
     {
       "source": "Remotive",
@@ -603,5 +603,39 @@ const EVO_VACANCIES = {
       "url": "https://remotive.com/remote-jobs/software-development/senior-back-end-engineer-2091132",
       "snippet": "Senior back-end Engineer | tags: .Net, android, C, C#, C++, data science, golang, ios"
     }
-  ]
+  ],
+  "freelance": {
+    "flru": [
+      {
+        "source": "FL.ru",
+        "title": "Наркутка голосов на учебном сайте",
+        "company": "fl.ru",
+        "location": "",
+        "salary": "по договоренности",
+        "date": "",
+        "url": "https://www.fl.ru/projects/5527332/narkutka-golosov-na-uchebnom-sayte.html",
+        "snippet": ""
+      },
+      {
+        "source": "FL.ru",
+        "title": "Нужно сделать гайд по использованию сайта",
+        "company": "fl.ru",
+        "location": "",
+        "salary": "3 000 ₽",
+        "date": "",
+        "url": "https://www.fl.ru/projects/5527327/nujno-sdelat-gayd-po-ispolzovaniyu-sayta.html",
+        "snippet": ""
+      },
+      {
+        "source": "FL.ru",
+        "title": "Управление репутацией сайта",
+        "company": "fl.ru",
+        "location": "",
+        "salary": "20 000 ₽",
+        "date": "",
+        "url": "https://www.fl.ru/projects/5527298/upravlenie-reputatsiey-sayta.html",
+        "snippet": ""
+      }
+    ]
+  }
 };
