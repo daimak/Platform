@@ -216,6 +216,9 @@ function openIslandModal(islandKey) {
     initAiSandboxControls();
     initSecurityContourControls();
   }
+  if (islandKey === "tradingQuarter") {
+    initTradingQuarterGroups();
+  }
 
   // Генерация кнопок действий в футере
   if (actionsEl) {
@@ -698,6 +701,125 @@ function closeWorkspaceModal() {
 }
 
 /**
+ * Свёрнутость групп источников ленты вакансий (persist в localStorage,
+ * по образцу evo_brief_seen). По умолчанию все группы свёрнуты.
+ */
+const VAC_EXPANDED_KEY = "evo_vacancies_expanded";
+
+function getVacExpandedSources() {
+  try {
+    const v = JSON.parse(localStorage.getItem(VAC_EXPANDED_KEY));
+    return Array.isArray(v) ? v : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function setVacSourceExpanded(source, expanded) {
+  const cur = getVacExpandedSources().filter((s) => s !== source);
+  if (expanded) cur.push(source);
+  try {
+    localStorage.setItem(VAC_EXPANDED_KEY, JSON.stringify(cur));
+  } catch (e) { /* нет доступа к localStorage — просто не персистим */ }
+}
+
+function initTradingQuarterGroups() {
+  document.querySelectorAll("#modal-island-content .vac-group-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const group = btn.closest(".vac-group");
+      const items = group ? group.querySelector(".vac-group-items") : null;
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!expanded));
+      const chevron = btn.querySelector(".vac-group-chevron");
+      if (chevron) chevron.textContent = expanded ? "▸" : "▾";
+      if (items) items.hidden = expanded;
+      const src = btn.getAttribute("data-source");
+      if (src) setVacSourceExpanded(src, !expanded);
+    });
+  });
+}
+
+/**
+ * Рынок вакансий и заказов (Trading Quarter).
+ * Данные приходят из vacancies.js (EVO_VACANCIES), который генерирует
+ * tools/job_search.py --js. Пустая лента — подсказка, как её обновить.
+ */
+function buildTradingQuarterHTML(data) {
+  const vac = (typeof EVO_VACANCIES !== "undefined") ? EVO_VACANCIES : null;
+  const header = `
+    <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
+      <div class="panel-label">${data.badge || "TRADE DISTRICT"}</div>
+      <h4 style="color: var(--accent-amber); font-family: var(--font-display);">${data.title || "TRADING QUARTER"}</h4>
+      <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 12px 0;">
+        ${data.shortDesc || ""}
+      </p>
+      <div class="status-badge-row" style="color: var(--text-muted);">
+        <span>${data.status || ""}</span>
+      </div>
+    </div>
+  `;
+  if (!vac || !Array.isArray(vac.jobs) || vac.jobs.length === 0) {
+    return header + `
+      <div class="glass-panel">
+        <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.5;">
+          ${data.nextStep || "Лента пуста."}
+        </p>
+      </div>
+    `;
+  }
+
+  const groups = {};
+  vac.jobs.forEach((job) => {
+    const src = job.source || "unknown";
+    (groups[src] = groups[src] || []).push(job);
+  });
+
+  const isEn = currentLanguage === "en";
+  const updatedLine = `
+    <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin: 2px 0 10px;">
+      ${data.vacUpdated || "Лента обновлена:"} ${escapeHtml(vac.generatedAt || "")}
+    </div>
+  `;
+  let body = "";
+  const vacExpandedSources = getVacExpandedSources();
+  for (const [src, jobs] of Object.entries(groups)) {
+    const items = jobs.map((job) => {
+      const meta = [job.company, job.location, job.salary]
+        .filter(Boolean).map(escapeHtml).join(" · ");
+      const date = job.date ? escapeHtml(String(job.date).slice(0, 16).replace("T", " ")) : "";
+      const snippet = job.snippet ? escapeHtml(String(job.snippet).slice(0, 200)) : "";
+      return `
+        <div class="brief-task-item" style="cursor: default;">
+          <a href="${escapeHtml(job.url || "#")}" target="_blank" rel="noopener noreferrer"
+             style="color: #5eead4; text-decoration: none;">
+            <div class="brief-task-title">${escapeHtml(job.title || "")}</div>
+          </a>
+          <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+            ${meta}${date ? " · " + date : ""}
+          </div>
+          ${snippet ? `<div style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.45; margin-top: 4px;">${snippet}</div>` : ""}
+        </div>
+      `;
+    }).join("");
+    const isGroupExpanded = vacExpandedSources.indexOf(src) !== -1;
+    body += `
+      <div class="glass-panel vac-group">
+        <button type="button" class="vac-group-toggle" data-source="${escapeHtml(src)}"
+                aria-expanded="${isGroupExpanded}" title="${escapeHtml(src)}"
+                style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 0; background: none; border: none; cursor: pointer; text-align: left; color: inherit; font: inherit;">
+          <span class="vac-group-chevron" aria-hidden="true" style="font-family: var(--font-mono); color: var(--accent-amber); flex-shrink: 0;">${isGroupExpanded ? "▾" : "▸"}</span>
+          <span class="panel-label">${escapeHtml(src)} · ${jobs.length} ${data.vacPositions || (isEn ? "positions" : "позиций")}</span>
+        </button>
+        <div class="vac-group-items" ${isGroupExpanded ? "" : "hidden"}>
+          ${items}
+        </div>
+      </div>
+    `;
+  }
+  return header + updatedLine + body;
+}
+
+/**
  * Генерация HTML-разметки для полупрозрачного окна конкретного острова
  */
 function buildIslandContentHTML(islandKey, data, lang) {
@@ -952,21 +1074,7 @@ function buildIslandContentHTML(islandKey, data, lang) {
       `;
 
     case "tradingQuarter":
-      return `
-        <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
-          <div class="panel-label">${data.badge || "TRADE DISTRICT"}</div>
-          <h4 style="color: var(--accent-amber); font-family: var(--font-display);">${data.title || "TRADING QUARTER"}</h4>
-          <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 12px 0;">
-            ${data.shortDesc || ""}
-          </p>
-          <div class="status-badge-row" style="color: var(--text-muted);">
-            <span>${data.status || ""}</span>
-          </div>
-          <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.5; margin-top: 12px;">
-            ${data.nextStep || ""}
-          </p>
-        </div>
-      `;
+      return buildTradingQuarterHTML(data);
 
     case "maelstormAtlas":
     case "lifeTreeSanctuary":

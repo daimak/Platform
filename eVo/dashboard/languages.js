@@ -149,11 +149,13 @@ const LANG = {
       },
       tradingQuarter: {
         title: "TRADING QUARTER",
-        subtitle: "Торговый квартал • Остров ждёт своего назначения",
-        shortDesc: "Отмеченный на карте торговый квартал Estate. Конкретные функции и правила пока не определены.",
-        badge: "TRADE DISTRICT",
-        status: "Функционал ещё предстоит определить.",
-        nextStep: "Здесь можно будет описать назначение квартала и правила торговли, когда вы решите, что именно ему поручить."
+        subtitle: "Торговый квартал • Рынок вакансий и заказов",
+        shortDesc: "Рынок труда Estate: свежие вакансии и фриланс-заказы прибывают сюда кораблями из внешних архипелагов. Ленту собирает tools/job_search.py.",
+        badge: "JOB MARKET",
+        status: "● Лента обновляется скриптом tools/job_search.py",
+        nextStep: "Лента пуста. Запусти: python tools/job_search.py --js ../eVo/dashboard/vacancies.js",
+        vacUpdated: "Лента обновлена:",
+        vacPositions: "позиций"
       },
       knowledgeArchive: {
         title: "KNOWLEDGE ARCHIVE",
@@ -376,11 +378,13 @@ const LANG = {
       },
       tradingQuarter: {
         title: "TRADING QUARTER",
-        subtitle: "Trading Quarter • An island awaiting its purpose",
-        shortDesc: "The marked marketplace island in Estate. Its specific functions and rules have not been defined yet.",
-        badge: "TRADE DISTRICT",
-        status: "Functionality is yet to be defined.",
-        nextStep: "Its purpose and trading rules can be added when you decide what role it should serve."
+        subtitle: "Trading Quarter • Job & Gig Market",
+        shortDesc: "The Estate labor market: fresh vacancies and freelance gigs arrive here by ships from the outer archipelagos. The feed is collected by tools/job_search.py.",
+        badge: "JOB MARKET",
+        status: "● The feed is refreshed by tools/job_search.py",
+        nextStep: "The feed is empty. Run: python tools/job_search.py --js ../eVo/dashboard/vacancies.js",
+        vacUpdated: "Feed updated:",
+        vacPositions: "positions"
       },
       knowledgeArchive: {
         title: "KNOWLEDGE ARCHIVE",
