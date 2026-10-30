@@ -1,8 +1,18 @@
 /* Автогенерация tools/job_search.py --js. Не править руками. */
 const EVO_VACANCIES = {
-  "generatedAt": "2026-10-29 20:13 UTC",
-  "total": 63,
+  "generatedAt": "2026-10-30 16:03 UTC",
+  "total": 64,
   "jobs": [
+    {
+      "source": "RemoteOK",
+      "title": "Cloud Engineer Automation",
+      "company": "Smile Digital Health",
+      "location": "Toronto, Ontario",
+      "salary": "",
+      "date": "2026-10-29T16:00:03+00:00",
+      "url": "https://remoteOK.com/remote-jobs/remote-cloud-engineer-automation-smile-digital-health-1137600",
+      "snippet": "tags: design, grafana, infosec, python, customer support, marketing, dev, quality assurance"
+    },
     {
       "source": "Remotive",
       "title": "Senior Back-end Developer",
@@ -466,16 +476,6 @@ const EVO_VACANCIES = {
     {
       "source": "HN (Ask HN: Who is hiring? (October 2026))",
       "title": "Ask HN: Who is hiring? (October 2026)",
-      "company": "snowghostx",
-      "location": "remote/HN",
-      "salary": "",
-      "date": "2026-10-02T02:45:47Z",
-      "url": "https://news.ycombinator.com/item?id=49929368",
-      "snippet": "Ambito (ambito.io) — Founding AI Engineer / Equity Partner — Remote but Boston based only Ambito is a CRM-connected QBR generator for B2B sales teams. The product is live, with the sales module, template engine, and CRM "
-    },
-    {
-      "source": "HN (Ask HN: Who is hiring? (October 2026))",
-      "title": "Ask HN: Who is hiring? (October 2026)",
       "company": "StellarScience",
       "location": "remote/HN",
       "salary": "",
@@ -608,32 +608,42 @@ const EVO_VACANCIES = {
     "flru": [
       {
         "source": "FL.ru",
-        "title": "Наркутка голосов на учебном сайте",
+        "title": "1С:Бух Корп – разработать отчет – ОСВ в разрезе договоров и контрагентов по счету 10.7 с оборотами",
         "company": "fl.ru",
         "location": "",
         "salary": "по договоренности",
         "date": "",
-        "url": "https://www.fl.ru/projects/5527332/narkutka-golosov-na-uchebnom-sayte.html",
+        "url": "https://www.fl.ru/projects/5527439/1sbuh-korp---razrabotat-otchet---osv-v-razreze-dogovorov-i-kontragentov-po-schetu-107-s-oborotami.html",
         "snippet": ""
       },
       {
         "source": "FL.ru",
-        "title": "Нужно сделать гайд по использованию сайта",
+        "title": "Привлечь пользователей в Telegram-бот интернет-сервиса",
         "company": "fl.ru",
         "location": "",
-        "salary": "3 000 ₽",
+        "salary": "по договоренности",
         "date": "",
-        "url": "https://www.fl.ru/projects/5527327/nujno-sdelat-gayd-po-ispolzovaniyu-sayta.html",
+        "url": "https://www.fl.ru/projects/5527438/privlech-polzovateley-v-telegram-bot-internet-servisa.html",
         "snippet": ""
       },
       {
         "source": "FL.ru",
-        "title": "Управление репутацией сайта",
+        "title": "Сайт",
         "company": "fl.ru",
         "location": "",
-        "salary": "20 000 ₽",
+        "salary": "3 500 ₽",
         "date": "",
-        "url": "https://www.fl.ru/projects/5527298/upravlenie-reputatsiey-sayta.html",
+        "url": "https://www.fl.ru/projects/5527427/sayt-.html",
+        "snippet": ""
+      },
+      {
+        "source": "FL.ru",
+        "title": "создать сайт на 3 города или три сайта по строительству ангаров,изготовление и монтаж металлоконст",
+        "company": "fl.ru",
+        "location": "",
+        "salary": "50 000 ₽",
+        "date": "",
+        "url": "https://www.fl.ru/projects/5527420/sozdat-sayt-na-3-goroda-ili-tri-sayta-po-stroitelstvu-angarovizgotovlenie-i-montaj-metallokonst.html",
         "snippet": ""
       }
     ]
