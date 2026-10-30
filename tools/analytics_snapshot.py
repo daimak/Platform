@@ -118,13 +118,13 @@ def build_tokens(d: Path) -> dict:
     text = TOKEN_LOG.read_text(encoding="utf-8-sig")
     rows = []
     for m in re.finditer(r"### Ответ (\d+)\n- \*\*Дата и время\*\*: (.+?)\n- \*\*Расход токенов\*\*: (\d+)\n- \*\*Контекст\*\*: (.+)", text):
-        rows.append(["codex-tui", f"ответ {m.group(1)}", m.group(2), "", m.group(3), "", "", m.group(4)])
+        rows.append(["codex-tui", f"ответ {m.group(1)}", m.group(2), "", "", m.group(3), "", m.group(4)])
     for m in re.finditer(r"#### Запрос: (.+?)\n- \*\*Модель\*\*: (.+?)\n- \*\*Входной контекст \(Prompt\)\*\*: (.+?)\n- \*\*Выходные токены \(Completion\)\*\*: (.+?)\n- \*\*Время ответа\*\*: (\d+)", text):
-        rows.append(["freellm-api", m.group(1), "", m.group(2), parse_k(m.group(3)),
+        rows.append(["freellm-api", "", m.group(1), m.group(2), parse_k(m.group(3)),
                      re.search(r"\d+", m.group(4)).group(0), m.group(5) + " мс", ""])
     with open(d / "token_usage.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
-        w.writerow(["kind", "time", "model", "prompt_tokens", "completion_tokens", "latency_ms", "context"])
+        w.writerow(["kind", "item", "time", "model", "prompt_tokens", "completion_tokens", "latency_ms", "context"])
         for r in rows:
             w.writerow(r)
     return {"codex_answers": sum(1 for r in rows if r[0] == "codex-tui"),
