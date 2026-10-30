@@ -1,0 +1,16 @@
+{
+  "id": "holmes-uncommitted-edits",
+  "title": "Холмс: незакоммиченные правки в рабочем дереве",
+  "source": "Holmes",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-10-29T19:34:08Z",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-10-29T19:34:08Z",
+      "by": "Holmes",
+      "note": "Незакоммиченные правки: tools/agents/registry.json, tools/agents/run_agent.py"
+    }
+  ]
+}

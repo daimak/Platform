@@ -1,0 +1,16 @@
+{
+  "id": "holmes-untracked-files",
+  "title": "Холмс: разобрать untracked-файлы (коммит или .gitignore)",
+  "source": "Holmes",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-10-29T19:34:08Z",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-10-29T19:34:08Z",
+      "by": "Holmes",
+      "note": "Untracked-файлов: 13: Workspace/analytics/2026-10-29/report.md, Workspace/analytics/2026-10-29/salary_extract_cache.json, Workspace/analytics/2026-10-29/salary_extracted.csv, tools/analytics_report.py"
+    }
+  ]
+}

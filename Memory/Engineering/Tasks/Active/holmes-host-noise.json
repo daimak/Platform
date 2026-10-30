@@ -1,0 +1,16 @@
+{
+  "id": "holmes-host-noise",
+  "title": "Холмс: шум авто-коммитов агент-хоста в истории",
+  "source": "Holmes",
+  "priority": "urgent",
+  "status": "active",
+  "createdAt": "2026-10-29T19:34:08Z",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-10-29T19:34:08Z",
+      "by": "Holmes",
+      "note": "Шум истории: 104 авто-коммитов агент-хоста из 134 за 7 дней (77%)."
+    }
+  ]
+}
