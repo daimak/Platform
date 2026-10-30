@@ -1,17 +1,10 @@
-## graphify
+# Инструкции для GitHub Copilot — Platform Evo
 
-For any question about this repo's architecture, structure, components, or how to add/modify/find
-code, your first action should be `graphify query "<question>"` when `graphify-out/graph.json`
-exists. Use `graphify path "<A>" "<B>"` for relationship questions and `graphify explain "<concept>"`
-for focused-concept questions. These return a scoped subgraph, usually much smaller than the full
-report or raw grep output.
+Персональная система управления эволюцией на обычных файлах (markdown + статический UI); версия — в `VERSION` (1.8.4). Бэкенда, API и базы данных нет.
 
-Triggers: "how do I…", "where is…", "what does … do", "add/modify a <component>",
-"explain the architecture", or anything that depends on how files or classes relate.
-
-If `graphify-out/wiki/index.md` exists, use it for broad navigation. Read `graphify-out/GRAPH_REPORT.md`
-only for broad architecture review or when query/path/explain do not surface enough context. Only read
-source files when (a) modifying/debugging specific code, (b) the graph lacks the needed detail, or
-(c) the graph is missing or stale.
-
-Type `/graphify` in Copilot Chat to build or update the graph.
+- Навигация: сначала `Docs/Map.md` (фактическая карта репозитория), затем `Memory/Context/CURRENT.md` (текущий фокус); точка входа — `README.md`.
+- Для вопросов об архитектуре и связях файлов используй Graphify: `graphify query "<вопрос>"`, когда существует `graphify-out/graph.json`; каталоги `graphify-out/` (в корне и в `eVo/`) — сгенерированный кэш, не исходники, вручную не править.
+- Рабочий код — только `eVo/dashboard/` (статические HTML/CSS/JS, карта Estate). Каталога `Interface/` больше нет; markdown-роли агентов — документы, а не исполняемый runtime.
+- Архитектурные решения — в `Core/Architecture/ADR/` (индекс: `INDEX.md`); предложения об изменениях оформляются через процесс `RFC/`.
+- Не запускать `eVo/scripts/bootstrap.ps1` без явной задачи (создаёт файлы); новые точки входа в корень не добавлять — для них есть `Docs/` и `Notes/`.
+- Все текстовые файлы — только в UTF-8 (ADR-001); документация и комментарии — на русском языке.
