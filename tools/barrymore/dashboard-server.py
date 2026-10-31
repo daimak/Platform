@@ -8,6 +8,7 @@ import re
 import socket
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from datetime import datetime, timedelta, timezone
@@ -29,6 +30,7 @@ TASK_LOCK = threading.Lock()
 HUNTER_LOCK = threading.Lock()
 USAGE_LOCK = threading.Lock()
 SECURITY_LOCK = threading.Lock()
+REPORTS_LOCK = threading.Lock()
 LOG_DIR = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "Barrymore"
 TASHKENT = timezone(timedelta(hours=5), "Tashkent")
 
@@ -89,6 +91,95 @@ def run_brief(retry_llm_error: bool = False) -> dict:
     if not generated.startswith(prefix) or not generated.rstrip().endswith(";"):
         raise RuntimeError("Генератор записал brief.js в неожиданном формате.")
     return json.loads(generated[len(prefix):].rstrip()[:-1])
+
+
+# Находки Холмса со стабильными ID — заголовки задач лиджера.
+FINDING_TITLES = {
+    "host-noise": "Холмс: шум авто-коммитов агент-хоста в истории",
+    "untracked-files": "Холмс: разобрать untracked-файлы (коммит или .gitignore)",
+    "uncommitted-edits": "Холмс: незакоммиченные правки в рабочем дереве",
+    "journal-stale": "Холмс: журнал LOG.md давно не обновлялся",
+    "branch-drift": "Холмс: рабочая ветка разошлась с upstream",
+    "main-behind": "Холмс: локальный main позади origin/main",
+}
+
+
+def _atomic_write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=path.parent,
+            prefix=f".{path.stem}.", suffix=".tmp", delete=False,
+        ) as temporary:
+            tmp_path = Path(temporary.name)
+            json.dump(payload, temporary, ensure_ascii=False, indent=2)
+            temporary.write("\n")
+        os.replace(tmp_path, path)
+    finally:
+        if tmp_path and tmp_path.exists():
+            tmp_path.unlink()
+
+
+def holmes_ensure_task(finding_id: str, severity: str, detail: str) -> str:
+    """Create-if-missing задача holmes-<id>: инициатива Холмса, санкционированная
+    Sovereign через дашборд. Существующие задачи не изменяет (ADR-003)."""
+    base_id = f"holmes-{finding_id}"
+    if not TASK_ID_PATTERN.fullmatch(base_id):
+        return "invalid-id"
+    active_dir = ROOT / "Memory" / "Engineering" / "Tasks" / "Active"
+    archive_dir = ROOT / "Memory" / "Engineering" / "Tasks" / "Archive"
+    if (active_dir / f"{base_id}.json").exists():
+        return "exists"
+    task_id = None
+    for candidate in [base_id] + [f"{base_id}-{n}" for n in range(2, 10)]:
+        if archive_dir.exists() and any(archive_dir.rglob(f"{candidate}.json")):
+            continue
+        task_id = candidate
+        break
+    if task_id is None:
+        return "no-free-id"
+    created = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    note = f"{detail[:180]} — санкция Sovereign через дашборд." if detail else "Санкция Sovereign через дашборд."
+    task = {
+        "id": task_id,
+        "title": FINDING_TITLES.get(finding_id, f"Холмс: находка {finding_id}"),
+        "source": "Holmes",
+        "priority": "urgent" if severity == "P1" else "regular",
+        "status": "active",
+        "createdAt": created,
+        "history": [{"status": "active", "at": created, "by": "Sovereign", "note": note}],
+    }
+    _atomic_write_json(active_dir / f"{task_id}.json", task)
+    return f"created:{task_id}"
+
+
+def holmes_reports(file: str | None = None) -> dict:
+    """Read-only отчёты аудита Холмса для острова holmes.html."""
+    reports_dir = ROOT / "Memory" / "Engineering" / "Reports"
+    if file is not None:
+        if not re.fullmatch(r"Report-\d{4}-\d{2}-\d{2}-holmes-audit\.md", file):
+            raise ValueError("Недопустимое имя отчёта.")
+        path = reports_dir / file
+        if not path.is_file():
+            raise FileNotFoundError(f"Отчёт не найден: {file}")
+        return {"file": file, "content": path.read_text(encoding="utf-8-sig", errors="replace")[:200_000]}
+    files = sorted(reports_dir.glob("Report-*-holmes-audit.md"), reverse=True)
+    reports = []
+    for path in files:
+        stat = path.stat()
+        reports.append({
+            "file": path.name,
+            "modified": datetime.fromtimestamp(stat.st_mtime, TASHKENT).strftime("%Y-%m-%d %H:%M"),
+            "size": stat.st_size,
+        })
+    latest = None
+    if files:
+        latest = {
+            "file": files[0].name,
+            "content": files[0].read_text(encoding="utf-8-sig", errors="replace")[:200_000],
+        }
+    return {"reports": reports, "latest": latest}
 
 
 class DashboardHandler(SimpleHTTPRequestHandler):
@@ -178,6 +269,17 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 logging.exception("Security contour status failed")
                 self._send_json(500, {"error": f"Не удалось получить состояние контура: {error}"})
             return
+        if request_path == "/api/holmes/reports":
+            try:
+                query = urlsplit(self.path).query
+                requested = re.fullmatch(r"file=([^&]+)", query)
+                with REPORTS_LOCK:
+                    payload = holmes_reports(requested.group(1) if requested else None)
+                self._send_json(200, payload)
+            except (OSError, ValueError) as error:
+                logging.exception("Holmes reports read failed")
+                self._send_json(404, {"error": f"Не удалось прочитать отчёты Холмса: {error}"})
+            return
         super().do_GET()
 
     def _read_json_body(self) -> dict:
@@ -229,12 +331,13 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         hunter_tasks_route = "/api/hunter/tasks"
         security_route = "/api/security/check"
         security_targets_route = "/api/security/targets"
+        holmes_implement_route = "/api/holmes/implement"
         body_routes = {"/api/ai-usage/snapshots", "/api/ai-usage/settings"}
         bodyless_routes = {
             "/api/refresh-brief",
             "/api/ai-usage/ask-barrymore",
         }
-        if request_path not in body_routes | bodyless_routes and not task_done and request_path not in (hunter_tasks_route, security_route, security_targets_route):
+        if request_path not in body_routes | bodyless_routes and not task_done and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route):
             self._send_json(404, {"error": "Неизвестный локальный endpoint."})
             return
 
@@ -271,6 +374,48 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                         self._send_json(200, {"settings": settings})
             except (OSError, ValueError, json.JSONDecodeError) as error:
                 self._send_json(400 if isinstance(error, ValueError) else 500, {"error": str(error)})
+            return
+
+        if request_path == holmes_implement_route:
+            try:
+                payload = self._read_json_body()
+            except ValueError as error:
+                self._send_json(400, {"error": str(error)})
+                return
+            file_name = payload.get("file")
+            items = payload.get("items")
+            if not isinstance(file_name, str) or not re.fullmatch(
+                r"Report-\d{4}-\d{2}-\d{2}-holmes-audit\.md", file_name
+            ):
+                self._send_json(400, {"error": "Некорректное имя отчёта."})
+                return
+            if not isinstance(items, list) or not items or len(items) > 20:
+                self._send_json(400, {"error": "Список инициатив пуст или слишком велик."})
+                return
+            results = {"created": [], "existing": [], "errors": []}
+            try:
+                with TASK_LOCK:
+                    for item in items[:20]:
+                        if not isinstance(item, dict):
+                            results["errors"].append("bad-item")
+                            continue
+                        fid = str(item.get("id", ""))
+                        severity = str(item.get("severity", "P2"))
+                        detail = str(item.get("detail", ""))[:300]
+                        if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,55}", fid):
+                            results["errors"].append(fid or "bad-id")
+                            continue
+                        outcome = holmes_ensure_task(fid, severity, detail)
+                        if outcome.startswith("created:"):
+                            results["created"].append(outcome.split(":", 1)[1])
+                        elif outcome == "exists":
+                            results["existing"].append(f"holmes-{fid}")
+                        else:
+                            results["errors"].append(f"{fid}:{outcome}")
+                self._send_json(200, results)
+            except OSError as error:
+                logging.exception("Holmes implement failed")
+                self._send_json(500, {"error": f"Не удалось создать задачи: {error}"})
             return
 
         if request_path == hunter_tasks_route:

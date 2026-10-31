@@ -176,7 +176,20 @@ const LANG = {
         activeBranch: "Текущая ветка: feature_1.8.2",
         treeStatus: "● Рабочее дерево проверено (паспорта агентов добавлены)",
         agentHolmes: "Sherlock Holmes: На посту (Инспектор безопасности — Memory/Agents/Holmes.md)",
-        securityVerdict: "Вердикт: Нарушений целостности нет. Архитектурный контур под контролем."
+        securityVerdict: "Вердикт: Нарушений целостности нет. Архитектурный контур под контролем.",
+        reportsHeading: "Отчёты аудита",
+        reportForPrefix: "Отчёт за ",
+        viewReportBtn: "Посмотреть отчёт",
+        reportsLoading: "Загрузка списка отчётов…",
+        reportsEmpty: "Отчётов пока нет — запусти Холмса.",
+        reportsError: "Не удалось загрузить отчёты.",
+        fullscreenBtn: "⤢ Во весь экран",
+        initiativesHeading: "Инициативы Холмса — отметить и отправить на реализацию",
+        initiativesHint: "Отметьте галочками пункты — задачи появятся в лиджере Бэрримора.",
+        initiativesNone: "В этом отчёте нет машиночитаемых инициатив (или все уже закрыты).",
+        initiativeSendBtn: "🚀 Отправить на реализацию",
+        initiativesSent: "Готово: создано задач — {created}; уже было в лиджере — {existing}.",
+        initiativesError: "Не удалось отправить инициативы."
       },
       leonardoStudy: {
         title: "LEONARDO STUDY",
@@ -407,7 +420,20 @@ const LANG = {
         activeBranch: "Current branch: feature_1.8.2",
         treeStatus: "● Working tree verified (agent passports added)",
         agentHolmes: "Sherlock Holmes: On duty (Security Inspector — Memory/Agents/Holmes.md)",
-        securityVerdict: "Verdict: No integrity violations. Architecture contour under control."
+        securityVerdict: "Verdict: No integrity violations. Architecture contour under control.",
+        reportsHeading: "Audit reports",
+        reportForPrefix: "Report for ",
+        viewReportBtn: "View report",
+        reportsLoading: "Loading report list…",
+        reportsEmpty: "No reports yet — run Holmes.",
+        reportsError: "Failed to load reports.",
+        fullscreenBtn: "⤢ Fullscreen",
+        initiativesHeading: "Holmes initiatives — check and send for implementation",
+        initiativesHint: "Check the items — tasks will appear in Barrymore's ledger.",
+        initiativesNone: "No machine-readable initiatives in this report (or all are closed).",
+        initiativeSendBtn: "🚀 Send for implementation",
+        initiativesSent: "Done: {created} tasks created; {existing} were already in the ledger.",
+        initiativesError: "Failed to send initiatives."
       },
       leonardoStudy: {
         title: "LEONARDO STUDY",

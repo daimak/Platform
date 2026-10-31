@@ -1,0 +1,123 @@
+/* Кораблик-вестник Harbor: раз в 5 минут приплывает к причалу,
+   рассказывает вести и уплывает. Клик по кораблику - внеочередная весточка. */
+
+/* кораблик уходит за края карты (вход/выход за горизонт) - вьюпорту запрещено
+   плодить скроллбары, иначе карта дёргается на ширину скроллбара */
+.estate-viewport { overflow: hidden; }
+
+#harbor-ship {
+  position: absolute;
+  width: 70px;
+  height: 64px;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s ease;
+  transform: translate(-50%, -58%);
+  will-change: left, top;
+}
+
+#harbor-ship.visible { opacity: 1; }
+
+#harbor-ship .ship-bob {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  cursor: pointer;
+  perspective: 480px;
+  transform-origin: 50% 82%;
+  animation: harbor-ship-bob 3.4s ease-in-out infinite;
+  transition: filter .25s ease;
+}
+
+#harbor-ship .ship-bob:hover { filter: drop-shadow(0 0 6px rgba(251, 191, 36, .55)); }
+
+#harbor-ship .ship-turn {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 2.2s ease-in-out;
+}
+
+#harbor-ship .ship-bank {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 1.6s ease-in-out;
+}
+
+#harbor-ship .ship-bank img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .35));
+}
+
+/* тень на воде под килем: дышит в противофазе к качке */
+#harbor-ship .ship-shadow {
+  position: absolute;
+  left: 14%;
+  bottom: -7px;
+  width: 72%;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .38), rgba(0, 0, 0, 0) 72%);
+  animation: harbor-ship-shadow 3.4s ease-in-out infinite;
+}
+
+@keyframes harbor-ship-shadow {
+  0%, 100% { transform: scaleX(1); opacity: .85; }
+  50%      { transform: scaleX(.92); opacity: .6; }
+}
+
+@keyframes harbor-ship-bob {
+  0%, 100% { transform: rotate(-1.7deg) translateY(0); }
+  50%      { transform: rotate(1.9deg) translateY(-3px); }
+}
+
+/* пена за кормой, пока кораблик ходит */
+#harbor-ship .ship-wake {
+  position: absolute;
+  left: -16px;
+  bottom: 6px;
+  width: 36px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.55), rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity .9s ease;
+}
+#harbor-ship.sailing .ship-wake { opacity: .85; }
+
+/* пузырь с речами над корабликом */
+#harbor-ship-bubble {
+  position: absolute;
+  z-index: 31;
+  transform: translate(-50%, -100%);
+  background: rgba(8, 18, 30, .93);
+  border: 1px solid rgba(94, 234, 212, .45);
+  color: #cbd5e1;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: .78rem;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 10px;
+  max-width: 300px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
+}
+#harbor-ship-bubble.visible { opacity: 1; }
+#harbor-ship-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  background: rgba(8, 18, 30, .93);
+  border-right: 1px solid rgba(94, 234, 212, .45);
+  border-bottom: 1px solid rgba(94, 234, 212, .45);
+  transform: translateX(-50%) rotate(45deg);
+}
