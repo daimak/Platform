@@ -1,0 +1,3174 @@
+{
+ "schema_version": 1,
+ "updated_at": "2026-10-30T22:45:16+05:00",
+ "records": [
+  {
+   "idx": "1",
+   "source": "Remotive",
+   "title": "Senior Back-end Developer",
+   "url": "https://remotive.com/remote-jobs/software-development/senior-back-end-developer-2091135",
+   "date": "2026-10-27",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "2",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "💻 Front‑End AI‑инженер 🏢 Accenture • 🌍 Remote 💰 $54K - $205K/год 🛠 Стек: JavaScript, TypeS",
+   "url": "https://t.me/remote_jobs_ru/444",
+   "date": "2026-10-26",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка",
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "3",
+   "source": "RemoteOK",
+   "title": "Senior Software Engineer LATAM",
+   "url": "https://remoteOK.com/remote-jobs/remote-senior-software-engineer-latam-wagmo-1137572",
+   "date": "2026-10-26",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "4",
+   "source": "RemoteOK",
+   "title": "Solutions Engineer",
+   "url": "https://remoteOK.com/remote-jobs/remote-solutions-engineer-onebrief-1137568",
+   "date": "2026-10-24",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "5",
+   "source": "RemoteOK",
+   "title": "Senior DevOps Engineer",
+   "url": "https://remoteOK.com/remote-jobs/remote-senior-devops-engineer-lemon-io-1137557",
+   "date": "2026-10-22",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "6",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🖥️ Senior Java‑разработчик 🏢 pathway solutions gmbh • 🌍 Remote 💰 По договорённости 🛠 Стек:",
+   "url": "https://t.me/remote_jobs_ru/442",
+   "date": "2026-10-20",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "7",
+   "source": "RemoteOK",
+   "title": "Risk Analyst",
+   "url": "https://remoteOK.com/remote-jobs/remote-risk-analyst-pavago-1137548",
+   "date": "2026-10-20",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "8",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "⚙️ Azure DevOps инженер 🏢 Coopers Group AG • 🌍 Remote 💰 По договорённости 🛠 Стек: Azure, T",
+   "url": "https://t.me/remote_jobs_ru/440",
+   "date": "2026-10-19",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "9",
+   "source": "Remotive",
+   "title": "Software Engineer, AI Coding Tasks",
+   "url": "https://remotive.com/remote-jobs/software-development/software-engineer-ai-coding-tasks-2091158",
+   "date": "2026-10-17",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "10",
+   "source": "RemoteOK",
+   "title": "Technical Account Manager",
+   "url": "https://remoteOK.com/remote-jobs/remote-technical-account-manager-yuno-1137540",
+   "date": "2026-10-17",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "11",
+   "source": "RemoteOK",
+   "title": "Software Engineer AI Coding Tasks",
+   "url": "https://remoteOK.com/remote-jobs/remote-software-engineer-ai-coding-tasks-askable-1137538",
+   "date": "2026-10-17",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "12",
+   "source": "RemoteOK",
+   "title": "APAC Python",
+   "url": "https://remoteOK.com/remote-jobs/remote-apac-python-kodland-1137534",
+   "date": "2026-10-16",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "13",
+   "source": "RemoteOK",
+   "title": "Associate Data Scientist",
+   "url": "https://remoteOK.com/remote-jobs/remote-associate-data-scientist-algaecal-1137531",
+   "date": "2026-10-16",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "14",
+   "source": "RemoteOK",
+   "title": "Director of IT and Workplace",
+   "url": "https://remoteOK.com/remote-jobs/remote-director-of-it-and-workplace-hippocratic-ai-1137530",
+   "date": "2026-10-16",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "15",
+   "source": "RemoteOK",
+   "title": "Senior Software Engineer II Applied AI",
+   "url": "https://remoteOK.com/remote-jobs/remote-senior-software-engineer-ii-applied-ai-wrapbook-1137527",
+   "date": "2026-10-15",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "16",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🤖 Инженер по внедрению ИИ 🏢 Neurawork GmbH & Co. KG • 🌍 Remote 💰 По договорённости 🛠 Стек:",
+   "url": "https://t.me/remote_jobs_ru/439",
+   "date": "2026-10-15",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "17",
+   "source": "RemoteOK",
+   "title": "Sr REACT NATIVE",
+   "url": "https://remoteOK.com/remote-jobs/remote-sr-react-native-somnio-software-1137523",
+   "date": "2026-10-15",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "18",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=50090302",
+   "date": "2026-10-14",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "19",
+   "source": "Remotive",
+   "title": "Tech Lead Full-Stack Rails Engineer",
+   "url": "https://remotive.com/remote-jobs/software-development/tech-lead-full-stack-rails-engineer-2069746",
+   "date": "2026-10-14",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "20",
+   "source": "RemoteOK",
+   "title": "Principal Software Engineer",
+   "url": "https://remoteOK.com/remote-jobs/remote-principal-software-engineer-vytalize-health-1137508",
+   "date": "2026-10-13",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "21",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=50059584",
+   "date": "2026-10-12",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "22",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🖥️ Full‑stack разработчик 🏢 ElevenLabs • 🌍 Remote 💰 По договорённости 🛠 Стек: Python, Type",
+   "url": "https://t.me/remote_jobs_ru/437",
+   "date": "2026-10-11",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "сайты/вёрстка",
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "23",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=50033036",
+   "date": "2026-10-10",
+   "has_salary": "yes",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "24",
+   "source": "RemoteOK",
+   "title": "Senior React Full stack Developer",
+   "url": "https://remoteOK.com/remote-jobs/remote-senior-react-full-stack-developer-lemon-io-1137475",
+   "date": "2026-10-09",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "25",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🖥️ Full-Stack разработчик (backend) 🏢 ElevenLabs • 🌍 Remote 💰 По договорённости 🛠 Стек: Py",
+   "url": "https://t.me/remote_jobs_ru/436",
+   "date": "2026-10-09",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "26",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=50003866",
+   "date": "2026-10-08",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "27",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=50002587",
+   "date": "2026-10-08",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "28",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=50001801",
+   "date": "2026-10-08",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "29",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49996914",
+   "date": "2026-10-07",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "30",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49994263",
+   "date": "2026-10-07",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "31",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49987144",
+   "date": "2026-10-07",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "32",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49982648",
+   "date": "2026-10-06",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "33",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49972736",
+   "date": "2026-10-06",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "34",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49972097",
+   "date": "2026-10-05",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "35",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🔐 Инженер по безопасности приложений 🏢 Security Engineer • 🌍 Remote 💰 По договорённости 🛠 ",
+   "url": "https://t.me/remote_jobs_ru/435",
+   "date": "2026-10-05",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "36",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49963937",
+   "date": "2026-10-05",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "37",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49962002",
+   "date": "2026-10-05",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "38",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49940381",
+   "date": "2026-10-03",
+   "has_salary": "yes",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "39",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49937104",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "40",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49934993",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "41",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49934530",
+   "date": "2026-10-02",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "42",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49933969",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "43",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49933038",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "44",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49932525",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "45",
+   "source": "Remotive",
+   "title": "Senior React Full-stack Developer",
+   "url": "https://remotive.com/remote-jobs/software-development/senior-react-full-stack-developer-2091133",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "46",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49929553",
+   "date": "2026-10-02",
+   "has_salary": "yes",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "47",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49929368",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "48",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49929352",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "49",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49928997",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "50",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49928755",
+   "date": "2026-10-02",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "51",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49928677",
+   "date": "2026-10-02",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "скраперы/парсеры",
+   "tags": [
+    "скраперы/парсеры",
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "52",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49928358",
+   "date": "2026-10-01",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "53",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49927356",
+   "date": "2026-10-01",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "54",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49927158",
+   "date": "2026-10-01",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "55",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49925497",
+   "date": "2026-10-01",
+   "has_salary": "yes",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "56",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49925098",
+   "date": "2026-10-01",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "57",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49922929",
+   "date": "2026-10-01",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "58",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49922615",
+   "date": "2026-10-01",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "59",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🧪 Инженер по обеспечению качества программного обеспечения 🏢 Cerence • 🌍 Remote 💰 По догов",
+   "url": "https://t.me/remote_jobs_ru/433",
+   "date": "2026-09-30",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "60",
+   "source": "Remotive",
+   "title": "Senior back-end Engineer",
+   "url": "https://remotive.com/remote-jobs/software-development/senior-back-end-engineer-2091132",
+   "date": "2026-09-30",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "61",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🖥️ Full‑Stack разработчик 🏢 Spear AI • 🌍 Remote 💰 По договорённости 🛠 Стек: JavaScript, Ty",
+   "url": "https://t.me/remote_jobs_ru/432",
+   "date": "2026-09-29",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "62",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "💻 Инженер‑программист (премиум‑функции) 🏢 Discord • 🌍 Remote 💰 По договорённости 🛠 Стек: P",
+   "url": "https://t.me/remote_jobs_ru/431",
+   "date": "2026-09-29",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "сайты/вёрстка",
+   "tags": [
+    "сайты/вёрстка"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "63",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "💻 Full‑stack разработчик (здравоохранение) 🏢 Medconomy GmbH • 🌍 Remote 💰 По договорённости",
+   "url": "https://t.me/remote_jobs_ru/430",
+   "date": "2026-09-28",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "64",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🖥️ Backend-разработчик 🏢 paddy • 🌍 Remote 💰 По договорённости 🛠 Стек: Python, TypeScript, ",
+   "url": "https://t.me/remote_jobs_ru/429",
+   "date": "2026-09-24",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "сайты/вёрстка",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "65",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🛠️ Старший консультант SAP Basis 🏢 The Config Team • 🌍 Remote 💰 По договорённости 🛠 Стек: ",
+   "url": "https://t.me/remote_jobs_ru/428",
+   "date": "2026-09-24",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "66",
+   "source": "Telegram @remote_jobs_ru",
+   "title": "🎓 Тренер по веб-разработке 🏢 Leland • 🌍 Remote 💰 По договорённости 🛠 Стек: JavaScript, Rea",
+   "url": "https://t.me/remote_jobs_ru/426",
+   "date": "2026-09-18",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "сайты/вёрстка",
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "67",
+   "source": "RemoteOK",
+   "title": "Golang Kubernetes Engineer",
+   "url": "https://remoteOK.com/remote-jobs/remote-golang-kubernetes-engineer-arango-1137400",
+   "date": "2026-09-16",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "68",
+   "source": "RemoteOK",
+   "title": "Sr Solutions Architect",
+   "url": "https://remoteOK.com/remote-jobs/remote-sr-solutions-architect-extrahop-1137394",
+   "date": "2026-09-15",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "69",
+   "source": "RemoteOK",
+   "title": "AI Engineer Data APIs",
+   "url": "https://remoteOK.com/remote-jobs/remote-ai-engineer-data-apis-benzinga-1137224",
+   "date": "2026-08-30",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "70",
+   "source": "RemoteOK",
+   "title": "DESARROLLADOR FULL STACK",
+   "url": "https://remoteOK.com/remote-jobs/remote-desarrollador-full-stack-kruger-nearshore-llc-rekluti-1137062",
+   "date": "2026-08-22",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "71",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 DevOps-инженер Linux • Ansible • Docker/Podman • CI/CD 🌾 Разработка и внедрение процессо",
+   "url": "https://t.me/devops_vacancies/61",
+   "date": "2025-09-17",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "72",
+   "source": "Telegram @devops_vacancies",
+   "title": "👩‍💻 DevOps Kubernetes • IaC tools • Linux 🔵 Настройка и развитие CI/CD процессов. 🔵 Поддер",
+   "url": "https://t.me/devops_vacancies/60",
+   "date": "2025-09-16",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "73",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 DevOps-инженер Kubernetes • Docker • Terraform • Ansible • HashiCorp Vault • Bitbucket •",
+   "url": "https://t.me/devops_vacancies/59",
+   "date": "2025-09-15",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "74",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 DevOps/DevSecOps-инженер Linux • Docker • Kubernetes • PostgreSQL • Zabbix • Redis • Kaf",
+   "url": "https://t.me/devops_vacancies/58",
+   "date": "2025-09-14",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "75",
+   "source": "Telegram @devops_vacancies",
+   "title": "👩‍💻 DevOps-инженер Linux • Kubernetes • GitLab CI • PostgreSQL • RabbitMQ • Prometheus • G",
+   "url": "https://t.me/devops_vacancies/57",
+   "date": "2025-09-13",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "76",
+   "source": "Telegram @devops_vacancies",
+   "title": "👩‍💻 DevOps-инженер Linux • Java • Python • Kubernetes • Ansible • Pulumi • Grafana • ELK 🔵",
+   "url": "https://t.me/devops_vacancies/56",
+   "date": "2025-09-12",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "77",
+   "source": "Telegram @devops_vacancies",
+   "title": "👣 DevOps-инженер Linux • Docker • Kubernetes • GitLab ➡️ Развертывание и поддержка инстанс",
+   "url": "https://t.me/devops_vacancies/55",
+   "date": "2025-09-11",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "78",
+   "source": "Telegram @devops_vacancies",
+   "title": "👩‍💻 Системный администратор (DevOps) Linux • Kubernetes • Yandex Cloud 🔠 Опыт администриро",
+   "url": "https://t.me/devops_vacancies/54",
+   "date": "2025-09-10",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "79",
+   "source": "Telegram @devops_vacancies",
+   "title": "👩‍💻 DevOps инженер (Middle+) Windows Server • Linux • Docker • Proxmox 🌾 Поддержка и улучш",
+   "url": "https://t.me/devops_vacancies/53",
+   "date": "2025-09-09",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "80",
+   "source": "Telegram @devops_vacancies",
+   "title": "👩‍💻 Стажер-DevOps Docker • Kubernetes • GitHub Actions/GitLab CI/Jenkins ⚫️ Настройка и по",
+   "url": "https://t.me/devops_vacancies/52",
+   "date": "2025-09-08",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "81",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 Junior+ DevOps Engineer AWS • System Administration • Docker • Linux • Terraform • EKS 🔵",
+   "url": "https://t.me/devops_vacancies/51",
+   "date": "2025-09-07",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "82",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 Дежурный инженер (Linux / Windows) Unix/Linux • TCP/IP • Английский язык 🔠 Мониторинг со",
+   "url": "https://t.me/devops_vacancies/50",
+   "date": "2025-09-06",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "83",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 Middle/Middle+ DevOps-инженер DevOps-стек • Docker • Kubernetes (Self-hosted) • Helm • G",
+   "url": "https://t.me/devops_vacancies/49",
+   "date": "2025-09-05",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "84",
+   "source": "Telegram @devops_vacancies",
+   "title": "👣 Системный администратор Linux Unix подобные ОС • Bind • Iptables/fail2ban/fwd • Apache/N",
+   "url": "https://t.me/devops_vacancies/48",
+   "date": "2025-09-04",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "85",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 DevOps-инженер Docker • Kubernetes • PostgreSQL • GitLab CI 🔵 Докеризация Java-сервисов ",
+   "url": "https://t.me/devops_vacancies/47",
+   "date": "2025-09-03",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "86",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 Senior DevOps Engineer Nginx / Haproxy • MySQL / Mariadb • Redis • Clickhouse • Kafka • ",
+   "url": "https://t.me/devops_vacancies/46",
+   "date": "2025-09-02",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "87",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 DevOps инженер Linux • Ansible • Kubernetes • Jenkins • GitOps • Helm • Docker • Istio •",
+   "url": "https://t.me/devops_vacancies/45",
+   "date": "2025-09-02",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "88",
+   "source": "Telegram @devops_vacancies",
+   "title": "👩‍💻 DevOps-инженер Linux • Bash • VMware/KVM • PostgreSQL • ClickHouse • Docker • Kubernet",
+   "url": "https://t.me/devops_vacancies/44",
+   "date": "2025-09-01",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "89",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 DevOps-инженер Linux • Docker • Kubernetes • CI/CD ➡️ Развертывание и поддержка инфрастр",
+   "url": "https://t.me/devops_vacancies/43",
+   "date": "2025-08-31",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "90",
+   "source": "Telegram @devops_vacancies",
+   "title": "🖥 Системный инженер/DevOps Engineer (KSS) Linux • Docker • Kubernetes • Terraform • Promet",
+   "url": "https://t.me/devops_vacancies/42",
+   "date": "2025-08-30",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "91",
+   "source": "hh (hh.uz, html)",
+   "title": "Стажер по управлению конфигурациями и релизами | Configuration and Release Engineer",
+   "url": "https://adsrv.hh.uz/click?b=2262097&place=35&meta=eSN5GknPucDhQUnD4wchRuYGKnOZae-fgHKzyNizZTeK-lPhRjLuUnOO5TkYN6hF7DXGfzdlRJ5o8aB0kkKdYZRhda3-nspqgGsZ-NUVX3317z6BrxGq1hSlP6lzf23YwaosFXuCgm6YugrKOQep4wWr4h9Mg6H_0g-8WU99GkgApbxCuzj2GxiL64nIsEyiri6lR3cS4jlqXYyscMyYkA6OxKJ8aYNZqAd3RuiLeuEyloXFdChNSVXoAg5B6fuNPcM4fqmTaSrTs3D7Na8yfYaeWxJ8NXnQp1emMnASFNaqtCP46fP26p4L8iICV1P2Qu7rQrvoQkWXFxTkQwD9rTocedsP5Z7MR_q73zUR-JeWZxm01LQ4-Xuw980h2yITqDt510eU1IZgxa94G0x4bw7Vs2s1bFoSld3aezUn6genIzlvGRIxhTwJ4HLDeWKIAxLhwRUoRVnTTAlqQpc2iO1wX092s9qIBj3dZFu461TxQtSURN412eEs7HSr80suO66t4rgB2AC6hNLd6qh7eW4yKoZ1rXcKBJfBvekaMM0cgebSPDrg29aSrYPtDXvqp-MZ4-yX0nEknnn0cdKxz2-YjnH98IUniSJYdY6r3ng1CB9RRyjKYAkDMFz1kimxub9HV7lCDMK75gu14I7SR2rK0VDNrRn7FRT-nA5CspKRdsmAI1uqc6IYr9hVIaytoim1aygjMXmPKrTZQgngSwjRj7yVtM2q_MGJod_zhdqgTQv_X6G2ZKsdw-v4uBBuvFx8vY01e-3YYPWTkM1XzaLvQtd9Rp4LeqvUnccQVX8%3D&clickType=link_to_vacancy&j=1",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "92",
+   "source": "hh (hh.uz, html)",
+   "title": "Senior DevOps / Kubernetes Platform Engineer",
+   "url": "https://tashkent.hh.uz/vacancy/138851293?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "93",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps инженер / Инженер сопровождения инфраструктуры",
+   "url": "https://tashkent.hh.uz/vacancy/138797504?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "94",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/138983910?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "95",
+   "source": "hh (hh.uz, html)",
+   "title": "Junior DevOps engineer",
+   "url": "https://tashkent.hh.uz/vacancy/135610513?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "96",
+   "source": "hh (hh.uz, html)",
+   "title": "Ведущий DevOps-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/138937450?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "97",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps / Инфраструктурный инженер (ROS2, робототехника)",
+   "url": "https://tashkent.hh.uz/vacancy/138926871?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "98",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps engineer",
+   "url": "https://tashkent.hh.uz/vacancy/138461468?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "99",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps инженер(Tech Lead)",
+   "url": "https://tashkent.hh.uz/vacancy/138857044?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "100",
+   "source": "hh (hh.uz, html)",
+   "title": "Инженер ИИ-инфраструктуры и агентных систем (DevOps / Linux)",
+   "url": "https://tashkent.hh.uz/vacancy/138760988?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "101",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/138238746?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "102",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/138850446?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "103",
+   "source": "hh (hh.uz, html)",
+   "title": "Стажёр DevOps-инженер [MWS Cloud Platform]",
+   "url": "https://tashkent.hh.uz/vacancy/138752574?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "104",
+   "source": "hh (hh.uz, html)",
+   "title": "Cистемный администратор Linux / DevOps-инженер (Middle)",
+   "url": "https://tashkent.hh.uz/vacancy/138896561?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "105",
+   "source": "hh (hh.uz, html)",
+   "title": "MLOps / DevOps Engineer (LLM, GPU)",
+   "url": "https://tashkent.hh.uz/vacancy/138721529?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "106",
+   "source": "hh (hh.uz, html)",
+   "title": "Junior/Middle DevOps specialist",
+   "url": "https://tashkent.hh.uz/vacancy/138968373?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "107",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps specialist",
+   "url": "https://tashkent.hh.uz/vacancy/138756909?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "108",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps Engineer",
+   "url": "https://tashkent.hh.uz/vacancy/138977787?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "109",
+   "source": "hh (hh.uz, html)",
+   "title": "Middle+ DevOps Engineer (Беларусь)",
+   "url": "https://tashkent.hh.uz/vacancy/138931290?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "110",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps-инженер (Python, Linux)",
+   "url": "https://tashkent.hh.uz/vacancy/138657891?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "111",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE / DevOps-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/138926334?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "112",
+   "source": "hh (hh.uz, html)",
+   "title": "Senior DevOps / Kubernetes Platform Engineer",
+   "url": "https://tashkent.hh.uz/vacancy/138851293?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "113",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/137052689?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "114",
+   "source": "hh (hh.uz, html)",
+   "title": "Senior SRE / Инженер инфраструктуры",
+   "url": "https://tashkent.hh.uz/vacancy/138980150?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "115",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/137447630?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "116",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE инженер",
+   "url": "https://tashkent.hh.uz/vacancy/138618092?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "117",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE/Инженер сопровождения Linux/Kubernetes (ГигаЧат Бизнес)",
+   "url": "https://tashkent.hh.uz/vacancy/138135381?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "118",
+   "source": "hh (hh.uz, html)",
+   "title": "Руководитель команды SRE",
+   "url": "https://tashkent.hh.uz/vacancy/138938489?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "119",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE (Криптоактивы)",
+   "url": "https://tashkent.hh.uz/vacancy/138894436?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "120",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/137878928?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "121",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE-инженер",
+   "url": "https://tashkent.hh.uz/vacancy/136717652?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "122",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE / DevOps Engineer (Agentic AI)",
+   "url": "https://tashkent.hh.uz/vacancy/138932822?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "123",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE-инженер (ЦОД)",
+   "url": "https://tashkent.hh.uz/vacancy/135662880?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "124",
+   "source": "hh (hh.uz, html)",
+   "title": "Аналитик DevOps/SRE (команда инфраструктуры)",
+   "url": "https://tashkent.hh.uz/vacancy/138908848?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "125",
+   "source": "hh (hh.uz, html)",
+   "title": "SRE инженер (Управление эксплуатации), Новосибирск",
+   "url": "https://tashkent.hh.uz/vacancy/138901505?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "126",
+   "source": "hh (hh.uz, html)",
+   "title": "Senior SRE, DevOps Engineer (Data platform)",
+   "url": "https://tashkent.hh.uz/vacancy/138916110?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "127",
+   "source": "hh (hh.uz, html)",
+   "title": "Site reliability engineer / SRE (ML Infra)",
+   "url": "https://tashkent.hh.uz/vacancy/138914436?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "128",
+   "source": "hh (hh.uz, html)",
+   "title": "Senior SRE инженер (highload)",
+   "url": "https://tashkent.hh.uz/vacancy/138703930?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "129",
+   "source": "hh (hh.uz, html)",
+   "title": "Руководитель отдела автоматизации инфраструктуры и сопровождения (SRE/DevOps/DBA/АБС)",
+   "url": "https://tashkent.hh.uz/vacancy/138625761?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "130",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор SRE",
+   "url": "https://tashkent.hh.uz/vacancy/138850406?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "131",
+   "source": "hh (hh.uz, html)",
+   "title": "Руководитель группы системных администраторов",
+   "url": "https://adsrv.hh.uz/click?b=2259565&place=35&meta=nhBDvq6uMV-cO88jICKk0_MSB1hgp-lSqIOZXU2E_XwJFXUyoN3fIx7UdeRkSI9EJiARp5chIeT-BdrOHLjI25J8RVJNXZh9JQUhAyuMlTUNdukn1rcQpQqdh0XovG9D6OOF2Z_feI7mHl6Dj41NYeO1movx9DyXFoiT1O_4KhmR1q6PmGd6fTv5EI8dIMMLLQsSqEjzUfvhNW__4QiMn9g8Cx2mUAHFTcwOliOOMH_aaqXZFRW0gi1Q01NvkLIhnf63crVxiloZuEIWJNjKigfvXZdEChywEB6KNwOuoVlTXadV5jwpxjWU0QhGCtB59PG1R9P9hiWV_I_Wmk43qZxrH3q1AUVaIVFciERiZRBKpbjuCnRzuhxV44EmrQA_VXzmKCY6sBeKc9YFfbuS6zhFWV84hFCLHNsFUnkMEwt5uNyWd2fclM6WhatgazcuXzd2Ab5JygFpFlgErfVWmVT82BsPhEbA77iQv8qKbfxDIQzflq5vu-W7aZntsOD3XjDaWFnKdUzZTdTDA0J9GUexBWYsbEHibf111SRScruUFKUjTENDFa7XE3dGNN-EqX8ZZLzdNu4zsgGuYvEyw2MhMc77W1qRDaKjfvSAZSgAhIMm4kX6DAMFHGq4_GUy1YGYE87TvmH7xKdcmT1aGs5l7kfKwJ6jTe8TApUmdauE9_wmo9zNbCkx0FghmBHE-6JNc1suvVr5tVYKRn52v3xlFfbxigkFJkCthAWuiOEiffgLDlXkc6O8SjIg5-8jUsfwFnAypHLS770WueIiRcvWGSVMAnuRVFW8ce9J0Bw%3D&clickType=link_to_vacancy&j=1",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "132",
+   "source": "hh (hh.uz, html)",
+   "title": "Инженер по сборке платежных терминалов",
+   "url": "https://adsrv.hh.uz/click?b=2205440&place=36&meta=F4cTWTAfgv06EEQn1P3mZWtfV2l5YKtb0cgRmtXX_G18iWEzhGC2tF7s9dBkRYeJyKrx1iZA90AXjzdtkexSn-_tXh9_A1SzU8WcvvXOdlLArTQsBCWKDUgfBYUwfDZIROe07dP0N2vmdJWK6F4HwTXd58dqlI4r6M6eQvYQc5HI17NV583aK3UfDc-SYaRZiDAZQ9XVuhfP_mCYR3yeyqncRz1Q0c15h5dG7TCGCicvsRKwEBdfwW8-htIdEb_NUS6IbD8irZ3GT_ZbJ1T640tV_NRTwNSUPPWm9l4Dy1RSowFZ2lFJSXK_Ubjj4YMkywAyDQQXW1uGXpI8WhLtpujfBkPVuU2u_SxoHEphHeXzH0hs35lFqEM4wjnB_2yPMcWbX9L5-_9tU6ujcYonN2TaEjuE_rLa44xR85NKc62dvGckau017MYaJbUeybv-nXsLt4PPUvkEDx18vQ-4O3hGD2bK0_5fPLup3LKiqk1bOeQwzHR01bcTto2-GzwNoF6dA9sS0cZ7V2OxxrLnk7YWTOzhhr80Op3Nr-sQO1yb_Ibv_4m8t9YtOyJ2me6aaLScFwA-VzWfGaUYY7JHT4OEsg66T_OANTOC7lm7WGUS4IptvwVIjfCuFr20ENpCgl32EKzP3qUyX7yvHDOE2exZnR3c8BI3RngJnaQE6VqTSD296FiloIZbvGrQcqvkQaL5K0dwDKHlDmUAGGb0THmWuEPT7wndnDUcQTQLuicP2_OzdGjJnDgG4EPB-sRoLM3XdGOpRwA3Uv4luma05axk8a21zhsX5AvBfVjvVR8%3D&clickType=link_to_vacancy&j=1",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "133",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор (офис)",
+   "url": "https://tashkent.hh.uz/vacancy/138977615?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "134",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор",
+   "url": "https://tashkent.hh.uz/vacancy/138933630?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "135",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор",
+   "url": "https://tashkent.hh.uz/vacancy/138790798?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "136",
+   "source": "hh (hh.uz, html)",
+   "title": "Старший системный администратор",
+   "url": "https://tashkent.hh.uz/vacancy/135917256?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&utm_source=headhunter&utm_medium=vacancy_search_results&utm_campaign=vacancy_of_the_day_to&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "137",
+   "source": "hh (hh.uz, html)",
+   "title": "Application Security Engineer (безопасность приложений)",
+   "url": "https://tashkent.hh.uz/vacancy/86043215?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "138",
+   "source": "hh (hh.uz, html)",
+   "title": "Начальник отдела инфраструктуры",
+   "url": "https://tashkent.hh.uz/vacancy/138914168?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "139",
+   "source": "hh (hh.uz, html)",
+   "title": "DevOps инженер / Инженер сопровождения инфраструктуры",
+   "url": "https://tashkent.hh.uz/vacancy/138797504?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "140",
+   "source": "hh (hh.uz, html)",
+   "title": "Инженер по сопровождению ПО и технической поддержке",
+   "url": "https://tashkent.hh.uz/vacancy/138797052?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "141",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://tashkent.hh.uz/vacancy/138490813?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "142",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://tashkent.hh.uz/vacancy/138970570?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "143",
+   "source": "hh (hh.uz, html)",
+   "title": "Senior Linux Administrator",
+   "url": "https://tashkent.hh.uz/vacancy/138788850?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "144",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://tashkent.hh.uz/vacancy/138958279?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "145",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор Linux (Duty administrator)",
+   "url": "https://tashkent.hh.uz/vacancy/138490325?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "146",
+   "source": "hh (hh.uz, html)",
+   "title": "Администратор серверов Linux",
+   "url": "https://tashkent.hh.uz/vacancy/138110524?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "147",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://tashkent.hh.uz/vacancy/138956159?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "148",
+   "source": "hh (hh.uz, html)",
+   "title": "System Administrator Linux / Системный Администратор Линукс (Junior+)",
+   "url": "https://tashkent.hh.uz/vacancy/138798076?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "149",
+   "source": "hh (hh.uz, html)",
+   "title": "Системный администратор Linux / Junior Devops",
+   "url": "https://tashkent.hh.uz/vacancy/136554241?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "150",
+   "source": "hh (hh.uz, html)",
+   "title": "Junior Linux Engineer",
+   "url": "https://tashkent.hh.uz/vacancy/138073033?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "151",
+   "source": "hh (hh.ru, html)",
+   "title": "Стажер по управлению конфигурациями и релизами | Configuration and Release Engineer",
+   "url": "https://adsrv.hh.ru/click?b=2262097&place=35&meta=yyJiqs3Hld-H8ogA_0fU-fEoIjJ6lhqIq6g5vXowPGLc0uSbr16Nj8_3iuzKCQnuBeKxHDEL7S_MdSyBgSyCKd9-wbhIojzIVQ8Zj1YmxZjyhZ-kwW-HW22IHywB2HGGFuOiR5y51xiXmJZACDTOImZNGWBVNhjn9GOREd5Z2bVsBmG-gqRX65UmB97vI9RuUit8UWWYzz0PsLFVH3dMgEKzfidQLQ5xd96LBguWXOQywUQ3wYPtV_DoGkIlB7ImYam2whRr8IPMn--TLKKgFhPw3Pfiaf11nBXiz--el8EIS8UJDvirsd3tTVu9AiQoEAOrH-futsuoAbz5VLeZ-gcWeCB3b7uQjJ71zw-r0eQwzeY8U_8VScbERSMZiXiWebIXpJSiUkPQLqvSt9fId2nHWEom8pBKu0Ejw8OjkUxgtMD7bF1ygy21nTqQLsBmXUtHSCpSYZsqlhiCRd3ma2xnVMzh_xe8dyH23nus7QSKLANNVFvuruRHnZbvKhLIJjurrHcKu3Fu_eVU6VX-A2_waAqtbwmsnH0YZiCrCYiHWr7qZc0COGdUuIaClvAzYIuNy0kS31SjCqGqMjZfu2_AJYo9RHG6BJj9NjgGWVqr8-JRr4NY3rQXxemUrXLL9t1XDJqGCs8pNc21gS0IWb4U2eUZ6tumca2hMtnhv5TI-9lk4MDyd5NdsL1mshCigt58b_Ixjfz8JI2LNPDNfElzLXEWYTeB2dj_cX7A1PCz7l2AaisxSxGJiLL5Qa3jH5Ub-2VfcakVzHK3aDcvZuJ7jamW6fFqS9ASatqWHrQ%3D&clickType=link_to_vacancy&j=1",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "152",
+   "source": "hh (hh.ru, html)",
+   "title": "Senior DevOps / Kubernetes Platform Engineer",
+   "url": "https://hh.ru/vacancy/138851293?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "153",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps инженер / Инженер сопровождения инфраструктуры",
+   "url": "https://hh.ru/vacancy/138797504?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "154",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps-инженер",
+   "url": "https://hh.ru/vacancy/138983910?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "155",
+   "source": "hh (hh.ru, html)",
+   "title": "Junior DevOps engineer",
+   "url": "https://hh.ru/vacancy/135610513?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "156",
+   "source": "hh (hh.ru, html)",
+   "title": "Ведущий DevOps-инженер",
+   "url": "https://hh.ru/vacancy/138937450?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "157",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps / Инфраструктурный инженер (ROS2, робототехника)",
+   "url": "https://hh.ru/vacancy/138926871?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "158",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps engineer",
+   "url": "https://hh.ru/vacancy/138461468?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "159",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps инженер(Tech Lead)",
+   "url": "https://hh.ru/vacancy/138857044?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "160",
+   "source": "hh (hh.ru, html)",
+   "title": "Инженер ИИ-инфраструктуры и агентных систем (DevOps / Linux)",
+   "url": "https://hh.ru/vacancy/138760988?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "161",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps-инженер",
+   "url": "https://hh.ru/vacancy/138238746?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "162",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps-инженер",
+   "url": "https://hh.ru/vacancy/138850446?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "163",
+   "source": "hh (hh.ru, html)",
+   "title": "Стажёр DevOps-инженер [MWS Cloud Platform]",
+   "url": "https://hh.ru/vacancy/138752574?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "164",
+   "source": "hh (hh.ru, html)",
+   "title": "Cистемный администратор Linux / DevOps-инженер (Middle)",
+   "url": "https://hh.ru/vacancy/138896561?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "165",
+   "source": "hh (hh.ru, html)",
+   "title": "MLOps / DevOps Engineer (LLM, GPU)",
+   "url": "https://hh.ru/vacancy/138721529?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "166",
+   "source": "hh (hh.ru, html)",
+   "title": "Junior/Middle DevOps specialist",
+   "url": "https://hh.ru/vacancy/138968373?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "167",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps specialist",
+   "url": "https://hh.ru/vacancy/138756909?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "168",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps Engineer",
+   "url": "https://hh.ru/vacancy/138977787?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "169",
+   "source": "hh (hh.ru, html)",
+   "title": "Middle+ DevOps Engineer (Беларусь)",
+   "url": "https://hh.ru/vacancy/138931290?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "170",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps-инженер (Python, Linux)",
+   "url": "https://hh.ru/vacancy/138657891?query=DevOps&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "171",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE / DevOps-инженер",
+   "url": "https://hh.ru/vacancy/138926334?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "172",
+   "source": "hh (hh.ru, html)",
+   "title": "Senior DevOps / Kubernetes Platform Engineer",
+   "url": "https://hh.ru/vacancy/138851293?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "173",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE-инженер",
+   "url": "https://hh.ru/vacancy/137052689?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "174",
+   "source": "hh (hh.ru, html)",
+   "title": "Senior SRE / Инженер инфраструктуры",
+   "url": "https://hh.ru/vacancy/138980150?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "175",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE-инженер",
+   "url": "https://hh.ru/vacancy/137447630?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "176",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE инженер",
+   "url": "https://hh.ru/vacancy/138618092?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "177",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE/Инженер сопровождения Linux/Kubernetes (ГигаЧат Бизнес)",
+   "url": "https://hh.ru/vacancy/138135381?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "178",
+   "source": "hh (hh.ru, html)",
+   "title": "Руководитель команды SRE",
+   "url": "https://hh.ru/vacancy/138938489?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "179",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE (Криптоактивы)",
+   "url": "https://hh.ru/vacancy/138894436?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "180",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE-инженер",
+   "url": "https://hh.ru/vacancy/137878928?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "181",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE-инженер",
+   "url": "https://hh.ru/vacancy/136717652?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "182",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE / DevOps Engineer (Agentic AI)",
+   "url": "https://hh.ru/vacancy/138932822?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "183",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE-инженер (ЦОД)",
+   "url": "https://hh.ru/vacancy/135662880?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "184",
+   "source": "hh (hh.ru, html)",
+   "title": "Аналитик DevOps/SRE (команда инфраструктуры)",
+   "url": "https://hh.ru/vacancy/138908848?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "185",
+   "source": "hh (hh.ru, html)",
+   "title": "SRE инженер (Управление эксплуатации), Новосибирск",
+   "url": "https://hh.ru/vacancy/138901505?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "186",
+   "source": "hh (hh.ru, html)",
+   "title": "Senior SRE, DevOps Engineer (Data platform)",
+   "url": "https://hh.ru/vacancy/138916110?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "187",
+   "source": "hh (hh.ru, html)",
+   "title": "Site reliability engineer / SRE (ML Infra)",
+   "url": "https://hh.ru/vacancy/138914436?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "188",
+   "source": "hh (hh.ru, html)",
+   "title": "Senior SRE инженер (highload)",
+   "url": "https://hh.ru/vacancy/138703930?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "189",
+   "source": "hh (hh.ru, html)",
+   "title": "Руководитель отдела автоматизации инфраструктуры и сопровождения (SRE/DevOps/DBA/АБС)",
+   "url": "https://hh.ru/vacancy/138625761?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация",
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "190",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор SRE",
+   "url": "https://hh.ru/vacancy/138850406?query=SRE&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "191",
+   "source": "hh (hh.ru, html)",
+   "title": "Руководитель группы системных администраторов",
+   "url": "https://adsrv.hh.ru/click?b=2259565&place=35&meta=HJyzs_GQ8PgqhmqbyjQEU-7-I610XIc48FLaQJiPSfhUr5fjEXF1KbCYz3ZIz86gSdRuprxdovmNx3RVhd2kYwlW4Wf05dZPi9V2nQkyOHvhkuADTDK3cF_Kv4AU5IXEIwFxEO1S_KvHn1HbdK7qdgMcNuCSQeAW0VGVZpJp_4Qc-NipqHSVfZbx6jmQ1WZ5mzxViEpd14MiXgQEs_bqKhcPjeXH4LqzS4Y-niffVgyI3Fj41lTnaR-T7qJQm3kurDWYIfEwGC-EfaZD-P5tV3bA97cCbR5VZeu_P4Vq5d5zzTabuVbj8zP0d31T8I_znPZSxZ7umqikTi6HLANDEKcDtH0hTuld-jek8bjJYXf784SjvxNS-Oyagl8zMxMtH2qKLtQCScm5kDqv5Ql6QEH6wID3oQAkCqRJ_B7dcVdzNwewQgGfmpf3xQFXRzRH0J0ME7VLyo-rnhAdhwPtTlZd_jI1HiYEaKKk0CTtS_i5KpqyTw-L3CRANR-uKRjSRZRLHfBRPDLtv2TWHqGMI6uivQYGlaLvBOnba5lyMFylw60tl41ljCZbVLlFuLjJo86wDYpFjlUn4upN2ximrdhB2oa7xHyWuodAX020ENrwhbCV3Ju1EEcVZkKw1sTfGW3klCBc7lnoPEY-knglczoKHRvT51EGp1zyr0TubuStZ4nYCFCJclK0AnJJFTyeiX5dbi9qUNeztuOU8fPU_E7P26DdRb8iNWRct-Y_pRpvJjjP49Kuxe2WgA37WrlWTpOFv2vDW1GTp6VoTTzdCEEY3ddudZEHiRsjF2rYoDg%3D&clickType=link_to_vacancy&j=1",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "192",
+   "source": "hh (hh.ru, html)",
+   "title": "Инженер по сборке платежных терминалов",
+   "url": "https://adsrv.hh.ru/click?b=2205440&place=36&meta=tkuGkzaD88QzLlzry0E-CR2OvVAUEE-TBlwPrMKP7A8cMVZEX7V_sB-nVDKx4Zhc7A6J2Jz_FL1ykdgHvPp6m3ASNFgusG6pSDAPP2-aJOvS5u85YCefMcKMkNx6HBERkKQWbexZTLwds5Rpe_6kSYTwxumTIaRy8cO8zXNYjsmO65yOQU_HbuJJKxbiZewA7I3b_AJJhckPdqAi_igGMlePd65-0srK9p-31x_XnC--VPpWT0a5Y4qP70yhLpTtvymJ0G7QMJjWh8-EfTZpdQqhMjZ8gEso918r2D5iDX-pI3BYnY7H_HKubr9FPKuR6ZytNBtzS5EmdSxnjyvauLNV6M7H8gXWI1zVaih7Y8v08tEgu_QHdwiT8vIyAi2bJR_RDqrWd5Eq4jQe-DBX4H8kLy7aN558m2aCOKZZZnwOEo7bquXJ3zAahwKO5GQZ-aHdyA4NFfREINUlezCcBoeLqWUzXzUxhNKFmWu9g-fq7zxQMTMOxY_CCHzGlu95maJYo4FIvvYhYG5p_ZpXpw7wxEN-ma76EUdT6D2aXeNbcVEM3ovxaEPf_o_qVH12Mpzv84YgvptrbCErCaWOKLbDPEEtSp2PmBxi_fHQI6kox587kh1Yl4SJVmdMy65kHGL26t-8E1GrWWI-XXb48GPA8L4R9NvlEeu_V1uK6N7ml3RO_j4scPnpCN-nPl_CFgC0hIrak2yksRIP7yk4VpO-qtO9t1ixkVmENcCivKbujiUjhF7y30M2GxSMvhyD1kkAE98ztARIZJCZf0dKQrd__dMejVoypzHpd5OehfU%3D&clickType=link_to_vacancy&j=1",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "193",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор (офис)",
+   "url": "https://hh.ru/vacancy/138977615?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "194",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор",
+   "url": "https://hh.ru/vacancy/138933630?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "195",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор",
+   "url": "https://hh.ru/vacancy/138790798?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "196",
+   "source": "hh (hh.ru, html)",
+   "title": "Старший системный администратор",
+   "url": "https://hh.ru/vacancy/135917256?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&utm_source=headhunter&utm_medium=vacancy_search_results&utm_campaign=vacancy_of_the_day_to&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "197",
+   "source": "hh (hh.ru, html)",
+   "title": "Application Security Engineer (безопасность приложений)",
+   "url": "https://hh.ru/vacancy/86043215?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "198",
+   "source": "hh (hh.ru, html)",
+   "title": "Начальник отдела инфраструктуры",
+   "url": "https://hh.ru/vacancy/138914168?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "199",
+   "source": "hh (hh.ru, html)",
+   "title": "DevOps инженер / Инженер сопровождения инфраструктуры",
+   "url": "https://hh.ru/vacancy/138797504?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "200",
+   "source": "hh (hh.ru, html)",
+   "title": "Инженер по сопровождению ПО и технической поддержке",
+   "url": "https://hh.ru/vacancy/138797052?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "main",
+   "status_auto": "main",
+   "category": "",
+   "tags": [],
+   "note": ""
+  },
+  {
+   "idx": "201",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://hh.ru/vacancy/138490813?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "202",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://hh.ru/vacancy/138970570?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "203",
+   "source": "hh (hh.ru, html)",
+   "title": "Senior Linux Administrator",
+   "url": "https://hh.ru/vacancy/138788850?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "204",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://hh.ru/vacancy/138958279?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "205",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор Linux (Duty administrator)",
+   "url": "https://hh.ru/vacancy/138490325?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "206",
+   "source": "hh (hh.ru, html)",
+   "title": "Администратор серверов Linux",
+   "url": "https://hh.ru/vacancy/138110524?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "207",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор Linux",
+   "url": "https://hh.ru/vacancy/138956159?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "208",
+   "source": "hh (hh.ru, html)",
+   "title": "Junior Linux Engineer",
+   "url": "https://hh.ru/vacancy/138073033?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "209",
+   "source": "hh (hh.ru, html)",
+   "title": "System Administrator Linux / Системный Администратор Линукс (Junior+)",
+   "url": "https://hh.ru/vacancy/138798076?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "210",
+   "source": "hh (hh.ru, html)",
+   "title": "Системный администратор Linux / Junior Devops",
+   "url": "https://hh.ru/vacancy/136554241?query=%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80+Linux&hhtmFrom=vacancy_search_list",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "211",
+   "source": "OLX.uz",
+   "title": "DevOpsDays 2026 Мерч",
+   "url": "https://www.olx.uz/d/obyavlenie/devopsdays-2026-merch-ID4ntC4.html?reason=extended_search_no_results_category",
+   "date": "",
+   "has_salary": "yes",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "DevOps/инфраструктура",
+   "tags": [
+    "DevOps/инфраструктура"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "212",
+   "source": "OLX.uz",
+   "title": "Mid/Senior Software Engineers Wanted (Global AI Startup / Equity & Par",
+   "url": "https://www.olx.uz/d/obyavlenie/mid-senior-software-engineers-wanted-global-ai-startup-equity-par-ID4sP6u.html?reason=extended_search_no_results_category",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "AI/LLM",
+   "tags": [
+    "AI/LLM"
+   ],
+   "note": ""
+  },
+  {
+   "idx": "213",
+   "source": "OLX.uz",
+   "title": "Telegram bot, webapp, website, backend, vyorstka,  server va boshqa",
+   "url": "https://www.olx.uz/d/obyavlenie/telegram-bot-webapp-website-backend-vyorstka-server-va-boshqa-ID4uUL1.html?reason=extended_search_no_results_category",
+   "date": "",
+   "has_salary": "no",
+   "status": "perspective",
+   "status_auto": "perspective",
+   "category": "боты/автоматизация",
+   "tags": [
+    "боты/автоматизация"
+   ],
+   "note": ""
+  }
+ ],
+ "snapshot": "2026-10-29"
+}

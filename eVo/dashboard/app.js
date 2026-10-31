@@ -172,6 +172,152 @@ function updateBriefLink() {
 /**
  * Открытие модального окна конкретного острова
  */
+function initHolmesReports() {
+  const select = document.getElementById("holmes-report-select");
+  const button = document.getElementById("holmes-report-btn");
+  const statusEl = document.getElementById("holmes-report-status");
+  const viewEl = document.getElementById("holmes-report-view");
+  const fullscreenBtn = document.getElementById("holmes-fullscreen-btn");
+  const initiativesEl = document.getElementById("holmes-initiatives");
+  const initiativesList = document.getElementById("holmes-initiatives-list");
+  const implementBtn = document.getElementById("holmes-implement-btn");
+  const implementStatus = document.getElementById("holmes-implement-status");
+  if (!select || !button || !statusEl || !viewEl || !fullscreenBtn || !initiativesEl || !initiativesList || !implementBtn || !implementStatus) return;
+  const lang = (typeof LANG !== 'undefined' && LANG[currentLanguage]) ? LANG[currentLanguage] : {};
+  const islandData = (lang.islands && lang.islands.holmesStudy) ? lang.islands.holmesStudy : {};
+  const prefix = islandData.reportForPrefix || "Отчёт за ";
+  const failMessage = islandData.reportsError || "Не удалось загрузить отчёты.";
+  let currentFile = null;
+  let currentInitiatives = [];
+
+  function parseHolmesFindings(content) {
+    const blocks = [...content.matchAll(/```json\s*(\{[\s\S]*?\})\s*```/g)];
+    if (!blocks.length) return null;
+    try {
+      const parsed = JSON.parse(blocks[blocks.length - 1][1]);
+      return parsed && Array.isArray(parsed.findings) ? parsed.findings : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function renderInitiatives(findings) {
+    initiativesList.innerHTML = "";
+    const actionable = (findings || []).filter(
+      (f) => f && f.id && f.status !== "resolved" && (f.severity === "P1" || f.severity === "P2")
+    );
+    if (!actionable.length) {
+      initiativesEl.style.display = "none";
+      currentInitiatives = [];
+      return;
+    }
+    currentInitiatives = actionable;
+    initiativesEl.style.display = "block";
+    implementBtn.disabled = true;
+    implementStatus.textContent = islandData.initiativesHint || "";
+    for (const finding of actionable) {
+      const row = document.createElement("label");
+      row.style.cssText = "display: flex; gap: 8px; align-items: flex-start; cursor: pointer; padding: 6px 8px; background: rgba(0,0,0,0.25); border-radius: 6px;";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.dataset.findingId = finding.id;
+      checkbox.addEventListener("change", () => {
+        implementBtn.disabled = !initiativesList.querySelector("input:checked");
+      });
+      const tag = document.createElement("span");
+      tag.textContent = finding.severity;
+      tag.style.cssText = finding.severity === "P1"
+        ? "color: #fb7185; font-family: var(--font-mono); font-size: 0.72rem; font-weight: bold; margin-top: 2px;"
+        : "color: #fbbf24; font-family: var(--font-mono); font-size: 0.72rem; font-weight: bold; margin-top: 2px;";
+      const text = document.createElement("span");
+      text.textContent = finding.detail || finding.id;
+      text.style.cssText = "font-size: 0.82rem; color: #cbd5e1; line-height: 1.45;";
+      row.appendChild(checkbox);
+      row.appendChild(tag);
+      row.appendChild(text);
+      initiativesList.appendChild(row);
+    }
+  }
+
+  statusEl.textContent = islandData.reportsLoading || "Загрузка списка отчётов…";
+  viewEl.style.display = "none";
+  fullscreenBtn.style.display = "none";
+  initiativesEl.style.display = "none";
+  fetch("/api/holmes/reports")
+    .then((r) => r.json())
+    .then((data) => {
+      const reports = (data && data.reports) || [];
+      select.innerHTML = "";
+      if (!reports.length) {
+        statusEl.textContent = islandData.reportsEmpty || "Отчётов пока нет — запусти Холмса.";
+        button.disabled = true;
+        return;
+      }
+      for (const rep of reports) {
+        const option = document.createElement("option");
+        option.value = rep.file;
+        option.textContent = prefix + rep.file.replace("Report-", "").replace("-holmes-audit.md", "");
+        select.appendChild(option);
+      }
+      button.disabled = false;
+      statusEl.textContent = "Отчётов: " + reports.length;
+    })
+    .catch(() => { statusEl.textContent = failMessage; });
+
+  button.onclick = () => {
+    const file = select.value;
+    if (!file) return;
+    statusEl.textContent = "Загрузка " + file + "…";
+    fetch("/api/holmes/reports?file=" + encodeURIComponent(file))
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.content) {
+          currentFile = file;
+          viewEl.textContent = data.content;
+          viewEl.style.display = "block";
+          fullscreenBtn.style.display = "inline-block";
+          statusEl.textContent = file;
+          renderInitiatives(parseHolmesFindings(data.content));
+        } else {
+          statusEl.textContent = failMessage;
+        }
+      })
+      .catch(() => { statusEl.textContent = failMessage; });
+  };
+
+  fullscreenBtn.onclick = () => {
+    if (!currentFile) return;
+    window.open("/holmes.html?file=" + encodeURIComponent(currentFile), "_blank");
+  };
+
+  implementBtn.onclick = () => {
+    const checked = [...initiativesList.querySelectorAll("input:checked")]
+      .map((box) => currentInitiatives.find((f) => f.id === box.dataset.findingId))
+      .filter(Boolean)
+      .map((f) => ({ id: f.id, severity: f.severity, detail: f.detail || "" }));
+    if (!checked.length || !currentFile) return;
+    implementBtn.disabled = true;
+    implementStatus.textContent = "Отправка…";
+    fetch("/api/holmes/implement", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ file: currentFile, items: checked }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && (data.created || data.existing)) {
+          const template = islandData.initiativesSent || "Готово: создано задач — {created}; уже было в лиджере — {existing}.";
+          implementStatus.textContent = template
+            .replace("{created}", (data.created || []).length)
+            .replace("{existing}", (data.existing || []).length);
+        } else {
+          implementStatus.textContent = islandData.initiativesError || "Не удалось отправить инициативы.";
+        }
+      })
+      .catch(() => { implementStatus.textContent = islandData.initiativesError || "Не удалось отправить инициативы."; });
+  };
+}
+
 function openIslandModal(islandKey) {
   activeIslandKey = islandKey;
   const refreshButton = document.getElementById("btn-refresh-barrymore");
@@ -215,6 +361,9 @@ function openIslandModal(islandKey) {
     initAiSandboxTabs();
     initAiSandboxControls();
     initSecurityContourControls();
+  }
+  if (islandKey === "holmesStudy") {
+    initHolmesReports();
   }
   if (islandKey === "tradingQuarter") {
     initTradingQuarterGroups();
@@ -1172,6 +1321,33 @@ function buildIslandContentHTML(islandKey, data, lang) {
           </p>
           <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #fef08a; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-top: 10px;">
             ${data.securityVerdict || ""}
+          </div>
+        </div>
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-rose); margin-top: 14px;">
+          <div class="panel-label">${data.reportsHeading || "Отчёты аудита"}</div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px;">
+            <select id="holmes-report-select" style="background: rgba(0,0,0,0.35); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 8px 10px; font-family: var(--font-mono); font-size: 0.85rem;">
+              <option value="">…</option>
+            </select>
+            <button class="btn-action-primary" id="holmes-report-btn" disabled>
+              <span>${data.viewReportBtn || "Посмотреть отчёт"}</span>
+            </button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+            <div id="holmes-report-status" style="font-size: 0.8rem; color: #8b96a5;"></div>
+            <button id="holmes-fullscreen-btn" style="display: none; margin-left: auto; background: rgba(0,0,0,0.35); color: #8b96a5; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 3px 9px; font-size: 0.72rem; cursor: pointer;">${data.fullscreenBtn || "⤢ Во весь экран"}</button>
+          </div>
+          <pre id="holmes-report-view" style="display: none; max-height: 340px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.55; color: #cfd7e1; background: rgba(0,0,0,0.35); padding: 12px; border-radius: 6px; margin-top: 10px;"></pre>
+          <div id="holmes-initiatives" style="display: none; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+            <div class="panel-label" style="font-size: 0.7rem;">${data.initiativesHeading || "Инициативы Холмса"}</div>
+            <div id="holmes-initiatives-hint" style="font-size: 0.75rem; color: #8b96a5; margin-top: 4px;">${data.initiativesHint || ""}</div>
+            <div id="holmes-initiatives-list" style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+              <button class="btn-action-primary" id="holmes-implement-btn" disabled>
+                <span>${data.initiativeSendBtn || "🚀 Отправить на реализацию"}</span>
+              </button>
+              <span id="holmes-implement-status" style="font-size: 0.8rem; color: #8b96a5;"></span>
+            </div>
           </div>
         </div>
       `;
