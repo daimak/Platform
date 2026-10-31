@@ -1,0 +1,64 @@
+{
+  "version": 3,
+  "updated": "2026-10-30",
+  "adr": ["ADR-004", "ADR-005"],
+  "comment": "Реестр инструментов агентов Platform eVo (ADR-005: всё — инструмент, ничего вне реестра). Каждый инструмент описывает контракт; права выдаются агенту явно, по паспорту. Все инструменты read-only: поле writes всегда пустое, пока Sovereign не утвердит обратное.",
+  "gateway": {
+    "base_url_env": "FREE_LLM_BASE_URL",
+    "default_base_url": "http://localhost:31415/v1",
+    "key_env": "FREE_LLM_API_KEY",
+    "model_env": "FREE_LLM_MODEL",
+    "default_model": "auto",
+    "timeout_sec": 120
+  },
+  "agents": {
+    "Holmes": {
+      "passport": "Memory/Agents/Holmes.md",
+      "title": "Верховный инспектор по аудиту, безопасности и расследованиям",
+      "mode": "read-only",
+      "adr": ["ADR-003", "ADR-004"],
+      "tools": ["git.inspect", "journal.read", "tree.inspect", "reports.inspect", "gateway.chat", "report.write", "ledger.write"],
+      "schedule_hint": "еженедельно, пятница (триггер: автоматизация ZCode)",
+      "powers": "два права записи: (1) отчёт Memory/Engineering/Reports/Report-ГГГГ-ММ-ДД-holmes-audit.md; (2) задачи holmes-<finding> в Memory/Engineering/Tasks/Active — только create-if-missing по формату Tasks/README.md; существующие задачи не изменяет и не закрывает, Mark Done остаётся за Sovereign"
+    },
+    "Barrymore": {
+      "passport": "Memory/Agents/Barrymore.md",
+      "title": "Главный дворецкий Estate / оркестратор",
+      "mode": "read-only",
+      "adr": ["ADR-003", "ADR-004"],
+      "tools": ["git.inspect", "journal.read", "tree.inspect", "gateway.chat"],
+      "note": "Оркестрация субагентами — целевое состояние; сейчас рантайм есть только у Morning Brief (tools/barrymore/morning-brief-agent.py)"
+    }
+  },
+  "tools": {
+    "git.inspect": {
+      "description": "Чтение состояния Git: status --porcelain, branch -vv, log за N дней, счётчики коммитов. Только подкоманды чтения.",
+      "writes": [],
+      "allowed_git_commands": ["status", "branch", "log", "rev-list"]
+    },
+    "journal.read": {
+      "description": "Чтение Memory/Engineering: LOG.md (mtime, ID записей E-xxx), STATE.md, список Memory/Engineering/Tasks/Active.",
+      "writes": []
+    },
+    "tree.inspect": {
+      "description": "Обзор рабочего дерева: untracked-файлы, изменённые файлы, размеры. Никаких записей и удалений.",
+      "writes": []
+    },
+    "gateway.chat": {
+      "description": "Один запрос к локальному LLM-шлюзу (OpenAI-совместимый /chat/completions). LLM получает только текст; доступ к ОС у модели отсутствует (ADR-004). Используется дважды: черновик отчёта и независимый проход верификации против данных инструментов.",
+      "writes": []
+    },
+    "report.write": {
+      "description": "Право записи №1: отчёт аудита в Memory/Engineering/Reports/, имя строго Report-ГГГГ-ММ-ДД-holmes-audit.md (перезапись только своего же файла того же дня). В конец отчёта дописывается машиночитаемый ```json-блок с находками прогона — источник сравнения для следующего прогона. Код, журнал, решения — не трогает (ADR-003).",
+      "writes": ["Memory/Engineering/Reports/Report-*-holmes-audit.md"]
+    },
+    "ledger.write": {
+      "description": "Право записи №2: задачи в Memory/Engineering/Tasks/Active, только create-if-missing — новые файлы holmes-<finding-id>.json строго по формату Tasks/README.md. Изменение, перезапись и закрытие существующих задач запрещены; Mark Done — только Sovereign через дашборд. Если ID уже в архиве, берётся свободный суффикс -2…-9.",
+      "writes": ["Memory/Engineering/Tasks/Active/holmes-*.json"]
+    },
+    "reports.inspect": {
+      "description": "Чтение прошлых аудитов Холмса (Reports/Report-*-holmes-audit.md) и извлечение машиночитаемого блока находок для сравнения прогонов.",
+      "writes": []
+    }
+  }
+}
