@@ -1,0 +1,27 @@
+{
+  "_comment": "Бэкап автоматизаций ZCode перед переходом на режим «поводка» (решение Дмитрия 31.10.2026 вечером: никакой работы по расписанию, только ручной запуск). Пересоздание: CronCreate с теми же title/cron/prompt.",
+  "backup_date": "2026-10-31T19:35+03:00",
+  "removed_from_schedule": [
+    {
+      "automationId": "automation-dfa644c9-9ec9-4c29-b1ac-b90c071979b8",
+      "title": "Risk scan ежедневно в 17:30",
+      "cronExpr": "30 17 * * *",
+      "runCount": 2,
+      "prompt": "Inspect code changes from the last 24 hours for high-confidence risks involving runtime failures, data loss, authorization bypasses, resource leaks, or cross-platform compatibility, and attach code and commit/diff evidence. Perform read-only analysis using only verifiable repository facts; state when evidence is insufficient, do not speculate, and do not modify code or external state."
+    },
+    {
+      "automationId": "automation-ab9fcb0c-48b3-424a-b999-d7179f776b5e",
+      "title": "Холмс: аудит + сводка, ежедневно в 18:00",
+      "cronExpr": "0 18 * * *",
+      "runCount": 3,
+      "prompt": "Шаг 1 — аудит Холмса: запусти из корня рабочей директории команду `python tools/agents/run_agent.py --agent Holmes`. Скрипт сам соберёт данные инструментов, получит черновик и верификацию от локального LLM-шлюза и сохранит отчёт в Memory/Engineering/Reports/. Шаг 2 — ежедневная сводка: git log по всем веткам за последние 7 дней (дата, хэш, тема; отдельно посчитай шумовые авто-коммиты «Agent host session»), git status, журнал Memory/Engineering — новые записи E-xxx и свежие отчёты в Reports/. Результат — краткая сводка в чате на русском: (а) вердикт Холмса: путь к отчёту и какие его утверждения прошли верификацию, а какие помечены wrong/unverified/dangerous; (б) что сделано за неделю (с хэшами коммитов); (в) что в работе и не закоммичено; (г) что ждёт решения. Только чтение, ничего не коммитить."
+    }
+  ],
+  "left_paused": [
+    {
+      "automationId": "automation-93fdfe2d-13c4-4ccf-a6a0-07239ff43961",
+      "title": "Ежедневная проверка знаний Platform, 20:30 (7 дней)",
+      "status": "уже была на паузе (enabled=false, 0 прогонов)"
+    }
+  ]
+}
