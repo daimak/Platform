@@ -1,0 +1,419 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1642 944" width="100%" role="img" aria-label="Маэльшторм — векторная авторская реализация ZCode по референсу Дмитрия">
+<title>Маэльшторм — реализация ZCode</title>
+<desc>Фэнтезийный архипелаг на закате: остров-замок с дирижаблями, гигантское дерево, кольцевой город-воронка, вулкан, цитадель, приморский городок, летающая платформа.</desc>
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#6e3a54"/><stop offset="0.14" stop-color="#b25a54"/>
+    <stop offset="0.30" stop-color="#e08a5a"/><stop offset="0.46" stop-color="#f6ae66"/>
+    <stop offset="0.60" stop-color="#ffc87e"/><stop offset="0.72" stop-color="#ffdfa2"/>
+    <stop offset="1" stop-color="#ffeec2"/>
+  </linearGradient>
+  <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8ecbdd"/><stop offset="0.12" stop-color="#58a8c8"/>
+    <stop offset="0.35" stop-color="#2f74a4"/><stop offset="0.7" stop-color="#1e5282"/>
+    <stop offset="1" stop-color="#173f68"/>
+  </linearGradient>
+  <radialGradient id="sunGlow">
+    <stop offset="0" stop-color="#fff7d0" stop-opacity="1"/>
+    <stop offset="0.3" stop-color="#ffe4a4" stop-opacity="0.75"/>
+    <stop offset="1" stop-color="#ffe4a4" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="warmSide" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0.55" stop-color="#ffb46a" stop-opacity="0"/>
+    <stop offset="1" stop-color="#ffb46a" stop-opacity="0.14"/>
+  </linearGradient>
+  <radialGradient id="vin" cx="50%" cy="47%" r="72%">
+    <stop offset="0.62" stop-color="#0c1e36" stop-opacity="0"/>
+    <stop offset="1" stop-color="#0c1e36" stop-opacity="0.3"/>
+  </radialGradient>
+  <filter id="f2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2"/></filter>
+  <filter id="f4" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
+  <filter id="f8" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="f14" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="14"/></filter>
+  <g id="boat">
+    <path d="M0,0 L30,0 L24,9 L7,9 Z" fill="#5a4632"/>
+    <line x1="15" y1="0" x2="15" y2="-26" stroke="#4a3a2a" stroke-width="1.5"/>
+    <path d="M17,-25 L17,-2 L28,-2 Z" fill="#f6ecd4"/>
+    <path d="M13,-20 L13,-2 L4,-2 Z" fill="#e8dcc0"/>
+  </g>
+  <g id="boatGold">
+    <path d="M0,0 L30,0 L24,9 L7,9 Z" fill="#5a4632"/>
+    <line x1="15" y1="0" x2="15" y2="-26" stroke="#4a3a2a" stroke-width="1.5"/>
+    <path d="M17,-25 L17,-2 L28,-2 Z" fill="#ffdf9e"/>
+    <path d="M13,-20 L13,-2 L4,-2 Z" fill="#f6c98a"/>
+  </g>
+  <g id="balloon">
+    <ellipse rx="13" ry="15" fill="#d98a5a"/>
+    <path d="M-6,-14 C-9,-4 -9,6 -6,14 L6,14 C9,6 9,-4 6,-14 Z" fill="#f2c084" opacity="0.85"/>
+    <rect x="-4" y="19" width="8" height="6" rx="1" fill="#7a5a3a"/>
+    <line x1="-6" y1="14" x2="-4" y2="19" stroke="#7a5a3a" stroke-width="1"/>
+    <line x1="6" y1="14" x2="4" y2="19" stroke="#7a5a3a" stroke-width="1"/>
+  </g>
+  <g id="palm">
+    <path d="M0,0 C-3,-10 -3,-20 3,-28" stroke="#6e4c30" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M3,-28 C-9,-34 -20,-32 -26,-24 C-16,-28 -6,-28 3,-28 Z" fill="#3f7d4a"/>
+    <path d="M3,-28 C15,-34 26,-32 32,-24 C22,-28 12,-28 3,-28 Z" fill="#4c8552"/>
+    <path d="M3,-28 C-2,-40 0,-46 8,-50 C6,-42 6,-34 3,-28 Z" fill="#3f7d4a"/>
+    <path d="M3,-28 C10,-38 16,-42 24,-42 C18,-36 12,-32 3,-28 Z" fill="#4c8552"/>
+  </g>
+  <path id="bird" d="M0,0 Q4,-5 8,0 Q12,-5 16,0" fill="none" stroke="#f4f8f8" stroke-width="1.6" stroke-linecap="round"/>
+</defs>
+
+<!-- НЕБО -->
+<rect x="0" y="0" width="1642" height="330" fill="url(#sky)"/>
+<circle cx="1560" cy="238" r="185" fill="url(#sunGlow)"/>
+<circle cx="1560" cy="238" r="30" fill="#fff4c8"/>
+
+<!-- облака: тёмная кромка, тёплое тело, освещённые верхушки -->
+<g filter="url(#f8)">
+  <ellipse cx="300" cy="42" rx="320" ry="58" fill="#8a4258" opacity="0.9"/>
+  <ellipse cx="800" cy="32" rx="380" ry="54" fill="#9c4a52" opacity="0.9"/>
+  <ellipse cx="1350" cy="46" rx="340" ry="58" fill="#a85452" opacity="0.9"/>
+  <ellipse cx="200" cy="98" rx="260" ry="44" fill="#cf6f54" opacity="0.95"/>
+  <ellipse cx="620" cy="88" rx="300" ry="46" fill="#e08159" opacity="0.95"/>
+  <ellipse cx="1050" cy="96" rx="280" ry="44" fill="#ea8f5e" opacity="0.95"/>
+  <ellipse cx="1450" cy="82" rx="260" ry="42" fill="#f6a468"/>
+</g>
+<g filter="url(#f4)" opacity="0.9">
+  <ellipse cx="230" cy="72" rx="230" ry="26" fill="#ffcf96"/>
+  <ellipse cx="640" cy="64" rx="260" ry="28" fill="#ffd9a0"/>
+  <ellipse cx="1060" cy="70" rx="240" ry="26" fill="#ffe0a8"/>
+  <ellipse cx="1460" cy="58" rx="230" ry="24" fill="#ffe8b4"/>
+</g>
+<g filter="url(#f4)">
+  <ellipse cx="500" cy="152" rx="120" ry="17" fill="#f2b078" opacity="0.85"/>
+  <ellipse cx="950" cy="162" rx="140" ry="19" fill="#f6b87e" opacity="0.85"/>
+  <ellipse cx="1290" cy="150" rx="130" ry="17" fill="#fbc286" opacity="0.9"/>
+  <ellipse cx="120" cy="180" rx="100" ry="15" fill="#e89a6a" opacity="0.7"/>
+</g>
+<g filter="url(#f4)" opacity="0.6">
+  <ellipse cx="720" cy="228" rx="70" ry="10" fill="#ffe8bc"/>
+  <ellipse cx="1020" cy="240" rx="80" ry="11" fill="#ffe4b4"/>
+  <ellipse cx="380" cy="248" rx="65" ry="9" fill="#ffd9ae"/>
+</g>
+
+<!-- дальние острова на горизонте -->
+<g fill="#8fb0c8" opacity="0.55" filter="url(#f4)">
+  <path d="M640,318 Q700,290 770,316 L770,318 Z"/>
+  <path d="M880,316 Q960,282 1050,314 L1050,318 Z"/>
+  <path d="M1120,317 Q1180,295 1250,315 L1250,318 Z"/>
+  <path d="M1360,315 Q1440,280 1530,313 L1530,318 Z"/>
+  <path d="M250,317 Q300,300 355,316 L355,318 Z"/>
+  <rect x="955" y="286" width="3" height="14"/>
+  <rect x="1435" y="284" width="3" height="16"/>
+</g>
+
+<!-- МОРЕ -->
+<rect x="0" y="318" width="1642" height="626" fill="url(#sea)"/>
+<rect x="0" y="316" width="1642" height="5" fill="#ffe8bc" opacity="0.55" filter="url(#f2)"/>
+
+<!-- солнечная дорожка -->
+<polygon points="1524,320 1602,320 1642,560 1642,944 1268,944" fill="#ffd98f" opacity="0.13"/>
+<g fill="#ffd98f" filter="url(#f2)">
+  <rect x="1495" y="345" width="130" height="4" rx="2" opacity="0.3"/>
+  <rect x="1470" y="390" width="170" height="5" rx="2.5" opacity="0.26"/>
+  <rect x="1435" y="445" width="210" height="6" rx="3" opacity="0.24"/>
+  <rect x="1390" y="505" width="250" height="7" rx="3.5" opacity="0.22"/>
+  <rect x="1340" y="575" width="290" height="8" rx="4" opacity="0.2"/>
+  <rect x="1280" y="655" width="330" height="9" rx="4.5" opacity="0.18"/>
+  <rect x="1215" y="745" width="370" height="10" rx="5" opacity="0.16"/>
+  <rect x="1150" y="835" width="410" height="11" rx="5.5" opacity="0.14"/>
+  <rect x="1090" y="905" width="440" height="12" rx="6" opacity="0.12"/>
+</g>
+
+<!-- бирюзовые отмели вокруг островов -->
+<g fill="#3fc3bd" opacity="0.32" filter="url(#f8)">
+  <ellipse cx="325" cy="445" rx="300" ry="64"/>
+  <ellipse cx="350" cy="870" rx="330" ry="85"/>
+  <ellipse cx="775" cy="505" rx="290" ry="100"/>
+  <ellipse cx="1185" cy="400" rx="215" ry="48"/>
+  <ellipse cx="1400" cy="580" rx="205" ry="48"/>
+  <ellipse cx="1400" cy="860" rx="340" ry="85"/>
+  <ellipse cx="830" cy="852" rx="105" ry="20"/>
+</g>
+<g fill="#6ad8cc" opacity="0.3" filter="url(#f4)">
+  <ellipse cx="325" cy="440" rx="210" ry="44"/>
+  <ellipse cx="350" cy="868" rx="240" ry="60"/>
+  <ellipse cx="775" cy="500" rx="220" ry="72"/>
+  <ellipse cx="1400" cy="858" rx="250" ry="60"/>
+  <ellipse cx="1400" cy="578" rx="150" ry="32"/>
+  <ellipse cx="1185" cy="398" rx="150" ry="32"/>
+</g>
+
+<!-- волны -->
+<g fill="#123c66" opacity="0.32" filter="url(#f2)">
+  <rect x="90" y="515" width="170" height="4" rx="2"/><rect x="320" y="585" width="190" height="4" rx="2"/>
+  <rect x="590" y="645" width="210" height="5" rx="2.5"/><rect x="180" y="700" width="180" height="4" rx="2"/>
+  <rect x="680" y="755" width="230" height="5" rx="2.5"/><rect x="420" y="830" width="200" height="5" rx="2.5"/>
+  <rect x="950" y="585" width="180" height="4" rx="2"/><rect x="1120" y="660" width="200" height="5" rx="2.5"/>
+  <rect x="1010" y="770" width="230" height="5" rx="2.5"/><rect x="1300" y="720" width="200" height="5" rx="2.5"/>
+  <rect x="1450" y="640" width="170" height="4" rx="2"/><rect x="760" y="690" width="180" height="4" rx="2"/>
+</g>
+<g fill="#8fd8e2" opacity="0.15" filter="url(#f2)">
+  <rect x="240" y="545" width="150" height="3" rx="1.5"/><rect x="520" y="610" width="170" height="3" rx="1.5"/>
+  <rect x="840" y="620" width="160" height="3" rx="1.5"/><rect x="1080" y="700" width="180" height="3" rx="1.5"/>
+  <rect x="700" y="820" width="190" height="3" rx="1.5"/><rect x="1180" y="810" width="200" height="3" rx="1.5"/>
+  <rect x="930" y="900" width="210" height="4" rx="2"/><rect x="480" y="905" width="180" height="4" rx="2"/>
+  <rect x="1340" y="930" width="220" height="4" rx="2"/>
+</g>
+
+<!-- ОСТРОВ: ВУЛКАН (право-верх) -->
+<g>
+  <ellipse cx="1180" cy="392" rx="210" ry="30" fill="#123c66" opacity="0.4" filter="url(#f4)"/>
+  <path d="M1010,388 C1070,320 1130,240 1168,186 L1198,186 C1250,250 1300,330 1345,388 L1345,400 C1240,418 1105,418 1010,400 Z" fill="#7d6a54"/>
+  <path d="M1010,388 C1070,320 1130,240 1168,186 L1180,186 C1140,260 1090,330 1050,388 Z" fill="#5f5040" opacity="0.85"/>
+  <ellipse cx="1080" cy="340" rx="60" ry="18" fill="#4c8552"/>
+  <ellipse cx="1260" cy="350" rx="70" ry="20" fill="#558e56"/>
+  <ellipse cx="1180" cy="298" rx="40" ry="12" fill="#4c8552" opacity="0.9"/>
+  <path d="M1075,320 Q1180,300 1290,330" stroke="#9a8870" stroke-width="3" fill="none" opacity="0.7"/>
+  <path d="M1100,270 Q1185,252 1270,280" stroke="#9a8870" stroke-width="3" fill="none" opacity="0.7"/>
+  <path d="M1130,225 Q1185,212 1245,232" stroke="#9a8870" stroke-width="3" fill="none" opacity="0.6"/>
+  <ellipse cx="1183" cy="184" rx="15" ry="5" fill="#3f3226"/>
+  <path d="M1168,184 Q1183,178 1198,184" stroke="#e8c890" stroke-width="2" fill="none" opacity="0.7"/>
+  <g fill="#e6d4ac">
+    <rect x="1112" y="296" width="7" height="9"/><rect x="1148" y="262" width="7" height="9"/>
+    <rect x="1212" y="266" width="7" height="9"/><rect x="1248" y="300" width="7" height="9"/>
+    <rect x="1120" y="336" width="7" height="9"/><rect x="1218" y="318" width="7" height="9"/>
+  </g>
+  <g fill="#a85a46">
+    <path d="M1112,296 l3.5,-6 l3.5,6 z"/><path d="M1148,262 l3.5,-6 l3.5,6 z"/>
+    <path d="M1212,266 l3.5,-6 l3.5,6 z"/><path d="M1248,300 l3.5,-6 l3.5,6 z"/>
+    <path d="M1120,336 l3.5,-6 l3.5,6 z"/><path d="M1218,318 l3.5,-6 l3.5,6 z"/>
+  </g>
+  <g fill="#3f7d4a">
+    <circle cx="1100" cy="352" r="5"/><circle cx="1130" cy="360" r="4"/><circle cx="1230" cy="362" r="5"/>
+    <circle cx="1265" cy="352" r="4"/><circle cx="1160" cy="308" r="4"/>
+  </g>
+</g>
+
+<!-- ОСТРОВ: ЗАМОК (лево-верх) -->
+<g>
+  <ellipse cx="320" cy="432" rx="260" ry="34" fill="#123c66" opacity="0.45" filter="url(#f4)"/>
+  <circle cx="325" cy="250" r="75" fill="#ffdf9e" opacity="0.22" filter="url(#f4)"/>
+  <path d="M80,398 C140,372 220,358 320,352 C420,356 500,372 552,396 L552,432 C470,456 360,464 280,460 C200,456 130,440 80,420 Z" fill="#6e5b49"/>
+  <path d="M110,412 C200,432 400,436 530,414" stroke="#57463a" stroke-width="4" fill="none" opacity="0.6"/>
+  <path d="M140,396 C240,412 420,416 520,398" stroke="#57463a" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M95,392 C160,360 250,344 340,342 C430,344 500,360 545,388 C470,398 380,404 300,402 C210,400 140,398 95,392 Z" fill="#4c8552"/>
+  <circle cx="150" cy="380" r="14" fill="#5f9e5f"/><circle cx="210" cy="368" r="18" fill="#6fac60"/>
+  <circle cx="300" cy="356" r="20" fill="#79b56a"/><circle cx="420" cy="364" r="16" fill="#6fac60"/>
+  <circle cx="490" cy="380" r="14" fill="#5f9e5f"/>
+  <!-- замок -->
+  <rect x="255" y="300" width="165" height="50" fill="#dcc7a0"/>
+  <g fill="#dcc7a0">
+    <rect x="255" y="294" width="10" height="8"/><rect x="271" y="294" width="10" height="8"/>
+    <rect x="287" y="294" width="10" height="8"/><rect x="349" y="294" width="10" height="8"/>
+    <rect x="365" y="294" width="10" height="8"/><rect x="381" y="294" width="10" height="8"/>
+    <rect x="397" y="294" width="10" height="8"/><rect x="413" y="294" width="10" height="8"/>
+  </g>
+  <rect x="290" y="265" width="30" height="35" fill="#dcc7a0"/>
+  <path d="M287,265 L305,250 L323,265 Z" fill="#b0604a"/>
+  <rect x="340" y="270" width="26" height="30" fill="#d2bd94"/>
+  <path d="M337,270 L353,257 L369,270 Z" fill="#a85a46"/>
+  <rect x="305" y="170" width="34" height="140" fill="#e2cfa8"/>
+  <path d="M305,170 L322,120 L339,170 Z" fill="#b0604a"/>
+  <line x1="322" y1="120" x2="322" y2="102" stroke="#6a4c34" stroke-width="2"/>
+  <path d="M322,102 L336,107 L322,112 Z" fill="#d84a3a"/>
+  <rect x="352" y="205" width="26" height="110" fill="#d8c49c"/>
+  <path d="M352,205 L365,165 L378,205 Z" fill="#b0604a"/>
+  <rect x="262" y="225" width="22" height="95" fill="#d2bd94"/>
+  <path d="M262,225 L273,190 L284,225 Z" fill="#a85a46"/>
+  <rect x="337" y="172" width="3" height="138" fill="#ffe2a4" opacity="0.95"/>
+  <rect x="376" y="207" width="3" height="108" fill="#ffe2a4" opacity="0.8"/>
+  <rect x="282" y="227" width="3" height="93" fill="#f2c890" opacity="0.5"/>
+  <g fill="#6a4c34">
+    <rect x="312" y="200" width="3" height="5"/><rect x="320" y="220" width="3" height="5"/>
+    <rect x="315" y="240" width="3" height="5"/><rect x="360" y="230" width="3" height="5"/>
+    <rect x="316" y="285" width="3" height="5"/><rect x="352" y="285" width="3" height="5"/>
+  </g>
+  <!-- водопад -->
+  <path d="M235,452 L225,530 L245,532 L252,456 Z" fill="#d8f4f2" opacity="0.85" filter="url(#f2)"/>
+  <ellipse cx="232" cy="536" rx="26" ry="8" fill="#eafcf9" opacity="0.8" filter="url(#f2)"/>
+</g>
+
+<!-- ОСТРОВ: МАЭЛЬШТОРМ (центр) -->
+<g>
+  <ellipse cx="775" cy="555" rx="250" ry="36" fill="#0f3a63" opacity="0.5" filter="url(#f4)"/>
+  <path fill-rule="evenodd" fill="#a3906e"
+    d="M775,383 C884,383 968,421 968,470 C968,519 884,557 775,557 C666,557 582,519 582,470 C582,421 666,383 775,383 Z
+       M775,420 C843,420 888,442 888,470 C888,498 843,520 775,520 C707,520 662,498 662,470 C662,442 707,420 775,420 Z"/>
+  <path d="M600,485 C640,530 760,552 900,528" stroke="#87745a" stroke-width="5" fill="none" opacity="0.5"/>
+  <path d="M640,415 C700,398 850,398 912,418" stroke="#87745a" stroke-width="4" fill="none" opacity="0.4"/>
+  <!-- застройка по кольцу -->
+  <g>
+    <rect x="917" y="454" width="16" height="16" fill="#e8d8b2"/><path d="M916,454 L925,445 L934,454 Z" fill="#c06a48"/>
+    <rect x="903" y="482" width="16" height="16" fill="#e0cfa6"/><path d="M902,482 L911,473 L920,482 Z" fill="#b85e42"/>
+    <rect x="863" y="505" width="16" height="16" fill="#e8d8b2"/><path d="M862,505 L871,496 L880,505 Z" fill="#c06a48"/>
+    <rect x="793" y="519" width="16" height="16" fill="#e0cfa6"/><path d="M792,519 L801,510 L810,519 Z" fill="#b85e42"/>
+    <rect x="716" y="516" width="16" height="16" fill="#e8d8b2"/><path d="M715,516 L724,507 L733,516 Z" fill="#c06a48"/>
+    <rect x="652" y="496" width="16" height="16" fill="#e0cfa6"/><path d="M651,496 L660,487 L669,496 Z" fill="#b85e42"/>
+    <rect x="619" y="465" width="16" height="16" fill="#e8d8b2"/><path d="M618,465 L627,456 L636,465 Z" fill="#c06a48"/>
+    <rect x="626" y="431" width="16" height="16" fill="#e0cfa6"/><path d="M625,431 L634,422 L643,431 Z" fill="#b85e42"/>
+    <rect x="671" y="403" width="16" height="16" fill="#e8d8b2"/><path d="M670,403 L679,394 L688,403 Z" fill="#c06a48"/>
+    <rect x="793" y="389" width="16" height="16" fill="#e0cfa6"/><path d="M792,389 L801,380 L810,389 Z" fill="#b85e42"/>
+    <rect x="863" y="403" width="16" height="16" fill="#e8d8b2"/><path d="M862,403 L871,394 L880,403 Z" fill="#c06a48"/>
+    <rect x="908" y="431" width="16" height="16" fill="#e0cfa6"/><path d="M907,431 L916,422 L925,431 Z" fill="#b85e42"/>
+    <!-- башни -->
+    <rect x="717" y="490" width="16" height="44" fill="#e2cfa8"/><path d="M715,490 L725,470 L735,490 Z" fill="#a85a46"/>
+    <rect x="865" y="382" width="14" height="38" fill="#dcc7a0"/><path d="M863,382 L872,364 L881,382 Z" fill="#b0604a"/>
+    <!-- маяк -->
+    <rect x="743" y="352" width="14" height="54" fill="#e8d8b2"/>
+    <rect x="741" y="344" width="18" height="9" fill="#c06a48"/>
+    <circle cx="750" cy="348" r="4.5" fill="#ffe9a8"/>
+    <circle cx="750" cy="348" r="14" fill="#ffe9a8" opacity="0.6" filter="url(#f4)"/>
+  </g>
+  <!-- воронка -->
+  <ellipse cx="775" cy="470" rx="128" ry="52" fill="#2b7fae"/>
+  <ellipse cx="775" cy="470" rx="110" ry="44" fill="#1c5b8c"/>
+  <ellipse cx="775" cy="470" rx="90" ry="36" fill="#2f8ab8"/>
+  <ellipse cx="775" cy="470" rx="70" ry="28" fill="#1a4e7c"/>
+  <ellipse cx="775" cy="470" rx="50" ry="20" fill="#2f8ab8" opacity="0.9"/>
+  <ellipse cx="775" cy="470" rx="32" ry="13" fill="#143f68"/>
+  <ellipse cx="775" cy="470" rx="14" ry="6" fill="#0b2c4e"/>
+  <path d="M685,478 C710,442 845,442 868,476" stroke="#bfeaf2" stroke-width="3" fill="none" opacity="0.55" filter="url(#f2)"/>
+  <path d="M700,492 C725,516 828,516 852,490" stroke="#bfeaf2" stroke-width="3" fill="none" opacity="0.5" filter="url(#f2)"/>
+  <path d="M702,452 C730,430 822,430 850,454" stroke="#bfeaf2" stroke-width="2.5" fill="none" opacity="0.45" filter="url(#f2)"/>
+  <ellipse cx="775" cy="470" rx="124" ry="50" stroke="#eafcff" stroke-width="3" fill="none" opacity="0.7" stroke-dasharray="12 8"/>
+  <!-- пирс -->
+  <path d="M946,513 L1036,556 L1032,564 L942,521 Z" fill="#7a5f42"/>
+  <rect x="955" y="516" width="3" height="14" fill="#5f4a32"/><rect x="985" y="530" width="3" height="14" fill="#5f4a32"/>
+  <rect x="1015" y="545" width="3" height="14" fill="#5f4a32"/>
+</g>
+
+<!-- ОСТРОВ: ЦИТАДЕЛЬ (право-центр) -->
+<g>
+  <ellipse cx="1395" cy="585" rx="190" ry="30" fill="#0f3a63" opacity="0.45" filter="url(#f4)"/>
+  <path d="M1255,540 C1300,505 1360,490 1420,492 C1490,496 1545,515 1565,540 L1560,565 C1480,585 1350,588 1265,570 Z" fill="#6e5b49"/>
+  <path d="M1280,548 C1360,566 1480,566 1552,550" stroke="#57463a" stroke-width="4" fill="none" opacity="0.5"/>
+  <ellipse cx="1400" cy="505" rx="90" ry="16" fill="#4c8552"/>
+  <rect x="1352" y="458" width="18" height="50" fill="#e2cfa8"/>
+  <path d="M1350,458 L1361,436 L1372,458 Z" fill="#a85a46"/>
+  <rect x="1388" y="446" width="22" height="62" fill="#dcc7a0"/>
+  <path d="M1386,446 L1399,420 L1412,446 Z" fill="#b0604a"/>
+  <rect x="1424" y="462" width="16" height="44" fill="#d2bd94"/>
+  <path d="M1422,462 L1432,442 L1442,462 Z" fill="#a85a46"/>
+  <rect x="1408" y="448" width="3" height="58" fill="#ffe2a4" opacity="0.8"/>
+  <circle cx="1300" cy="520" r="9" fill="#3f7d4a"/><circle cx="1470" cy="515" r="8" fill="#4c8552"/>
+  <circle cx="1520" cy="530" r="10" fill="#3f7d4a"/>
+</g>
+
+<!-- ОСТРОВ: ДЕРЕВО (лево-низ) -->
+<g>
+  <ellipse cx="345" cy="880" rx="300" ry="40" fill="#0d3557" opacity="0.55" filter="url(#f4)"/>
+  <path d="M110,838 C170,802 260,786 355,784 C455,786 545,806 595,838 L595,872 C500,900 320,908 190,892 L110,860 Z" fill="#6e5b49"/>
+  <path d="M150,856 C260,884 440,886 570,860" stroke="#57463a" stroke-width="4" fill="none" opacity="0.5"/>
+  <circle cx="330" cy="648" r="155" fill="#3c7a49"/>
+  <circle cx="215" cy="690" r="95" fill="#43814f"/>
+  <circle cx="440" cy="688" r="100" fill="#43814f"/>
+  <circle cx="300" cy="706" r="85" fill="#387046"/>
+  <circle cx="380" cy="712" r="70" fill="#43814f"/>
+  <circle cx="270" cy="610" r="60" fill="#6fae58" opacity="0.9"/>
+  <circle cx="390" cy="615" r="55" fill="#7fbc60" opacity="0.9"/>
+  <circle cx="200" cy="660" r="40" fill="#6fae58" opacity="0.8"/>
+  <circle cx="470" cy="655" r="42" fill="#6fae58" opacity="0.8"/>
+  <g fill="#a8d878">
+    <circle cx="250" cy="595" r="5"/><circle cx="310" cy="580" r="4"/><circle cx="415" cy="590" r="5"/>
+    <circle cx="180" cy="645" r="4"/><circle cx="480" cy="635" r="4"/><circle cx="350" cy="600" r="3.5"/>
+  </g>
+  <path d="M318,700 C310,740 306,768 300,790 L345,790 C340,764 338,738 336,700 Z" fill="#7a5636"/>
+  <path d="M300,790 C280,806 260,812 240,816 L255,790 Z" fill="#6e4c30"/>
+  <path d="M345,790 C365,808 385,814 405,816 L388,790 Z" fill="#6e4c30"/>
+  <path d="M322,700 C310,680 295,668 280,660" stroke="#7a5636" stroke-width="8" fill="none" stroke-linecap="round" filter="url(#f2)"/>
+  <path d="M332,700 C345,678 360,666 378,658" stroke="#7a5636" stroke-width="8" fill="none" stroke-linecap="round" filter="url(#f2)"/>
+  <rect x="428" y="762" width="24" height="18" fill="#e8d8b2"/>
+  <path d="M425,762 L440,750 L455,762 Z" fill="#c06a48"/>
+  <path d="M200,845 L186,908 L210,910 L218,848 Z" fill="#d8f4f2" opacity="0.85" filter="url(#f2)"/>
+  <ellipse cx="200" cy="914" rx="24" ry="8" fill="#eafcf9" opacity="0.8" filter="url(#f2)"/>
+  <use href="#bird" x="498" y="598"/><use href="#bird" x="536" y="583"/><use href="#bird" x="562" y="608"/>
+</g>
+
+<!-- ОСТРОВ: ГОРОДОК (право-низ) -->
+<g>
+  <ellipse cx="1400" cy="890" rx="340" ry="42" fill="#0d3557" opacity="0.55" filter="url(#f4)"/>
+  <path d="M1130,845 C1200,806 1300,788 1400,786 C1510,788 1590,812 1625,845 L1620,878 C1520,902 1330,908 1210,896 L1130,868 Z" fill="#6e5b49"/>
+  <path d="M1140,840 C1220,802 1330,790 1420,790 C1520,792 1590,814 1620,842 C1540,852 1400,856 1300,852 C1220,848 1165,846 1140,840 Z" fill="#4c8552"/>
+  <g fill="#ecdcb4">
+    <rect x="1190" y="812" width="20" height="16"/><rect x="1225" y="806" width="18" height="15"/>
+    <rect x="1258" y="800" width="22" height="16"/><rect x="1295" y="796" width="18" height="14"/>
+    <rect x="1330" y="794" width="20" height="15"/><rect x="1365" y="792" width="22" height="16"/>
+    <rect x="1400" y="790" width="18" height="14"/><rect x="1438" y="792" width="20" height="15"/>
+    <rect x="1472" y="796" width="18" height="15"/><rect x="1505" y="800" width="20" height="16"/>
+    <rect x="1540" y="806" width="18" height="15"/>
+  </g>
+  <g fill="#c06a48">
+    <path d="M1188,812 l7,-8 l7,8 z"/><path d="M1256,800 l8,-9 l8,9 z"/>
+    <path d="M1328,794 l7,-8 l7,8 z"/><path d="M1363,792 l8,-9 l8,9 z"/>
+    <path d="M1436,792 l7,-8 l7,8 z"/><path d="M1503,800 l7,-8 l7,8 z"/>
+  </g>
+  <g fill="#b85e42">
+    <path d="M1223,806 l6.5,-7 l6.5,7 z"/><path d="M1293,796 l6.5,-7 l6.5,7 z"/>
+    <path d="M1398,790 l6.5,-7 l6.5,7 z"/><path d="M1470,796 l6.5,-7 l6.5,7 z"/>
+    <path d="M1538,806 l6.5,-7 l6.5,7 z"/>
+  </g>
+  <g fill="#e0cfa6">
+    <rect x="1210" y="826" width="18" height="13"/><rect x="1280" y="818" width="18" height="13"/>
+    <rect x="1350" y="812" width="18" height="13"/><rect x="1420" y="810" width="18" height="13"/>
+    <rect x="1490" y="816" width="18" height="13"/>
+  </g>
+  <g fill="#ffd98f">
+    <rect x="1370" y="796" width="3" height="4"/><rect x="1404" y="794" width="3" height="4"/>
+    <rect x="1442" y="796" width="3" height="4"/><rect x="1510" y="804" width="3" height="4"/>
+  </g>
+  <use href="#palm" transform="translate(1175,800) scale(0.9)"/>
+  <use href="#palm" transform="translate(1560,812) scale(0.8)"/>
+  <use href="#palm" transform="translate(1245,795) scale(0.7)"/>
+  <path d="M1600,860 L1642,880 L1642,888 L1596,868 Z" fill="#7a5f42"/>
+</g>
+
+<!-- ЛЕТАЮЩАЯ ПЛАТФОРМА (центр-низ) -->
+<g>
+  <ellipse cx="830" cy="852" rx="70" ry="14" stroke="#cfeef2" stroke-width="2.5" fill="none" opacity="0.5"/>
+  <ellipse cx="830" cy="850" rx="42" ry="8" stroke="#cfeef2" stroke-width="2" fill="none" opacity="0.4"/>
+  <ellipse cx="830" cy="838" rx="34" ry="9" fill="#7fe8dc" opacity="0.85" filter="url(#f4)"/>
+  <polygon points="818,812 842,812 852,840 808,840" fill="#7fe8dc" opacity="0.2"/>
+  <path d="M798,806 L862,806 L850,824 L810,824 Z" fill="#5a4632"/>
+  <ellipse cx="830" cy="800" rx="66" ry="16" fill="#8a6f52"/>
+  <ellipse cx="830" cy="796" rx="60" ry="13" fill="#a3865e"/>
+  <rect x="806" y="772" width="18" height="18" fill="#e0cfa6"/>
+  <path d="M803,772 L815,760 L827,772 Z" fill="#c06a48"/>
+  <ellipse cx="848" cy="780" rx="12" ry="14" fill="#c9a05a"/>
+  <ellipse cx="848" cy="780" rx="6" ry="7" fill="#8a6f52"/>
+  <circle cx="782" cy="788" r="13" fill="#c9a05a"/>
+  <circle cx="782" cy="788" r="6" fill="#8a6f52"/>
+  <path d="M782,775 L782,801 M769,788 L795,788" stroke="#8a6f52" stroke-width="3"/>
+  <circle cx="884" cy="782" r="9" fill="#c9a05a"/>
+  <circle cx="884" cy="782" r="4" fill="#8a6f52"/>
+  <path d="M868,776 L892,748 L898,752 L874,780 Z" fill="#6e5b49"/>
+  <line x1="895" y1="752" x2="895" y2="768" stroke="#4a3a2a" stroke-width="1.5"/>
+  <rect x="891" y="768" width="8" height="5" fill="#4a3a2a"/>
+</g>
+
+<!-- КОРАБЛИ -->
+<use href="#boat" transform="translate(620,382) scale(0.9)"/>
+<use href="#boat" transform="translate(700,352) scale(0.7)"/>
+<use href="#boat" transform="translate(985,432) scale(0.9)"/>
+<use href="#boatGold" transform="translate(1075,472) scale(1.05)"/>
+<use href="#boat" transform="translate(1175,522) scale(-0.8,0.8)"/>
+<use href="#boatGold" transform="translate(1245,602) scale(0.85)"/>
+<use href="#boat" transform="translate(645,602) scale(0.9)"/>
+<use href="#boat" transform="translate(555,762) scale(0.8)"/>
+<use href="#boat" transform="translate(985,852) scale(1.05)"/>
+<use href="#boat" transform="translate(890,642) scale(-0.7,0.7)"/>
+<use href="#boatGold" transform="translate(1500,660) scale(0.9)"/>
+<use href="#boat" transform="translate(720,562) scale(0.6)"/>
+
+<!-- ДИРИЖАБЛИ -->
+<use href="#balloon" transform="translate(430,148) scale(1.1)"/>
+<use href="#balloon" transform="translate(487,238) scale(0.75)"/>
+<use href="#balloon" transform="translate(165,262) scale(0.6)"/>
+<use href="#balloon" transform="translate(900,300) scale(0.5)"/>
+<use href="#balloon" transform="translate(1148,330) scale(0.55)"/>
+
+<!-- птицы у замка -->
+<use href="#bird" x="470" y="325"/><use href="#bird" x="492" y="316"/>
+
+<!-- дымка и свет -->
+<rect x="0" y="300" width="1642" height="26" fill="#ffd9a8" opacity="0.1" filter="url(#f8)"/>
+<rect x="0" y="318" width="1642" height="14" fill="#ffe8bc" opacity="0.14" filter="url(#f4)"/>
+<rect x="0" y="0" width="1642" height="944" fill="url(#warmSide)"/>
+<rect x="0" y="0" width="1642" height="944" fill="url(#vin)"/>
+</svg>
