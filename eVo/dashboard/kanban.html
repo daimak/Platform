@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo — Канбан лиджера</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 20% 0%, #0d1b2a 0%, #060a13 55%, #030509 100%);
+      color: var(--text-primary, #e2e8f0);
+      font-family: var(--font-mono, "JetBrains Mono", monospace);
+      padding: 24px 28px;
+    }
+    .kb-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; }
+    .kb-title {
+      font-family: var(--font-display, Orbitron);
+      font-size: 1.35rem; font-weight: 700; letter-spacing: 2px;
+      color: #fff;
+    }
+    .kb-sub { color: var(--text-muted, #7d8aa0); font-size: 0.72rem; letter-spacing: 1px; }
+    .kb-back {
+      margin-left: auto; color: var(--accent-cyan, #38bdf8); text-decoration: none;
+      font-size: 0.78rem; border: 1px solid rgba(56,189,248,0.35); padding: 6px 12px; border-radius: 8px;
+    }
+    .kb-back:hover { background: rgba(56,189,248,0.12); }
+    .kb-meta { color: var(--text-muted, #7d8aa0); font-size: 0.68rem; margin-bottom: 18px; }
+    .kb-meta b { color: var(--accent-emerald, #34d399); }
+
+    .kb-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; align-items: start; }
+    .kb-col {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      min-height: 200px;
+      padding: 10px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .kb-col.dragover { border-color: var(--accent-cyan, #38bdf8); background: rgba(56,189,248,0.07); }
+    .kb-col-head {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 6px 10px;
+      font-family: var(--font-display, Orbitron);
+      font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .kb-col-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .kb-col-count { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted, #7d8aa0); }
+    .kb-cards { display: flex; flex-direction: column; gap: 8px; min-height: 60px; }
+    .kb-card {
+      background: linear-gradient(160deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.09);
+      border-left: 3px solid rgba(148,163,184,0.6);
+      border-radius: 9px; padding: 9px 11px;
+      cursor: grab;
+      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+    .kb-card:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.2); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+    .kb-card.dragging { opacity: 0.45; cursor: grabbing; }
+    .kb-card.urgent { border-left-color: #fb7185; }
+    .kb-card.regular { border-left-color: #38bdf8; }
+    .kb-card-title { font-size: 0.8rem; line-height: 1.4; color: #eef2f7; margin-bottom: 6px; }
+    .kb-card-foot { display: flex; align-items: center; gap: 8px; }
+    .kb-badge { font-size: 0.58rem; letter-spacing: 1px; padding: 2px 7px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.16); color: var(--text-muted, #7d8aa0); }
+    .kb-badge.urgent { color: #fb7185; border-color: rgba(251,113,133,0.5); }
+    .kb-badge.regular { color: #38bdf8; border-color: rgba(56,189,248,0.5); }
+    .kb-badge.done-badge { color: var(--accent-emerald, #34d399); border-color: rgba(52,211,153,0.5); }
+    .kb-card-id { margin-left: auto; font-size: 0.6rem; color: var(--text-muted, #7d8aa0); opacity: 0.7; }
+    .kb-empty { color: rgba(125,138,160,0.45); font-size: 0.7rem; text-align: center; padding: 14px 4px; border: 1px dashed rgba(255,255,255,0.08); border-radius: 9px; }
+    .kb-toast {
+      position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+      padding: 8px 16px; border-radius: 9px; font-size: 0.72rem;
+      background: rgba(15,23,42,0.92); border: 1px solid rgba(255,255,255,0.14);
+      opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+    }
+    .kb-toast.show { opacity: 1; }
+    .kb-toast.err { border-color: rgba(251,113,133,0.6); color: #fb7185; }
+
+    /* призрак карточки при перетаскивании */
+    .kb-ghost {
+      position: fixed; z-index: 1000; pointer-events: none;
+      opacity: 0.92; transform: rotate(2deg);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.55);
+      background: linear-gradient(160deg, rgba(30,41,59,0.98), rgba(15,23,42,0.98));
+    }
+    .kb-card.dragging { opacity: 0.35; }
+    .kb-card { touch-action: none; }
+
+    /* модалка карточки — на пол-экрана */
+    .kbm-overlay {
+      position: fixed; inset: 0; z-index: 900;
+      background: rgba(2,5,10,0.66); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+    }
+    .kbm-overlay.open { display: flex; }
+    .kbm-panel {
+      width: min(760px, 92vw); max-height: 86vh;
+      display: flex; flex-direction: column;
+      background: linear-gradient(170deg, #0d1523 0%, #0a101c 100%);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+    .kbm-body { overflow-y: auto; padding: 20px 24px 26px; }
+    .kbm-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .kbm-title { font-family: var(--font-display, Orbitron); font-size: 1.02rem; font-weight: 700; color: #fff; line-height: 1.45; margin-bottom: 8px; }
+    .kbm-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .kbm-close {
+      margin-left: auto; flex: none; cursor: pointer;
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
+      color: var(--text-secondary, #94a3b8); font-size: 0.85rem;
+    }
+    .kbm-close:hover { background: rgba(251,113,133,0.18); border-color: rgba(251,113,133,0.5); color: #fb7185; }
+    .kbm-statusbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .kbm-stage-btn {
+      display: flex; align-items: center; gap: 7px;
+      cursor: pointer; font-family: var(--font-mono, "JetBrains Mono");
+      font-size: 0.7rem; letter-spacing: 0.5px; padding: 7px 13px;
+      border-radius: 9px; color: var(--text-secondary, #cbd5e1);
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+    .kbm-stage-btn:hover { background: rgba(56,189,248,0.14); border-color: rgba(56,189,248,0.5); color: #fff; }
+    .kbm-stage-btn.current { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.55); color: #34d399; cursor: default; }
+    .kbm-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .kbm-meta-item { background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.07); border-radius: 9px; padding: 8px 11px; }
+    .kbm-meta-label { font-size: 0.58rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted, #7d8aa0); margin-bottom: 4px; }
+    .kbm-meta-value { font-size: 0.76rem; color: #e2e8f0; line-height: 1.4; }
+    .kbm-section { margin-bottom: 16px; }
+    .kbm-sec-title { font-family: var(--font-display, Orbitron); font-size: 0.66rem; letter-spacing: 1.6px; text-transform: uppercase; color: var(--accent-amber, #fbbf24); margin-bottom: 8px; }
+    .kbm-text { font-size: 0.78rem; color: var(--text-secondary, #cbd5e1); line-height: 1.6; white-space: pre-wrap; }
+    .kbm-step { margin-bottom: 8px; }
+    .kbm-step-do { font-size: 0.76rem; color: #e2e8f0; line-height: 1.55; }
+    .kbm-step-dod { font-size: 0.68rem; color: #7d8aa0; margin: 3px 0 0 18px; line-height: 1.5; }
+    .kbm-redline { font-size: 0.74rem; color: #fda4af; line-height: 1.55; margin-bottom: 6px; }
+    .kbm-link { font-size: 0.72rem; margin-bottom: 5px; line-height: 1.4; word-break: break-all; }
+    .kbm-hist { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px dashed rgba(255,255,255,0.06); }
+    .kbm-hist:last-child { border-bottom: none; }
+    .kbm-hist-when { font-size: 0.64rem; color: var(--text-muted, #7d8aa0); min-width: 118px; }
+    @media (max-width: 760px) { .kbm-meta { grid-template-columns: 1fr 1fr; } .kb-board { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="kb-head">
+    <span class="kb-title">ЛИДЖЕР · КАНБАН</span>
+    <span class="kb-sub">одна задача = один JSON-файл в Memory/Engineering/Tasks/Active</span>
+    <a class="kb-back" href="index.html">← Command Center</a>
+  </div>
+  <div class="kb-meta" id="kb-meta">загрузка…</div>
+  <div class="kb-board" id="kb-board"></div>
+  <div class="kb-toast" id="kb-toast"></div>
+  <div class="kbm-overlay" id="kb-modal"><div class="kbm-panel"><div class="kbm-body" id="kbm-body"></div></div></div>
+  <script src="kanban.js?v=3"></script>
+</body>
+</html>
