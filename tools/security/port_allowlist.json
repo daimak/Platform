@@ -1,0 +1,7 @@
+{
+  "_comment": "Ожидаемые слушатели Platform Evo (port_audit.py). Порт 8765 — дашборд Бэрримора (SO_EXCLUSIVEADDRUSE, loopback), 31415 — шлюз LLM. Всё остальное на wildcard-адресах считается подозрительным.",
+  "loopback": [
+    { "port": 8765, "note": "dashboard-server.py (Бэрримор)" },
+    { "port": 31415, "note": "FreeLLMAPI шлюз" }
+  ]
+}
