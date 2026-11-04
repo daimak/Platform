@@ -35,3 +35,26 @@ eVo/graphify-out/
 TOKEN_USAGE_LOG.md
 tools/*_data.json
 tools/_probe_*
+# Personal data (resume etc.) — local only, never commit
+Workspace/private/
+
+# Sandbox interior & pentest artifacts — never commit (AI Sandbox visibility rule, Sovereign 31.10)
+Workspace/pentest/
+Workspace/reports/
+Workspace/analytics/
+kali/
+tools/pentest/
+tools/hh406-lab/
+Docs/KALI-*.md
+
+# Tool caches, temp previews, generated research data
+.agents/
+.aider-desk/
+.zcode/
+tools/_ref_zoom.png
+tools/_sprite_prev_*.png
+tools/job_search_results.json
+tools/*_data.csv
+/job_search_results.json
+eVo/dashboard/assets/review/
+Docs/SANDBOX-RECON-PLAN-*
