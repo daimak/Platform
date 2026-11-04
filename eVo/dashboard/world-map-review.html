@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo — Референсы мировой карты (выбор фона)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(ellipse at 25% 0%, #0d1b2a 0%, #060a13 60%, #030509 100%);
+      color: #e2e8f0; font-family: "JetBrains Mono", monospace; padding: 22px 26px;
+    }
+    h1 { font-family: Orbitron, sans-serif; font-size: 1.15rem; letter-spacing: 2px; margin-bottom: 4px; }
+    .sub { color: #7d8aa0; font-size: 0.72rem; margin-bottom: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .card {
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden;
+      background: rgba(0,0,0,0.35);
+    }
+    .card img { width: 100%; height: 300px; object-fit: cover; object-position: center top; display: block; }
+    .cap { padding: 9px 13px; display: flex; align-items: baseline; gap: 10px; }
+    .cap b { color: #38bdf8; font-size: 0.8rem; white-space: nowrap; }
+    .cap span { color: #cbd5e1; font-size: 0.72rem; }
+  </style>
+</head>
+<body>
+  <h1>РЕФЕРЕНСЫ ДЛЯ МИРОВОЙ КАРТЫ</h1>
+  <div class="sub">клик на архипелаг (Estate / Maelstorm / Engine Core) — провал в его мир; выбираем фон уровня «мировая карта». Назови номер: R1…R11.</div>
+  <div class="grid">
+    <div class="card"><img src="assets/review/estate_bg.png" alt="R1"><div class="cap"><b>R1</b><span>Фон Estate — текущий мир №1 (уже в работе)</span></div></div>
+    <div class="card"><img src="assets/review/maelstorm_bg.png" alt="R2"><div class="cap"><b>R2</b><span>Фон Maelstorm — мир №2</span></div></div>
+    <div class="card"><img src="assets/review/maelstorm_bg_2.png" alt="R3"><div class="cap"><b>R3</b><span>Фон Maelstorm, вариант 2</span></div></div>
+    <div class="card"><img src="assets/review/engine-core-bg.png" alt="R4"><div class="cap"><b>R4</b><span>Фон Engine Core — мир №3</span></div></div>
+    <div class="card"><img src="assets/review/Main.png" alt="R5"><div class="cap"><b>R5</b><span>Референс «Main» (26.10)</span></div></div>
+    <div class="card"><img src="assets/review/Main_with_icons.png" alt="R6"><div class="cap"><b>R6</b><span>Референс «Main с иконками» (05.09)</span></div></div>
+    <div class="card"><img src="assets/review/Maelstorm.png" alt="R7"><div class="cap"><b>R7</b><span>Референс «Maelstorm» (27.10)</span></div></div>
+    <div class="card"><img src="assets/review/ref_maelshtorm_2710.png" alt="R8"><div class="cap"><b>R8</b><span>Референс «Хороший Маэльшторм» (27.10)</span></div></div>
+    <div class="card"><img src="assets/review/R_SS_MultiAge_SummerBonus18f.png" alt="R9"><div class="cap"><b>R9</b><span>Референс «R_SS MultiAge Summer» (30.10)</span></div></div>
+    <div class="card"><img src="assets/review/eVo-2.0-concept.png" alt="R10"><div class="cap"><b>R10</b><span>Концепт eVo 2.0 (04.09)</span></div></div>
+    <div class="card"><img src="assets/review/route-grid.png" alt="R11"><div class="cap"><b>R11</b><span>Сетка маршрута кораблика (31.10)</span></div></div>
+  </div>
+</body>
+</html>

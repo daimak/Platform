@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo — Карта мира</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Unicase:wght@500;600;700&family=Cormorant:ital,wght@0,500;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background: #0a1626;
+      font-family: "JetBrains Mono", monospace;
+      color: #e8dcc0;
+      cursor: default;
+    }
+
+    /* ---- фон: цельный арт-референс (World_map_v1) ---- */
+    .worldmap-bg {
+      position: absolute; inset: 0; z-index: 1;
+      background: url("assets/world-map-v1.png") center / cover no-repeat;
+    }
+
+    .title {
+      position: absolute; top: 22px; left: 0; right: 0; text-align: center; z-index: 6;
+      font-family: "Cormorant Unicase", serif; font-weight: 700;
+      font-size: clamp(1.3rem, 2.6vw, 2rem); letter-spacing: 0.35em;
+      color: #e6c877; text-shadow: 0 1px 0 #4a3a14, 0 0 24px rgba(230,200,119,0.35), 0 2px 6px rgba(0,0,0,0.8);
+      pointer-events: none;
+    }
+    .subtitle {
+      position: absolute; top: calc(22px + clamp(1.6rem, 3vw, 2.5rem)); left: 0; right: 0; text-align: center; z-index: 6;
+      font-family: "Cormorant", serif; font-style: italic; font-size: 0.82rem;
+      color: rgba(232,220,192,0.55); letter-spacing: 0.12em; pointer-events: none;
+    }
+
+    /* ---- континенты-архипелаги: клик-зоны поверх арта ---- */
+    .map { position: absolute; inset: 0; z-index: 3; }
+    .continent { cursor: pointer; }
+    .continent .hitzone {
+      fill: transparent; stroke: transparent; stroke-width: 2;
+      transition: fill 0.25s ease, stroke 0.25s ease;
+    }
+    .continent:hover .hitzone {
+      fill: rgba(230, 200, 119, 0.10);
+      stroke: rgba(230, 200, 119, 0.55);
+      stroke-dasharray: 7 6;
+      filter: drop-shadow(0 0 14px rgba(230,200,119,0.35));
+    }
+    .continent .hint {
+      font-family: "JetBrains Mono", monospace; font-size: 9px; letter-spacing: 1px;
+      fill: #9fd4e8; text-anchor: middle; opacity: 0;
+      transition: opacity 0.25s ease;
+      paint-order: stroke; stroke: rgba(10,18,28,0.9); stroke-width: 3px;
+    }
+    .continent:hover .hint { opacity: 1; }
+
+    /* иконка-герб архипелага */
+    .gerb {
+      position: absolute; z-index: 4; transform: translate(-50%, -50%);
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; text-decoration: none;
+      background: radial-gradient(circle at 35% 30%, rgba(60,48,20,0.95), rgba(24,18,8,0.95));
+      border: 2px solid #b08d3e; box-shadow: 0 0 16px rgba(176,141,62,0.5), inset 0 0 10px rgba(0,0,0,0.7);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      pointer-events: none;
+    }
+    .continent:hover ~ .gerb-pos .gerb { transform: translate(-50%,-50%) scale(1.12); box-shadow: 0 0 26px rgba(230,200,119,0.8), inset 0 0 10px rgba(0,0,0,0.7); }
+
+    /* ---- легенда ---- */
+    .legend {
+      position: absolute; left: 50%; transform: translateX(-50%); bottom: 20px; z-index: 6;
+      font-family: "Cormorant", serif; font-style: italic; font-size: 0.92rem;
+      color: rgba(232,220,192,0.78); letter-spacing: 0.06em; pointer-events: none;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      background: rgba(10,18,28,0.55); padding: 6px 18px; border-radius: 6px;
+      border: 1px solid rgba(176,141,62,0.35);
+    }
+    .legend b { color: #e6c877; font-weight: 600; }
+
+    /* ---- провал в мир ---- */
+    .dive {
+      position: fixed; inset: 0; z-index: 50; background: #030a14;
+      opacity: 0; pointer-events: none; transition: opacity 0.55s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dive.open { opacity: 1; }
+    .dive .dive-label {
+      font-family: "Cormorant Unicase", serif; font-size: 1.4rem; letter-spacing: 0.3em;
+      color: #e6c877; text-shadow: 0 0 20px rgba(230,200,119,0.5);
+      animation: pulse 1s ease infinite;
+    }
+    @keyframes pulse { 50% { opacity: 0.45; } }
+
+    /* зум выбранного континента */
+    .map.zooming { transition: transform 0.6s cubic-bezier(0.5, 0, 0.8, 0.4), opacity 0.6s ease; }
+    .map.zooming { transform-origin: var(--zx, 50%) var(--zy, 50%); }
+    .map.zooming.zoom { transform: scale(4.2); opacity: 0; }
+  </style>
+</head>
+<body>
+  <div class="worldmap-bg"></div>
+
+  <!-- ======== КАРТА: клик-зоны поверх арт-референса ======== -->
+  <svg class="map" id="map" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+    <!-- ====== АРХИПЕЛАГ 1: ESTATE (левый центр) ====== -->
+    <g class="continent" data-world="index.html" data-name="ГЛАВНАЯ УСАДЬБА">
+      <ellipse class="hitzone" cx="451" cy="405" rx="210" ry="125"/>
+      <text class="hint" x="451" y="548">▼ ПРОВАЛИТЬСЯ В МИР УСАДЬБЫ</text>
+    </g>
+
+    <!-- ====== АРХИПЕЛАГ 2: MAELSTORM (центр-низ, вихрь) ====== -->
+    <g class="continent" data-world="maelstorm.html" data-name="ВЕЛЬШТОРМ">
+      <ellipse class="hitzone" cx="824" cy="644" rx="300" ry="170"/>
+      <text class="hint" x="824" y="833">▼ ПРОВАЛИТЬСЯ В ВИХРЬ</text>
+    </g>
+
+    <!-- ====== АРХИПЕЛАГ 3: ENGINE (правый центр, механика) ====== -->
+    <g class="continent" data-world="engine-core.html" data-name="ЯДРО МЕХАНИЗМА">
+      <ellipse class="hitzone" cx="1155" cy="435" rx="235" ry="125"/>
+      <text class="hint" x="1155" y="578">▼ ПРОВАЛИТЬСЯ В ЯДРО</text>
+    </g>
+  </svg>
+
+  <!-- гербы-иконки над архипелагами -->
+  <div class="gerb" style="left: 28.2%; top: 36%;">🏰</div>
+  <div class="gerb" style="left: 59%; top: 66.5%;">🌀</div>
+  <div class="gerb" style="left: 72.2%; top: 36%;">⚙️</div>
+
+  <div class="title">КАРТА МИРА eVo</div>
+  <div class="subtitle">цифровая цивилизация из трёх архипелагов · эпоха первая</div>
+  <div class="legend">Кликните архипелаг, чтобы <b>провалиться в его мир</b> · маршруты между архипелагами ещё прокладываются</div>
+
+  <div class="dive" id="dive"><div class="dive-label" id="dive-label"></div></div>
+
+  <script>
+    "use strict";
+    const map = document.getElementById("map");
+    const dive = document.getElementById("dive");
+    const diveLabel = document.getElementById("dive-label");
+    document.querySelectorAll(".continent").forEach((c) => {
+      c.addEventListener("click", () => {
+        const r = c.querySelector(".hitzone").getBoundingClientRect();
+        const vb = map.viewBox.baseVal;
+        const zx = ((r.left + r.width / 2) / innerWidth * 100).toFixed(1) + "%";
+        const zy = ((r.top + r.height / 2) / innerHeight * 100).toFixed(1) + "%";
+        map.classList.add("zooming");
+        map.style.setProperty("--zx", zx);
+        map.style.setProperty("--zy", zy);
+        requestAnimationFrame(() => map.classList.add("zoom"));
+        diveLabel.textContent = c.dataset.name;
+        dive.classList.add("open");
+        setTimeout(() => { location.href = c.dataset.world; }, 750);
+      });
+    });
+  </script>
+</body>
+</html>
