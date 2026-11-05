@@ -11,6 +11,11 @@
       "at": "2026-10-29T19:34:08Z",
       "by": "Holmes",
       "note": "Незакоммиченные правки: tools/agents/registry.json, tools/agents/run_agent.py"
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-03T06:51:12Z"
     }
-  ]
+  ],
+  "stage": "in-progress"
 }

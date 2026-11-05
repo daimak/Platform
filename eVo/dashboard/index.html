@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="harbor-ship.css?v=10">
   <style>
     /* Trading Quarter: аккордеоны бирж (вкладка «Заказы») */
     details.tq-acc { border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 10px; background: rgba(0,0,0,0.25); }
@@ -41,27 +42,14 @@
         </div>
       </div>
 
-      <div class="hud-center">
-        <div class="hud-stat-item">
-          <span class="status-dot-green"></span>
-          <span id="hud-platform-alive">Платформа активна</span>
-          <span style="opacity: 0.35;">|</span>
-          <span style="color: var(--text-muted); font-size: 0.72rem;" id="hud-heartbeat">1.2с</span>
-        </div>
-        <div class="hud-stat-item" style="color: var(--text-muted);">
-          <span style="color: var(--accent-emerald);">●</span>
-          <span id="hud-status-quiet">Спокойно</span>
-        </div>
-        <div class="hud-stat-item" style="color: var(--text-muted);">
-          <span id="hud-active-processes">Активные процессы: 5</span>
-        </div>
-        <div class="hud-stat-item" style="color: var(--accent-amber);">
-          <span id="hud-attention-count">Ожидают внимания: 2</span>
-        </div>
-      </div>
-
       <div class="hud-right">
         <div style="display: flex; align-items: center; gap: 14px; margin-right: 20px;">
+          <a href="world-map.html?v=11" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(230, 200, 119, 0.12); border-color: #b08d3e; color: #e6c877; display: flex; align-items: center; gap: 8px;">
+            <span>🗺</span> КАРТА МИРА
+          </a>
+          <a href="kanban.html" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(56, 189, 248, 0.15); border-color: var(--accent-cyan); color: #38bdf8; display: flex; align-items: center; gap: 8px;">
+            <span>📋</span> КАНБАН
+          </a>
           <a href="maelstorm.html" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(251, 113, 133, 0.15); border-color: var(--accent-rose); color: #fb7185; display: flex; align-items: center; gap: 8px;">
             <span>🌀</span> MAELSTORM
           </a>
@@ -206,7 +194,7 @@
         </div>
 
         <!-- Торговый квартал — остров ниже и правее Гавани; функции пока не определены -->
-        <div class="island-hotspot beacon-amber" style="top: 78.0%; left: 53.0%;" data-island="tradingQuarter">
+        <div class="island-hotspot beacon-amber" style="top: 70.1%; left: calc(54.3% + 100px);" data-island="tradingQuarter">
           <div class="beacon-core">
             <span class="beacon-icon">🏺</span>
           </div>
@@ -314,10 +302,13 @@
     </div>
   </div>
 
-  <script src="languages.js"></script>
+  <script src="languages.js?v=3"></script>
   <script src="brief.js"></script>
   <script src="vacancies.js"></script>
+  <script src="orders-triage.js"></script>
+  <script src="hunter-report.js?v=1"></script>
   <script src="tasks.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=12"></script>
+  <script src="harbor-ship.js?v=10"></script>
 </body>
 </html>

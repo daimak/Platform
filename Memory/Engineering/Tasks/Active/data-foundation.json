@@ -1,0 +1,38 @@
+{
+  "id": "data-foundation",
+  "title": "Фундамент данных: конверт артефактов + events.jsonl + реестр джобов + мастер-профиль",
+  "source": "Sovereign",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-11-04T18:33:13Z",
+  "description": "5 лейнов: Л-1 конверт артефактов (tools/lib/envelope.py), Л-2 машинный журнал событий (events.jsonl), Л-3 реестр джобов + API (ops/jobs.json), Л-4 мастер-профиль откликов (private/resume), Л-5 подписанные переходы канбана + метрики (by в history, kanban_metrics.py). Полное ТЗ: Docs/DATA-FOUNDATION-PLAN-2026-11-04-ZCode.md. Исполнитель: суб-агент ZCode — берётся сразу при переводе в in-progress, по лейнам последовательно, git агенту запрещён, верификация ZCode.",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-04T18:33:13Z",
+      "note": "Создана ZCode по слову Sovereign 04.11. Анализ выполнен (зачем и почему — в ТЗ). Агент-исполнитель стартует при переводе в in-progress."
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-04T18:56:24Z"
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-05T00:17:00Z",
+      "by": "ZCode",
+      "note": "Исполнитель назначен: суб-агент ZCode. Прогресс лейнов см. Workspace/logs/events.jsonl после Л-2 и отчёт ZCode по завершении."
+    },
+    {
+      "stage": "test",
+      "at": "2026-11-04T19:45:08Z",
+      "by": "ZCode"
+    },
+    {
+      "stage": "test",
+      "at": "2026-11-04T19:52:07Z",
+      "by": "ZCode"
+    }
+  ],
+  "stage": "test",
+  "owner": "агент-строитель ZCode (Л-1…Л-5, старт 23:58)"
+}

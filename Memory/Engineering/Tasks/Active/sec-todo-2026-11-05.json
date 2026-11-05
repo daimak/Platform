@@ -1,0 +1,18 @@
+{
+  "id": "sec-todo-2026-11-05",
+  "title": "Утро 05.11 — контур безопасности: выжимка дня и ToDo (ZCode)",
+  "source": "ZCode/E-047",
+  "priority": "urgent",
+  "status": "active",
+  "stage": "todo",
+  "due": "2026-11-05",
+  "createdAt": "2026-11-04T23:51:15+05:00",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-04T23:51:15+05:00",
+      "by": "ZCode (E-047, выжимка по просьбе Sovereign)",
+      "note": "ГОТОВО 04.11: (1) «Целевой стенд» в AI Sandbox → Инструменты — цели-чипы + галочки проверок → nmap_probe, прогон и скриншот ок (app.js?v=12, languages.js?v=3); (2) найден и закрыт routing-drift баг /api/sandbox/run (V-06), сервер 8765 перезапущен — ожили и эндпоинты E-046; (3) VULN-PROGRAM.md в Workspace/pentest/2026-11-04-vuln-program/ (вне git): 12 уязвимостей Platform + 12 индустриальных классов + фазы Ф-1..Ф-5; (4) Kali: VM headless 192.168.238.128, снапшот pre-pentest-2026-11-04, консоль-блок для шага 7 сохранён Дмитрием. || НА 05.11: [1] Ротация sk-ant руками Sovereign (V-01, P1, ~10 мин: панель Anthropic → новый ключ → Vault → правка Workspace/main.py:17) — критерий: secret_scan RED=0. [2] Консоль-блок Kali (учётка watson) → ZCode поднимает Juice Shop (target-server.sh) → скан 192.168.238.128 через стенд → фазовый отчёт в Workspace/pentest/2026-11-04-juiceshop/. [3] После ротации: слово на вычистку git-истории (filter-repo/BFG по sk-ant, 709b2c5). [4] Ф-1 остаток: rae-work HAR/chrome-profile под пароль/удалить (куки hh!), мастер-пароль на Vault, pre-commit hook secret_scan. [5] Коммит кода стенда — когда разобраны чужие правки в app.js/dashboard-server (сейчас не смешивать)."
+    }
+  ]
+}

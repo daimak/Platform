@@ -36,6 +36,7 @@ from task_store import dashboard_tasks
 ROOT = Path(__file__).resolve().parents[2]
 ENV_PATH = ROOT / "Workspace" / ".env"
 OUT_PATH = ROOT / "eVo" / "dashboard" / "brief.js"
+HUNTER_DIGEST_PATH = ROOT / "Workspace" / "analytics" / "hunter" / "digest.json"
 LLM_TIMEOUT_SEC = 90
 BRIEF_PREFIX = "window.EVO_BRIEF = "
 TASHKENT = timezone(timedelta(hours=5), "Tashkent")
@@ -49,7 +50,9 @@ SYSTEM_PROMPT = (
     "следующим шагом. Ответ дай СТРОГО в JSON: "
     '{"summary": "текст доклада", "nextStep": "конкретный следующий шаг"}. '
     "Если передана секция aiUsage, сообщи только измеренные значения и явно "
-    "отделяй неизвестное от нуля; не делай выводов о расходах без подтверждённых сумм."
+    "отделяй неизвестное от нуля; не делай выводов о расходах без подтверждённых сумм. "
+    "Если передана секция hunter (выжимка Хантера), включи её в доклад одной "
+    "строкой, только факты из неё; полная часть живёт на Navigation Observatory."
 )
 
 AI_USAGE_SYSTEM_PROMPT = (
@@ -103,6 +106,23 @@ def git(*args: str) -> str:
         return ""
 
 
+def hunter_digest() -> dict | None:
+    """Выжимка Хантера: массовая часть доклада живёт на Navigation Observatory
+    (tools/hunter/report.py → digest.json), Бэрримор берёт из неё только свод."""
+    try:
+        data = json.loads(HUNTER_DIGEST_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    return {
+        "generatedAt": data.get("generatedAt") or "",
+        "headline": data.get("headline") or "",
+        "top": (data.get("top") or [])[:5],
+        "full": "Workspace/analytics/hunter/digest.json",
+    }
+
+
 def collect_sources() -> dict:
     current = read("Memory/Context/CURRENT.md")
     state = read("Memory/Engineering/STATE.md")
@@ -134,6 +154,7 @@ def collect_sources() -> dict:
         "state": {"nextStep": section(state, "Следующий шаг")},
         "changes": changes[-5:],
         "tasks": dashboard_tasks(archive_expired=False),
+        "hunter": hunter_digest(),
         "git": {
             "branch": git("branch", "--show-current"),
             "lastCommit": git("log", "-1", "--pretty=format:%h %s"),

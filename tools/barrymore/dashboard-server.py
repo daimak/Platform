@@ -8,6 +8,7 @@ import re
 import socket
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from datetime import datetime, timedelta, timezone
@@ -18,7 +19,7 @@ from urllib.parse import urlsplit
 from ai_usage import add_snapshot, dashboard_data, set_include_in_morning_brief
 from hunter_store import create_assignment, list_assignments
 from security_contour import add_target, dashboard_status, run_check
-from task_store import TASK_ID_PATTERN, dashboard_tasks, mark_done
+from task_store import TASK_ID_PATTERN, dashboard_tasks, mark_done, set_stage
 
 ROOT = Path(__file__).resolve().parents[2]
 DASHBOARD = ROOT / "eVo" / "dashboard"
@@ -29,8 +30,45 @@ TASK_LOCK = threading.Lock()
 HUNTER_LOCK = threading.Lock()
 USAGE_LOCK = threading.Lock()
 SECURITY_LOCK = threading.Lock()
+REPORTS_LOCK = threading.Lock()
+HOLMES_RUN_LOCK = threading.Lock()
+HOLMES_RUN: dict = {
+    "running": False,
+    "started_at": None,
+    "finished_at": None,
+    "returncode": None,
+    "error": None,
+}
+HOLMES_AGENT = ROOT / "tools" / "agents" / "run_agent.py"
 LOG_DIR = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "Barrymore"
 TASHKENT = timezone(timedelta(hours=5), "Tashkent")
+
+# Инструменты безопасности (прототипы 01.11, вкладка «Инструменты» AI Sandbox).
+# Поводок: запуск только кнопкой/рукой; отчёты — в LOCALAPPDATA вне git (правило видимости).
+SANDBOX_TOOLS = {
+    "radar": {"script": ROOT / "tools" / "security" / "vuln_radar.py", "prefix": "vuln-radar", "timeout": 180, "title": "Радар уязвимостей"},
+    "portaudit": {"script": ROOT / "tools" / "security" / "port_audit.py", "prefix": "port-audit", "timeout": 60, "title": "Аудит портов"},
+    "secrets": {"script": ROOT / "tools" / "security" / "secret_scan.py", "prefix": "secret-scan", "timeout": 120, "title": "Поиск секретов"},
+    "nmap": {"script": ROOT / "tools" / "security" / "nmap_probe.py", "prefix": "nmap-probe", "timeout": 900, "title": "nmap-скан"},
+}
+SANDBOX_RUN_LOCK = threading.Lock()
+SANDBOX_RUN: dict = {
+    "running": False,
+    "tool": None,
+    "started_at": None,
+    "finished_at": None,
+    "returncode": None,
+    "summary": None,
+    "error": None,
+}
+SANDBOX_REPORT_DIR = (
+    Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "SecurityReports"
+)
+
+# Реестр джобов (Л-3, Docs/DATA-FOUNDATION-PLAN-2026-11-04): API без UI-кнопок.
+JOBS_REGISTRY_PATH = ROOT / "tools" / "ops" / "jobs.json"
+JOBS_STATE_PATH = ROOT / "Workspace" / "logs" / "jobs_state.json"
+JOBS_LOCK = threading.Lock()
 
 
 class DashboardHTTPServer(ThreadingHTTPServer):
@@ -89,6 +127,271 @@ def run_brief(retry_llm_error: bool = False) -> dict:
     if not generated.startswith(prefix) or not generated.rstrip().endswith(";"):
         raise RuntimeError("Генератор записал brief.js в неожиданном формате.")
     return json.loads(generated[len(prefix):].rstrip()[:-1])
+
+
+# Находки Холмса со стабильными ID — заголовки задач лиджера.
+FINDING_TITLES = {
+    "host-noise": "Холмс: шум авто-коммитов агент-хоста в истории",
+    "untracked-files": "Холмс: разобрать untracked-файлы (коммит или .gitignore)",
+    "uncommitted-edits": "Холмс: незакоммиченные правки в рабочем дереве",
+    "journal-stale": "Холмс: журнал LOG.md давно не обновлялся",
+    "branch-drift": "Холмс: рабочая ветка разошлась с upstream",
+    "main-behind": "Холмс: локальный main позади origin/main",
+}
+
+
+def _atomic_write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=path.parent,
+            prefix=f".{path.stem}.", suffix=".tmp", delete=False,
+        ) as temporary:
+            tmp_path = Path(temporary.name)
+            json.dump(payload, temporary, ensure_ascii=False, indent=2)
+            temporary.write("\n")
+        os.replace(tmp_path, path)
+    finally:
+        if tmp_path and tmp_path.exists():
+            tmp_path.unlink()
+
+
+def holmes_ensure_task(finding_id: str, severity: str, detail: str) -> str:
+    """Create-if-missing задача holmes-<id>: инициатива Холмса, санкционированная
+    Sovereign через дашборд. Существующие задачи не изменяет (ADR-003)."""
+    base_id = f"holmes-{finding_id}"
+    if not TASK_ID_PATTERN.fullmatch(base_id):
+        return "invalid-id"
+    active_dir = ROOT / "Memory" / "Engineering" / "Tasks" / "Active"
+    archive_dir = ROOT / "Memory" / "Engineering" / "Tasks" / "Archive"
+    if (active_dir / f"{base_id}.json").exists():
+        return "exists"
+    task_id = None
+    for candidate in [base_id] + [f"{base_id}-{n}" for n in range(2, 10)]:
+        if archive_dir.exists() and any(archive_dir.rglob(f"{candidate}.json")):
+            continue
+        task_id = candidate
+        break
+    if task_id is None:
+        return "no-free-id"
+    created = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    note = f"{detail[:180]} — санкция Sovereign через дашборд." if detail else "Санкция Sovereign через дашборд."
+    task = {
+        "id": task_id,
+        "title": FINDING_TITLES.get(finding_id, f"Холмс: находка {finding_id}"),
+        "source": "Holmes",
+        "priority": "urgent" if severity == "P1" else "regular",
+        "status": "active",
+        "createdAt": created,
+        "history": [{"status": "active", "at": created, "by": "Sovereign", "note": note}],
+    }
+    _atomic_write_json(active_dir / f"{task_id}.json", task)
+    return f"created:{task_id}"
+
+
+def _git(*args: str) -> str:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=15,
+        check=False,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
+    )
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip() or f"git {' '.join(args)} завершился с кодом {result.returncode}")
+    return result.stdout.strip()
+
+
+def holmes_context() -> dict:
+    """Живой контекст кабинета Холмса: ветка, дерево, последний коммит и осмотр."""
+    branch = _git("branch", "--show-current")
+    status_out = _git("status", "--porcelain")
+    changed = len([line for line in status_out.splitlines() if line.strip()])
+    log_raw = _git("log", "-1", "--date=format-local:%Y-%m-%d %H:%M", "--format=%h|%ad|%s")
+    hash_, commit_date, subject = (log_raw.split("|", 2) + ["", "", ""])[:3] if log_raw else ("", "", "")
+    files = sorted((ROOT / "Memory" / "Engineering" / "Reports").glob("Report-*-holmes-audit.md"), reverse=True)
+    last_report = None
+    if files:
+        stat = files[0].stat()
+        last_report = {
+            "file": files[0].name,
+            "modified": datetime.fromtimestamp(stat.st_mtime, TASHKENT).strftime("%Y-%m-%d %H:%M"),
+        }
+    return {
+        "branch": branch or "(detached HEAD)",
+        "tree_changed": changed,
+        "last_commit": {"hash": hash_, "date": commit_date, "subject": subject},
+        "last_report": last_report,
+    }
+
+
+def _holmes_run_worker() -> None:
+    """Единичный цикл аудита Холмса (run_agent.py --agent Holmes) в фоне."""
+    command = [sys.executable, str(HOLMES_AGENT), "--agent", "Holmes"]
+    try:
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=1800,
+            check=False,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
+        )
+        with HOLMES_RUN_LOCK:
+            HOLMES_RUN.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": result.returncode,
+                "error": None if result.returncode == 0
+                else (result.stderr.strip() or result.stdout.strip() or f"код {result.returncode}")[-800:],
+            })
+        logging.info("Holmes run finished with code %s", result.returncode)
+    except subprocess.TimeoutExpired:
+        with HOLMES_RUN_LOCK:
+            HOLMES_RUN.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": -1,
+                "error": "Осмотр не уложился в 30 минут.",
+            })
+        logging.error("Holmes run timed out after 1800s")
+    except Exception as error:  # поток не должен умирать молча
+        with HOLMES_RUN_LOCK:
+            HOLMES_RUN.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": -1,
+                "error": str(error)[:800],
+            })
+        logging.exception("Holmes run failed")
+
+
+def holmes_reports(file: str | None = None) -> dict:
+    """Read-only отчёты аудита Холмса для острова holmes.html."""
+    reports_dir = ROOT / "Memory" / "Engineering" / "Reports"
+    if file is not None:
+        if not re.fullmatch(r"Report-\d{4}-\d{2}-\d{2}-holmes-audit\.md", file):
+            raise ValueError("Недопустимое имя отчёта.")
+        path = reports_dir / file
+        if not path.is_file():
+            raise FileNotFoundError(f"Отчёт не найден: {file}")
+        return {"file": file, "content": path.read_text(encoding="utf-8-sig", errors="replace")[:200_000]}
+    files = sorted(reports_dir.glob("Report-*-holmes-audit.md"), reverse=True)
+    reports = []
+    for path in files:
+        stat = path.stat()
+        reports.append({
+            "file": path.name,
+            "modified": datetime.fromtimestamp(stat.st_mtime, TASHKENT).strftime("%Y-%m-%d %H:%M"),
+            "size": stat.st_size,
+        })
+    latest = None
+    if files:
+        latest = {
+            "file": files[0].name,
+            "content": files[0].read_text(encoding="utf-8-sig", errors="replace")[:200_000],
+        }
+    return {"reports": reports, "latest": latest}
+
+
+# --- Обобщённые прогоны штата (Ватсон, Risk scan) по образцу квартета Холмса ---
+
+AGENT_RUNTIMES = {
+    "watson": {"registry_name": "Watson", "report_tag": "watson-audit", "label": "Ватсон"},
+    "riskscan": {"registry_name": "RiskScan", "report_tag": "riskscan-audit", "label": "Risk scan"},
+}
+AGENT_RUN_STATE = {
+    runtime: {
+        "lock": threading.Lock(),
+        "state": {"running": False, "started_at": None, "finished_at": None, "returncode": None, "error": None},
+    }
+    for runtime in AGENT_RUNTIMES
+}
+
+
+def _agent_run_worker(runtime: str) -> None:
+    """Единичный прогон агента штата (run_agent.py --agent <name>) в фоне."""
+    spec = AGENT_RUNTIMES[runtime]
+    entry = AGENT_RUN_STATE[runtime]
+    lock, state = entry["lock"], entry["state"]
+    command = [sys.executable, str(HOLMES_AGENT), "--agent", spec["registry_name"]]
+    try:
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=1800,
+            check=False,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
+        )
+        with lock:
+            state.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": result.returncode,
+                "error": None if result.returncode == 0
+                else (result.stderr.strip() or result.stdout.strip() or f"код {result.returncode}")[-800:],
+            })
+        logging.info("%s run finished with code %s", spec["label"], result.returncode)
+    except subprocess.TimeoutExpired:
+        with lock:
+            state.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": -1,
+                "error": "Прогон не уложился в 30 минут.",
+            })
+        logging.error("%s run timed out after 1800s", spec["label"])
+    except Exception as error:  # поток не должен умирать молча
+        with lock:
+            state.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": -1,
+                "error": str(error)[:800],
+            })
+        logging.exception("%s run failed", spec["label"])
+
+
+def agent_reports(runtime: str, file: str | None = None) -> dict:
+    """Read-only отчёты агента штата для дашборда (по report_tag из реестра)."""
+    spec = AGENT_RUNTIMES[runtime]
+    tag = spec["report_tag"]
+    reports_dir = ROOT / "Memory" / "Engineering" / "Reports"
+    if file is not None:
+        if not re.fullmatch(rf"Report-\d{{4}}-\d{{2}}-\d{{2}}-{re.escape(tag)}\.md", file):
+            raise ValueError("Недопустимое имя отчёта.")
+        path = reports_dir / file
+        if not path.is_file():
+            raise FileNotFoundError(f"Отчёт не найден: {file}")
+        return {"file": file, "content": path.read_text(encoding="utf-8-sig", errors="replace")[:200_000]}
+    files = sorted(reports_dir.glob(f"Report-*-{tag}.md"), reverse=True)
+    reports = []
+    for path in files:
+        stat = path.stat()
+        reports.append({
+            "file": path.name,
+            "modified": datetime.fromtimestamp(stat.st_mtime, TASHKENT).strftime("%Y-%m-%d %H:%M"),
+            "size": stat.st_size,
+        })
+    latest = None
+    if files:
+        latest = {
+            "file": files[0].name,
+            "content": files[0].read_text(encoding="utf-8-sig", errors="replace")[:200_000],
+        }
+    return {"reports": reports, "latest": latest}
 
 
 class DashboardHandler(SimpleHTTPRequestHandler):
@@ -153,6 +456,16 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 logging.exception("Task list failed")
                 self._send_json(500, {"error": f"Не удалось прочитать список задач: {error}"})
             return
+        if request_path == "/api/staff":
+            staff_path = ROOT / "Memory" / "Agents" / "estate-staff.json"
+            try:
+                self._send_json(200, json.loads(staff_path.read_text(encoding="utf-8")))
+            except FileNotFoundError:
+                self._send_json(404, {"error": "Файл штата не найден: Memory/Agents/estate-staff.json"})
+            except (OSError, json.JSONDecodeError) as error:
+                logging.exception("Staff read failed")
+                self._send_json(500, {"error": f"Не удалось прочитать штат поместья: {error}"})
+            return
         if request_path == "/api/hunter/tasks":
             try:
                 with HUNTER_LOCK:
@@ -177,6 +490,78 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             except (OSError, ValueError, json.JSONDecodeError) as error:
                 logging.exception("Security contour status failed")
                 self._send_json(500, {"error": f"Не удалось получить состояние контура: {error}"})
+            return
+        agent_report_route = re.fullmatch(r"/api/(watson|riskscan)/reports", request_path)
+        if agent_report_route:
+            try:
+                query = urlsplit(self.path).query
+                requested = re.fullmatch(r"file=([^&]+)", query)
+                payload = agent_reports(agent_report_route.group(1), requested.group(1) if requested else None)
+                self._send_json(200, payload)
+            except (OSError, ValueError) as error:
+                logging.exception("Agent reports read failed")
+                self._send_json(404, {"error": f"Не удалось прочитать отчёты: {error}"})
+            return
+        agent_status_route = re.fullmatch(r"/api/(watson|riskscan)/run-status", request_path)
+        if agent_status_route:
+            entry = AGENT_RUN_STATE[agent_status_route.group(1)]
+            with entry["lock"]:
+                self._send_json(200, dict(entry["state"]))
+            return
+        if request_path == "/api/holmes/reports":
+            try:
+                query = urlsplit(self.path).query
+                requested = re.fullmatch(r"file=([^&]+)", query)
+                with REPORTS_LOCK:
+                    payload = holmes_reports(requested.group(1) if requested else None)
+                self._send_json(200, payload)
+            except (OSError, ValueError) as error:
+                logging.exception("Holmes reports read failed")
+                self._send_json(404, {"error": f"Не удалось прочитать отчёты Холмса: {error}"})
+            return
+        if request_path == "/api/holmes/context":
+            try:
+                self._send_json(200, holmes_context())
+            except (OSError, RuntimeError) as error:
+                logging.exception("Holmes context failed")
+                self._send_json(500, {"error": f"Не удалось собрать контекст кабинета: {error}"})
+            return
+        if request_path == "/api/holmes/run-status":
+            with HOLMES_RUN_LOCK:
+                self._send_json(200, dict(HOLMES_RUN))
+            return
+        if request_path == "/api/sandbox/run-status":
+            with SANDBOX_RUN_LOCK:
+                self._send_json(200, dict(SANDBOX_RUN))
+            return
+        if request_path == "/api/sandbox/report":
+            query = urlsplit(self.path).query
+            match = re.fullmatch(r"tool=([^&]+)", query)
+            spec = SANDBOX_TOOLS.get(match.group(1) if match else "")
+            if spec is None:
+                self._send_json(400, {"error": "Укажи инструмент: radar, portaudit, secrets или nmap."})
+                return
+            report_file = sandbox_latest_report(spec["prefix"])
+            if report_file is None:
+                self._send_json(404, {"error": "Отчётов ещё нет — запусти инструмент кнопкой."})
+                return
+            try:
+                data = json.loads(report_file.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as error:
+                logging.exception("Sandbox report read failed")
+                self._send_json(500, {"error": f"Не удалось прочитать отчёт: {error}"})
+                return
+            self._send_json(200, {"file": report_file.name, "data": data})
+            return
+        if request_path == "/api/jobs":
+            # Л-3: реестр джобов (enabled по умолчанию, ?all=1 — все) + статус последнего запуска.
+            try:
+                include_all = re.fullmatch(r"all=1", urlsplit(self.path).query) is not None
+                with JOBS_LOCK:
+                    self._send_json(200, jobs_snapshot(include_all))
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Jobs registry read failed")
+                self._send_json(500, {"error": f"Не удалось прочитать реестр джобов: {error}"})
             return
         super().do_GET()
 
@@ -226,15 +611,26 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
         request_path = urlsplit(self.path).path
         task_done = re.fullmatch(r"/api/tasks/[a-z0-9][a-z0-9-]{0,63}/done", request_path)
+        task_stage = re.fullmatch(
+            r"/api/tasks/([a-z0-9][a-z0-9-]{0,63})/stage/(analysis|todo|in-progress|test|done)",
+            request_path,
+        )
+        # Л-3: запуск джоба из реестра tools/ops/jobs.json.
+        jobs_run = re.fullmatch(r"/api/jobs/([a-z0-9][a-z0-9-]{0,63})/run", request_path)
         hunter_tasks_route = "/api/hunter/tasks"
         security_route = "/api/security/check"
         security_targets_route = "/api/security/targets"
+        holmes_implement_route = "/api/holmes/implement"
         body_routes = {"/api/ai-usage/snapshots", "/api/ai-usage/settings"}
+        sandbox_run_route = "/api/sandbox/run"
         bodyless_routes = {
             "/api/refresh-brief",
             "/api/ai-usage/ask-barrymore",
+            "/api/holmes/run",
+            "/api/watson/run",
+            "/api/riskscan/run",
         }
-        if request_path not in body_routes | bodyless_routes and not task_done and request_path not in (hunter_tasks_route, security_route, security_targets_route):
+        if request_path not in body_routes | bodyless_routes and not task_done and not task_stage and not jobs_run and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route, sandbox_run_route):
             self._send_json(404, {"error": "Неизвестный локальный endpoint."})
             return
 
@@ -271,6 +667,144 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                         self._send_json(200, {"settings": settings})
             except (OSError, ValueError, json.JSONDecodeError) as error:
                 self._send_json(400 if isinstance(error, ValueError) else 500, {"error": str(error)})
+            return
+
+        if request_path == holmes_implement_route:
+            try:
+                payload = self._read_json_body()
+            except ValueError as error:
+                self._send_json(400, {"error": str(error)})
+                return
+            file_name = payload.get("file")
+            items = payload.get("items")
+            if not isinstance(file_name, str) or not re.fullmatch(
+                r"Report-\d{4}-\d{2}-\d{2}-holmes-audit\.md", file_name
+            ):
+                self._send_json(400, {"error": "Некорректное имя отчёта."})
+                return
+            if not isinstance(items, list) or not items or len(items) > 20:
+                self._send_json(400, {"error": "Список инициатив пуст или слишком велик."})
+                return
+            results = {"created": [], "existing": [], "errors": []}
+            try:
+                with TASK_LOCK:
+                    for item in items[:20]:
+                        if not isinstance(item, dict):
+                            results["errors"].append("bad-item")
+                            continue
+                        fid = str(item.get("id", ""))
+                        severity = str(item.get("severity", "P2"))
+                        detail = str(item.get("detail", ""))[:300]
+                        if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,55}", fid):
+                            results["errors"].append(fid or "bad-id")
+                            continue
+                        outcome = holmes_ensure_task(fid, severity, detail)
+                        if outcome.startswith("created:"):
+                            results["created"].append(outcome.split(":", 1)[1])
+                        elif outcome == "exists":
+                            results["existing"].append(f"holmes-{fid}")
+                        else:
+                            results["errors"].append(f"{fid}:{outcome}")
+                self._send_json(200, results)
+            except OSError as error:
+                logging.exception("Holmes implement failed")
+                self._send_json(500, {"error": f"Не удалось создать задачи: {error}"})
+            return
+
+        agent_run_route = re.fullmatch(r"/api/(watson|riskscan)/run", request_path)
+        if agent_run_route:
+            runtime = agent_run_route.group(1)
+            entry = AGENT_RUN_STATE[runtime]
+            if not entry["lock"].acquire(blocking=False):
+                self._send_json(409, {"error": "Состояние запуска уже изменяется."})
+                return
+            try:
+                if entry["state"]["running"]:
+                    self._send_json(409, {"error": f"Прогон {AGENT_RUNTIMES[runtime]['label']} уже идёт — дождитесь завершения."})
+                    return
+                started_at = datetime.now(TASHKENT).isoformat(timespec="seconds")
+                entry["state"].update({
+                    "running": True,
+                    "started_at": started_at,
+                    "finished_at": None,
+                    "returncode": None,
+                    "error": None,
+                })
+                threading.Thread(target=_agent_run_worker, args=(runtime,), name=f"{runtime}-run", daemon=True).start()
+                logging.info("%s run started from dashboard", AGENT_RUNTIMES[runtime]["label"])
+                self._send_json(202, {"started": True, "started_at": started_at})
+            finally:
+                entry["lock"].release()
+            return
+
+        if request_path == "/api/holmes/run":
+            if not HOLMES_RUN_LOCK.acquire(blocking=False):
+                self._send_json(409, {"error": "Состояние запуска уже изменяется."})
+                return
+            try:
+                if HOLMES_RUN["running"]:
+                    self._send_json(409, {"error": "Расследование уже идёт — дождитесь завершения."})
+                    return
+                started_at = datetime.now(TASHKENT).isoformat(timespec="seconds")
+                HOLMES_RUN.update({
+                    "running": True,
+                    "started_at": started_at,
+                    "finished_at": None,
+                    "returncode": None,
+                    "error": None,
+                })
+                threading.Thread(target=_holmes_run_worker, name="holmes-run", daemon=True).start()
+                logging.info("Holmes run started from dashboard")
+                self._send_json(202, {"started": True, "started_at": started_at})
+            finally:
+                HOLMES_RUN_LOCK.release()
+            return
+
+        if request_path == "/api/sandbox/run":
+            try:
+                payload = self._read_json_body()
+            except ValueError as error:
+                self._send_json(400, {"error": str(error)})
+                return
+            tool = payload.get("tool")
+            if tool not in SANDBOX_TOOLS:
+                self._send_json(400, {"error": "Неизвестный инструмент: radar, portaudit, secrets или nmap."})
+                return
+            args = payload.get("args") or []
+            if (
+                not isinstance(args, list)
+                or len(args) > 20
+                or not all(isinstance(a, str) and len(a) <= 300 for a in args)
+            ):
+                self._send_json(400, {"error": "Некорректные аргументы запуска."})
+                return
+            if not SANDBOX_RUN_LOCK.acquire(blocking=False):
+                self._send_json(409, {"error": "Инструмент песочницы уже запускается."})
+                return
+            try:
+                if SANDBOX_RUN["running"]:
+                    self._send_json(
+                        409,
+                        {"error": f"«{SANDBOX_RUN.get('tool')}» ещё выполняется — дождись завершения."},
+                    )
+                    return
+                started_at = datetime.now(TASHKENT).isoformat(timespec="seconds")
+                SANDBOX_RUN.update({
+                    "running": True,
+                    "tool": tool,
+                    "started_at": started_at,
+                    "finished_at": None,
+                    "returncode": None,
+                    "summary": None,
+                    "error": None,
+                })
+                threading.Thread(
+                    target=_sandbox_run_worker, args=(tool, args), name=f"sandbox-{tool}", daemon=True
+                ).start()
+                logging.info("Sandbox tool %s started from dashboard", tool)
+                self._send_json(202, {"started": True, "tool": tool, "started_at": started_at})
+            finally:
+                SANDBOX_RUN_LOCK.release()
             return
 
         if request_path == hunter_tasks_route:
@@ -376,6 +910,41 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 TASK_LOCK.release()
             return
 
+        if task_stage:
+            task_id, stage = task_stage.group(1), task_stage.group(2)
+            # Л-5: автор перехода декларируется в JSON-теле ("by"), дефолт "Sovereign"
+            # (loopback, один хозяин, без логинов). Пустое тело = дефолт.
+            by = "Sovereign"
+            if self.headers.get("Content-Length", "0") not in ("", "0"):
+                try:
+                    stage_payload = self._read_json_body()
+                except ValueError as error:
+                    self._send_json(400, {"error": str(error)})
+                    return
+                declared = stage_payload.get("by")
+                if isinstance(declared, str) and declared.strip():
+                    by = declared.strip()[:100]
+            if not TASK_LOCK.acquire(blocking=False):
+                self._send_json(409, {"error": "Список задач уже обновляется."})
+                return
+            try:
+                task = set_stage(task_id, stage, by=by)
+                self._send_json(200, {"task": task, "tasks": dashboard_tasks()})
+            except FileNotFoundError as error:
+                self._send_json(404, {"error": str(error)})
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Task stage update failed")
+                self._send_json(500, {"error": f"Не удалось обновить задачу: {error}"})
+            finally:
+                TASK_LOCK.release()
+            return
+
+        if jobs_run:
+            # Л-3: немедленный ответ {"started": true}, процесс ведёт поток-наблюдатель.
+            status_code, response = start_job(jobs_run.group(1))
+            self._send_json(status_code, response)
+            return
+
         manual_refresh = self.headers.get("X-Barrymore-Manual")
         if manual_refresh not in (None, "true"):
             self._send_json(400, {"error": "Некорректный режим проверки доклада."})
@@ -397,6 +966,209 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self._send_json(500, {"error": str(error)})
         finally:
             REFRESH_LOCK.release()
+
+
+def sandbox_latest_report(prefix: str):
+    if not SANDBOX_REPORT_DIR.exists():
+        return None
+    files = sorted(SANDBOX_REPORT_DIR.glob(f"{prefix}-*.json"), reverse=True)
+    return files[0] if files else None
+
+
+def _sandbox_run_worker(tool: str, args: list) -> None:
+    """Прогон инструмента песочницы в фоне (stdino-стайл Холмса: статус в SANDBOX_RUN)."""
+    spec = SANDBOX_TOOLS[tool]
+    command = [sys.executable, str(spec["script"]), *args]
+    try:
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=spec["timeout"],
+            check=False,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
+        )
+        with SANDBOX_RUN_LOCK:
+            SANDBOX_RUN.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": result.returncode,
+                "summary": (result.stdout or "")[-4000:] or None,
+                "error": None if result.returncode == 0
+                else (result.stderr.strip() or f"код {result.returncode}")[-800:],
+            })
+        logging.info("Sandbox tool %s finished with code %s", tool, result.returncode)
+    except subprocess.TimeoutExpired:
+        with SANDBOX_RUN_LOCK:
+            SANDBOX_RUN.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": None,
+                "summary": None,
+                "error": f"Инструмент не завершился за {spec['timeout']} с.",
+            })
+    except Exception as error:
+        with SANDBOX_RUN_LOCK:
+            SANDBOX_RUN.update({
+                "running": False,
+                "finished_at": datetime.now(TASHKENT).isoformat(timespec="seconds"),
+                "returncode": None,
+                "summary": None,
+                "error": str(error)[:800],
+            })
+        logging.exception("Sandbox tool %s failed", tool)
+
+
+# --- Реестр джобов: GET /api/jobs + POST /api/jobs/<id>/run (Л-3, Docs/DATA-FOUNDATION-PLAN-2026-11-04) ---
+
+_JOBS_REQUIRED_FIELDS = ("id", "title", "owner", "cmd", "timeout_s", "enabled")
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _load_jobs_registry() -> list:
+    """Прочитать tools/ops/jobs.json; битый реестр — ValueError с внятной ошибкой."""
+    raw = json.loads(JOBS_REGISTRY_PATH.read_text(encoding="utf-8"))
+    if not isinstance(raw, list):
+        raise ValueError("jobs.json должен быть массивом записей.")
+    for index, job in enumerate(raw):
+        if not isinstance(job, dict):
+            raise ValueError(f"jobs.json[{index}]: запись должна быть объектом.")
+        for field in _JOBS_REQUIRED_FIELDS:
+            if field not in job:
+                raise ValueError(f"jobs.json[{index}]: нет обязательного поля {field}.")
+        if not isinstance(job["cmd"], list) or not all(isinstance(arg, str) for arg in job["cmd"]):
+            raise ValueError(f"jobs.json[{index}]: cmd должен быть списком строк.")
+    return raw
+
+
+def _load_jobs_state() -> dict:
+    """Прочитать Workspace/logs/jobs_state.json (конверт evo.ops.job_state); нет файла или битый — {}."""
+    try:
+        raw = json.loads(JOBS_STATE_PATH.read_text(encoding="utf-8"))
+    except (FileNotFoundError, OSError, json.JSONDecodeError):
+        return {}
+    if (
+        isinstance(raw, dict)
+        and raw.get("schema_id") == "evo.ops.job_state"
+        and isinstance(raw.get("payload"), dict)
+    ):
+        return raw["payload"]
+    return raw if isinstance(raw, dict) else {}
+
+
+def _save_jobs_state(payload: dict) -> None:
+    """Перезаписать jobs_state.json одним конвертом schema_id="evo.ops.job_state"."""
+    envelope = {
+        "schema_id": "evo.ops.job_state",
+        "schema_version": 1,
+        "produced_by": "dashboard-server",
+        "produced_at": _utc_now_iso(),
+        "payload": payload,
+        "refs": {},
+    }
+    _atomic_write_json(JOBS_STATE_PATH, envelope)
+
+
+def _job_is_running(state_entry) -> bool:
+    """Маркер «джоб уже запущен»: started_at есть, finished_at ещё нет (по ТЗ Л-3 → 409)."""
+    return (
+        isinstance(state_entry, dict)
+        and bool(state_entry.get("started_at"))
+        and not state_entry.get("finished_at")
+    )
+
+
+def jobs_snapshot(include_all: bool = False) -> dict:
+    """Собрать payload GET /api/jobs: реестр (enabled по умолчанию) + статус последнего запуска."""
+    state = _load_jobs_state()
+    jobs = []
+    for job in _load_jobs_registry():
+        if not include_all and not job.get("enabled"):
+            continue
+        entry = dict(job)
+        last_run = state.get(str(job.get("id")))
+        entry["last_run"] = dict(last_run) if isinstance(last_run, dict) else None
+        entry["running"] = _job_is_running(last_run)
+        jobs.append(entry)
+    return {"jobs": jobs}
+
+
+def _job_cwd(job: dict) -> Path:
+    raw = Path(str(job.get("cwd") or "."))
+    return raw if raw.is_absolute() else ROOT / raw
+
+
+def _jobs_run_worker(job_id: str, cmd: list, cwd: Path, timeout_s: int, started_at: str) -> None:
+    """Поток-наблюдатель: ждёт процесс с таймаутом (kill при превышении) и пишет финальный state."""
+    exit_code = -1
+    started_monotonic = time.monotonic()
+    try:
+        process = subprocess.Popen(
+            cmd,
+            cwd=str(cwd),
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
+        )
+        try:
+            exit_code = process.wait(timeout=timeout_s)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            exit_code = process.wait()
+    except Exception:
+        logging.exception("Job %s failed to start", job_id)
+        exit_code = -1
+    finished_at = _utc_now_iso()
+    duration_s = round(time.monotonic() - started_monotonic, 1)
+    with JOBS_LOCK:
+        state = _load_jobs_state()
+        state[job_id] = {
+            "started_at": started_at,
+            "finished_at": finished_at,
+            "exit_code": exit_code,
+            "duration_s": duration_s,
+        }
+        _save_jobs_state(state)
+    logging.info("Job %s finished with code %s", job_id, exit_code)
+
+
+def start_job(job_id: str) -> tuple:
+    """Запустить джоб из реестра; возвращает (http_status, response) для обработчика.
+
+    Повторный запуск уже идущего джоба (started_at без finished_at) — 409.
+    """
+    try:
+        registry = _load_jobs_registry()
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        return 500, {"error": f"Реестр джобов не читается: {error}"}
+    job = next((entry for entry in registry if str(entry.get("id")) == job_id), None)
+    if job is None:
+        return 404, {"error": f"Джоб не найден в реестре: {job_id}"}
+    if not job.get("enabled"):
+        return 403, {"error": f"Джоб выключен (enabled=false): {job_id}"}
+    with JOBS_LOCK:
+        state = _load_jobs_state()
+        if _job_is_running(state.get(job_id)):
+            return 409, {"error": f"Джоб уже выполняется — дождитесь завершения: {job_id}"}
+        started_at = _utc_now_iso()
+        state[job_id] = {"started_at": started_at, "finished_at": None, "exit_code": None, "duration_s": None}
+        try:
+            _save_jobs_state(state)
+        except OSError as error:
+            return 500, {"error": f"Не удалось записать jobs_state.json: {error}"}
+        threading.Thread(
+            target=_jobs_run_worker,
+            args=(job_id, list(job["cmd"]), _job_cwd(job), int(job.get("timeout_s") or 600), started_at),
+            name=f"job-{job_id}",
+            daemon=True,
+        ).start()
+    return 202, {"started": True, "id": job_id, "started_at": started_at}
 
 
 def main() -> None:

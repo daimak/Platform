@@ -13,6 +13,12 @@
       "skillPath": "skills/deploy-to-vercel/SKILL.md",
       "computedHash": "3a0481591523c55ecfe2569b6b28b2dcbfa3742367667697219d29170981ad53"
     },
+    "reverse-api-engineer": {
+      "source": "kalil0321/reverse-api-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/reverse-api-engineer/SKILL.md",
+      "computedHash": "a9df158c0c5bfe6fcc3b3faf964afb46b276e0bd1966e466a70ad98cac1c2201"
+    },
     "vercel-cli-with-tokens": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",

@@ -108,12 +108,17 @@ async function loadTasks() {
   TASKS = data.tasks.all || [];
   const urgent = TASKS.filter((t) => t.status !== "done" && t.priority === "urgent").length;
   document.getElementById("kb-meta").innerHTML =
-    `карточек: <b>${TASKS.length}</b> · срочных: <b>${urgent}</b> · тащи мышью, клик = подробности; ` +
-    `в «Готово» = закрыть (Mark Done), из «Готово» = reopen. Каждый перенос пишется в history карточки.`;
+    `карточек: <b>${TASKS.length}</b> · срочных: <b>${urgent}</b>`;
 }
 
 async function moveTask(id, stage) {
-  const res = await fetch(`/api/tasks/${encodeURIComponent(id)}/stage/${stage}`, { method: "POST" });
+  /* Л-5: подпись автора перехода. Без логинов и ролей: loopback, один хозяин —
+   * автор декларирует сам; сервер пишет её в history и в журнал событий. */
+  const res = await fetch(`/api/tasks/${encodeURIComponent(id)}/stage/${stage}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ by: "Sovereign" }),
+  });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   TASKS = data.tasks.all || [];
@@ -139,8 +144,12 @@ function onDragStart(e, card) {
   const onMove = (ev) => {
     if (!dragging) {
       if (Math.hypot(ev.clientX - startX, ev.clientY - startY) < 5) return;
+      // правило «текст выделяется ВЕЗДЕ»: пока есть живое выделение, drag не стартует;
+      // перетаскивание карточки — от пустого места карточки
+      let selLen = 0;
+      try { selLen = String(getSelection()).length; } catch (err) {}
+      if (selLen > 0) return;
       dragging = true;
-      try { getSelection().removeAllRanges(); } catch (err) {}
       const r = card.getBoundingClientRect();
       ghost = card.cloneNode(true);
       ghost.className = card.className + " kb-ghost";

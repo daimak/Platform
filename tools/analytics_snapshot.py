@@ -161,6 +161,16 @@ def main() -> None:
     manifest = {"date": day, "raw": raw, "jobs": jobs, "olx": olx, "tokens": tokens,
                 "generator": "tools/analytics_snapshot.py (stdlib-only)"}
     (d / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    # Врезка-доказательство Л-2 (Docs/DATA-FOUNDATION-PLAN-2026-11-04-ZCode.md):
+    # событие в машинный журнал в конце успешного прогона; падение журнала
+    # не должно ломать снапшот — весь блок под try/except.
+    try:
+        if str(ROOT) not in sys.path:
+            sys.path.insert(0, str(ROOT))
+        from tools.lib.log_event import append_event
+        append_event("snapshot.completed", "analytics_snapshot", {"dir": d.name})
+    except Exception:
+        pass
     print(json.dumps(manifest, ensure_ascii=False, indent=2))
 
 

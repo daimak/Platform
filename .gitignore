@@ -42,6 +42,8 @@ Workspace/private/
 Workspace/pentest/
 Workspace/reports/
 Workspace/analytics/
+# Machine events journal & job run states (regenerable, Л-2/Л-3 data foundation)
+Workspace/logs/
 kali/
 tools/pentest/
 tools/hh406-lab/
