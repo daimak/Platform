@@ -1,0 +1,29 @@
+{
+  "run_mode": "DRY-RUN",
+  "utc": "2026-11-04T19:53:14.315897+00:00",
+  "env": {
+    "HIGGSFIELD_API_KEY": "(пусто)",
+    "HF_KEY": "(пусто)",
+    "HF_API_KEY_set": false,
+    "HF_API_SECRET_set": false
+  },
+  "sdk_check": {
+    "ok": false,
+    "stage": "credentials-local-check",
+    "sdk_version": "0.2.0 (не экспортируется)",
+    "credentials": "CredentialsMissedError: Higgsfield API credentials missing. Please set HF_KEY, or alternatively set HF_API_KEY and HF_API_SECRET."
+  },
+  "raw_auth_check": {
+    "probe_url": "https://api.higgsfield.ai/requests/5142fdaf-d8d3-45f3-b185-76bf3b8cfb33/status",
+    "auth_header": "absent",
+    "http_status": 401,
+    "reason": "Unauthorized",
+    "body": "{\"detail\":\"Invalid credentials\"}"
+  },
+  "payload": {
+    "prompt": "Editorial fashion photo, a mid-30s woman in a charcoal wool coat, standing on a rain-wet Tokyo street at dusk, neon reflections, shallow depth of field, 85mm lens, cinematic color grade",
+    "num_images": 1,
+    "resolution": "2K",
+    "aspect_ratio": "3:4"
+  }
+}

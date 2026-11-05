@@ -3,13 +3,41 @@
   "title": "Слияние веток по D-002",
   "source": "R9",
   "priority": "regular",
-  "status": "active",
+  "status": "done",
+  "completedAt": "2026-11-04T18:36:05Z",
   "createdAt": "2026-10-29T04:26:16Z",
   "history": [
     {
       "status": "active",
       "at": "2026-10-29T04:26:16Z",
       "note": "Перенесено из текущего списка задач дашборда."
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-03T06:36:52Z"
+    },
+    {
+      "stage": "test",
+      "at": "2026-11-03T06:43:22Z"
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-03T06:43:24Z"
+    },
+    {
+      "stage": "todo",
+      "at": "2026-11-03T06:51:13Z"
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-04T06:13:21Z"
+    },
+    {
+      "stage": "done",
+      "at": "2026-11-04T18:36:05Z",
+      "by": "Sovereign",
+      "note": "Закрыто 04.11 (E-046): merge origin/main (PR #2) в feature_1.8.6 → push origin/main (5057dcb), локальная main создана, ветки feature_1.8.6/1.8.5/1.8.2 удалены локально и на origin. Работа продолжается на main."
     }
-  ]
+  ],
+  "stage": "in-progress"
 }

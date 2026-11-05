@@ -1,0 +1,18 @@
+{
+  "id": "morning-review-agent-diagnostics",
+  "title": "Утро: ознакомиться с диагностикой параллельных агентов (04.11)",
+  "source": "Sovereign",
+  "priority": "regular",
+  "status": "active",
+  "stage": "todo",
+  "createdAt": "2026-11-04T18:53:39Z",
+  "description": "Результат диагностики 04.11 ~23:45 (вопрос Дмитрия «у нас запущены параллельные агенты?»). ВЕРДИКТ: работающих агентов НЕТ, кроме одной параллельной ZCode-сессии (sess_d092a1db, активна — E-045, app.js v12).\n\nПо слоям:\n1. Платформенные рантаймы: Holmes/Watson/RiskScan — running:false у всех; последний прогон RiskScan 23:40:17→23:40:36, код 0.\n2. Python-процессы: только dashboard-server.py (норма) + hermes_cli.main gateway run (PID 2972, порт 45616) — не наш агент, локальный шлюз инструментария.\n3. Планировщик ОС: одна запись «Barrymore Dashboard Server» (триггер на логон). Risk-крона в системе нет.\n4. ZCode-автоматизации: обе enabled=false — ночной насос-сторож (failed, ночь 01→02.11 кончилась) и «проверка знаний 20:30» (paused). Поводок подтверждён.\n5. Свежая фактура C:/Users/temp/.zcode/cli/rollout/model-io-*.jsonl (mtime <30 мин): наша сессия, суб-агент, параллельная сессия d092a1db.\n\nШпаргалка самопроверки (описана Дмитрию в чате 04.11): curl /api/<holmes|watson|riskscan>/run-status; лог %LOCALAPPDATA%/Platform/Barrymore/dashboard-server.log; Get-CimInstance Win32_Process (python%); schtasks; sqlite tasks-index.sqlite → automations.enabled; mtime model-io-*.jsonl.\n\nСвязь: утром — сверить, что картина не изменилась, и решить вопрос «почему агенты не работают сами» (обсуждение 04.11: снятие поводка ступенями).",
+  "history": [
+    {
+      "stage": "todo",
+      "at": "2026-11-04T18:53:39Z",
+      "by": "Sovereign",
+      "note": "Создано по просьбе Дмитрия «запиши результат и оставь на утро задачу — еще раз ознакомиться»"
+    }
+  ]
+}

@@ -2,20 +2,19 @@
 # -*- coding: utf-8 -*-
 """Agent Runtime — запуск агента по паспорту с инструментами из реестра.
 
-Замкнутый цикл Холмса (Этап 2 дорожной карты, Docs/AGENTS-LANDSCAPE-2026-10-29-ZCode.md):
-каждый прогон вычисляет находки со стабильными ID, сравнивает их с
-машиночитаемым блоком прошлого отчёта (new / persisting / resolved), создаёт
-задачи в лиджере Memory/Engineering/Tasks/Active (create-if-missing, формат
-Tasks/README.md) и пишет отчёт с новым блоком состояния — так следующий прогон
-видит последствия предыдущего.
+Замкнутый цикл аудита (Холмс, Ватсон, Risk scan — Этап 2 дорожной карты,
+Docs/AGENTS-LANDSCAPE-2026-10-29-ZCode.md): каждый прогон вычисляет находки
+со стабильными ID (набор правил задаётся полем findings_kind агента в реестре),
+сравнивает их с машиночитаемым блоком прошлого отчёта (new / persisting /
+resolved) и пишет отчёт с новым блоком состояния. Инициативы (P1/P2) Sovereign
+отмечает галочками в модалке Холмса на дашборде и отправляет на реализацию —
+задачи в лиджере создаёт dashboard-server (/api/holmes/implement), только по санкции.
 
 Свойства:
 - только stdlib; ключ шлюза читается из Workspace/.env и не выводится;
 - LLM получает только текст источников, доступа к ОС у модели нет (ADR-004);
 - «мозги»: черновик отчёта проходит независимую верификацию против данных;
-- «власть в меру»: ровно две записи — отчёт в Memory/Engineering/Reports/ и
-  задачи holmes-* в лиджере (existing tasks не трогаются, Mark Done — за
-  Sovereign через дашборд);
+- «власть в меру»: единственная запись — отчёт в Memory/Engineering/Reports/;
 - при --no-llm или недоступном шлюзе цикл всё равно работает детерминированно.
 
 Запуск:
@@ -29,7 +28,6 @@ import os
 import re
 import subprocess
 import sys
-import tempfile
 import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -40,28 +38,12 @@ REGISTRY_PATH = Path(__file__).resolve().parent / "registry.json"
 ENV_PATH = ROOT / "Workspace" / ".env"
 TASHKENT = timezone(timedelta(hours=5), "Tashkent")
 
-sys.path.insert(0, str(ROOT / "tools" / "barrymore"))
-try:
-    import task_store  # формат и каталоги лиджера Tasks/README.md
-except Exception:
-    task_store = None
-
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 
-# Находки со стабильными ID: сравнение прогонов и задачи в лиджере.
-FINDING_TITLES = {
-    "host-noise": "Холмс: шум авто-коммитов агент-хоста в истории",
-    "untracked-files": "Холмс: разобрать untracked-файлы (коммит или .gitignore)",
-    "uncommitted-edits": "Холмс: незакоммиченные правки в рабочем дереве",
-    "journal-stale": "Холмс: журнал LOG.md давно не обновлялся",
-    "branch-drift": "Холмс: рабочая ветка разошлась с upstream",
-    "main-behind": "Холмс: локальный main позади origin/main",
-}
-TASKABLE_SEVERITIES = {"P1", "P2"}
 # Файлы, создаваемые самими агентами Platform (не считаются «незакоммиченной
 # правкой», иначе Холмс триггерит сам себя):
 GENERATED_PATHS = ("eVo/dashboard/brief.js",)
@@ -94,7 +76,42 @@ def git(*args: str) -> str:
         return ""
 
 
-# --- Инструменты (реестр: git.inspect, journal.read, tree.inspect, reports.inspect)
+# --- Инструменты (реестр: git.inspect, journal.read, tree.inspect, reports.inspect, git.diff)
+
+SENSITIVE_PATH_NAMES = {
+    "dashboard-server.py", "security-targets.json", "security_contour.py",
+    "main.py", ".env", ".env.example", "registry.json", "run_agent.py", "task_store.py",
+}
+
+# Секретоподобное = префикс + РЕАЛЬНОЕ значение (упоминания вида «FreeLLMAPI ключи» не матчатся).
+SECRET_PATTERN = re.compile(
+    r"(lsv2_pt_[A-Za-z0-9_\-]{10,}|sk-ant-[A-Za-z0-9_\-]{10,}|freellmapi-[a-z0-9]{10,}|"
+    r"ghp_[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{12,}|AIza[A-Za-z0-9_\-]{20,}|"
+    r"api_?key\s*[=:]\s*[\"'][A-Za-z0-9_\-]{16,}|password\s*[=:]\s*[\"'][^\"']{6,})",
+    re.I,
+)
+# Файлы-сканеры сами содержат образцы паттернов — из проверки секретов исключены.
+SECRET_SCAN_EXEMPT = {"tools/agents/run_agent.py", "tools/security/secret_scan.py"}
+
+
+def _mask_secretish(line: str) -> str:
+    return re.sub(r"(lsv2_pt_|sk-ant-|freellmapi-|ghp_|AKIA[0-9A-Z]{4}|AIza)[A-Za-z0-9_\-]{6,}",
+                  lambda m: m.group(1) + "***", line)
+
+
+def _iter_diff_files(diff_text: str):
+    """Разбить diff на секции по файлам → [(path, [changed lines])]."""
+    current, bucket = None, []
+    for line in diff_text.splitlines():
+        m = re.match(r"^diff --git a/(.+?) b/(.+?)$", line)
+        if m:
+            if current is not None:
+                yield current, bucket
+            current, bucket = m.group(2), []
+        elif current is not None and line[:1] in ("+", "-") and not line.startswith(("+++", "---")):
+            bucket.append(line)
+    if current is not None:
+        yield current, bucket
 
 def parse_branch_tracking() -> list:
     """Каждая локальная ветка и её позиция относительно СВОЕГО upstream."""
@@ -146,15 +163,37 @@ def tool_git_inspect(days: int = 7) -> dict:
 
 def tool_journal_read() -> dict:
     eng = ROOT / "Memory" / "Engineering"
-    data = {"logEntries": [], "logModified": None, "activeTasks": []}
+    agents_dir = ROOT / "Memory" / "Agents"
+    data = {"logEntries": [], "logHeadings": [], "logModified": None,
+            "activeTasks": [], "estateStaff": [], "passportsOnDisk": []}
     log_path = eng / "LOG.md"
     if log_path.exists():
         data["logModified"] = datetime.fromtimestamp(log_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
-        ids = sorted(set(re.findall(r"\bE-\d{3}\b", log_path.read_text(encoding="utf-8-sig", errors="replace"))))
+        text = log_path.read_text(encoding="utf-8-sig", errors="replace")
+        ids = sorted(set(re.findall(r"\bE-\d{3}\b", text)))
         data["logEntries"] = ids
+        for m in re.finditer(r"^## (E-\d{3})\s*\|\s*([^\n|]+)", text, re.M):
+            data["logHeadings"].append({"id": m.group(1), "time": m.group(2).strip()})
     tasks_dir = eng / "Tasks" / "Active"
     if tasks_dir.exists():
-        data["activeTasks"] = sorted(p.stem for p in tasks_dir.glob("*.json"))
+        data["activeTasks"] = [
+            {"id": p.stem, "modified": datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M")}
+            for p in sorted(tasks_dir.glob("*.json"))
+        ]
+    staff_path = agents_dir / "estate-staff.json"
+    if staff_path.exists():
+        try:
+            staff = json.loads(staff_path.read_text(encoding="utf-8-sig", errors="replace"))
+            members = staff.get("members", staff if isinstance(staff, list) else [])
+            data["estateStaff"] = [
+                {"id": m.get("id"), "name": m.get("name"), "passport": m.get("passport"),
+                 "status": m.get("status")}
+                for m in members if isinstance(m, dict)
+            ]
+        except json.JSONDecodeError:
+            pass
+    if agents_dir.exists():
+        data["passportsOnDisk"] = sorted(p.name for p in agents_dir.glob("*.md"))
     return data
 
 
@@ -170,13 +209,51 @@ def tool_tree_inspect() -> dict:
     return {"heavyAssetsMB": heavy}
 
 
-def tool_reports_inspect() -> dict:
-    """Прошлый отчёт Холмса и его машиночитаемый блок находок."""
+def tool_git_diff(window_days: int = 2, max_chars: int = 60000) -> dict:
+    """Свежие правки (read-only): незакоммиченные изменения + окно последних коммитов."""
+    working = git("diff", "HEAD")
+    rng = f"@{{{window_days} days ago}}"
+    recent = git("diff", rng, "HEAD")
+    if not recent:
+        rng = "HEAD~3"
+        recent = git("diff", rng, "HEAD")
+    stat_lines = git("diff", "--stat", rng, "HEAD").splitlines()
+    stat_tail = stat_lines[-1] if stat_lines else ""
+    deleted = [l for l in git("diff", "--diff-filter=D", "--name-only", rng, "HEAD").splitlines() if l.strip()]
+    changed = [l[3:] if l.startswith(" M") else l for l in
+               (git("diff", "--name-only", rng, "HEAD").splitlines()
+                + git("diff", "--name-only", "HEAD").splitlines()) if l.strip()]
+    sensitive = sorted({p for p in changed if Path(p).name in SENSITIVE_PATH_NAMES})
+    secretish = []
+    for diff_text in (recent, working):
+        for path, lines in _iter_diff_files(diff_text):
+            if path in SECRET_SCAN_EXEMPT:
+                continue
+            for line in lines:
+                if line.startswith("+") and SECRET_PATTERN.search(line):
+                    secretish.append(_mask_secretish(line[:120]).lstrip("+").strip())
+    budget = max_chars * 3 // 5
+    text = (recent or "")[:budget]
+    if working:
+        text += ("\n\n# --- uncommitted ---\n" + working[:max_chars - len(text)])
+    return {
+        "window": f"{rng}..HEAD + uncommitted",
+        "statTail": stat_tail,
+        "deletedFiles": deleted[:30],
+        "sensitiveTouched": sensitive[:20],
+        "secretishAddedLines": secretish[:20],
+        "diffText": text,
+        "truncated": (len(recent) + len(working)) > max_chars,
+    }
+
+
+def tool_reports_inspect(tag: str = "holmes-audit") -> dict:
+    """Прошлый отчёт агента (по report_tag из реестра) и его машиночитаемый блок находок."""
     data = {"previousReportPath": None, "previousFindings": None}
     reports_dir = ROOT / "Memory" / "Engineering" / "Reports"
     if not reports_dir.exists():
         return data
-    reports = sorted(reports_dir.glob("Report-*-holmes-audit.md"))
+    reports = sorted(reports_dir.glob(f"Report-*-{tag}.md"))
     if not reports:
         return data
     latest = reports[-1]
@@ -312,6 +389,99 @@ def compute_findings(git_data: dict, journal: dict) -> list:
     return findings
 
 
+def compute_watson_findings(git_data: dict, journal: dict) -> list:
+    """Хроника Memory/Engineering против фактов git и штата (стабильные ID)."""
+    findings = []
+    entries = set(journal.get("logEntries") or [])
+    nums = sorted(int(e[2:]) for e in entries if re.fullmatch(r"E-\d{3}", e))
+    if nums:
+        gaps = [f"E-{i:03d}" for i in range(nums[0], nums[-1] + 1) if f"E-{i:03d}" not in entries]
+        if gaps:
+            findings.append({
+                "id": "journal-enum-gap", "severity": "P3",
+                "detail": f"Пропуски нумерации журнала: {', '.join(gaps[:10])}.",
+            })
+    bad_time = [h.get("id") for h in journal.get("logHeadings") or []
+                if not re.match(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$", h.get("time", ""))]
+    if bad_time:
+        findings.append({
+            "id": "journal-no-timestamp", "severity": "P3",
+            "detail": f"Записи журнала без корректного времени (ГГГГ-ММ-ДД ЧЧ:ММ): {', '.join(bad_time[:10])}.",
+        })
+    mem_paths = [p for p in (git_data.get("modifiedTracked") or []) if p.startswith("Memory/")]
+    mem_paths += [p for p in (git_data.get("untracked") or []) if p.startswith("Memory/")]
+    if mem_paths:
+        findings.append({
+            "id": "memory-uncommitted", "severity": "P2",
+            "detail": "Память не записана в git: " + ", ".join(mem_paths[:5])
+                      + ("…" if len(mem_paths) > 5 else "") + ".",
+        })
+    active_status = ("на службе", "испытательный срок", "active")
+    for s in journal.get("estateStaff") or []:
+        if not s.get("id"):
+            continue
+        pid = s.get("passport")
+        status = str(s.get("status") or "").lower()
+        if pid is None and status in active_status:
+            findings.append({
+                "id": "staff-no-passport", "severity": "P3",
+                "detail": f"Сотрудник «{s['id']}» ({s.get('status')}) в штате без паспорта.",
+            })
+        elif pid and not (ROOT / str(pid)).exists():
+            findings.append({
+                "id": "staff-passport-missing", "severity": "P2",
+                "detail": f"Паспорт сотрудника «{s['id']}» не найден на диске: {pid}.",
+            })
+    stale = []
+    for t in journal.get("activeTasks") or []:
+        try:
+            if (datetime.now() - datetime.strptime(t["modified"], "%Y-%m-%d %H:%M")).days >= 14:
+                stale.append(t["id"])
+        except ValueError:
+            continue
+    if stale:
+        findings.append({
+            "id": "tasks-stale", "severity": "P3",
+            "detail": f"Задачи в Active без движения ≥14 дней: {', '.join(stale[:8])}.",
+        })
+    return findings
+
+
+def compute_riskscan_findings(diff_data: dict) -> list:
+    """Высокие риски свежих правок — только то, что видно в диффе (без спекуляций)."""
+    findings = []
+    if not diff_data:
+        return findings
+    secretish = diff_data.get("secretishAddedLines") or []
+    if secretish:
+        findings.append({
+            "id": "secret-in-diff", "severity": "P1",
+            "detail": f"В свежих правках {len(secretish)} строк с секретоподобными значениями (маскированы): "
+                      + " | ".join(secretish[:3]),
+        })
+    deleted = diff_data.get("deletedFiles") or []
+    if deleted:
+        findings.append({
+            "id": "deleted-files", "severity": "P2",
+            "detail": f"Удалены файлы за окно прогона ({len(deleted)}): " + ", ".join(deleted[:6])
+                      + ("…" if len(deleted) > 6 else "") + ".",
+        })
+    sensitive = diff_data.get("sensitiveTouched") or []
+    if sensitive:
+        findings.append({
+            "id": "sensitive-edited", "severity": "P2",
+            "detail": "Правки чувствительных файлов: " + ", ".join(sensitive[:6])
+                      + ("…" if len(sensitive) > 6 else "") + ".",
+        })
+    m = re.search(r"(\d+) deletions?", diff_data.get("statTail") or "")
+    if m and int(m.group(1)) >= 500:
+        findings.append({
+            "id": "mass-deletion", "severity": "P2",
+            "detail": f"За окно прогона удалено {m.group(1)} строк ({diff_data.get('statTail', '')}).",
+        })
+    return findings
+
+
 def compare_findings(findings: list, prev_block: dict) -> tuple:
     prev_by_id = {f["id"]: f for f in (prev_block or {}).get("findings", [])
                   if isinstance(f, dict) and "id" in f}
@@ -319,72 +489,6 @@ def compare_findings(findings: list, prev_block: dict) -> tuple:
     statuses = {f["id"]: ("persisting" if f["id"] in prev_by_id else "new") for f in findings}
     resolved = [fid for fid in prev_by_id if fid not in cur_ids]
     return prev_by_id, statuses, resolved
-
-
-def _atomic_write_json(path: Path, payload: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w", encoding="utf-8", dir=path.parent,
-            prefix=f".{path.stem}.", suffix=".tmp", delete=False,
-        ) as fh:
-            tmp = Path(fh.name)
-            json.dump(payload, fh, ensure_ascii=False, indent=2)
-            fh.write("\n")
-        os.replace(tmp, path)
-    finally:
-        if tmp and tmp.exists():
-            tmp.unlink()
-
-
-def ledger_ensure_task(finding: dict) -> str:
-    """Create-if-missing задача holmes-<id> в Tasks/Active; существующие не трогает."""
-    if task_store is None:
-        return "unavailable"
-    base_id = f"holmes-{finding['id']}"
-    if not task_store.TASK_ID_PATTERN.fullmatch(base_id):
-        return "invalid-id"
-    if (task_store.ACTIVE_DIR / f"{base_id}.json").exists():
-        return "exists"
-    task_id = None
-    for candidate in [base_id] + [f"{base_id}-{n}" for n in range(2, 10)]:
-        if any(task_store.ARCHIVE_DIR.rglob(f"{candidate}.json")):
-            continue
-        task_id = candidate
-        break
-    if task_id is None:
-        return "no-free-id"
-    path = task_store.ACTIVE_DIR / f"{task_id}.json"
-    if path.exists():
-        return "exists"
-    created = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
-    task = {
-        "id": task_id,
-        "title": FINDING_TITLES.get(finding["id"], f"Холмс: находка {finding['id']}"),
-        "source": "Holmes",
-        "priority": "urgent" if finding["severity"] == "P1" else "regular",
-        "status": "active",
-        "createdAt": created,
-        "history": [{
-            "status": "active",
-            "at": created,
-            "by": "Holmes",
-            "note": finding["detail"][:200],
-        }],
-    }
-    _atomic_write_json(path, task)
-    return f"created:{task_id}"
-
-
-def run_ledger_cycle(findings: list, statuses: dict) -> list:
-    """По находкам P1/P2 (new/persisting) обеспечить задачи в лиджере."""
-    actions = []
-    for f in findings:
-        if f["severity"] in TASKABLE_SEVERITIES and statuses.get(f["id"]) in ("new", "persisting"):
-            outcome = ledger_ensure_task(f)
-            actions.append({"finding": f["id"], "outcome": outcome})
-    return actions
 
 
 def followup_lines(findings: list, statuses: dict, resolved: list, prev_by_id: dict, has_prev: bool) -> list:
@@ -402,13 +506,13 @@ def followup_lines(findings: list, statuses: dict, resolved: list, prev_by_id: d
 
 
 def deterministic_report(findings: list, statuses: dict, resolved: list, prev_by_id: dict,
-                         has_prev: bool, ledger_actions: list) -> str:
+                         has_prev: bool, agent_name: str = "Holmes") -> str:
     now_str = datetime.now(TASHKENT).strftime("%Y-%m-%d %H:%M")
     lines = [
-        "# Отчёт Холмса (детерминированный, без LLM)",
+        f"# Отчёт {agent_name} (детерминированный, без LLM)",
         f"Сгенерирован: {now_str} (Tashkent)",
         "",
-        "**Вывод:** автоматическая проверка гигиены репозитория; LLM-вердикт недоступен, выводы основаны только на правилах.",
+        "**Вывод:** автоматическая проверка по правилам агента; LLM-вердикт недоступен, выводы основаны только на правилах.",
         "**Ключевые факты:**",
     ]
     if findings:
@@ -416,12 +520,10 @@ def deterministic_report(findings: list, statuses: dict, resolved: list, prev_by
     else:
         lines.append("- Аномалий по правилам проверки не обнаружено.")
     lines += followup_lines(findings, statuses, resolved, prev_by_id, has_prev)
-    if ledger_actions:
-        lines.append("**Лиджер:** " + "; ".join(f"{a['finding']} → {a['outcome']}" for a in ledger_actions))
     lines += [
         "**Варианты:** устранить находки по списку или повторить с LLM для аналитического вердикта.",
         "**Риски:** без регулярного аудита шум и дрейф контекста накапливаются незаметно.",
-        "**Рекомендация:** повторить запуск с LLM; закрывать задачи в дашборде по факту исправления.",
+        "**Рекомендация:** повторить запуск с LLM; инициативы отмечать в дашборде (кнопка «Отправить на реализацию»).",
         "**Что нужно от Sovereign:** санкция на решение находок из списка.",
     ]
     return "\n".join(lines)
@@ -445,25 +547,31 @@ def main() -> int:
     passport = passport_path.read_text(encoding="utf-8-sig", errors="replace")
 
     tools_used = [t for t in agent["tools"] if t not in ("gateway.chat", "report.write", "ledger.write")]
+    report_tag = agent.get("report_tag", args.agent.lower() + "-audit")
+    findings_kind = agent.get("findings_kind", "holmes")
     data = {
         "git": tool_git_inspect() if "git.inspect" in tools_used else None,
         "journal": tool_journal_read() if "journal.read" in tools_used else None,
         "tree": tool_tree_inspect() if "tree.inspect" in tools_used else None,
-        "previousReport": tool_reports_inspect() if "reports.inspect" in tools_used else {"previousReportPath": None, "previousFindings": None},
+        "diff": tool_git_diff() if "git.diff" in tools_used else None,
+        "previousReport": tool_reports_inspect(report_tag) if "reports.inspect" in tools_used else {"previousReportPath": None, "previousFindings": None},
     }
     print(f"[agents] Инструменты ({args.agent}): {', '.join(tools_used)}")
 
-    # Цикл последствий: находки → сравнение → лиджер.
-    findings = compute_findings(data["git"] or {}, data["journal"] or {})
+    # Цикл последствий: находки → сравнение прогонов. Создание задач из
+    # инициатив — через дашборд (/api/holmes/implement) по санкции Sovereign.
+    if findings_kind == "watson":
+        findings = compute_watson_findings(data["git"] or {}, data["journal"] or {})
+    elif findings_kind == "riskscan":
+        findings = compute_riskscan_findings(data["diff"] or {})
+    else:
+        findings = compute_findings(data["git"] or {}, data["journal"] or {})
     prev_block = data["previousReport"].get("previousFindings")
     has_prev = prev_block is not None
     prev_by_id, statuses, resolved = compare_findings(findings, prev_block)
-    ledger_actions = run_ledger_cycle(findings, statuses) if "ledger.write" in agent["tools"] else []
-    created = [a["outcome"].split(":", 1)[1] for a in ledger_actions if a["outcome"].startswith("created:")]
     print(f"[agents] Цикл: new={sum(1 for s in statuses.values() if s == 'new')} "
           f"persisting={sum(1 for s in statuses.values() if s == 'persisting')} "
-          f"resolved={len(resolved)}; задач создано: {len(created)}"
-          + (f" ({', '.join(created)})" if created else ""))
+          f"resolved={len(resolved)}")
 
     report = None
     verification = None
@@ -485,14 +593,14 @@ def main() -> int:
             "previousFindings": (prev_block or {}).get("findings"),
             "currentStatuses": [{"id": f["id"], "severity": f["severity"], "status": statuses[f["id"]]} for f in findings],
             "resolved": resolved,
-            "ledgerActions": ledger_actions,
         }
         user_prompt = (
             f"Данные инструментов (read-only, снимок {datetime.now(TASHKENT).strftime('%Y-%m-%d %H:%M')}):\n"
             + json.dumps(data, ensure_ascii=False, indent=2)
             + "\n\nfollowup (сравнение с прошлым аудитом, посчитано рантаймом):\n"
             + json.dumps(followup_ctx, ensure_ascii=False, indent=2)
-            + "\n\nПроведи плановый аудит чистоты репозитория и журнала по своему мандату."
+            + "\n\n" + agent.get("task_line",
+                                 "Проведи плановый аудит чистоты репозитория и журнала по своему мандату.")
         )
         env = load_env(ENV_PATH)
         try:
@@ -510,7 +618,8 @@ def main() -> int:
             print(f"[agents] Шлюз недоступен ({e}); детерминированный отчёт", file=sys.stderr)
 
     if report is None:
-        report = deterministic_report(findings, statuses, resolved, prev_by_id, has_prev, ledger_actions)
+        report = deterministic_report(findings, statuses, resolved, prev_by_id, has_prev,
+                                      agent_name=args.agent)
 
     if verification:
         report += "\n\n---\n\n## Верификация (авто, против данных инструментов)\n\n" + verification
@@ -524,14 +633,13 @@ def main() -> int:
     state = {
         "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
         "findings": state_findings,
-        "ledger": ledger_actions,
     }
     report += "\n\n---\n\n```json\n" + json.dumps(state, ensure_ascii=False, indent=2) + "\n```"
 
     if "report.write" in agent["tools"]:
         reports_dir = ROOT / "Memory" / "Engineering" / "Reports"
         reports_dir.mkdir(parents=True, exist_ok=True)
-        out_path = reports_dir / f"Report-{datetime.now(TASHKENT).strftime('%Y-%m-%d')}-{args.agent.lower()}-audit.md"
+        out_path = reports_dir / f"Report-{datetime.now(TASHKENT).strftime('%Y-%m-%d')}-{report_tag}.md"
         out_path.write_text(report + "\n", encoding="utf-8")
         print(f"[agents] Отчёт сохранён (report.write): {out_path.relative_to(ROOT)}")
 

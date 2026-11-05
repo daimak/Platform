@@ -1,7 +1,7 @@
 {
   "id": "rotate-langsmith-freellmapi",
   "title": "Ротация ключей LangSmith/FreeLLMAPI",
-  "source": "S-1",
+  "source": "S1",
   "priority": "urgent",
   "status": "active",
   "createdAt": "2026-10-29T04:26:16Z",
@@ -10,6 +10,21 @@
       "status": "active",
       "at": "2026-10-29T04:26:16Z",
       "note": "Перенесено из текущего списка задач дашборда."
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-04T06:13:34Z"
+    },
+    {
+      "stage": "todo",
+      "at": "2026-11-04T06:28:13Z"
+    },
+    {
+      "stage": "todo",
+      "at": "2026-11-04T18:20:23Z",
+      "note": "Аудит секретов 04.11 (E-046): реальные LangSmith и FreeLLMAPI ключи были в Workspace/main.py коммита 1164ed7 — он НЕ достижим из веток, держится в reflog, на origin не запушен (ключи не покидали хост). sk-ant в истории — только dummy-заглушка, не секрет. Срочность низкая. Ротация для Sovereign: 1) smith.langchain.com → Settings → API Keys → Create key → вписать в Workspace/.env (строки 11-12); 2) FreeLLMAPI-ключ перевыпустить в шлюзе :31415 → вписать в Workspace/.env:13. После ротации опционально: git reflog expire --expire-unreachable=now --all && git gc --prune=now — сотрёт 1164ed7 из локальной базы (осторожно: убьёт и чужие висячие объекты)."
     }
-  ]
+  ],
+  "stage": "todo",
+  "description": "Ротация LangSmith + FreeLLMAPI ключей (аудит 04.11: ключи в локальном reflog-коммите 1164ed7, origin чист; sk-ant — dummy)"
 }

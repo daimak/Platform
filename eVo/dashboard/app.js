@@ -172,6 +172,447 @@ function updateBriefLink() {
 /**
  * Открытие модального окна конкретного острова
  */
+const STAFF_STATUS_COLORS = {
+  "на службе": "#5eead4",
+  "испытательный срок": "#fbbf24",
+  "кандидат": "#f87171",
+  "уволен": "#64748b",
+  "приглашённый специалист": "#c4b5fd",
+};
+const STAFF_STATUS_ORDER = ["на службе", "испытательный срок", "кандидат", "уволен"];
+
+const STAFF_GROUPS = [
+  { key: "active", label: "Активные", countLabel: "активных", color: "#5eead4", statuses: ["на службе", "приглашённый специалист"] },
+  { key: "inactive", label: "Неактивные", countLabel: "неактивных", color: "#fbbf24", statuses: ["испытательный срок"] },
+  { key: "candidate", label: "Потенциальные", countLabel: "потенциальных", color: "#f87171", statuses: ["кандидат"] },
+  { key: "dismissed", label: "Списаны", countLabel: "списаны", color: "#64748b", statuses: ["уволен"] },
+];
+let estateStaffExpanded = false;
+
+function groupEstateStaff(staff) {
+  const groups = Object.fromEntries(STAFF_GROUPS.map((g) => [g.key, []]));
+  for (const member of [...(staff.members || []), ...(staff.guests || [])]) {
+    const group = STAFF_GROUPS.find((g) => g.statuses.includes(member.status));
+    groups[group ? group.key : "dismissed"].push(member);
+  }
+  return groups;
+}
+
+function renderStaffCounts(groups) {
+  const muted = "color: var(--text-muted);";
+  return (
+    `<span style="${muted}">(</span>` +
+    STAFF_GROUPS.slice(0, 3)
+      .map((g) => `<span style="color: ${g.color};">${g.countLabel}: ${groups[g.key].length}</span>`)
+      .join(`<span style="${muted}"> · </span>`) +
+    `<span style="${muted}">)</span>`
+  );
+}
+
+function renderStaffBreakdown(groups) {
+  return STAFF_GROUPS.filter((g) => groups[g.key].length)
+    .map(
+      (g) => `
+    <div style="display: flex; align-items: baseline; gap: 8px; padding: 6px 10px; background: rgba(0,0,0,0.25); border-radius: 6px;">
+      <span style="color: ${g.color}; font-size: 0.65rem;">●</span>
+      <span style="color: ${g.color}; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">${g.label}: ${groups[g.key].length}</span>
+      <span style="font-size: 0.8rem; color: #cbd5e1;">${groups[g.key].map((m) => m.name).join(", ")}</span>
+    </div>`
+    )
+    .join("");
+}
+
+async function initEstateStaff() {
+  const listEl = document.getElementById("estate-staff-list");
+  const bodyEl = document.getElementById("estate-staff-body");
+  const toggleEl = document.getElementById("estate-staff-toggle");
+  if (!listEl || !bodyEl || !toggleEl) return;
+
+  const applyState = () => {
+    bodyEl.style.gridTemplateRows = estateStaffExpanded ? "1fr" : "0fr";
+    toggleEl.setAttribute("aria-expanded", String(estateStaffExpanded));
+    const chevron = document.getElementById("estate-staff-chevron");
+    if (chevron) chevron.style.transform = estateStaffExpanded ? "rotate(90deg)" : "rotate(0deg)";
+  };
+  toggleEl.addEventListener("click", () => {
+    estateStaffExpanded = !estateStaffExpanded;
+    applyState();
+  });
+  toggleEl.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleEl.click();
+    }
+  });
+  applyState();
+
+  try {
+    const response = await fetch("/api/staff", { cache: "no-store" });
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const staff = await response.json();
+    const groups = groupEstateStaff(staff);
+    const countsEl = document.getElementById("estate-staff-counts");
+    const breakdownEl = document.getElementById("estate-staff-breakdown");
+    if (countsEl) countsEl.innerHTML = renderStaffCounts(groups);
+    if (breakdownEl) breakdownEl.innerHTML = renderStaffBreakdown(groups);
+    listEl.innerHTML = renderEstateStaff(staff);
+    initAgentRunButton("watson", "watson-run-btn", "watson-run-status", "watson-report-box");
+    initAgentRunButton("riskscan", "riskscan-run-btn", "riskscan-run-status", "riskscan-report-box");
+  } catch (error) {
+    listEl.innerHTML = `<span style="font-size: 0.82rem; color: #fca5a5;">Штат недоступен: ${error.message}</span>`;
+  }
+}
+
+function renderEstateStaff(staff) {
+  const memberRow = (member) => {
+    const runtime = RUNTIME_BY_STAFF_ID[member.id];
+    const cfg = runtime ? AGENT_RUNTIMES_UI[runtime] : null;
+    return `
+    <div style="padding: 8px 12px; background: rgba(0,0,0,0.25); border-radius: 6px;">
+      <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
+        <strong style="color: #fff; font-size: 0.9rem;">${member.name}</strong>
+        <span style="font-size: 0.72rem; color: ${STAFF_STATUS_COLORS[member.status] || "#94a3b8"}; white-space: nowrap;">${member.status}</span>
+      </div>
+      <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 2px;">${member.role || ""}</div>
+      ${member.metric ? `<div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Метрика: ${member.metric}</div>` : ""}
+      ${member.last_pocket_result ? `<div style="font-size: 0.75rem; color: #a7f3d0; margin-top: 4px;">В кармане: ${member.last_pocket_result}</div>` : ""}
+      ${member.dismiss_reason ? `<div style="font-size: 0.75rem; color: #fca5a5; margin-top: 4px;">Причина увольнения: ${member.dismiss_reason}</div>` : ""}
+      ${member.note ? `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">${member.note}</div>` : ""}
+      ${cfg ? `<div style="display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+        <button id="${runtime}-run-btn" style="font-size: 0.78rem; padding: 6px 12px; background: rgba(94,234,212,0.12); color: #5eead4; border: 1px solid rgba(94,234,212,0.35); border-radius: 6px; cursor: pointer;"><span>${cfg.btnLabel}</span></button>
+        <span id="${runtime}-run-status" style="font-size: 0.75rem; color: #8b96a5;"></span>
+      </div>
+      <div id="${runtime}-report-box" style="margin-top: 8px;"></div>` : ""}
+    </div>`;
+  };
+  const section = (title, list) => (list && list.length)
+    ? `<div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 10px 0 6px;">${title}</div>${list.map(memberRow).join("")}`
+    : "";
+  const members = [...(staff.members || [])].sort(
+    (a, b) => STAFF_STATUS_ORDER.indexOf(a.status) - STAFF_STATUS_ORDER.indexOf(b.status)
+  );
+  return section("Штат", members) + section("Приглашённые специалисты", staff.guests || []);
+}
+
+// --- Прогоны штата на шлюзе (Ватсон, Risk scan) — по образцу кабинета Холмса ---
+
+const AGENT_RUNTIMES_UI = {
+  watson: {
+    run: "/api/watson/run",
+    status: "/api/watson/run-status",
+    reports: "/api/watson/reports",
+    btnLabel: "📝 Сверка хроники",
+    emptyText: "Сверок ещё не было — запусти проверку кнопкой.",
+  },
+  riskscan: {
+    run: "/api/riskscan/run",
+    status: "/api/riskscan/run-status",
+    reports: "/api/riskscan/reports",
+    btnLabel: "🛡 Проверить свежие правки",
+    emptyText: "Проверок ещё не было — запусти скан кнопкой.",
+  },
+};
+const RUNTIME_BY_STAFF_ID = { watson: "watson", "risk-scan": "riskscan" };
+
+function initAgentRunButton(runtime, btnId, statusId, reportId) {
+  const cfg = AGENT_RUNTIMES_UI[runtime];
+  const btn = document.getElementById(btnId);
+  const statusEl = document.getElementById(statusId);
+  const reportEl = document.getElementById(reportId);
+  if (!cfg || !btn || !statusEl || !reportEl) return;
+  let pollTimer = null;
+
+  const loadLastReport = () => {
+    fetch(cfg.reports, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status))))
+      .then((data) => {
+        const latest = data && data.latest;
+        reportEl.innerHTML = latest
+          ? `<div style="font-family: var(--font-mono); font-size: 0.72rem; color: #8b96a5; margin-bottom: 6px;">${escapeHtml(latest.file)}</div>` +
+            `<pre style="max-height: 260px; overflow: auto; white-space: pre-wrap; font-family: var(--font-mono); font-size: 0.74rem; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin: 0;">${escapeHtml(latest.content)}</pre>`
+          : `<span style="font-size: 0.78rem; color: #8b96a5;">${cfg.emptyText}</span>`;
+      })
+      .catch(() => { reportEl.textContent = "Отчёты недоступны."; });
+  };
+  const stopPoll = () => { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } };
+  const pollOnce = () => {
+    fetch(cfg.status, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((state) => {
+        if (state.running) {
+          btn.disabled = true;
+          statusEl.textContent = "Прогон идёт…";
+          return;
+        }
+        btn.disabled = false;
+        statusEl.textContent = state.returncode === null || state.returncode === undefined
+          ? ""
+          : (state.returncode === 0 ? "Готово." : "Ошибка: " + (state.error || "код " + state.returncode));
+        if (state.finished_at) loadLastReport();
+        stopPoll();
+      })
+      .catch(() => {});
+  };
+  const startPoll = () => { if (!pollTimer) pollTimer = setInterval(pollOnce, 5000); pollOnce(); };
+
+  btn.addEventListener("click", () => {
+    btn.disabled = true;
+    statusEl.textContent = "Запуск…";
+    fetch(cfg.run, { method: "POST" })
+      .then((r) => {
+        if (r.status === 409) { statusEl.textContent = "Прогон уже идёт."; return; }
+        if (r.status !== 202) throw new Error("HTTP " + r.status);
+        statusEl.textContent = "Прогон запущен.";
+        startPoll();
+      })
+      .catch((e) => { statusEl.textContent = "Запуск не удался (" + e.message + ")."; btn.disabled = false; });
+  });
+  fetch(cfg.status, { cache: "no-store" })
+    .then((r) => r.json())
+    .then((state) => {
+      if (state.running) { btn.disabled = true; statusEl.textContent = "Прогон идёт…"; startPoll(); }
+    })
+    .catch(() => {});
+  loadLastReport();
+}
+
+let holmesRunPoll = null;
+
+function initHolmesContext() {
+  const branchEl = document.getElementById("holmes-branch");
+  const treeEl = document.getElementById("holmes-tree");
+  const verdictEl = document.getElementById("holmes-verdict");
+  const runBtn = document.getElementById("holmes-run-btn");
+  const runStatus = document.getElementById("holmes-run-status");
+  if (!branchEl || !treeEl || !verdictEl || !runBtn || !runStatus) return;
+
+  const loadContext = () => {
+    fetch("/api/holmes/context", { cache: "no-store" })
+      .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then((ctx) => {
+        branchEl.innerHTML = `Текущая ветка: <span style="color: #fb7185; font-weight: bold;">${ctx.branch || "?"}</span>`;
+        const changed = Number(ctx.tree_changed) || 0;
+        treeEl.textContent = changed ? `● Рабочее дерево: ${changed} незакоммиченных изменений` : "● Рабочее дерево чисто";
+        treeEl.style.color = changed ? "#a7f3d0" : "#5eead4";
+        verdictEl.textContent = ctx.last_report
+          ? `Последний осмотр: ${ctx.last_report.modified} (${ctx.last_report.file}). Данные сыщика актуальны на эту минуту.`
+          : "Осмотров ещё не было — сыщик не владеет данными.";
+      })
+      .catch(() => {
+        branchEl.textContent = "Текущая ветка: недоступна";
+        treeEl.textContent = "● Рабочее дерево: не читается";
+        treeEl.style.color = "#fbbf24";
+        verdictEl.textContent = "Контекст недоступен — дашборд-сервер молчит.";
+      });
+  };
+  loadContext();
+
+  const finishRun = (state) => {
+    runBtn.disabled = false;
+    if (state.returncode === 0) {
+      runStatus.style.color = "#5eead4";
+      runStatus.textContent = "Дело закрыто — свежий отчёт в списке ниже.";
+    } else {
+      runStatus.style.color = "#fca5a5";
+      runStatus.textContent = "Осмотр не удался: " + (state.error || ("код " + state.returncode));
+    }
+    if (typeof initHolmesReports === "function") initHolmesReports();
+    loadContext();
+  };
+
+  const pollRun = () => {
+    if (holmesRunPoll) clearInterval(holmesRunPoll);
+    holmesRunPoll = setInterval(() => {
+      fetch("/api/holmes/run-status", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((state) => {
+          if (state.running) {
+            runStatus.textContent = "Расследование идёт" + (state.started_at ? " (с " + String(state.started_at).replace("T", " ") + ")" : "") + " — Холмс осматривает место происшествия…";
+            return;
+          }
+          clearInterval(holmesRunPoll);
+          holmesRunPoll = null;
+          finishRun(state);
+        })
+        .catch(() => {});
+    }, 5000);
+  };
+
+  runBtn.onclick = () => {
+    if (runBtn.disabled) return;
+    runBtn.disabled = true;
+    runStatus.style.color = "#8b96a5";
+    runStatus.textContent = "Холмс выходит на место происшествия…";
+    fetch("/api/holmes/run", { method: "POST" })
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({}));
+          throw new Error(body.error || "HTTP " + r.status);
+        }
+      })
+      .then(pollRun)
+      .catch((error) => {
+        runBtn.disabled = false;
+        runStatus.textContent = "Не удалось начать: " + error.message;
+      });
+  };
+
+  fetch("/api/holmes/run-status", { cache: "no-store" })
+    .then((r) => r.json())
+    .then((state) => {
+      if (!state.running) return;
+      runBtn.disabled = true;
+      pollRun();
+    })
+    .catch(() => {});
+}
+
+function initHolmesReports() {
+  const select = document.getElementById("holmes-report-select");
+  const button = document.getElementById("holmes-report-btn");
+  const statusEl = document.getElementById("holmes-report-status");
+  const viewEl = document.getElementById("holmes-report-view");
+  const fullscreenBtn = document.getElementById("holmes-fullscreen-btn");
+  const initiativesEl = document.getElementById("holmes-initiatives");
+  const initiativesList = document.getElementById("holmes-initiatives-list");
+  const implementBtn = document.getElementById("holmes-implement-btn");
+  const implementStatus = document.getElementById("holmes-implement-status");
+  if (!select || !button || !statusEl || !viewEl || !fullscreenBtn || !initiativesEl || !initiativesList || !implementBtn || !implementStatus) return;
+  const lang = (typeof LANG !== 'undefined' && LANG[currentLanguage]) ? LANG[currentLanguage] : {};
+  const islandData = (lang.islands && lang.islands.holmesStudy) ? lang.islands.holmesStudy : {};
+  const prefix = islandData.reportForPrefix || "Отчёт за ";
+  const failMessage = islandData.reportsError || "Не удалось загрузить отчёты.";
+  let currentFile = null;
+  let currentInitiatives = [];
+
+  function parseHolmesFindings(content) {
+    const blocks = [...content.matchAll(/```json\s*(\{[\s\S]*?\})\s*```/g)];
+    if (!blocks.length) return null;
+    try {
+      const parsed = JSON.parse(blocks[blocks.length - 1][1]);
+      return parsed && Array.isArray(parsed.findings) ? parsed.findings : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function renderInitiatives(findings) {
+    initiativesList.innerHTML = "";
+    const actionable = (findings || []).filter(
+      (f) => f && f.id && f.status !== "resolved" && (f.severity === "P1" || f.severity === "P2")
+    );
+    if (!actionable.length) {
+      initiativesEl.style.display = "none";
+      currentInitiatives = [];
+      return;
+    }
+    currentInitiatives = actionable;
+    initiativesEl.style.display = "block";
+    implementBtn.disabled = true;
+    implementStatus.textContent = islandData.initiativesHint || "";
+    for (const finding of actionable) {
+      const row = document.createElement("label");
+      row.style.cssText = "display: flex; gap: 8px; align-items: flex-start; cursor: pointer; padding: 6px 8px; background: rgba(0,0,0,0.25); border-radius: 6px;";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.dataset.findingId = finding.id;
+      checkbox.addEventListener("change", () => {
+        implementBtn.disabled = !initiativesList.querySelector("input:checked");
+      });
+      const tag = document.createElement("span");
+      tag.textContent = finding.severity;
+      tag.style.cssText = finding.severity === "P1"
+        ? "color: #fb7185; font-family: var(--font-mono); font-size: 0.72rem; font-weight: bold; margin-top: 2px;"
+        : "color: #fbbf24; font-family: var(--font-mono); font-size: 0.72rem; font-weight: bold; margin-top: 2px;";
+      const text = document.createElement("span");
+      text.textContent = finding.detail || finding.id;
+      text.style.cssText = "font-size: 0.82rem; color: #cbd5e1; line-height: 1.45;";
+      row.appendChild(checkbox);
+      row.appendChild(tag);
+      row.appendChild(text);
+      initiativesList.appendChild(row);
+    }
+  }
+
+  statusEl.textContent = islandData.reportsLoading || "Загрузка списка отчётов…";
+  viewEl.style.display = "none";
+  fullscreenBtn.style.display = "none";
+  initiativesEl.style.display = "none";
+  fetch("/api/holmes/reports")
+    .then((r) => r.json())
+    .then((data) => {
+      const reports = (data && data.reports) || [];
+      select.innerHTML = "";
+      if (!reports.length) {
+        statusEl.textContent = islandData.reportsEmpty || "Отчётов пока нет — запусти Холмса.";
+        button.disabled = true;
+        return;
+      }
+      for (const rep of reports) {
+        const option = document.createElement("option");
+        option.value = rep.file;
+        option.textContent = prefix + rep.file.replace("Report-", "").replace("-holmes-audit.md", "");
+        select.appendChild(option);
+      }
+      button.disabled = false;
+      statusEl.textContent = "Отчётов: " + reports.length;
+    })
+    .catch(() => { statusEl.textContent = failMessage; });
+
+  button.onclick = () => {
+    const file = select.value;
+    if (!file) return;
+    statusEl.textContent = "Загрузка " + file + "…";
+    fetch("/api/holmes/reports?file=" + encodeURIComponent(file))
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.content) {
+          currentFile = file;
+          viewEl.textContent = data.content;
+          viewEl.style.display = "block";
+          fullscreenBtn.style.display = "inline-block";
+          statusEl.textContent = file;
+          renderInitiatives(parseHolmesFindings(data.content));
+        } else {
+          statusEl.textContent = failMessage;
+        }
+      })
+      .catch(() => { statusEl.textContent = failMessage; });
+  };
+
+  fullscreenBtn.onclick = () => {
+    if (!currentFile) return;
+    window.open("/holmes.html?file=" + encodeURIComponent(currentFile), "_blank");
+  };
+
+  implementBtn.onclick = () => {
+    const checked = [...initiativesList.querySelectorAll("input:checked")]
+      .map((box) => currentInitiatives.find((f) => f.id === box.dataset.findingId))
+      .filter(Boolean)
+      .map((f) => ({ id: f.id, severity: f.severity, detail: f.detail || "" }));
+    if (!checked.length || !currentFile) return;
+    implementBtn.disabled = true;
+    implementStatus.textContent = "Отправка…";
+    fetch("/api/holmes/implement", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ file: currentFile, items: checked }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && (data.created || data.existing)) {
+          const template = islandData.initiativesSent || "Готово: создано задач — {created}; уже было в лиджере — {existing}.";
+          implementStatus.textContent = template
+            .replace("{created}", (data.created || []).length)
+            .replace("{existing}", (data.existing || []).length);
+        } else {
+          implementStatus.textContent = islandData.initiativesError || "Не удалось отправить инициативы.";
+        }
+      })
+      .catch(() => { implementStatus.textContent = islandData.initiativesError || "Не удалось отправить инициативы."; });
+  };
+}
+
 function openIslandModal(islandKey) {
   activeIslandKey = islandKey;
   const refreshButton = document.getElementById("btn-refresh-barrymore");
@@ -215,6 +656,17 @@ function openIslandModal(islandKey) {
     initAiSandboxTabs();
     initAiSandboxControls();
     initSecurityContourControls();
+    initSecurityTools();
+  }
+  if (islandKey === "holmesStudy") {
+    initHolmesReports();
+    initHolmesContext();
+  }
+  if (islandKey === "memoryLibrary") {
+    initAgentRunButton("watson", "watson-run-btn", "watson-run-status", "watson-report-box");
+  }
+  if (islandKey === "barrymore") {
+    initEstateStaff();
   }
   if (islandKey === "tradingQuarter") {
     initTradingQuarterGroups();
@@ -288,6 +740,305 @@ function initAiSandboxTabs() {
       selectTab(tabs[nextIndex], true);
     });
   });
+}
+
+/**
+ * Инструменты безопасности (прототипы 01.11): кнопки → POST /api/sandbox/run,
+ * статус → GET /api/sandbox/run-status, последний отчёт → GET /api/sandbox/report?tool=.
+ * Отчёты рендерятся по-инструментному; secrets/nmap/portaudit — read-only, радар пассивен.
+ */
+function initSecurityTools() {
+  const buttons = Array.from(document.querySelectorAll("[data-sandbox-tool]"));
+  if (!buttons.length) return;
+  const esc = (value) => escapeHtml(value == null ? "" : String(value));
+  const lang = (typeof LANG !== 'undefined' && LANG[currentLanguage]) ? LANG[currentLanguage] : {};
+  const labels = (lang.islands && lang.islands.aiSandbox) ? lang.islands.aiSandbox : {};
+
+  buttons.forEach((button) => {
+    const tool = button.dataset.sandboxTool;
+    button.addEventListener("click", () => runSandboxTool(tool));
+  });
+  ["radar", "portaudit", "secrets", "nmap"].forEach(loadLatestReport);
+
+  function setStatus(tool, text) {
+    const el = document.getElementById(`sandbox-status-${tool}`);
+    if (el) el.textContent = text || "";
+  }
+
+  async function runSandboxTool(tool) {
+    const args = [];
+    if (tool === "nmap") {
+      const input = document.getElementById("sandbox-nmap-target");
+      const target = ((input && input.value) || "127.0.0.1").trim();
+      if (!target || /[^0-9A-Za-z.:\-/]/.test(target)) {
+        setStatus(tool, `${labels.toolsError || "Ошибка:"} цель должна быть IP/подсетью без лишних символов`);
+        return;
+      }
+      args.push("--target", target);
+    }
+    setStatus(tool, labels.toolsRunning || "Выполняется…");
+    try {
+      const response = await fetch("/api/sandbox/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tool, args }),
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        setStatus(tool, `${labels.toolsError || "Ошибка:"} ${payload.error || response.status}`);
+        return;
+      }
+      pollStatus(tool);
+    } catch (error) {
+      setStatus(tool, `${labels.toolsError || "Ошибка:"} ${error}`);
+    }
+  }
+
+  function pollStatus(tool) {
+    const started = Date.now();
+    const timer = setInterval(async () => {
+      try {
+        const response = await fetch("/api/sandbox/run-status");
+        const state = await response.json();
+        if (!state.running) {
+          clearInterval(timer);
+          if (state.returncode === 0) {
+            setStatus(tool, `${labels.toolsDone || "Готово."} ${state.finished_at || ""}`);
+            loadLatestReport(tool);
+          } else {
+            setStatus(tool, `${labels.toolsError || "Ошибка:"} ${state.error || state.returncode}`);
+          }
+          return;
+        }
+        if (Date.now() - started > 10 * 60 * 1000) {
+          clearInterval(timer);
+          setStatus(tool, labels.toolsTimeout || "Ожидание превышено — смотри лог сервера.");
+          return;
+        }
+        const seconds = Math.round((Date.now() - started) / 1000);
+        setStatus(tool, `${labels.toolsRunning || "Выполняется…"} ${seconds} с`);
+      } catch (error) {
+        clearInterval(timer);
+        setStatus(tool, `${labels.toolsError || "Ошибка:"} ${error}`);
+      }
+    }, 2000);
+  }
+
+  async function loadLatestReport(tool) {
+    const box = document.getElementById(`sandbox-result-${tool}`);
+    if (!box) return;
+    try {
+      const response = await fetch(`/api/sandbox/report?tool=${encodeURIComponent(tool)}`);
+      if (response.status === 404) {
+        box.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted);">${labels.toolsNoReports || "Отчётов ещё нет — нажми кнопку."}</div>`;
+        return;
+      }
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || response.status);
+      box.innerHTML = renderReport(tool, payload.data, payload.file);
+    } catch (error) {
+      box.innerHTML = `<div style="font-size:0.8rem; color:#fb7185;">${labels.toolsError || "Ошибка:"} ${esc(error)}</div>`;
+    }
+  }
+
+  const severityColor = { red: "#fb7185", orange: "#fbbf24", yellow: "#fde68a", info: "#94a3b8" };
+
+  function renderReport(tool, report, file) {
+    const head = `<div style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;">${esc(file)}</div>`;
+    if (tool === "radar") {
+      const counts = report.counts || {};
+      const rows = (report.items || []).map((item) => {
+        const color = severityColor[item.severity] || "#94a3b8";
+        const chipText = item.severity === "red" ? "КРАСНЫЙ" : item.severity === "orange" ? "ОРАНЖ" : "ЖЁЛТЫЙ";
+        const epss = item.epss != null ? `EPSS ${Math.round(item.epss * 100)}%` : "EPSS —";
+        const cvss = item.cvss != null ? `CVSS ${item.cvss}` : "CVSS —";
+        const flags = [item.kev ? "KEV" : "", item.ransomware ? "ransomware" : ""].filter(Boolean).join("+");
+        return `<div style="display:flex; gap:8px; align-items:baseline; padding:4px 6px; background:rgba(0,0,0,0.25); border-radius:6px; margin-bottom:4px;">
+          <span style="font-family:var(--font-mono); font-size:0.7rem; font-weight:bold; color:${color};">${chipText}</span>
+          <span style="font-family:var(--font-mono); font-size:0.74rem; color:#e2e8f0;">${esc(item.cve || "")}</span>
+          <span style="font-family:var(--font-mono); font-size:0.72rem; color:#94a3b8; white-space:nowrap;">${esc(epss)} · ${esc(cvss)}${flags ? " · " + esc(flags) : ""}</span>
+          <span style="font-size:0.76rem; color:#cbd5e1; flex:1;">${esc(item.title || "")}</span>
+        </div>`;
+      });
+      const totals = `<div style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:6px;">всего ${counts.total || 0}: красных ${counts.red || 0}, оранжевых ${counts.orange || 0}, жёлтых ${counts.yellow || 0}</div>`;
+      return head + totals + (rows.length ? rows.join("") : `<div style="font-size:0.8rem; color:#a7f3d0;">Совпадений нет.</div>`);
+    }
+    if (tool === "portaudit") {
+      const counts = report.counts || {};
+      const rows = (report.listeners || [])
+        .filter((l) => l.severity === "red" || l.severity === "orange")
+        .map((l) => `<div style="padding:4px 6px; background:rgba(0,0,0,0.25); border-radius:6px; margin-bottom:4px; font-family:var(--font-mono); font-size:0.74rem; color:${severityColor[l.severity]};">${esc(l.proto)} ${esc(l.addr)}:${esc(l.port)} — ${esc(l.process)} — ${esc(l.note)}</div>`);
+      const totals = `<div style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:6px;">слушателей ${report.total_listeners || 0}: красных ${counts.red || 0}, оранжевых ${counts.orange || 0}, системных ${counts.info || 0}, loopback ${counts.ok || 0}</div>`;
+      return head + totals + (rows.length ? rows.join("") : `<div style="font-size:0.8rem; color:#a7f3d0;">Опасных и незнакомых wildcard-слушателей нет — чисто.</div>`);
+    }
+    if (tool === "secrets") {
+      const counts = report.counts || {};
+      const rows = (report.findings || []).slice(0, 15).map((f) => `<div style="padding:4px 6px; background:rgba(0,0,0,0.25); border-radius:6px; margin-bottom:4px; font-family:var(--font-mono); font-size:0.74rem; color:${severityColor[f.severity] || "#94a3b8"};">${esc(f.file)}:${esc(f.line)} — ${esc(f.label)} ${esc(f.excerpt)}</div>`);
+      const totals = `<div style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:6px;">файлов просканировано ${report.files_scanned || 0}, находок ${report.findings_count || 0} (красных ${counts.red || 0}, оранжевых ${counts.orange || 0})</div>`;
+      return head + totals + (rows.length ? rows.join("") : `<div style="font-size:0.8rem; color:#a7f3d0;">Секретов известных форматов не найдено.</div>`);
+    }
+    if (tool === "nmap") {
+      const rows = (report.open_ports || []).map((p) => `<div style="padding:4px 6px; background:rgba(0,0,0,0.25); border-radius:6px; margin-bottom:4px; font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1;">${esc(p.port)} ${esc(p.service)}${p.cves && p.cves.length ? " — CVE: " + esc(p.cves.map((c) => c.id + (c.cvss ? ` (${c.cvss})` : "")).slice(0, 6).join(", ")) : ""}</div>`);
+      const totals = `<div style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:6px;">цель ${esc(report.target || "")}, vulners: ${report.cve_script ? "да" : "нет"}, открытых TCP ${ (report.open_ports || []).length }</div>`;
+      return head + totals + (rows.length ? rows.join("") : `<div style="font-size:0.8rem; color:#a7f3d0;">Открытых портов не найдено.</div>`);
+    }
+    return head;
+  }
+
+  /**
+   * Целевой стенд (04.11, задание Sovereign): список целей в localStorage,
+   * галочки проверок → args для nmap_probe через /api/sandbox/run.
+   * Гварды на месте: nmap_probe сам отклоняет цели вне loopback/приватных
+   * без --allow-external; галочка внешних целей требует подтверждения.
+   */
+  function initTargetBoard() {
+    const chipsBox = document.getElementById("sandbox-targets-chips");
+    if (!chipsBox) return;
+    const input = document.getElementById("sandbox-targets-input");
+    const statusEl = document.getElementById("sandbox-status-targets");
+    const resultBox = document.getElementById("sandbox-result-targets");
+    const STORE_KEY = "sandbox-targets-v1";
+    let targets = [];
+    let selected = "";
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+      if (Array.isArray(stored)) targets = stored.filter((t) => typeof t === "string");
+    } catch (error) { targets = []; }
+    if (!targets.length) targets = ["127.0.0.1", "192.168.238.128"];
+
+    const validTarget = (value) => value.length <= 64 && !/[^0-9A-Za-z.:\-/]/.test(value);
+    const setStatus = (text) => { if (statusEl) statusEl.textContent = text || ""; };
+
+    function save() {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(targets)); } catch (error) { /* приватный режим — ок */ }
+    }
+
+    function render() {
+      chipsBox.innerHTML = targets.map((t) => `
+        <span data-target="${esc(t)}" title="${esc(labels.targetsSelectHint || "Клик — выбрать цель, × — убрать")}"
+          style="display:inline-flex; align-items:center; gap:6px; padding:3px 8px; border-radius:14px; cursor:pointer;
+          font-family:var(--font-mono); font-size:0.76rem; color:#e2e8f0;
+          border:1px solid ${t === selected ? "var(--accent-amber, #f59e0b)" : "rgba(255,255,255,0.18)"};
+          background:${t === selected ? "rgba(245,158,11,0.15)" : "rgba(0,0,0,0.3)"};">
+          ▶ ${esc(t)} <span data-remove="${esc(t)}" style="cursor:pointer; color:#fb7185; font-weight:bold;">×</span>
+        </span>`).join("")
+        || `<span style="font-size:0.78rem; color:var(--text-muted);">${esc(labels.targetsEmpty || "Список пуст — добавь цель.")}</span>`;
+    }
+
+    async function runScan() {
+      if (!selected) { setStatus(labels.targetsSelectFirst || "Сначала выбери цель — клик по чипу."); return; }
+      const args = ["--target", selected];
+      const fast = document.getElementById("sandbox-check-fast");
+      const full = document.getElementById("sandbox-check-full");
+      const cve = document.getElementById("sandbox-check-cve");
+      const external = document.getElementById("sandbox-check-external");
+      if (fast && fast.checked && full && !full.checked) args.push("--ports", "1-1000");
+      if (full && full.checked) args.push("--ports", "1-65535");
+      if (cve && cve.checked) args.push("--cve");
+      if (external && external.checked) args.push("--allow-external");
+      setStatus(labels.toolsRunning || "Выполняется…");
+      if (resultBox) resultBox.innerHTML = "";
+      try {
+        const response = await fetch("/api/sandbox/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tool: "nmap", args }),
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          setStatus(`${labels.toolsError || "Ошибка:"} ${payload.error || response.status}`);
+          return;
+        }
+        pollTargets();
+      } catch (error) {
+        setStatus(`${labels.toolsError || "Ошибка:"} ${esc(error)}`);
+      }
+    }
+
+    function pollTargets() {
+      const started = Date.now();
+      const timer = setInterval(async () => {
+        try {
+          const state = await (await fetch("/api/sandbox/run-status")).json();
+          if (!state.running) {
+            clearInterval(timer);
+            if (state.returncode === 0) {
+              setStatus(`${labels.toolsDone || "Готово."} ${state.finished_at || ""}`);
+              const reportResponse = await fetch("/api/sandbox/report?tool=nmap");
+              if (reportResponse.ok) {
+                const reportPayload = await reportResponse.json();
+                if (resultBox) resultBox.innerHTML = renderReport("nmap", reportPayload.data, reportPayload.file);
+              }
+            } else {
+              setStatus(`${labels.toolsError || "Ошибка:"} ${state.error || state.returncode}`);
+            }
+            return;
+          }
+          if (Date.now() - started > 10 * 60 * 1000) {
+            clearInterval(timer);
+            setStatus(labels.toolsTimeout || "Ожидание превышено — смотри лог сервера.");
+            return;
+          }
+          setStatus(`${labels.toolsRunning || "Выполняется…"} ${Math.round((Date.now() - started) / 1000)} с`);
+        } catch (error) {
+          clearInterval(timer);
+          setStatus(`${labels.toolsError || "Ошибка:"} ${esc(error)}`);
+        }
+      }, 2000);
+    }
+
+    const addButton = document.getElementById("sandbox-targets-add");
+    if (addButton) {
+      addButton.addEventListener("click", () => {
+        const value = ((input && input.value) || "").trim();
+        if (!value || !validTarget(value)) { setStatus(labels.targetsBad || "Цель должна быть IP/подсетью/хостом без лишних символов."); return; }
+        if (!targets.includes(value)) targets.push(value);
+        if (targets.length > 20) targets = targets.slice(-20);
+        selected = value;
+        if (input) input.value = "";
+        save();
+        render();
+        setStatus("");
+      });
+    }
+    if (input) {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") { event.preventDefault(); if (addButton) addButton.click(); }
+      });
+    }
+    chipsBox.addEventListener("click", (event) => {
+      const remove = event.target.closest("[data-remove]");
+      if (remove) {
+        const target = remove.getAttribute("data-remove");
+        targets = targets.filter((t) => t !== target);
+        if (selected === target) selected = targets[0] || "";
+        save();
+        render();
+        return;
+      }
+      const chip = event.target.closest("[data-target]");
+      if (chip) {
+        selected = chip.getAttribute("data-target") || "";
+        render();
+      }
+    });
+    const fastCheck = document.getElementById("sandbox-check-fast");
+    const fullCheck = document.getElementById("sandbox-check-full");
+    if (fastCheck) fastCheck.addEventListener("change", (event) => { if (event.target.checked && fullCheck) fullCheck.checked = false; });
+    if (fullCheck) fullCheck.addEventListener("change", (event) => { if (event.target.checked && fastCheck) fastCheck.checked = false; });
+    const externalCheck = document.getElementById("sandbox-check-external");
+    if (externalCheck) {
+      externalCheck.addEventListener("change", (event) => {
+        if (event.target.checked && !window.confirm(labels.targetsConfirmExternal || "Разрешить сканирование целей вне loopback/приватных сетей? Это осознанное решение Sovereign.")) {
+          event.target.checked = false;
+        }
+      });
+    }
+    const runButton = document.getElementById("sandbox-targets-run");
+    if (runButton) runButton.addEventListener("click", runScan);
+    render();
+  }
+  initTargetBoard();
 }
 
 /**
@@ -821,14 +1572,16 @@ function buildTQVacanciesHTML(data) {
 }
 
 /**
- * Рынок вакансий и заказов (Trading Quarter): две вкладки.
+ * Рынок вакансий и заказов (Trading Quarter): три вкладки.
  * «Вакансии» - лента (buildTQVacanciesHTML), «Заказы» - справочник фриланс-бирж:
- * что продавать, тактика, живые заказы (FL.ru - скрап ленты, Kwork - репосты TG).
+ * что продавать, тактика, живые заказы (FL.ru - скрап ленты, Kwork - репосты TG),
+ * «Радар» - триаж заказов по перспективности (orders_triage.py → orders-triage.js).
  */
 function buildTradingQuarterHTML(data) {
   const isEn = currentLanguage === "en";
   const vacanciesTab = data.vacanciesTab || (isEn ? "Vacancies" : "Вакансии");
   const ordersTab = data.ordersTab || (isEn ? "Gig platforms" : "Заказы");
+  const radarTab = data.radarTab || (isEn ? "Radar" : "Радар");
   return `
     <div class="ai-sandbox-tabs" role="tablist" aria-label="${isEn ? "Trading Quarter sections" : "Разделы рынка"}">
       <button class="ai-sandbox-tab is-active" id="tq-vacancies-tab" type="button" role="tab"
@@ -839,12 +1592,19 @@ function buildTradingQuarterHTML(data) {
               aria-selected="false" aria-controls="tq-panel-orders" data-tq-tab tabindex="-1">
         ${ordersTab}
       </button>
+      <button class="ai-sandbox-tab" id="tq-radar-tab" type="button" role="tab"
+              aria-selected="false" aria-controls="tq-panel-radar" data-tq-tab tabindex="-1">
+        ${radarTab}
+      </button>
     </div>
     <section class="ai-sandbox-tab-panel" id="tq-panel-vacancies" role="tabpanel" aria-labelledby="tq-vacancies-tab">
       ${buildTQVacanciesHTML(data)}
     </section>
     <section class="ai-sandbox-tab-panel" id="tq-panel-orders" role="tabpanel" aria-labelledby="tq-orders-tab" hidden>
       ${buildTQMarketplacesHTML()}
+    </section>
+    <section class="ai-sandbox-tab-panel" id="tq-panel-radar" role="tabpanel" aria-labelledby="tq-radar-tab" hidden>
+      ${buildTQRadarHTML()}
     </section>
   `;
 }
@@ -961,6 +1721,60 @@ function buildTQMarketplacesHTML() {
 }
 
 /**
+ * Радар заказов (orders_triage.py → orders-triage.js): триаж записей снапшота
+ * на перспективные (по категориям), основной блок и отсев. Ручные статусы
+ * правятся в Workspace/analytics/orders_board.json и при перегенерации сохраняются.
+ */
+function buildTQRadarHTML() {
+  const board = (typeof EVO_ORDERS_TRIAGE !== "undefined") ? EVO_ORDERS_TRIAGE : null;
+  const isEn = currentLanguage === "en";
+  if (!board || !Array.isArray(board.categories)) {
+    return `<p style="color: var(--text-muted); font-size: 0.84rem; margin: 4px 0 0 2px;">${
+      isEn ? "No radar data yet. Run: python tools/orders_triage.py" : "Данных радара ещё нет — прогони: python tools/orders_triage.py"
+    }</p>`;
+  }
+  const asRow = (item) => buildTQOrderItem({
+    title: item.title,
+    url: item.url,
+    salary: item.has_salary === "yes" ? (isEn ? "salary ✓" : "ЗП ✓") : (isEn ? "ask for range" : "спросить вилку"),
+    date: item.date,
+  });
+  const accordion = (name, count, rows, moreCount) => `
+    <details class="tq-acc">
+      <summary>
+        <span class="tq-name">${escapeHtml(name)}</span>
+        <span class="tq-count">${count}${isEn ? " items" : " шт."}</span>
+      </summary>
+      <div class="tq-body">
+        ${rows}
+        ${moreCount > 0 ? `<div class="tq-line" style="color: var(--text-muted);">… ${isEn ? "and" : "и ещё"} ${moreCount} — ${isEn ? "in orders_board.json" : "в orders_board.json"}</div>` : ""}
+      </div>
+    </details>
+  `;
+  let html = `
+    <p style="color: var(--text-muted); font-size: 0.84rem; margin: 0 0 14px 2px;">
+      ${isEn
+        ? `Triage of the ${board.snapshot} snapshot: promising orders by category first, then the study pile. Manual sorting lives in orders_board.json and survives regeneration.`
+        : `Триаж снапшота ${board.snapshot}: перспективные заказы по категориям, ниже основной блок. Ручная сортировка живёт в orders_board.json и переживает перегенерацию.`}
+    </p>
+  `;
+  for (const cat of board.categories) {
+    const items = Array.isArray(cat.items) ? cat.items : [];
+    if (!items.length) continue;
+    html += accordion(cat.label, cat.count, items.map(asRow).join(""), Math.max(cat.count - items.length, 0));
+  }
+  if (board.main && board.main.count) {
+    html += accordion(isEn ? "Study pile (main)" : "Основной блок (изучать)", board.main.count,
+      (board.main.items || []).map(asRow).join(""), Math.max(board.main.count - (board.main.items || []).length, 0));
+  }
+  if (board.outset && board.outset.count) {
+    html += accordion(isEn ? "Discarded (outset)" : "Отсев", board.outset.count,
+      (board.outset.items || []).map(asRow).join(""), Math.max(board.outset.count - (board.outset.items || []).length, 0));
+  }
+  return html;
+}
+
+/**
  * Переключение вкладок Trading Quarter (та же механика, что в aiSandbox).
  */
 function initTradingQuarterTabs() {
@@ -1009,11 +1823,10 @@ function buildIslandContentHTML(islandKey, data, lang) {
         </div>
       `;
 
-    case "barrymore":
-      if (typeof EVO_BRIEF !== "undefined" && EVO_BRIEF && EVO_BRIEF.current) {
-        return buildMorningBriefHTML(EVO_BRIEF, lang);
-      }
-      return `
+    case "barrymore": {
+      const briefHTML = (typeof EVO_BRIEF !== "undefined" && EVO_BRIEF && EVO_BRIEF.current)
+        ? buildMorningBriefHTML(EVO_BRIEF, lang)
+        : `
         <div class="glass-panel" style="border-left: 4px solid var(--accent-amber);">
           <div class="panel-label">ЛИЧНЫЙ СТЮАРД ПЛАТФОРМЫ (ADR-003)</div>
           <h4 style="font-size: 1.25rem; color: #fef08a;">${lang.barrymoreGreeting || "Доброе утро, Дмитрий."}</h4>
@@ -1025,6 +1838,29 @@ function buildIslandContentHTML(islandKey, data, lang) {
           </div>
         </div>
       `;
+      return `
+        ${briefHTML}
+        <div class="glass-panel" id="estate-staff-panel">
+          <div id="estate-staff-toggle" role="button" tabindex="0" aria-expanded="false" title="Развернуть/свернуть штат"
+               style="display: flex; align-items: baseline; gap: 8px; cursor: pointer;">
+            <span id="estate-staff-chevron" style="display: inline-block; transition: transform 0.3s ease; color: var(--text-muted); font-size: 0.65rem;">▶</span>
+            <span class="panel-label">ШТАТ ПОМЕСТЬЯ (ESTATE STAFF)</span>
+            <span id="estate-staff-counts" style="font-family: var(--font-mono); font-size: 0.78rem; white-space: nowrap;"></span>
+          </div>
+          <div id="estate-staff-body" style="display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease;">
+            <div style="overflow: hidden; min-height: 0;">
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin: 8px 0 10px;">
+                Кто числится в доме. Режим «поводка»: без расписаний — запуск кнопкой «Прогон» или рукой Sovereign.
+              </p>
+              <div id="estate-staff-breakdown" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;"></div>
+              <div id="estate-staff-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 0.82rem; color: var(--text-muted);">Читаю штат…</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     case "workshop":
       return `
@@ -1052,6 +1888,9 @@ function buildIslandContentHTML(islandKey, data, lang) {
           </button>
           <button class="ai-sandbox-tab" id="ai-sandbox-security-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-security" data-ai-sandbox-tab tabindex="-1">
             ${data.securityTab || "Защищённый контур"}
+          </button>
+          <button class="ai-sandbox-tab" id="ai-sandbox-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-tools" data-ai-sandbox-tab tabindex="-1">
+            ${data.toolsTab || "Инструменты"}
           </button>
         </div>
         <section class="ai-sandbox-tab-panel" id="ai-sandbox-overview" role="tabpanel" aria-labelledby="ai-sandbox-overview-tab">
@@ -1124,6 +1963,76 @@ function buildIslandContentHTML(islandKey, data, lang) {
             <div id="security-results"></div>
           </div>
         </section>
+        <section class="ai-sandbox-tab-panel" id="ai-sandbox-tools" role="tabpanel" aria-labelledby="ai-sandbox-tools-tab" tabindex="0" hidden>
+          <div class="glass-panel">
+            <div class="panel-label">${data.toolsHeading || "ИНСТРУМЕНТЫ БЕЗОПАСНОСТИ (ПРОТОТИПЫ)"}</div>
+            <p style="color: var(--text-secondary); font-size: 0.86rem; line-height: 1.5; margin: 8px 0 0;">
+              ${data.toolsDesc || "Запуск только по кнопке (режим «поводок»). Отчёты пишутся вне git — %LOCALAPPDATA%\\Platform\\SecurityReports."}
+            </p>
+          </div>
+          <div class="glass-panel">
+            <div class="panel-label">${data.radarTitle || "🛰 Радар уязвимостей"}</div>
+            <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">${data.radarDesc || "CISA KEV + EPSS + NVD: воронка «эксплуатируется → вероятно → тяжёлое»."}</p>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="btn-action-primary" type="button" data-sandbox-tool="radar">${data.radarBtn || "Собрать радар"}</button>
+              <span id="sandbox-status-radar" style="font-size:0.78rem; color:var(--text-muted);"></span>
+            </div>
+            <div id="sandbox-result-radar" style="margin-top:10px;"></div>
+          </div>
+          <div class="glass-panel">
+            <div class="panel-label">${data.portTitle || "🔌 Аудит портов"}</div>
+            <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">${data.portDesc || "Что слушает Windows и на каких адресах. Опасные порты на 0.0.0.0 — красным."}</p>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="btn-action-primary" type="button" data-sandbox-tool="portaudit">${data.portBtn || "Проверить порты"}</button>
+              <span id="sandbox-status-portaudit" style="font-size:0.78rem; color:var(--text-muted);"></span>
+            </div>
+            <div id="sandbox-result-portaudit" style="margin-top:10px;"></div>
+          </div>
+          <div class="glass-panel">
+            <div class="panel-label">${data.secretsTitle || "🔑 Поиск секретов"}</div>
+            <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">${data.secretsDesc || "Ключи известных форматов в дереве репозитория; найденное маскируется."}</p>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="btn-action-primary" type="button" data-sandbox-tool="secrets">${data.secretsBtn || "Проверить секреты"}</button>
+              <span id="sandbox-status-secrets" style="font-size:0.78rem; color:var(--text-muted);"></span>
+            </div>
+            <div id="sandbox-result-secrets" style="margin-top:10px;"></div>
+          </div>
+          <div class="glass-panel">
+            <div class="panel-label">${data.nmapTitle || "🎯 nmap-скан своих хостов"}</div>
+            <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">${data.nmapDesc || "Версии сервисов и CVE (vulners). По умолчанию 127.0.0.1; внешние цели — осознанное решение."}</p>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <label style="font-size:0.8rem; color:var(--text-secondary);">${data.nmapTargetLabel || "Цель:"}
+                <input id="sandbox-nmap-target" value="127.0.0.1" spellcheck="false"
+                  style="background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#e2e8f0; padding:4px 8px; font-family:var(--font-mono); font-size:0.8rem; width:180px;">
+              </label>
+              <button class="btn-action-primary" type="button" data-sandbox-tool="nmap">${data.nmapBtn || "Сканировать"}</button>
+              <span id="sandbox-status-nmap" style="font-size:0.78rem; color:var(--text-muted);"></span>
+            </div>
+            <div id="sandbox-result-nmap" style="margin-top:10px;"></div>
+          </div>
+          <div class="glass-panel">
+            <div class="panel-label">${data.targetsTitle || "🧭 Целевой стенд"}</div>
+            <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">${data.targetsDesc || "Свои цели: вбей IP/подсеть, щёлкни галочки проверок, запускай. По умолчанию разрешены только loopback и приватные сети; внешние — отдельная галочка Sovereign."}</p>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input id="sandbox-targets-input" placeholder="192.168.238.128 / 127.0.0.1" spellcheck="false"
+                style="background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#e2e8f0; padding:4px 8px; font-family:var(--font-mono); font-size:0.8rem; width:200px;">
+              <button type="button" id="sandbox-targets-add"
+                style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); border-radius:6px; color:#e2e8f0; padding:4px 10px; font-size:0.78rem; cursor:pointer;">${data.targetsAdd || "＋ добавить"}</button>
+            </div>
+            <div id="sandbox-targets-chips" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;"></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px 14px; margin-top:10px; font-size:0.78rem; color:var(--text-secondary);">
+              <label><input type="checkbox" id="sandbox-check-fast"> ${data.targetsFast || "Быстрый скан (порты 1–1000)"}</label>
+              <label><input type="checkbox" id="sandbox-check-full"> ${data.targetsFull || "Все порты 1–65535 (медленно)"}</label>
+              <label><input type="checkbox" id="sandbox-check-cve"> ${data.targetsCve || "Поиск CVE (vulners)"}</label>
+              <label style="color:#fb7185;"><input type="checkbox" id="sandbox-check-external"> ${data.targetsExternal || "Внешние цели (Sovereign)"}</label>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; margin-top:10px;">
+              <button class="btn-action-primary" type="button" id="sandbox-targets-run">${data.targetsRun || "Сканировать выбранную"}</button>
+              <span id="sandbox-status-targets" style="font-size:0.78rem; color:var(--text-muted);"></span>
+            </div>
+            <div id="sandbox-result-targets" style="margin-top:10px;"></div>
+          </div>
+        </section>
       `;
 
     case "memoryLibrary":
@@ -1143,6 +2052,17 @@ function buildIslandContentHTML(islandKey, data, lang) {
             ${data.archiveFiles || ""}
           </div>
         </div>
+        <div class="glass-panel" style="border-left: 4px solid #93c5fd; margin-top: 14px;">
+          <div class="panel-label">ВАТСОН — СВЕРКА ХРОНИКИ</div>
+          <p style="color: #cbd5e1; font-size: 0.9rem; margin: 10px 0;">
+            Холмс расследует — Ватсон ведёт протокол: сверка журнала, штата и задач с фактами git.
+          </p>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button id="watson-run-btn" style="font-size: 0.82rem; padding: 7px 14px; background: rgba(147,197,253,0.14); color: #93c5fd; border: 1px solid rgba(147,197,253,0.4); border-radius: 6px; cursor: pointer;"><span>📝 Сверить хронику</span></button>
+            <span id="watson-run-status" style="font-size: 0.8rem; color: #8b96a5;"></span>
+          </div>
+          <div id="watson-report-box" style="margin-top: 10px;"></div>
+        </div>
       `;
 
     case "navigator":
@@ -1157,21 +2077,49 @@ function buildIslandContentHTML(islandKey, data, lang) {
             ${data.principle || ""}
           </div>
         </div>
+        ${buildHunterObservatoryHTML()}
       `;
 
     case "holmesStudy":
       return `
         <div class="glass-panel" style="border-left: 4px solid var(--accent-rose);">
           <div class="panel-label">${data.investigationHeading || "Активное расследование"}</div>
-          <h4 style="color: #fb7185;">${data.activeBranch || "Ветка: feature/1.8.2"}</h4>
-          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #a7f3d0; margin-top: 10px;">
-            ${data.treeStatus || "● Проверка завершена"}
-          </div>
+          <h4 style="color: #fb7185;" id="holmes-branch"><span style="color: #94a3b8;">Выясняю, где сыщик ведёт наблюдение…</span></h4>
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #a7f3d0; margin-top: 10px;" id="holmes-tree"></div>
           <p style="color: #cbd5e1; font-size: 0.95rem; margin: 12px 0;">
             ${data.agentHolmes || ""}
           </p>
-          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #fef08a; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-top: 10px;">
-            ${data.securityVerdict || ""}
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #fef08a; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-top: 10px;" id="holmes-verdict"></div>
+          <div style="display: flex; gap: 10px; align-items: center; margin-top: 12px; flex-wrap: wrap;">
+            <button class="btn-action-primary" id="holmes-run-btn"><span>🔎 ${data.runBtn || "Собрать улики"}</span></button>
+            <span id="holmes-run-status" style="font-size: 0.8rem; color: #8b96a5;"></span>
+          </div>
+        </div>
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-rose); margin-top: 14px;">
+          <div class="panel-label">${data.reportsHeading || "Отчёты аудита"}</div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px;">
+            <select id="holmes-report-select" style="background: rgba(0,0,0,0.35); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 8px 10px; font-family: var(--font-mono); font-size: 0.85rem;">
+              <option value="">…</option>
+            </select>
+            <button class="btn-action-primary" id="holmes-report-btn" disabled>
+              <span>${data.viewReportBtn || "Посмотреть отчёт"}</span>
+            </button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+            <div id="holmes-report-status" style="font-size: 0.8rem; color: #8b96a5;"></div>
+            <button id="holmes-fullscreen-btn" style="display: none; margin-left: auto; background: rgba(0,0,0,0.35); color: #8b96a5; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 3px 9px; font-size: 0.72rem; cursor: pointer;">${data.fullscreenBtn || "⤢ Во весь экран"}</button>
+          </div>
+          <pre id="holmes-report-view" style="display: none; max-height: 340px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.55; color: #cfd7e1; background: rgba(0,0,0,0.35); padding: 12px; border-radius: 6px; margin-top: 10px;"></pre>
+          <div id="holmes-initiatives" style="display: none; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+            <div class="panel-label" style="font-size: 0.7rem;">${data.initiativesHeading || "Инициативы Холмса"}</div>
+            <div id="holmes-initiatives-hint" style="font-size: 0.75rem; color: #8b96a5; margin-top: 4px;">${data.initiativesHint || ""}</div>
+            <div id="holmes-initiatives-list" style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+              <button class="btn-action-primary" id="holmes-implement-btn" disabled>
+                <span>${data.initiativeSendBtn || "🚀 Отправить на реализацию"}</span>
+              </button>
+              <span id="holmes-implement-status" style="font-size: 0.8rem; color: #8b96a5;"></span>
+            </div>
           </div>
         </div>
       `;
@@ -1277,6 +2225,57 @@ function buildIslandContentHTML(islandKey, data, lang) {
  * Morning Brief из источников истины (ADR-003, read-only).
  * Снимок генерируется из реальных данных проекта.
  */
+function buildHunterObservatoryHTML() {
+  const esc = (s) => escapeHtml(s || "");
+  const r = (typeof EVO_HUNTER_REPORT !== "undefined") ? EVO_HUNTER_REPORT : null;
+  if (!r || !r.generatedAt) {
+    return `
+      <div class="glass-panel" style="border-left: 4px solid var(--accent-amber); margin-top: 14px;">
+        <div class="panel-label">🔭 ДОКЛАД ХАНТЕРА — ВНЕШНИЙ МИР</div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">
+          Доклад не сформирован. Генератор: <code>python tools/hunter/report.py</code> (запуск из корня Platform).
+        </p>
+      </div>
+    `;
+  }
+  const c = r.counts || {};
+  const chip = (label, value) => `
+    <span style="display:inline-block; padding:3px 9px; margin:0 6px 6px 0; background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.08); border-radius:5px; font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1;">${esc(label)}: <b style="color:#5eead4;">${esc(String(value ?? 0))}</b></span>`;
+  const subHead = (text, extra) => `
+    <div class="panel-label" style="font-size:0.68rem; margin-top:10px;${extra || ""}">${text}</div>`;
+  const linkRow = (item, meta) => `
+    <div style="padding:4px 0; font-size:0.83rem; line-height:1.45; border-top:1px solid rgba(255,255,255,0.05);">
+      <a href="${esc(item.url)}" target="_blank" rel="noopener" style="color:#93c5fd;">${esc(item.title)}</a>
+      <span style="color:var(--text-muted); font-size:0.75rem;"> — ${esc(meta)}</span>
+    </div>`;
+  const o = r.observatory || {};
+  const salaries = (o.salaries || []).map((i) => linkRow(i, [i.source, i.salary].filter(Boolean).join(", "))).join("");
+  const persp = (o.perspective || []).map((i) => linkRow(i, [i.category, i.source, i.date].filter(Boolean).join(", "))).join("");
+  const olx = (o.olx || []).map((i) => linkRow(i, [i.price, i.city].filter(Boolean).join(", "))).join("");
+  const queue = (o.queue || []).map((i) => `
+    <div style="padding:4px 0; font-size:0.83rem; line-height:1.45; border-top:1px solid rgba(255,255,255,0.05); color:#cbd5e1;">· ${esc(i.title)} <span style="color:var(--text-muted); font-size:0.75rem;"> — ${esc(i.category)}</span></div>`).join("");
+  return `
+    <div class="glass-panel" style="border-left: 4px solid var(--accent-amber); margin-top: 14px;">
+      <div class="panel-label">🔭 ДОКЛАД ХАНТЕРА — ВНЕШНИЙ МИР</div>
+      <p style="color:#cbd5e1; font-size:0.9rem; line-height:1.5; margin:8px 0 10px;">${esc(r.headline)}</p>
+      <div>
+        ${chip("перспективные", c.perspective || 0)}
+        ${chip("основные", c.main || 0)}
+        ${chip("с вилкой", c.jobsWithSalary || 0)}
+        ${chip("OLX", c.olxItems || 0)}
+        ${chip("поручения", c.queue || 0)}
+      </div>
+      ${salaries ? subHead("С ВИЛКОЙ — БЫСТРЕЕ К ДЕНЬГАМ") + salaries : ""}
+      ${persp ? subHead("ПЕРСПЕКТИВНЫЕ") + persp : ""}
+      ${olx ? subHead("OLX — ПОДРАБОТКИ") + olx : ""}
+      ${queue ? subHead("ОЧЕРЕДЬ ПОРУЧЕНИЙ") + queue : ""}
+      <p style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted); margin-top:12px;">
+        Доклад: ${esc(r.generatedAt)} • снимок ${esc(r.snapshot || "—")} • полная часть: Workspace/analytics/hunter/digest.json
+      </p>
+    </div>
+  `;
+}
+
 function buildMorningBriefHTML(brief, lang) {
   const esc = (s) => escapeHtml(s || "");
   const escMulti = (s) => escapeHtml(s || "").replace(/\r?\n/g, "<br>");
@@ -1346,6 +2345,32 @@ function buildMorningBriefHTML(brief, lang) {
           </p>
         </div>
       </div>
+
+      <!-- Раздел ВНЕШНИЙ МИР (выжимка Хантера, масса — на Observatory) -->
+      ${brief.hunter ? `
+      <div class="brief-section" id="section-hunter">
+        <div class="brief-section-header" onclick="toggleBriefSection('section-hunter')">
+          <span>🔭 ВНЕШНИЙ МИР (ХАНТЕР)</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="brief-section-content">
+          <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5;">
+            ${escMulti(brief.hunter.headline)}
+          </p>
+          ${(brief.hunter.top || []).map((i) => `
+            <div class="brief-task-item">
+              <div class="brief-task-title">
+                <a href="${esc(i.url)}" target="_blank" rel="noopener" style="color:#93c5fd;">${esc(i.title)}</a>
+              </div>
+              <div class="brief-task-details" style="display:block; border:none; margin:0; padding:0;">
+                ${esc([i.salary, i.category, i.source].filter(Boolean).join(" • "))}
+              </div>
+            </div>`).join("")}
+          <p style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted); margin-top:8px;">
+            Полная часть: Observatory → Доклад Хантера • ${esc(brief.hunter.generatedAt)}
+          </p>
+        </div>
+      </div>` : ""}
 
       <!-- Раздел ТЕХНИЧЕСКОЕ СОСТОЯНИЕ (Свернут по умолчанию) -->
       <div class="brief-section" id="section-tech">
@@ -1573,11 +2598,6 @@ function updateLanguage() {
     refreshBriefButton.setAttribute("aria-label", lang.refreshBriefBtn);
     refreshBriefButton.title = lang.refreshBriefBtn;
   }
-  setText("hud-platform-alive", lang.platformAlive);
-  setText("hud-heartbeat", lang.heartbeat);
-  setText("hud-status-quiet", lang.estateStatusQuiet);
-  setText("hud-active-processes", lang.activeProcessesLabel);
-  setText("hud-attention-count", lang.attentionQueueLabel);
   setText("btn-close-island-modal", lang.closeBtnText);
   setText("btn-back-to-map", lang.backToMapBtn);
 

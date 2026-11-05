@@ -1,0 +1,43 @@
+========================================================================
+HIGGSFIELD PILOT — Platform Evo — режим: DRY-RUN
+========================================================================
+
+--- 0. Окружение (значения секретов не выводятся) ---
+{
+  "HIGGSFIELD_API_KEY": "(пусто)",
+  "HF_KEY": "(пусто)",
+  "HF_API_KEY_set": false,
+  "HF_API_SECRET_set": false
+}
+
+--- 1. Auth-check через SDK (локальная проверка кредов) ---
+{
+  "ok": false,
+  "stage": "credentials-local-check",
+  "sdk_version": "0.2.0 (не экспортируется)",
+  "credentials": "CredentialsMissedError: Higgsfield API credentials missing. Please set HF_KEY, or alternatively set HF_API_KEY and HF_API_SECRET."
+}
+
+--- 2. Auth-check сырым HTTP (точное поведение сервера) ---
+Ключа нет -> проба БЕЗ Authorization (не может запустить генерацию, бесплатна).
+{
+  "probe_url": "https://api.higgsfield.ai/requests/5142fdaf-d8d3-45f3-b185-76bf3b8cfb33/status",
+  "auth_header": "absent",
+  "http_status": 401,
+  "reason": "Unauthorized",
+  "body": "{\"detail\":\"Invalid credentials\"}"
+}
+
+--- 3. Скелет submit Soul 2 (payload собран, НЕ отправлен) ---
+POST https://api.higgsfield.ai/higgsfield-ai/soul/v2/standard
+{
+  "prompt": "Editorial fashion photo, a mid-30s woman in a charcoal wool coat, standing on a rain-wet Tokyo street at dusk, neon reflections, shallow depth of field, 85mm lens, cinematic color grade",
+  "num_images": 1,
+  "resolution": "2K",
+  "aspect_ratio": "3:4"
+}
+Смета: 1 кадр x $0.0032 (Soul 2, 2K) = $0.0032 (~0,26 руб по курсу ~81).
+
+--- 4. LIVE-генерация: не выполнялась (нет ключа/не запрошена) ---
+
+Отчёт сохранён: pilot-report.json

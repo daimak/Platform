@@ -1,0 +1,18 @@
+{
+  "id": "agents-fleet",
+  "title": "«Флот в море» — дашборд запущенных агентов",
+  "source": "Sovereign",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-11-05T00:35:00Z",
+  "description": "Панель рейсов: события evo.agent.event в events.jsonl → GET /api/agents/live + agents.html «корабли в море». Метрики: лейны, пульс, штормы, ETA (~), итоги. Полное ТЗ: Docs/AGENT-FLEET-PLAN-2026-11-05-ZCode.md. Старт: после сдачи data-foundation (нужен events.jsonl).",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-05T00:35:00Z",
+      "by": "ZCode",
+      "note": "Идея Sovereign 05.11 в чате. Заложена в Сделать; ждёт сдачи data-foundation."
+    }
+  ],
+  "stage": "todo"
+}

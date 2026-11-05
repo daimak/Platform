@@ -1,0 +1,32 @@
+[
+  {
+    "id": "analytics-snapshot",
+    "title": "Дневной снапшот аналитики (jobs, OLX, токены)",
+    "owner": "Sovereign",
+    "cmd": ["python", "tools/analytics_snapshot.py"],
+    "cwd": ".",
+    "timeout_s": 600,
+    "report_hint": "Workspace/analytics/<дата>/manifest.json",
+    "enabled": true
+  },
+  {
+    "id": "token-meter",
+    "title": "Замер расхода токенов z.ai по локальной фактуре",
+    "owner": "Sovereign",
+    "cmd": ["python", "tools/ops/token_meter.py"],
+    "cwd": ".",
+    "timeout_s": 600,
+    "report_hint": "Workspace/analytics/token-spend/ledger.jsonl (запуск без аргументов; опционально --reading N)",
+    "enabled": true
+  },
+  {
+    "id": "healthcheck",
+    "title": "Хелсчек Platform Evo (read-only аудит находок F1/F2/F4)",
+    "owner": "Sovereign",
+    "cmd": ["python", "tools/ops/healthcheck.py"],
+    "cwd": ".",
+    "timeout_s": 600,
+    "report_hint": "stdout прогона; код выхода: 0 — чисто, 1 — есть FAIL, 2 — только WARN",
+    "enabled": true
+  }
+]
