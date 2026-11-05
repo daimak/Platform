@@ -19,7 +19,7 @@ from urllib.parse import urlsplit
 from ai_usage import add_snapshot, dashboard_data, set_include_in_morning_brief
 from hunter_store import create_assignment, list_assignments
 from security_contour import add_target, dashboard_status, run_check
-from task_store import TASK_ID_PATTERN, dashboard_tasks, mark_done, set_stage
+from task_store import TASK_ID_PATTERN, add_comment, can_transition, dashboard_tasks, mark_done, set_stage
 
 ROOT = Path(__file__).resolve().parents[2]
 DASHBOARD = ROOT / "eVo" / "dashboard"
@@ -51,6 +51,17 @@ SANDBOX_TOOLS = {
     "secrets": {"script": ROOT / "tools" / "security" / "secret_scan.py", "prefix": "secret-scan", "timeout": 120, "title": "Поиск секретов"},
     "nmap": {"script": ROOT / "tools" / "security" / "nmap_probe.py", "prefix": "nmap-probe", "timeout": 900, "title": "nmap-скан"},
 }
+
+# Гвард A-01 (аудит 06.11, CWE-88): инструменту разрешены только санкционированные флаги.
+# Значение = сколько аргументов-значений ждёт флаг после себя.
+SANDBOX_ARG_ALLOW = {
+    "radar": {"--days": 1, "--keywords": 1, "--limit": 1},
+    "portaudit": {},
+    "secrets": {},
+    "nmap": {"--target": 1, "--ports": 1, "--cve": 0, "--allow-external": 0},
+}
+SANDBOX_PORTS_RE = re.compile(r"[0-9]{1,5}(-[0-9]{1,5})?(,[0-9]{1,5}(-[0-9]{1,5})?)*")
+SANDBOX_NUM_RE = re.compile(r"[0-9]{1,4}")
 SANDBOX_RUN_LOCK = threading.Lock()
 SANDBOX_RUN: dict = {
     "running": False,
@@ -615,6 +626,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             r"/api/tasks/([a-z0-9][a-z0-9-]{0,63})/stage/(analysis|todo|in-progress|test|done)",
             request_path,
         )
+        task_comment = re.fullmatch(r"/api/tasks/([a-z0-9][a-z0-9-]{0,63})/comments", request_path)
         # Л-3: запуск джоба из реестра tools/ops/jobs.json.
         jobs_run = re.fullmatch(r"/api/jobs/([a-z0-9][a-z0-9-]{0,63})/run", request_path)
         hunter_tasks_route = "/api/hunter/tasks"
@@ -630,7 +642,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             "/api/watson/run",
             "/api/riskscan/run",
         }
-        if request_path not in body_routes | bodyless_routes and not task_done and not task_stage and not jobs_run and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route, sandbox_run_route):
+        if request_path not in body_routes | bodyless_routes and not task_done and not task_stage and not task_comment and not jobs_run and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route, sandbox_run_route):
             self._send_json(404, {"error": "Неизвестный локальный endpoint."})
             return
 
@@ -778,6 +790,28 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             ):
                 self._send_json(400, {"error": "Некорректные аргументы запуска."})
                 return
+            # Гвард A-01: только флаги из белого списка инструмента, со строгими значениями.
+            sandbox_allowed = SANDBOX_ARG_ALLOW.get(tool, {})
+            index = 0
+            while index < len(args):
+                flag = args[index]
+                if flag not in sandbox_allowed:
+                    self._send_json(400, {"error": f"Аргумент «{flag}» не разрешён для «{tool}»."})
+                    return
+                value_count = sandbox_allowed[flag]
+                index += 1
+                for _ in range(value_count):
+                    if index >= len(args):
+                        self._send_json(400, {"error": f"«{flag}» ожидает значение."})
+                        return
+                    value = args[index]
+                    if flag == "--ports" and not SANDBOX_PORTS_RE.fullmatch(value):
+                        self._send_json(400, {"error": "Некорректный формат --ports."})
+                        return
+                    if flag in ("--days", "--limit") and not SANDBOX_NUM_RE.fullmatch(value):
+                        self._send_json(400, {"error": f"Некорректный формат {flag}."})
+                        return
+                    index += 1
             if not SANDBOX_RUN_LOCK.acquire(blocking=False):
                 self._send_json(409, {"error": "Инструмент песочницы уже запускается."})
                 return
@@ -895,11 +929,28 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if not TASK_ID_PATTERN.fullmatch(task_id):
                 self._send_json(400, {"error": "Некорректный идентификатор задачи."})
                 return
+            # Врата/подпись как у stage: by из тела, дефолт Sovereign (P1 ревизора:
+            # /done раньше обходил врата и писал "unknown").
+            by = "Sovereign"
+            if self.headers.get("Content-Length", "0") not in ("", "0"):
+                try:
+                    done_payload = self._read_json_body()
+                    declared = done_payload.get("by")
+                    if isinstance(declared, str) and declared.strip():
+                        by = declared.strip()[:100]
+                except ValueError as error:
+                    self._send_json(400, {"error": str(error)})
+                    return
+            if not can_transition(task_id, by, "done"):
+                self._send_json(403, {
+                    "error": (f"Автор «{by}» не может закрыть «{task_id}»: "
+                              "врата стоят только на владельца работы (source/owner).")})
+                return
             if not TASK_LOCK.acquire(blocking=False):
                 self._send_json(409, {"error": "Список задач уже обновляется."})
                 return
             try:
-                task = mark_done(task_id)
+                task = mark_done(task_id, by=by)
                 self._send_json(200, {"task": task, "tasks": dashboard_tasks()})
             except FileNotFoundError as error:
                 self._send_json(404, {"error": str(error)})
@@ -915,6 +966,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             # Л-5: автор перехода декларируется в JSON-теле ("by"), дефолт "Sovereign"
             # (loopback, один хозяин, без логинов). Пустое тело = дефолт.
             by = "Sovereign"
+            declared_by = None
             if self.headers.get("Content-Length", "0") not in ("", "0"):
                 try:
                     stage_payload = self._read_json_body()
@@ -924,6 +976,19 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 declared = stage_payload.get("by")
                 if isinstance(declared, str) and declared.strip():
                     by = declared.strip()[:100]
+                    declared_by = by
+            # Врата требуют ЯВНО объявленного автора (P2 ревизора: дефолт Sovereign
+            # = ключ от врат — обходится omit-ом поля). Рабочие колонки — дефолт ок.
+            if stage in ("test", "done") and declared_by is None:
+                self._send_json(400, {"error": "Для перевода в «Проверку/Готово» объяви автора: поле by в JSON-теле."})
+                return
+            # Врата Sovereign (2026-11-06): заявлять готовность (test/done) может
+            # только владелец работы (source/owner/ZCode/Sovereign).
+            if not can_transition(task_id, by, stage):
+                self._send_json(403, {
+                    "error": (f"Автор «{by}» не может переводить «{task_id}» в «{stage}»: "
+                              "врата стоят только на владельца работы (source/owner).")})
+                return
             if not TASK_LOCK.acquire(blocking=False):
                 self._send_json(409, {"error": "Список задач уже обновляется."})
                 return
@@ -935,6 +1000,35 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             except (OSError, ValueError, json.JSONDecodeError) as error:
                 logging.exception("Task stage update failed")
                 self._send_json(500, {"error": f"Не удалось обновить задачу: {error}"})
+            finally:
+                TASK_LOCK.release()
+            return
+
+        if task_comment:
+            # Комментарий к карточке (Sovereign 2026-11-06). by из тела, дефолт Sovereign.
+            try:
+                payload = self._read_json_body()
+            except ValueError as error:
+                self._send_json(400, {"error": str(error)})
+                return
+            by = payload.get("by")
+            if not isinstance(by, str) or not by.strip():
+                by = "Sovereign"
+            by = by.strip()[:100]
+            text = payload.get("text")
+            if not isinstance(text, str):
+                self._send_json(400, {"error": "Ожидалось поле text (строка)."})
+                return
+            if not TASK_LOCK.acquire(blocking=False):
+                self._send_json(409, {"error": "Список задач уже обновляется."})
+                return
+            try:
+                task = add_comment(task_comment.group(1), by, text)
+                self._send_json(200, {"task": task, "tasks": dashboard_tasks()})
+            except FileNotFoundError as error:
+                self._send_json(404, {"error": str(error)})
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                self._send_json(400, {"error": str(error)})
             finally:
                 TASK_LOCK.release()
             return

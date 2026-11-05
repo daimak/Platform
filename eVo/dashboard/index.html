@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="harbor-ship.css?v=10">
   <style>
     /* Trading Quarter: аккордеоны бирж (вкладка «Заказы») */
@@ -114,6 +114,15 @@
             <span>Review</span><span class="plaque-brief-arrow">→</span>
           </div>
         </div>
+
+        <!-- 2b. Ярлычок канбана — табличка у плашки Бэрримора (Sovereign 2026-11-06:
+             «доску держать у Бэрримора под рукой и в Эстейт красивым ярлычком») -->
+        <a class="kanban-shortcut" href="kanban.html" target="_blank" rel="noopener noreferrer"
+           aria-label="Канбан лиджера — доска задач" title="Канбан лиджера — доска задач">
+          <span class="kanban-shortcut-icon" aria-hidden="true">📋</span>
+          <span class="kanban-shortcut-text">Канбан лиджера</span>
+          <span class="kanban-shortcut-arrow" aria-hidden="true">→</span>
+        </a>
 
         <!-- 3. Мастерская eVo (eVo Workshop) — строго над трубами мастерской -->
         <div class="island-hotspot beacon-amber" style="top: 28.5%; left: 72.4%;" data-island="workshop">
@@ -308,7 +317,7 @@
   <script src="orders-triage.js"></script>
   <script src="hunter-report.js?v=1"></script>
   <script src="tasks.js"></script>
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
   <script src="harbor-ship.js?v=10"></script>
 </body>
 </html>
