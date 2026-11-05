@@ -270,14 +270,14 @@ function renderEstateStaff(staff) {
     return `
     <div style="padding: 8px 12px; background: rgba(0,0,0,0.25); border-radius: 6px;">
       <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
-        <strong style="color: #fff; font-size: 0.9rem;">${member.name}</strong>
-        <span style="font-size: 0.72rem; color: ${STAFF_STATUS_COLORS[member.status] || "#94a3b8"}; white-space: nowrap;">${member.status}</span>
+        <strong style="color: #fff; font-size: 0.9rem;">${escapeHtml(member.name)}</strong>
+        <span style="font-size: 0.72rem; color: ${STAFF_STATUS_COLORS[member.status] || "#94a3b8"}; white-space: nowrap;">${escapeHtml(member.status)}</span>
       </div>
-      <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 2px;">${member.role || ""}</div>
-      ${member.metric ? `<div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Метрика: ${member.metric}</div>` : ""}
-      ${member.last_pocket_result ? `<div style="font-size: 0.75rem; color: #a7f3d0; margin-top: 4px;">В кармане: ${member.last_pocket_result}</div>` : ""}
-      ${member.dismiss_reason ? `<div style="font-size: 0.75rem; color: #fca5a5; margin-top: 4px;">Причина увольнения: ${member.dismiss_reason}</div>` : ""}
-      ${member.note ? `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">${member.note}</div>` : ""}
+      <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 2px;">${escapeHtml(member.role || "")}</div>
+      ${member.metric ? `<div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Метрика: ${escapeHtml(member.metric)}</div>` : ""}
+      ${member.last_pocket_result ? `<div style="font-size: 0.75rem; color: #a7f3d0; margin-top: 4px;">В кармане: ${escapeHtml(member.last_pocket_result)}</div>` : ""}
+      ${member.dismiss_reason ? `<div style="font-size: 0.75rem; color: #fca5a5; margin-top: 4px;">Причина увольнения: ${escapeHtml(member.dismiss_reason)}</div>` : ""}
+      ${member.note ? `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">${escapeHtml(member.note)}</div>` : ""}
       ${cfg ? `<div style="display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
         <button id="${runtime}-run-btn" style="font-size: 0.78rem; padding: 6px 12px; background: rgba(94,234,212,0.12); color: #5eead4; border: 1px solid rgba(94,234,212,0.35); border-radius: 6px; cursor: pointer;"><span>${cfg.btnLabel}</span></button>
         <span id="${runtime}-run-status" style="font-size: 0.75rem; color: #8b96a5;"></span>
@@ -390,7 +390,7 @@ function initHolmesContext() {
     fetch("/api/holmes/context", { cache: "no-store" })
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then((ctx) => {
-        branchEl.innerHTML = `Текущая ветка: <span style="color: #fb7185; font-weight: bold;">${ctx.branch || "?"}</span>`;
+        branchEl.innerHTML = `Текущая ветка: <span style="color: #fb7185; font-weight: bold;">${escapeHtml(ctx.branch || "?")}</span>`;
         const changed = Number(ctx.tree_changed) || 0;
         treeEl.textContent = changed ? `● Рабочее дерево: ${changed} незакоммиченных изменений` : "● Рабочее дерево чисто";
         treeEl.style.color = changed ? "#a7f3d0" : "#5eead4";
@@ -680,6 +680,7 @@ function openIslandModal(islandKey) {
         <button class="btn-action-primary" id="btn-modal-open-workspace">
           <span>${lang.toWorkspaceBtn || "🚪 Перейти в рабочий кабинет"}</span>
         </button>
+        <a class="btn-action-kanban" id="btn-modal-open-kanban" href="kanban.html" target="_blank" rel="noopener noreferrer" title="Доска задач: Анализ → Сделать → В работе → Проверка → Готово">📋 Канбан лиджера</a>
       `;
       const btnWs = document.getElementById("btn-modal-open-workspace");
       if (btnWs) {
@@ -1542,7 +1543,7 @@ function buildTQVacanciesHTML(data) {
       const snippet = job.snippet ? escapeHtml(String(job.snippet).slice(0, 200)) : "";
       return `
         <div class="brief-task-item" style="cursor: default;">
-          <a href="${escapeHtml(job.url || "#")}" target="_blank" rel="noopener noreferrer"
+          <a href="${safeUrl(job.url)}" target="_blank" rel="noopener noreferrer"
              style="color: #5eead4; text-decoration: none;">
             <div class="brief-task-title">${escapeHtml(job.title || "")}</div>
           </a>
@@ -2360,7 +2361,7 @@ function buildMorningBriefHTML(brief, lang) {
           ${(brief.hunter.top || []).map((i) => `
             <div class="brief-task-item">
               <div class="brief-task-title">
-                <a href="${esc(i.url)}" target="_blank" rel="noopener" style="color:#93c5fd;">${esc(i.title)}</a>
+                <a href="${safeUrl(i.url)}" target="_blank" rel="noopener" style="color:#93c5fd;">${esc(i.title)}</a>
               </div>
               <div class="brief-task-details" style="display:block; border:none; margin:0; padding:0;">
                 ${esc([i.salary, i.category, i.source].filter(Boolean).join(" • "))}
@@ -2640,4 +2641,10 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+// A-02 (аудит 06.11, CWE-79): URL из внешних фидов в href — только http(s), иначе "#".
+function safeUrl(value) {
+  const raw = String(value == null ? "" : value).trim();
+  return /^(https?:)?\/\//i.test(raw) ? escapeHtml(raw) : "#";
 }

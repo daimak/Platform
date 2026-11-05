@@ -1,0 +1,89 @@
+#!/bin/sh
+# pre-commit гейт секретов (V-09): перед коммитом гоняет tools/security/secret_scan.py.
+# RED (известные форматы ключей) — коммит отклоняется; ORANGE — предупреждение, проходит.
+# Политика fail-open: поломка гейта/сканера не блокирует работу — коммит проходит
+# с пометкой FAIL-OPEN и причиной. Зависимости: только python + git.
+
+# Регулярки находок: secret_scan печатает "[RED   ] файл:строка  метка  маска"
+# и "[ORANGE] файл:строка  ...". Полный отчёт — %LOCALAPPDATA%/Platform/SecurityReports.
+RE_RED='^\[RED'
+RE_ORANGE='^\[ORANGE'
+TIMEOUT_SEC=60
+
+say() { printf '[secret-scan] %s\n' "$*"; }
+
+fail_open() {
+    say "FAIL-OPEN: $*"
+    say "Коммит пропущен БЕЗ проверки секретов — почини гейт: tools/security/hooks/"
+    exit 0
+}
+
+git_root=$(git rev-parse --show-toplevel 2>/dev/null) \
+    || fail_open "git rev-parse не сработал — не похоже на репозиторий."
+
+# Нет staged-файлов (add/copy/modify) — нечего защищать, гейт не нужен.
+staged=$(git diff --cached --name-only --diff-filter=ACM) \
+    || fail_open "git diff --cached упал."
+if [ -z "$staged" ]; then
+    exit 0
+fi
+staged_count=$(printf '%s\n' "$staged" | grep -c .)
+
+scanner="$git_root/tools/security/secret_scan.py"
+command -v python >/dev/null 2>&1 || fail_open "python не найден в PATH."
+[ -f "$scanner" ] || fail_open "сканер не найден: $scanner."
+
+tmp=$(mktemp) 2>/dev/null || fail_open "mktemp недоступен."
+trap 'rm -f "$tmp"' EXIT
+
+# Запуск с таймаутом TIMEOUT_SEC: раз в секунду проверяем живость, завис — убиваем
+# и fail-open. PYTHONIOENCODING — чтобы русский вывод не поплыл при перенаправлении.
+PYTHONIOENCODING=utf-8 python "$scanner" >"$tmp" 2>&1 &
+scan_pid=$!
+elapsed=0
+while [ "$elapsed" -lt "$TIMEOUT_SEC" ]; do
+    kill -0 "$scan_pid" 2>/dev/null || break
+    sleep 1
+    elapsed=$((elapsed + 1))
+done
+timed_out=0
+if kill -0 "$scan_pid" 2>/dev/null; then
+    # kill может успеть промахнуться (процесс вышел между проверками) — тогда это не таймаут.
+    if kill "$scan_pid" 2>/dev/null; then
+        timed_out=1
+        sleep 1
+        kill -9 "$scan_pid" 2>/dev/null
+    fi
+fi
+wait "$scan_pid" 2>/dev/null
+scan_status=$?
+
+[ "$timed_out" -eq 1 ] && fail_open "сканер превысил таймаут ${TIMEOUT_SEC}с — процесс убит."
+# Сканер в норме всегда выходит с 0 (даже с находками); иной код — его авария, fail-open.
+[ "$scan_status" -eq 0 ] || fail_open "сканер завершился с ошибкой (exit $scan_status)."
+
+# Разбор вывода: считаем и собираем строки находок.
+red_lines=$(grep -E "$RE_RED" "$tmp")
+orange_lines=$(grep -E "$RE_ORANGE" "$tmp")
+red_count=0
+[ -n "$red_lines" ] && red_count=$(printf '%s\n' "$red_lines" | grep -c .)
+orange_count=0
+[ -n "$orange_lines" ] && orange_count=$(printf '%s\n' "$orange_lines" | grep -c .)
+
+say "staged-файлов: $staged_count; сканировалось всё дерево (фаза 2 — только staged)."
+
+if [ "$red_count" -gt 0 ]; then
+    say "RED: $red_count — коммит ОТКЛОНЁН. Найдено:"
+    printf '%s\n' "$red_lines"
+    say "Полный отчёт: %LOCALAPPDATA%/Platform/SecurityReports/secret-scan-*.json"
+    say "Обход — осознанно и один раз: git commit --no-verify"
+    exit 1
+fi
+
+if [ "$orange_count" -gt 0 ]; then
+    say "ORANGE: $orange_count — предупреждения (коммит разрешён, проверь руками):"
+    printf '%s\n' "$orange_lines"
+fi
+
+say "RED-секретов нет — коммит разрешён."
+exit 0
