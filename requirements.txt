@@ -1,0 +1,5 @@
+# Platform Evo — сторонние зависимости Python (стандартная библиотека не указана).
+# Сервер и tools работают на stdlib; ниже — только то, что импортируется явно.
+# Проверка: python -m pip install -r requirements.txt
+beautifulsoup4>=4.12,<5
+curl_cffi>=0.7

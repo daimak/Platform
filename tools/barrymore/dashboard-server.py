@@ -19,7 +19,7 @@ from urllib.parse import urlsplit
 from ai_usage import add_snapshot, dashboard_data, set_include_in_morning_brief
 from hunter_store import create_assignment, list_assignments
 from security_contour import add_target, dashboard_status, run_check
-from task_store import TASK_ID_PATTERN, add_comment, can_transition, dashboard_tasks, mark_done, set_stage
+from task_store import TASK_ID_PATTERN, add_comment, can_transition, dashboard_tasks, mark_done, set_stage, set_type
 
 ROOT = Path(__file__).resolve().parents[2]
 DASHBOARD = ROOT / "eVo" / "dashboard"
@@ -646,6 +646,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             request_path,
         )
         task_comment = re.fullmatch(r"/api/tasks/([a-z0-9][a-z0-9-]{0,63})/comments", request_path)
+        task_type = re.fullmatch(r"/api/tasks/([a-z0-9][a-z0-9-]{0,63})/type", request_path)
         # Л-3: запуск джоба из реестра tools/ops/jobs.json.
         jobs_run = re.fullmatch(r"/api/jobs/([a-z0-9][a-z0-9-]{0,63})/run", request_path)
         hunter_tasks_route = "/api/hunter/tasks"
@@ -661,7 +662,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             "/api/watson/run",
             "/api/riskscan/run",
         }
-        if request_path not in body_routes | bodyless_routes and not task_done and not task_stage and not task_comment and not jobs_run and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route, sandbox_run_route):
+        if request_path not in body_routes | bodyless_routes and not task_done and not task_stage and not task_comment and not task_type and not jobs_run and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route, sandbox_run_route):
             self._send_json(404, {"error": "Неизвестный локальный endpoint."})
             return
 
@@ -1043,6 +1044,36 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 return
             try:
                 task = add_comment(task_comment.group(1), by, text)
+                self._send_json(200, {"task": task, "tasks": dashboard_tasks()})
+            except FileNotFoundError as error:
+                self._send_json(404, {"error": str(error)})
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                self._send_json(400, {"error": str(error)})
+            finally:
+                TASK_LOCK.release()
+            return
+
+        if task_type:
+            # Тип сущности карточки (Sovereign 2026-11-06): task | change | epic.
+            # Неизвестное значение = 400 (allowlist в task_store.set_type), не 500.
+            try:
+                payload = self._read_json_body()
+            except ValueError as error:
+                self._send_json(400, {"error": str(error)})
+                return
+            by = payload.get("by")
+            if not isinstance(by, str) or not by.strip():
+                by = "Sovereign"
+            by = by.strip()[:100]
+            type_value = payload.get("type")
+            if not isinstance(type_value, str):
+                self._send_json(400, {"error": "Ожидалось поле type (строка)."})
+                return
+            if not TASK_LOCK.acquire(blocking=False):
+                self._send_json(409, {"error": "Список задач уже обновляется."})
+                return
+            try:
+                task = set_type(task_type.group(1), type_value.strip(), by)
                 self._send_json(200, {"task": task, "tasks": dashboard_tasks()})
             except FileNotFoundError as error:
                 self._send_json(404, {"error": str(error)})

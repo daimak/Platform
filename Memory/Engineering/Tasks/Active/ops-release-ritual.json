@@ -1,0 +1,18 @@
+{
+  "id": "ops-release-ritual",
+  "title": "Ритуал релиза: VERSION и AI-ONBOARDING тем же коммитом",
+  "source": "ZCode",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-11-06T18:18:00Z",
+  "description": "VERSION = 1.8.4 при ветке release/1.8.6; AI-ONBOARDING фиксирует HEAD a3ca29e при живом dd4113c — карта, которой доверяют входящие сессии, систематически врёт. Правило: релизная правка = тот же коммит обновляет VERSION, CHANGELOG и строку HEAD в AI-ONBOARDING. Попутно: строка «Interface/ заморожен до X» в README (второй фронтенд-каркас спит и создаёт раздвоение).",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-06T18:18:00Z",
+      "by": "ZCode",
+      "note": "Ревью проекта 06.11: собственный протокол «сверяй VERSION» даёт ложный след."
+    }
+  ],
+  "stage": "todo"
+}

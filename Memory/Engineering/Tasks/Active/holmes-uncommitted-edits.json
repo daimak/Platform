@@ -17,5 +17,12 @@
       "at": "2026-11-03T06:51:12Z"
     }
   ],
-  "stage": "in-progress"
+  "stage": "in-progress",
+  "comments": [
+    {
+      "by": "ZCode",
+      "text": "Обновление инвентаря 06.11, 21:20: в дереве 41 позиция — 23 изменённых (M), 17 новых (??), 1 удалённая (D), ~1301 строка diff. Состав: флот-панель agents.html/css/js + test_agents_live (20 тестов); tools/lib/task_lock.py + тесты task_comments/night_fixes; HIGGSFIELD-DOCS-2026-11-05.md (54KB); 4 новые карточки задач; правки task_store / dashboard-server / kanban. dd4113c (секрет-фиксы) не запушен — origin/main на a3ca29e. Для закрытия создана карточка ops-commit-push-2026-11-06 (Сделать, urgent): бэкап → коммит → пуш одним пакетом, по команде Sovereign.",
+      "at": "2026-11-06T18:20:16Z"
+    }
+  ]
 }

@@ -1,0 +1,18 @@
+{
+  "id": "ops-test-runner-unify",
+  "title": "Единый тест-раннер + requirements.txt",
+  "source": "ZCode",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-11-06T18:18:00Z",
+  "description": "Три сьюта (48 + 35 + новые ~46: agents_live, night_fixes, task_comments, jobs_registry) запускаются вручную по памяти из AI-ONBOARDING — при таком росте что-то перестанут запускать. Сделать: tools/ops/run_all.py (одна команда, сводка по сьютам, exit code) + requirements.txt (фикс версий сторонних зависимостей tools/). Опционально: pre-push хук с прогоном как замена отсутствующему CI.",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-06T18:18:00Z",
+      "by": "ZCode",
+      "note": "Ревью проекта 06.11: тесты растут быстрее рутины их запуска."
+    }
+  ],
+  "stage": "todo"
+}

@@ -14,6 +14,9 @@ ACTIVE_DIR = TASKS_DIR / "Active"
 ARCHIVE_DIR = TASKS_DIR / "Archive"
 TASK_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 STAGES = ("analysis", "todo", "in-progress", "test")
+# Типы сущностей (запрос Sovereign 2026-11-06, ITIL-минимум):
+# task = таска, change = ЗНИ (запрос на изменение), epic = эпик.
+TASK_TYPES = ("task", "change", "epic")
 DONE_RETENTION = timedelta(hours=48)
 
 
@@ -56,6 +59,9 @@ def _read_task(path: Path) -> dict:
         and not (stage_value == "done" and task.get("status") == "done")
     ):
         raise ValueError(f"Некорректная колонка канбана: {path}")
+    # Тип сущности: чтение толерантно (нет поля = task; неизвестное значение не
+    # роняет доску). Строгий allowlist стоит на записи — set_type, API даёт 400.
+    task.setdefault("type", "task")
     if task["status"] == "done":
         try:
             completed_at = _parse_timestamp(task["completedAt"])
@@ -307,5 +313,28 @@ def add_comment(task_id: str, by: str, text: str, now: datetime | None = None) -
     comments.append({"by": author or "Sovereign", "text": body,
                      "at": _timestamp(now or _now())})
     task["comments"] = comments
+    _atomic_write(path, task)
+    return task
+
+
+def set_type(task_id: str, type_value: str, by: str = "unknown", now: datetime | None = None) -> dict:
+    """Тип сущности карточки: task | change (ЗНИ) | epic (запрос Sovereign
+    2026-11-06, ITIL-минимум). Allowlist строгий: неизвестное значение =
+    ValueError (API отвечает 400, не 500 — урок priority-инцидента).
+    Смена типа — запись в history с подписью "by"; смена на тот же тип = no-op."""
+    if not TASK_ID_PATTERN.fullmatch(task_id):
+        raise ValueError("Некорректный идентификатор задачи.")
+    if type_value not in TASK_TYPES:
+        raise ValueError(f"Некорректный тип сущности: {type_value}")
+
+    path = ACTIVE_DIR / f"{task_id}.json"
+    if not path.is_file():
+        raise FileNotFoundError(f"Активная задача не найдена: {task_id}")
+    task = _read_task(path)
+    previous = task.get("type", "task")
+    if previous == type_value:
+        return task
+    task["type"] = type_value
+    task["history"].append({"type": type_value, "at": _timestamp(now or _now()), "by": by})
     _atomic_write(path, task)
     return task
