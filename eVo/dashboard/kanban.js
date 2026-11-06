@@ -14,8 +14,23 @@ const COLUMNS = [
   { key: "done",        label: "Готово",   dot: "#34d399" },
 ];
 
+/* Типы сущностей (Sovereign 2026-11-06, ITIL-минимум): task | change | epic */
+const TYPE_LABELS = { task: "Таска", change: "ЗНИ", epic: "Эпик" };
+const TYPE_ORDER = ["task", "change", "epic"];
+
 let TASKS = [];
 let modalId = null;
+let typeFilter = localStorage.getItem("kb-type") || "all";
+
+function typeOf(task) {
+  return TYPE_LABELS[task.type] ? task.type : "task";
+}
+
+function typeBadgeHtml(task) {
+  return typeOf(task) !== "task"
+    ? `<span class="kb-badge kb-type-${typeOf(task)}">${TYPE_LABELS[typeOf(task)]}</span>`
+    : "";
+}
 
 function stageOf(task) {
   if (task.status === "done") return "done";
@@ -64,14 +79,39 @@ function cardHtml(task) {
   return `
     <div class="kb-card ${pr}" data-id="${esc(task.id)}">
       <div class="kb-card-title">${esc(task.title)}</div>
-      <div class="kb-card-foot">${badge}${source}<span class="kb-card-id">${esc(task.id)}</span></div>
+      <div class="kb-card-foot">${badge}${source}${typeBadgeHtml(task)}<span class="kb-card-id">${esc(task.id)}</span></div>
     </div>`;
+}
+
+function renderFilters() {
+  const box = document.getElementById("kb-filters");
+  if (!box) return;
+  const buttons = [
+    { key: "all", label: "Все", n: TASKS.length },
+    ...TYPE_ORDER.map((ty) => ({
+      key: ty,
+      label: TYPE_LABELS[ty],
+      n: TASKS.filter((t) => typeOf(t) === ty).length,
+    })),
+  ];
+  box.innerHTML = buttons.map((b) =>
+    `<button class="kb-filter ${b.key === typeFilter ? "current" : ""}" data-type="${b.key}">${b.label} · ${b.n}</button>`
+  ).join("");
+  box.querySelectorAll(".kb-filter").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      typeFilter = btn.dataset.type;
+      localStorage.setItem("kb-type", typeFilter);
+      render();
+    });
+  });
 }
 
 function render() {
   const board = document.getElementById("kb-board");
   const byStage = Object.fromEntries(COLUMNS.map((c) => [c.key, []]));
-  TASKS.forEach((t) => byStage[stageOf(t)].push(t));
+  const visible = typeFilter === "all" ? TASKS : TASKS.filter((t) => typeOf(t) === typeFilter);
+  visible.forEach((t) => byStage[stageOf(t)].push(t));
+  renderFilters();
 
   board.innerHTML = COLUMNS.map((col) => {
     const list = byStage[col.key];
@@ -212,6 +252,7 @@ function openModal(id, opts = {}) {
         <div class="kbm-badges">
           ${task.status === "done" ? '<span class="kb-badge done-badge">DONE</span>' : `<span class="kb-badge ${pr}">${pr === "urgent" ? "URGENT" : "REGULAR"}</span>`}
           ${task.source ? `<span class="kb-badge">${esc(task.source)}</span>` : ""}
+          ${typeBadgeHtml(task)}
           <span class="kb-badge">${esc(task.id)}</span>
         </div>
       </div>
@@ -225,12 +266,18 @@ function openModal(id, opts = {}) {
         </button>`).join("")}
     </div>
 
+    <div class="kbm-statusbar">
+      ${TYPE_ORDER.map((ty) => `
+        <button class="kbm-stage-btn kb-type-btn ${ty === typeOf(task) ? "current" : ""}" data-type="${ty}" ${ty === typeOf(task) ? "disabled" : ""}>${TYPE_LABELS[ty]}</button>`).join("")}
+    </div>
+
     <div class="kbm-meta">
       ${metaRow("Создал", esc(task.source || "—"))}
       ${metaRow("Создана", `${fmtDate(task.createdAt)}<br><span style="color:#7d8aa0;font-size:0.64rem;">${fmtAgo(task.createdAt)}</span>`)}
       ${metaRow("Статус", `${COLUMNS.find((c) => c.key === cur)?.label || cur}${task.status === "done" ? " · закрыта" : ""}`)}
       ${metaRow("Срок исполнения", esc(task.due ? fmtDate(task.due) : "—"))}
       ${metaRow("Ответственный", esc(task.owner || "—"))}
+      ${metaRow("Тип", TYPE_LABELS[typeOf(task)] || esc(task.type || "task"))}
       ${metaRow("Закрыта", task.status === "done" ? fmtDate(task.completedAt) : "—")}
     </div>
 
@@ -271,6 +318,7 @@ function openModal(id, opts = {}) {
             ${h.status === "done" ? '<span class="kb-badge done-badge">DONE</span>'
               : h.status === "reopened" ? `<span class="kb-badge">REOPEN → ${esc(COLUMNS.find((c) => c.key === h.stage)?.label || h.stage || "")}</span>`
               : h.status === "archived" ? '<span class="kb-badge">ARCHIVED</span>'
+              : h.type ? `<span class="kb-badge kb-type-${esc(h.type)}">ТИП → ${esc(TYPE_LABELS[h.type] || h.type)}</span>`
               : h.stage ? `<span class="kb-badge">→ ${esc(COLUMNS.find((c) => c.key === h.stage)?.label || h.stage)}</span>`
               : `<span class="kb-badge">${esc(h.status || "")}</span>`}
           </div>`).join("")}
@@ -330,6 +378,25 @@ function openModal(id, opts = {}) {
       moveTask(task.id, btn.dataset.stage)
         .then(() => openModal(task.id, { keepScroll: true }))
         .catch((err) => toast(`Ошибка: ${err.message}`, true));
+    });
+  });
+  root.querySelectorAll(".kb-type-btn:not(.current)").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        const res = await fetch(`/api/tasks/${encodeURIComponent(task.id)}/type`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ by: "Sovereign", type: btn.dataset.type }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        TASKS = data.tasks.all || [];
+        render();
+        toast(`Тип: ${TYPE_LABELS[btn.dataset.type] || btn.dataset.type}`);
+        openModal(task.id, { keepScroll: true });
+      } catch (err) {
+        toast(`Ошибка: ${err.message}`, true);
+      }
     });
   });
   if (!opts.keepScroll) document.getElementById("kbm-body").scrollTop = 0;

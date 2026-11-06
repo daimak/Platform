@@ -31,6 +31,13 @@
     .kb-back:hover { background: rgba(56,189,248,0.12); }
     .kb-meta { color: var(--text-muted, #7d8aa0); font-size: 0.68rem; margin-bottom: 18px; }
     .kb-meta b { color: var(--accent-emerald, #34d399); }
+    /* типы сущностей (Sovereign 2026-11-06): фильтр + бейджи ЗНИ/Эпик */
+    .kb-filters { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .kb-filter { background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.25); color: #cbd5e1; font-size: 0.72rem; padding: 4px 10px; border-radius: 999px; cursor: pointer; }
+    .kb-filter:hover { border-color: rgba(94,234,212,0.5); }
+    .kb-filter.current { background: rgba(94,234,212,0.15); border-color: rgba(94,234,212,0.6); color: #5eead4; }
+    .kb-type-change { background: rgba(251,146,60,0.18); color: #fdba74; }
+    .kb-type-epic { background: rgba(167,139,250,0.18); color: #c4b5fd; }
 
     .kb-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; align-items: start; }
     .kb-col {
@@ -176,9 +183,10 @@
     <a class="kb-back" href="index.html">← Command Center</a>
   </div>
   <div class="kb-meta" id="kb-meta">загрузка…</div>
+  <div class="kb-filters" id="kb-filters"></div>
   <div class="kb-board" id="kb-board"></div>
   <div class="kb-toast" id="kb-toast"></div>
   <div class="kbm-overlay" id="kb-modal"><div class="kbm-panel"><div class="kbm-body" id="kbm-body"></div></div></div>
-  <script src="kanban.js?v=7"></script>
+  <script src="kanban.js?v=8"></script>
 </body>
 </html>

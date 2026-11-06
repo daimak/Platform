@@ -37,7 +37,12 @@
       "at": "2026-11-04T18:36:05Z",
       "by": "Sovereign",
       "note": "Закрыто 04.11 (E-046): merge origin/main (PR #2) в feature_1.8.6 → push origin/main (5057dcb), локальная main создана, ветки feature_1.8.6/1.8.5/1.8.2 удалены локально и на origin. Работа продолжается на main."
+    },
+    {
+      "status": "archived",
+      "at": "2026-11-06T18:36:54Z"
     }
   ],
-  "stage": "in-progress"
+  "stage": "in-progress",
+  "archivedAt": "2026-11-06T18:36:54Z"
 }
