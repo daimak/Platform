@@ -73,10 +73,14 @@ def check_env() -> dict:
 
 
 def build_soul2_payload() -> dict:
-    """Скелет реального payload одного кадра Soul 2 (standard quality).
+    """Скелет реального payload одного кадра Soul 2 (standard).
 
-    Схема по openapi.json (/higgsfield-ai/soul/standard) и докам SOUL V2:
-    prompt (required), num_images 1..4 (default 1), resolution 2K|4K, aspect_ratio.
+    Схема сверена с живыми доками 2026-11-06 (models/soul-2/generate.md):
+    prompt (required); batch_size 1|4 (НЕ num_images); resolution 720p|1080p
+    (2K/4K остались у старого Soul v1 /higgsfield-ai/soul/standard);
+    aspect_ratio default 1:1, enum 9:16,16:9,4:3,3:4,1:1,2:3,3:2;
+    опционально: enhance_prompt, custom_reference_id(+strength), style_id,
+    style_strength (сейчас не влияет), seed 1..1000000.
     """
     return {
         "prompt": (
@@ -84,9 +88,10 @@ def build_soul2_payload() -> dict:
             "standing on a rain-wet Tokyo street at dusk, neon reflections, "
             "shallow depth of field, 85mm lens, cinematic color grade"
         ),
-        "num_images": 1,
-        "resolution": "2K",
+        "batch_size": 1,
+        "resolution": "1080p",
         "aspect_ratio": "3:4",
+        "enhance_prompt": False,
     }
 
 
@@ -211,7 +216,8 @@ def main() -> int:
     payload = build_soul2_payload()
     print(f"POST {BASE_URL}/{SOUL_V2_STANDARD_APP}")
     print(json.dumps(payload, ensure_ascii=False, indent=2))
-    print("Смета: 1 кадр x $0.0032 (Soul 2, 2K) = $0.0032 (~0,26 руб по курсу ~81).")
+    print("Смета: 1 кадр x $0.0032 (Soul 2, стартовый тариф, подтверждено блогом API) = $0.0032"
+          " (~0,26 руб по курсу ~81); точную цену конфига 1080p даст POST /estimate/higgsfield-ai/soul/v2/standard.")
     report["payload"] = payload
 
     live_allowed = args.live and (has_platform_key or has_sdk_creds)
