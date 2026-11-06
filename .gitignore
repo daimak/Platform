@@ -60,3 +60,6 @@ tools/*_data.csv
 /job_search_results.json
 eVo/dashboard/assets/review/
 Docs/SANDBOX-RECON-PLAN-*
+
+# Go build artifacts (evofind benchmark — sources only in git)
+golang_test/evofind.exe
