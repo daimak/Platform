@@ -1,6 +1,6 @@
 window.EVO_ORDERS_TRIAGE = {
- "generatedAt": "2026-11-01T21:33:17+05:00",
- "snapshot": "2026-11-01",
+ "generatedAt": "2026-11-06T00:17:08+05:00",
+ "snapshot": "2026-11-06",
  "counts": {
   "perspective": 125,
   "main": 32,
