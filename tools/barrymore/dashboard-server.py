@@ -574,6 +574,25 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 logging.exception("Jobs registry read failed")
                 self._send_json(500, {"error": f"Не удалось прочитать реестр джобов: {error}"})
             return
+        if request_path == "/api/agents/live":
+            # ТЗ «Флот в море» (Docs/AGENT-FLEET-PLAN-2026-11-05-ZCode.md): активные
+            # рейсы; единственный источник — Workspace/logs/events.jsonl, панель только читает.
+            try:
+                self._send_json(200, agents_live_snapshot())
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Agents live read failed")
+                self._send_json(500, {"error": f"Не удалось собрать флот: {error}"})
+            return
+        if request_path == "/api/agents/history":
+            # ТЗ «Флот в море»: завершённые рейсы с итогами; ?limit=20 по умолчанию (1..100).
+            try:
+                raw_limit = re.fullmatch(r"limit=(\d{1,3})", urlsplit(self.path).query)
+                limit = int(raw_limit.group(1)) if raw_limit else 20
+                self._send_json(200, agents_history_snapshot(limit=limit))
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Agents history read failed")
+                self._send_json(500, {"error": f"Не удалось собрать причалы: {error}"})
+            return
         super().do_GET()
 
     def _read_json_body(self) -> dict:
@@ -1263,6 +1282,305 @@ def start_job(job_id: str) -> tuple:
             daemon=True,
         ).start()
     return 202, {"started": True, "id": job_id, "started_at": started_at}
+
+
+# --- Флот агентов: GET /api/agents/live + GET /api/agents/history ---
+# (ТЗ Docs/AGENT-FLEET-PLAN-2026-11-05-ZCode.md, фаза 1)
+
+# Единственный источник — журнал Л-2 (конверт Л-1); панель ничего не собирает сама.
+AGENTS_LOG_PATH = ROOT / "Workspace" / "logs" / "events.jsonl"
+AGENTS_KINDS = ("agent.started", "agent.lane", "agent.pulse", "agent.storm", "agent.finished")
+AGENTS_SILENCE_STORM_MIN = 30  # тишина дольше 30 минут = шторм (метрики пульса ТЗ)
+AGENTS_TAIL_LINES = 5000  # читаем только хвост журнала, чтобы не душить IO на больших файлах
+AGENTS_RECENT_LIMIT = 5  # events_recent в карточке корабля
+
+
+def _parse_agent_ts(value) -> datetime | None:
+    """ISO-время журнала (…Z) → aware datetime UTC; мусор → None."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
+
+def _read_agent_events(log_path=None) -> list:
+    """Хвост events.jsonl → конверты с payload.kind из AGENTS_KINDS.
+
+    Битые и чужие строки пропускаются тихо: панель — читатель, падать на мусоре
+    не имеет права. Файл не пишется и не переформатируется.
+    """
+    path = Path(log_path) if log_path is not None else AGENTS_LOG_PATH
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as handle:
+            lines = handle.readlines()
+    except OSError:
+        return []
+    events = []
+    for raw_line in lines[-AGENTS_TAIL_LINES:]:
+        line = raw_line.strip()
+        if not line:
+            continue  # пустые строки формата записи (см. tools/lib/log_event.py)
+        try:
+            envelope = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(envelope, dict):
+            continue
+        payload = envelope.get("payload")
+        if isinstance(payload, dict) and payload.get("kind") in AGENTS_KINDS:
+            events.append(envelope)
+    return events
+
+
+def _agent_ship(envelope: dict) -> str:
+    """Имя корабля: payload.by (схема evo.agent.event по ТЗ), иначе produced_by (фаза 1)."""
+    payload = envelope.get("payload") or {}
+    by = payload.get("by")
+    if isinstance(by, str) and by.strip():
+        return by.strip()
+    produced = envelope.get("produced_by")
+    if isinstance(produced, str) and produced.strip():
+        return produced.strip()
+    return "(без имени)"
+
+
+def _agent_sort_key(envelope: dict) -> datetime:
+    return _parse_agent_ts(envelope.get("ts") or envelope.get("produced_at")) or datetime.min.replace(tzinfo=timezone.utc)
+
+
+def _agent_text(envelope: dict, limit: int = 140) -> str:
+    """Короткая человекочитаемая строка события для ленты/цепочки."""
+    payload = envelope.get("payload") or {}
+    kind = payload.get("kind")
+    candidates = {
+        "agent.started": ("task", "title", "goal", "spec"),
+        "agent.lane": ("lane", "lane_id", "step", "title", "note"),
+        "agent.storm": ("reason", "error", "note", "step"),
+        "agent.pulse": ("step", "note", "message", "status"),
+        "agent.finished": ("verdict", "task", "title", "note"),
+    }
+    for field in candidates.get(kind, ()):
+        value = payload.get(field)
+        if isinstance(value, (str, int, float, bool)) and str(value).strip():
+            return str(value).strip()[:limit]
+    return kind if isinstance(kind, str) else "событие"
+
+
+def _agent_voyages(events: list) -> list:
+    """События корабля → список рейсов: каждый agent.started открывает новый рейс."""
+    voyages = []
+    current = []
+    for envelope in events:
+        if (envelope.get("payload") or {}).get("kind") == "agent.started" and current:
+            voyages.append(current)
+            current = []
+        current.append(envelope)
+    if current:
+        voyages.append(current)
+    return voyages
+
+
+def _agent_started_at(voyage: list) -> str | None:
+    """ts начала рейса: первый agent.started, иначе первое событие (корабли без started-писателя)."""
+    for envelope in voyage:
+        if (envelope.get("payload") or {}).get("kind") == "agent.started":
+            ts = envelope.get("ts") or envelope.get("produced_at")
+            return ts if isinstance(ts, str) else None
+    if not voyage:
+        return None
+    ts = voyage[0].get("ts") or voyage[0].get("produced_at")
+    return ts if isinstance(ts, str) else None
+
+
+def _agent_lanes(voyage: list) -> dict:
+    """Лейны рейса: done = закрытые agent.lane; total = заявленный в started (или None)."""
+    done = sum(1 for envelope in voyage if (envelope.get("payload") or {}).get("kind") == "agent.lane")
+    total = None
+    for envelope in voyage:
+        if (envelope.get("payload") or {}).get("kind") != "agent.started":
+            continue
+        payload = envelope.get("payload") or {}
+        raw = payload.get("lanes_total", payload.get("lanes"))
+        if isinstance(raw, bool):
+            continue
+        if isinstance(raw, int) and raw >= 0:
+            total = raw
+        elif isinstance(raw, list):
+            total = len(raw)
+    return {"done": done, "total": total}
+
+
+def _agent_voyage_task(voyage: list) -> str:
+    """Задача рейса: из последнего agent.started, иначе «задача не объявлена»."""
+    for envelope in reversed(voyage):
+        if (envelope.get("payload") or {}).get("kind") != "agent.started":
+            continue
+        payload = envelope.get("payload") or {}
+        for field in ("task", "title", "goal"):
+            value = payload.get(field)
+            if isinstance(value, str) and value.strip():
+                return value.strip()[:200]
+    return "задача не объявлена"
+
+
+def _agent_live_entry(ship: str, voyage: list, moment: datetime) -> dict:
+    """Карточка корабля для /api/agents/live (метрики ТЗ: лейны, пульс, штормы, ETA-оценка)."""
+    started_ts = _agent_started_at(voyage)
+    started_dt = _parse_agent_ts(started_ts)
+    last_ts = None
+    if voyage:
+        last_ts = _parse_agent_ts(voyage[-1].get("ts") or voyage[-1].get("produced_at"))
+    pulse_min = None
+    if last_ts is not None:
+        pulse_min = round(max(0.0, (moment - last_ts).total_seconds() / 60.0), 1)
+    storms = sum(1 for envelope in voyage if (envelope.get("payload") or {}).get("kind") == "agent.storm")
+    # Правило ТЗ: шторм = storm-событие без finished (рейс ещё не завершён)
+    # либо тишина > 30 минут.
+    has_storm = storms > 0
+    silence_storm = pulse_min is not None and pulse_min > AGENTS_SILENCE_STORM_MIN
+    if pulse_min is None:
+        pulse_status = "неизвестно"
+    elif has_storm or silence_storm:
+        pulse_status = "шторм"
+    elif pulse_min < 10:
+        pulse_status = "идёт"
+    else:
+        pulse_status = "тихо"
+    lanes = _agent_lanes(voyage)
+    elapsed_min = None
+    if started_dt is not None:
+        elapsed_min = max(0.0, (moment - started_dt).total_seconds() / 60.0)
+    eta_min = None
+    if lanes["total"] is not None and 0 < lanes["done"] < lanes["total"] and started_dt is not None:
+        # ETA-оценка по фактической скорости лейнов (ТЗ, помечается «~»): от старта
+        # до последнего закрытого лейна; без лейнов — fallback на время с старта.
+        lane_span = None
+        for envelope in voyage:
+            if (envelope.get("payload") or {}).get("kind") == "agent.lane":
+                lane_dt = _parse_agent_ts(envelope.get("ts") or envelope.get("produced_at"))
+                if lane_dt is not None and lane_dt > started_dt:
+                    lane_span = max(0.0, (lane_dt - started_dt).total_seconds() / 60.0)
+        if lane_span is None:
+            lane_span = elapsed_min
+        if lane_span and lane_span > 0:
+            eta_min = round((lanes["total"] - lanes["done"]) * (lane_span / lanes["done"]), 1)
+    recent = [
+        {
+            "kind": (envelope.get("payload") or {}).get("kind"),
+            "ts": envelope.get("ts") or envelope.get("produced_at"),
+            "text": _agent_text(envelope),
+        }
+        for envelope in voyage[-AGENTS_RECENT_LIMIT:]
+    ]
+    return {
+        "by": ship,
+        "task": _agent_voyage_task(voyage),
+        "status": "шторм" if (has_storm or silence_storm) else "море",
+        "pulse_status": pulse_status,
+        "lanes": lanes,
+        "pulse_min": pulse_min,
+        "storms": storms,
+        "started_at": started_ts,
+        "eta_min": eta_min,
+        "elapsed_min": round(elapsed_min, 1) if elapsed_min is not None else None,
+        "events_recent": recent,
+    }
+
+
+def agents_live_snapshot(log_path=None, now=None) -> dict:
+    """Агрегат GET /api/agents/live: активные рейсы по кораблям из events.jsonl.
+
+    Корабль = payload.by либо produced_by (фаза 1: писателей agent.started может
+    не быть — тогда рейс собирается из любых agent.*-событий корабля). Корабль с
+    завершённым последним рейсом уходит в history, в live не попадает.
+    """
+    moment = now if now is not None else datetime.now(timezone.utc)
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    ships = {}
+    for envelope in _read_agent_events(log_path):
+        ships.setdefault(_agent_ship(envelope), []).append(envelope)
+    live = []
+    for ship, events in ships.items():
+        events.sort(key=_agent_sort_key)
+        voyages = _agent_voyages(events)
+        if not voyages:
+            continue
+        current = voyages[-1]
+        if (current[-1].get("payload") or {}).get("kind") == "agent.finished":
+            continue  # корабль у причала: GET /api/agents/history
+        live.append(_agent_live_entry(ship, current, moment))
+    live.sort(key=lambda entry: (entry["started_at"] or "", entry["by"]))
+    return {"ships": live, "generated_at": _utc_now_iso()}
+
+
+def agents_history_snapshot(limit: int = 20, log_path=None) -> dict:
+    """Агрегат GET /api/agents/history: завершённые рейсы, новые сверху.
+
+    Итоги — из payload финального agent.finished (вердикт, файлы, тесты, факты
+    токенов/времени); chain — цепочка «начальные → промежуточные → итоговые».
+    """
+    limit = max(1, min(int(limit), 100))
+    ships = {}
+    for envelope in _read_agent_events(log_path):
+        ships.setdefault(_agent_ship(envelope), []).append(envelope)
+    finished_voyages = []
+    for ship, events in ships.items():
+        events.sort(key=_agent_sort_key)
+        for voyage in _agent_voyages(events):
+            if voyage and (voyage[-1].get("payload") or {}).get("kind") == "agent.finished":
+                finished_voyages.append((ship, voyage))
+    finished_voyages.sort(key=lambda pair: _agent_sort_key(pair[1][-1]), reverse=True)
+    history = []
+    for ship, voyage in finished_voyages[:limit]:
+        final = voyage[-1]
+        final_payload = final.get("payload") or {}
+        started_ts = _agent_started_at(voyage)
+        started_dt = _parse_agent_ts(started_ts)
+        finished_dt = _parse_agent_ts(final.get("ts") or final.get("produced_at"))
+        minutes = final_payload.get("minutes")
+        if isinstance(minutes, bool) or not isinstance(minutes, (int, float)):
+            minutes = None
+            if started_dt is not None and finished_dt is not None:
+                minutes = round(max(0.0, (finished_dt - started_dt).total_seconds() / 60.0), 1)
+        tokens = final_payload.get("tokens")
+        if isinstance(tokens, bool) or not isinstance(tokens, (int, float)):
+            tokens = None
+        files = final_payload.get("files") if isinstance(final_payload.get("files"), list) else None
+        tests = final_payload.get("tests") if isinstance(final_payload.get("tests"), (str, list)) else None
+        chain = []
+        for envelope in voyage:
+            kind = (envelope.get("payload") or {}).get("kind")
+            if kind == "agent.started":
+                role = "initial"
+            elif kind == "agent.finished":
+                role = "final"
+            else:
+                role = "intermediate"
+            chain.append({
+                "role": role,
+                "kind": kind,
+                "ts": envelope.get("ts") or envelope.get("produced_at"),
+                "text": _agent_text(envelope),
+            })
+        history.append({
+            "by": ship,
+            "task": _agent_voyage_task(voyage),
+            "started_at": started_ts,
+            "finished_at": final.get("ts") or final.get("produced_at"),
+            "verdict": final_payload.get("verdict") if isinstance(final_payload.get("verdict"), str) else None,
+            "files": files,
+            "tests": tests,
+            "tokens": tokens,
+            "minutes": minutes,
+            "lanes": _agent_lanes(voyage),
+            "storms": sum(1 for envelope in voyage if (envelope.get("payload") or {}).get("kind") == "agent.storm"),
+            "chain": chain,
+        })
+    return {"voyages": history, "generated_at": _utc_now_iso()}
 
 
 def main() -> None:

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Флот в море — eVo Estate</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="agents.css?v=1">
+</head>
+<body>
+
+  <main class="fleet-page">
+
+    <header class="fleet-header">
+      <div>
+        <p class="panel-label">ФЛОТ АГЕНТОВ · ЖУРНАЛ РЕЙСОВ</p>
+        <h1>Флот в море</h1>
+        <p class="fleet-muted">Единственный источник — журнал <code>Workspace/logs/events.jsonl</code>.
+        Панель только читает: кто не пишет события agent.* — для флота не существует.</p>
+      </div>
+      <nav class="fleet-actions">
+        <a class="btn-action-primary" href="index.html">← На карту Estate</a>
+        <button class="btn-action-primary" id="fleet-refresh" type="button">Обновить сейчас</button>
+      </nav>
+    </header>
+
+    <section class="fleet-summary" aria-label="Сводка флота">
+      <article class="glass-panel fleet-card">
+        <span class="panel-label">В МОРЕ</span>
+        <strong id="fleet-count-sea">—</strong>
+        <span class="fleet-muted">активные рейсы</span>
+      </article>
+      <article class="glass-panel fleet-card fleet-card-storm">
+        <span class="panel-label">ШТОРМЯТ</span>
+        <strong id="fleet-count-storm">—</strong>
+        <span class="fleet-muted">шторм-событие без finished либо тишина &gt;30 мин</span>
+      </article>
+      <article class="glass-panel fleet-card fleet-card-harbor">
+        <span class="panel-label">У ПРИЧАЛОВ</span>
+        <strong id="fleet-count-harbor">—</strong>
+        <span class="fleet-muted">завершённые рейсы (последние 20)</span>
+      </article>
+    </section>
+
+    <p id="fleet-status" class="fleet-status" hidden role="alert"></p>
+
+    <section class="glass-panel fleet-panel" aria-label="Корабли в море">
+      <div class="fleet-panel-heading">
+        <div>
+          <p class="panel-label">АКТИВНЫЕ РЕЙСЫ</p>
+          <h2>В море</h2>
+        </div>
+        <span id="fleet-updated" class="fleet-muted fleet-updated">данные ещё не загружены</span>
+      </div>
+      <div id="fleet-sea" class="fleet-sea"></div>
+      <p class="fleet-muted fleet-note">~ — оценка панели по фактической скорости лейнов (не факт).
+      Пульс: «идёт» &lt;10 мин с события, «тихо» 10–30, «шторм» — storm-событие или &gt;30 мин тишины.</p>
+    </section>
+
+    <section class="glass-panel fleet-panel" aria-label="Завершённые рейсы">
+      <div class="fleet-panel-heading">
+        <div>
+          <p class="panel-label">ЗАВЕРШЁННЫЕ РЕЙСЫ</p>
+          <h2>Причалы</h2>
+        </div>
+        <span class="fleet-muted">цепочка: начальные → промежуточные → итоговые</span>
+      </div>
+      <div id="fleet-harbor" class="fleet-harbor"></div>
+    </section>
+
+    <footer class="fleet-footer">
+      <p class="fleet-muted">Автообновление каждые 15 с. Панель — наблюдение, управление агентами не предусмотрено (фаза 1 ТЗ).</p>
+    </footer>
+
+  </main>
+
+  <script src="agents.js?v=1"></script>
+</body>
+</html>
