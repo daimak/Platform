@@ -121,6 +121,44 @@ def _journal_transition(task_id: str, by: str, previous: str | None, next_stage:
         pass
 
 
+# Правило Sovereign (2026-11-06): колонки-врата. Перевод в test/done = заявление
+# «работа завершена, прошу приёмки» — его имеет право сделать только владелец
+# работы, не случайный прохожий (инцидент: суб-агент соседней сессии двинул
+# data-foundation в test посреди чужой ночной смены).
+GATE_STAGES = ("test", "done")
+
+
+def can_transition(task_id: str, by: str, stage: str) -> bool:
+    """Разрешён ли автору `by` перевод карточки в колонку `stage`.
+
+    Врата стоят только на GATE_STAGES; рабочие колонки и reopen открыты всем.
+    Ошибки чтения карточки не превращаются в 403 — их отработает set_stage.
+    """
+    if stage not in GATE_STAGES:
+        return True
+    path = ACTIVE_DIR / f"{task_id}.json"
+    if not path.is_file():
+        return True
+    try:
+        task = _read_task(path)
+    except (OSError, ValueError, json.JSONDecodeError):
+        return True
+    allowed = {task.get("source"), task.get("owner"), "Sovereign", "ZCode"}
+    return (by or "").strip() in allowed
+
+
+def _busy_map() -> dict:
+    """{task_id: busy-лок} для прикрепления к выдаче /api/tasks; недоступен — пусто."""
+    try:
+        if str(ROOT) not in sys.path:
+            sys.path.insert(0, str(ROOT))
+        from tools.lib.task_lock import status_all
+
+        return status_all()
+    except Exception:
+        return {}
+
+
 def archive_expired_done(now: datetime | None = None) -> int:
     current_time = now or _now()
     archived = 0
@@ -161,8 +199,10 @@ def dashboard_tasks(now: datetime | None = None, archive_expired: bool = True) -
     if not ACTIVE_DIR.exists():
         return result
 
+    busy_map = _busy_map()
     for path in sorted(ACTIVE_DIR.glob("*.json")):
         task = _read_task(path)
+        task["busy"] = busy_map.get(task["id"])
         result["all"].append(task)
         if task["status"] == "done":
             result["done"].append(task)
@@ -218,8 +258,13 @@ def set_stage(task_id: str, stage: str, now: datetime | None = None, by: str = "
     if stage == "done":
         return mark_done(task_id, now, by)
 
-    event_at = _timestamp(now or _now())
     previous = task.get("stage")
+    # no-op: карточка уже в этой колонке — без дубля в history и без фейкового
+    # события движения (fix Д-1 ночной смены 2026-11-05: "test -> test").
+    if task["status"] != "done" and previous == stage:
+        return task
+
+    event_at = _timestamp(now or _now())
     if task["status"] == "done":
         task["status"] = "active"
         task.pop("completedAt", None)
@@ -232,4 +277,35 @@ def set_stage(task_id: str, stage: str, now: datetime | None = None, by: str = "
         task["history"].append({"stage": stage, "at": event_at, "by": by})
         _atomic_write(path, task)
         _journal_transition(task_id, by, previous, stage)
+    return task
+
+
+COMMENT_MAX_LEN = 2000
+
+
+def add_comment(task_id: str, by: str, text: str, now: datetime | None = None) -> dict:
+    """Комментарий к карточке (запрос Sovereign 2026-11-06: «к задачам нельзя
+    добавить комментарий»). Хранится в поле comments карточки — история переходов
+    (history) остаётся только про движение. Комментарии не мигрируют в старых
+    карточках: нет поля = просто пустой список."""
+    if not TASK_ID_PATTERN.fullmatch(task_id):
+        raise ValueError("Некорректный идентификатор задачи.")
+    author = (by or "").strip()[:100]
+    body = (text or "").strip()
+    if not body:
+        raise ValueError("Комментарий не может быть пустым.")
+    if len(body) > COMMENT_MAX_LEN:
+        raise ValueError(f"Комментарий длиннее {COMMENT_MAX_LEN} символов.")
+
+    path = ACTIVE_DIR / f"{task_id}.json"
+    if not path.is_file():
+        raise FileNotFoundError(f"Активная задача не найдена: {task_id}")
+    task = _read_task(path)
+    comments = task.get("comments")
+    if not isinstance(comments, list):
+        comments = []
+    comments.append({"by": author or "Sovereign", "text": body,
+                     "at": _timestamp(now or _now())})
+    task["comments"] = comments
+    _atomic_write(path, task)
     return task

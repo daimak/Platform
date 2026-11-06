@@ -275,11 +275,56 @@ function openModal(id, opts = {}) {
               : `<span class="kb-badge">${esc(h.status || "")}</span>`}
           </div>`).join("")}
       </div>` : ""}
+
+    ${Array.isArray(task.comments) && task.comments.length ? `
+      <div class="kbm-section">
+        <div class="kbm-sec-title">Комментарии (${task.comments.length})</div>
+        ${[...task.comments].reverse().map((c) => `
+          <div class="kbm-comment">
+            <div class="kbm-comment-head">
+              <b>${esc(c.by || "—")}</b>
+              <span class="kbm-hist-when">${fmtDate(c.at)}</span>
+            </div>
+            <div class="kbm-comment-text">${esc(c.text)}</div>
+          </div>`).join("")}
+      </div>` : ""}
+
+    <div class="kbm-section">
+      <div class="kbm-sec-title">Добавить комментарий</div>
+      <textarea class="kbm-comment-input" id="kbm-comment-input" maxlength="2000" rows="3"
+        placeholder="Текст комментария…"></textarea>
+      <button class="kbm-comment-send" id="kbm-comment-send" type="button">Добавить</button>
+    </div>
   `;
 
   document.getElementById("kbm-body").innerHTML = html;
   root.classList.add("open");
   document.getElementById("kbm-close").addEventListener("click", closeModal);
+  const commentSend = document.getElementById("kbm-comment-send");
+  if (commentSend) {
+    commentSend.addEventListener("click", async () => {
+      const input = document.getElementById("kbm-comment-input");
+      const text = ((input && input.value) || "").trim();
+      if (!text) { toast("Комментарий пуст", true); return; }
+      commentSend.disabled = true;
+      try {
+        const res = await fetch(`/api/tasks/${encodeURIComponent(task.id)}/comments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ by: "Sovereign", text }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        TASKS = data.tasks.all || [];
+        render();
+        toast("Комментарий добавлен");
+        openModal(task.id, { keepScroll: true });
+      } catch (err) {
+        toast(`Ошибка: ${err.message}`, true);
+        commentSend.disabled = false;
+      }
+    });
+  }
   root.querySelectorAll(".kbm-stage-btn:not(.current)").forEach((btn) => {
     btn.addEventListener("click", () => {
       moveTask(task.id, btn.dataset.stage)
