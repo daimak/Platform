@@ -1,0 +1,18 @@
+{
+  "id": "jobs-registry-hardening",
+  "title": "Тех-долг реестра джобов: stale-running и типы полей (P2 ревизора)",
+  "source": "Sovereign",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-11-05T20:07:02Z",
+  "description": "Отчёт ревизора ночи: (1) dashboard-server.py:1148-1177 — running-статус джоба зависает навечно после краха сервера (daemon-поток умер, в jobs_state.json остался started_at без finished_at → вечный 409). Чинить: при старте сервера/чтении state считать запись мёртвой если started_at старше timeout_s+запас. (2) int(timeout_s) вне try + _load_jobs_registry не проверяет типы (timeout_s строка → 500). Чинить: валидация типов в загрузчике (timeout_s int>0, enabled bool). ПРАВИЛА: git запрещён, малые вставки, unittest зелёный (80 тестов), сервер 8765 не рестартовать (сделает вахтёр).",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-05T20:07:02Z",
+      "by": "ZCode",
+      "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+    }
+  ],
+  "stage": "todo"
+}

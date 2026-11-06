@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-11-05 00:52",
+  "generatedAt": "2026-11-06 12:10",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -41,7 +41,8 @@ window.EVO_BRIEF = {
             "at": "2026-11-01T08:56:15Z"
           }
         ],
-        "stage": "analysis"
+        "stage": "analysis",
+        "busy": null
       },
       {
         "id": "kali-pentest-lab",
@@ -159,7 +160,8 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:13:35Z"
           }
         ],
-        "stage": "test"
+        "stage": "test",
+        "busy": null
       },
       {
         "id": "keepass-master-password-backup",
@@ -179,7 +181,8 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:13:39Z"
           }
         ],
-        "stage": "analysis"
+        "stage": "analysis",
+        "busy": null
       },
       {
         "id": "money-radar-orders",
@@ -194,7 +197,8 @@ window.EVO_BRIEF = {
             "at": "2026-10-29T20:45:00Z",
             "note": "Приоритет Sovereign: реальные деньги любой ценой. Вести всесторонне: (1) триаж-доска Workspace/analytics/orders_board.json + orders_report.md (tools/orders_triage.py) — перспективные/основной/отсев, ручная сортировка сохраняется; (2) подключить к агрегатору биржи заказов (fl.ru, kwork — функции уже есть в tools/job_search.py, в снапшот 29.10 не попали); (3) подтягивать has_salary и свежесть; (4) готовить первые отклики на перспективные заказы (скраперы/парсеры/боты/LLM/DevOps); (5) задействовать все ресурсы платформы: агрегатор, экстракция зарплат, дашборд Trading Quarter, агенты. MVP уже стоит, работаем итерациями."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "rotate-langsmith-freellmapi",
@@ -224,7 +228,8 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
-        "description": "Ротация LangSmith + FreeLLMAPI ключей (аудит 04.11: ключи в локальном reflog-коммите 1164ed7, origin чист; sk-ant — dummy)"
+        "description": "Ротация LangSmith + FreeLLMAPI ключей (аудит 04.11: ключи в локальном reflog-коммите 1164ed7, origin чист; sk-ant — dummy)",
+        "busy": null
       },
       {
         "id": "sec-todo-2026-11-05",
@@ -242,7 +247,8 @@ window.EVO_BRIEF = {
             "by": "ZCode (E-047, выжимка по просьбе Sovereign)",
             "note": "ГОТОВО 04.11: (1) «Целевой стенд» в AI Sandbox → Инструменты — цели-чипы + галочки проверок → nmap_probe, прогон и скриншот ок (app.js?v=12, languages.js?v=3); (2) найден и закрыт routing-drift баг /api/sandbox/run (V-06), сервер 8765 перезапущен — ожили и эндпоинты E-046; (3) VULN-PROGRAM.md в Workspace/pentest/2026-11-04-vuln-program/ (вне git): 12 уязвимостей Platform + 12 индустриальных классов + фазы Ф-1..Ф-5; (4) Kali: VM headless 192.168.238.128, снапшот pre-pentest-2026-11-04, консоль-блок для шага 7 сохранён Дмитрием. || НА 05.11: [1] Ротация sk-ant руками Sovereign (V-01, P1, ~10 мин: панель Anthropic → новый ключ → Vault → правка Workspace/main.py:17) — критерий: secret_scan RED=0. [2] Консоль-блок Kali (учётка watson) → ZCode поднимает Juice Shop (target-server.sh) → скан 192.168.238.128 через стенд → фазовый отчёт в Workspace/pentest/2026-11-04-juiceshop/. [3] После ротации: слово на вычистку git-истории (filter-repo/BFG по sk-ant, 709b2c5). [4] Ф-1 остаток: rae-work HAR/chrome-profile под пароль/удалить (куки hh!), мастер-пароль на Vault, pre-commit hook secret_scan. [5] Коммит кода стенда — когда разобраны чужие правки в app.js/dashboard-server (сейчас не смешивать)."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "staff-hh-dashboard-loss",
@@ -258,7 +264,8 @@ window.EVO_BRIEF = {
             "by": "Code Reviewer (пилот штата, E-023)",
             "note": "P1: карточки hh из HTML-фолбэка получают date=''; parse_date даёт datetime.min; сортировка уносит их в хвост, слайс [:60] вырезает первыми. Верифицировано: results.json — 60 hh-записей, все с пустой датой; vacancies.js — 0 записей hh. Фикс: пустую дату подставлять временем запуска (hh-выдача отсортирована по свежести) или трактовать пустую дату как now в ключе сортировки. Файл: tools/job_search.py:133, 388, 400."
           }
-        ]
+        ],
+        "busy": null
       }
     ],
     "regular": [
@@ -276,9 +283,15 @@ window.EVO_BRIEF = {
             "at": "2026-11-05T00:35:00Z",
             "by": "ZCode",
             "note": "Идея Sovereign 05.11 в чате. Заложена в Сделать; ждёт сдачи data-foundation."
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-05T20:46:01Z",
+            "by": "ZCode"
           }
         ],
-        "stage": "todo"
+        "stage": "test",
+        "busy": null
       },
       {
         "id": "clean-empty-stubs",
@@ -367,7 +380,8 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:14:15Z"
           }
         ],
-        "stage": "todo"
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "data-foundation",
@@ -402,10 +416,33 @@ window.EVO_BRIEF = {
             "stage": "test",
             "at": "2026-11-04T19:52:07Z",
             "by": "ZCode"
+          },
+          {
+            "stage": "in-progress",
+            "at": "2026-11-05T19:47:33Z",
+            "by": "ZCode"
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-05T19:47:53Z",
+            "by": "ZCode"
           }
         ],
         "stage": "test",
-        "owner": "агент-строитель ZCode (Л-1…Л-5, старт 23:58)"
+        "owner": "агент-строитель ZCode (Л-1…Л-5, старт 23:58)",
+        "comments": [
+          {
+            "by": "Sovereign",
+            "text": "Night shift accepted: envelope, journal, gates, busy-lock.",
+            "at": "2026-11-05T20:06:23Z"
+          },
+          {
+            "by": "Sovereign",
+            "text": "Ночная смена принята: конверт, журнал, врата, busy-лок. ✅",
+            "at": "2026-11-05T20:06:32Z"
+          }
+        ],
+        "busy": null
       },
       {
         "id": "higgsfield-pilot-test",
@@ -464,10 +501,16 @@ window.EVO_BRIEF = {
             "at": "2026-11-05T01:00:00Z",
             "by": "ZCode",
             "note": "Старт агента-пилота: SDK-осмотр, один безопасный прогон (auth-check/dry-run, БЕЗ платных вызовов), полная документация. Живой кадр — после ключа от Sovereign."
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-05T19:39:58Z",
+            "by": "ZCode"
           }
         ],
-        "stage": "in-progress",
-        "owner": "агент-пилот ZCode (Higgsfield SDK+docs, старт 05.11)"
+        "stage": "test",
+        "owner": "агент-пилот ZCode (Higgsfield SDK+docs, старт 05.11)",
+        "busy": null
       },
       {
         "id": "holmes-uncommitted-edits",
@@ -488,7 +531,46 @@ window.EVO_BRIEF = {
             "at": "2026-11-03T06:51:12Z"
           }
         ],
-        "stage": "in-progress"
+        "stage": "in-progress",
+        "busy": null
+      },
+      {
+        "id": "jobs-registry-hardening",
+        "title": "Тех-долг реестра джобов: stale-running и типы полей (P2 ревизора)",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Отчёт ревизора ночи: (1) dashboard-server.py:1148-1177 — running-статус джоба зависает навечно после краха сервера (daemon-поток умер, в jobs_state.json остался started_at без finished_at → вечный 409). Чинить: при старте сервера/чтении state считать запись мёртвой если started_at старше timeout_s+запас. (2) int(timeout_s) вне try + _load_jobs_registry не проверяет типы (timeout_s строка → 500). Чинить: валидация типов в загрузчике (timeout_s int>0, enabled bool). ПРАВИЛА: git запрещён, малые вставки, unittest зелёный (80 тестов), сервер 8765 не рестартовать (сделает вахтёр).",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+          }
+        ],
+        "stage": "todo",
+        "busy": null
+      },
+      {
+        "id": "master-profile-gaps",
+        "title": "Заполнить 6 пробелов фактуры master-profile.json (конвейер откликов)",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Файл: Workspace/private/resume/master-profile.json (зона данных Sovereign, вне git). Пробелы из todo-поля: (1) реальные цифры в 3 кейсах proposals/2026-11-04/ — помечены TODO; (2) ссылки-доказательства (репо, HAR, runbook); (3) preferences.rate/hours — своя ставка; (4) links: портфолио/GitHub/профили; (5) подтвердить «8+ лет» и уровень Kubernetes (противоречие откликов 03/07/09 vs 12); (6) какие навыки из «предлагаемого подхода» считать реальными. ПРАВИЛА: git запрещён; не выдумывать факты — только из существующих материалов Workspace/private/proposals/; чего нет — остаётся null/TODO с пометкой. Кейсы править в 2026-11-04/*.md синхронно с профилем.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+          }
+        ],
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "money-lanes-2026-11-05",
@@ -532,9 +614,16 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T19:35:00Z",
             "by": "ZCode",
             "note": "Создана по команде Дмитрия 04.11 ~19:35 Тшк («запиши все это в задачу на завтра») — каталог денежных лейнов из интернет-исследования «как зарабатывают AI-айтишники 2026»."
+          },
+          {
+            "status": "active",
+            "at": "2026-11-06T00:40:00Z",
+            "by": "ZCode",
+            "note": "Ночная «десятка агентов» исполнена 10/10 по команде Дмитрия («запустить десяток агентов, чтобы жрали токены с пользой»): ресёрч R1 voice (Vapi+свой шлюз, себест. $0.02-0.09/мин, узкое место UZ-номера — Telnyx от $50/мес, узб. язык не готов → MVP на русском), R2 Frigate (N100 тянет 6-8 камер, LPR встроен 0.16, демо $560-1150, RMR $15-40/объект, аргумент ЗРУ-547), R3 прайс-карта (Kwork демпинг 500₽, Upwork n8n+AI $100-180/ч, OLX УЗ живой 135+ объявлений, вход: парсер 5-8K₽/бот 12-18K₽/AI-автоматизация 25-50K₽), R4 n8n-пакеты («Заявка под контролем» 45-70K₽, «Репутация» 60-90K₽, «Цифровой офис» 90-150K₽ + абонентка), R5 приватные LLM (Qwen3+vLLM, MoE на CPU €45-90/мес, ВАЖНО: УЗ отменил локализацию персданных 03.2026 — продавать через ТКО и коммерч. тайну), C1 объявления 4 площадок, C2 сценарии звонков СТО/клиника, C3 кейсы+резюме RU/EN, K1 код-скелет voice-агента (FastAPI+Vapi Custom LLM+Telegram), K2 план Frigate-стенда (демо без железа на mp4-цикле). Артефакты: Workspace/analytics/research/_agents-2026-11-04/ (сводка SUMMARY-utro-2026-11-05.md). Расход ~6.87M. Гочи: спавн только последовательно (пары рвёт concurrency), сон хоста убивает фон."
           }
         ],
-        "stage": "analysis"
+        "stage": "analysis",
+        "busy": null
       },
       {
         "id": "morning-review-agent-diagnostics",
@@ -552,7 +641,27 @@ window.EVO_BRIEF = {
             "by": "Sovereign",
             "note": "Создано по просьбе Дмитрия «запиши результат и оставь на утро задачу — еще раз ознакомиться»"
           }
-        ]
+        ],
+        "busy": null
+      },
+      {
+        "id": "resume-pipeline-collision",
+        "title": "Коллизия двойного исполнения: найти профиль «Резюме-конвейера»",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Контекст: ночью суб-агент «Резюме-конвейер» соседней сессии Sovereign исполнял (вероятно) лейн Л-4 параллельно с ночным писарем — возможен второй master-profile.json или черновики вне канона. ЗАДАЧА: обследовать Workspace/private/resume/ и workspace-черновики параллельных сессий; найти артефакты «Резюме-конвейера»; свести в один канон (канон = Workspace/private/resume/master-profile.json от ночного писаря, 27 навыков/5 кейсов); чужие черновики — не удалить, а влить недостающее и пометить merged. ОТЧЁТ: список найденных артефактов + что влито. Git запрещён; приватную зону наружу не выносить.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+          }
+        ],
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "staff-agents-2026-11-05",
@@ -570,7 +679,8 @@ window.EVO_BRIEF = {
             "by": "ZCode",
             "note": "Установлены в ~/.zcode/agents/ из каталога agency-agents (230+): engineering-devops-automator.md и engineering-technical-writer.md. Штат: 8 ролей. Зачем: (1) DevOps Automator — инфраструктурная автоматизация, CI/CD, операции: родная стихия Дмитрия, усилит tools/ops (бэкап/healthcheck), переезд Platform на хостинг (план fffc974), рутину вакансий DevOps; (2) Technical Writer — документация, README, гайды: закрывает БЛОКЕР №1 поиска работы (3 кейса для резюме + визитка в Workspace/private/resume/), описания услуг/откликов, устаревшие README Platform. Как работают: как остальные 6 — вызов в ZCode-окне (агент = роль с промптом; рантайма как у Холмса/Хантера нет и не нужно), привязка к задаче → прогон → отчёт. НОВЫЕ ТИПЫ УЖЕ ВИДНЫ СИСТЕМЕ БЕЗ ПЕРЕЗАПУСКА (хост подхватил живьём). Смоук 05.11 00:2x: Technical Writer живой — микрозадача справки за 88 сек / ~22k токенов, чистый русский текст + «СМОУК ОК»; первая попытка упёрлась в «user concurrency limit» (слот соседнего чата) — повтор через 45 с прошёл. Утром: демонстрация по живой задаче (кейс №1 для резюме техписателем, healthcheck-скрипт девопсом)."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "staff-secrets-rotation",
@@ -586,7 +696,8 @@ window.EVO_BRIEF = {
             "by": "Secrets & Credential Hygiene Engineer (пилот штата, E-023)",
             "note": "P1: реальные LANGSMITH_API_KEY и FREE_LLM_API_KEY лежат plaintext в C:/Users/temp/.zcode/cli/artifacts/session_c87212841fb8241f72e3dd5a6f5e7333/ (call_99ddca97… — эхо .env, call_fcdf812e…). Git-история чиста (P0 нет, 262 коммита). Действия по санкции Sovereign: (1) удалить два artifact-файла; (2) ротировать LANGSMITH_API_KEY (smith.langchain.com) и FREE_LLM_API_KEY (шлюз :31415); (3) обновить Workspace/.env и KeePassXC. P2: pre-commit сканер (gitleaks); заглушку sk-… из Workspace/main.py:17 убрать из tracked-кода."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "study-ai-agents",
@@ -650,7 +761,27 @@ window.EVO_BRIEF = {
             "at": "2026-10-30T16:33:00Z",
             "note": "Создана ZCode по прямому указанию Дмитрия («создай в AI задачу — изучение агентов»); декомпозиция заложена в JSON. 30.10 ~21:33 local (UTC+5)."
           }
-        ]
+        ],
+        "busy": null
+      },
+      {
+        "id": "task-lock-hardening",
+        "title": "Тех-долг task_lock: валидация task_id, докстринг журнала, кран тестов (P2 ревизора)",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Отчёт ревизора ночи: (1) tools/lib/task_lock.py — task_id нигде не валидируется: путь-траверсал ../.. и glob-инъекция *?[ в acquire/heartbeat/release/status/claims. Чинить: отклонять task_id с /, \\, .., glob-метасимволами (по образцу TASK_ID_PATTERN из task_store). (2) tools/lib/log_event.py:8-10 — докстринг противоречит фиксу Д-2 (обновить, оговорка про многопроцессную запись). (3) тесты TaskLockTest пишут в ПРОДОВЫЙ events.jsonl — завести кран (параметр journal_path/монки-патч). ПРАВИЛА: git запрещён, unittest зелёный, сервер не трогать.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+          }
+        ],
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "update-current-context",
@@ -670,40 +801,11 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:28:17Z"
           }
         ],
-        "stage": "in-progress"
+        "stage": "in-progress",
+        "busy": null
       }
     ],
     "done": [
-      {
-        "id": "holmes-untracked-files",
-        "title": "Холмс: разобрать untracked-файлы (коммит или .gitignore)",
-        "source": "Holmes",
-        "priority": "regular",
-        "status": "done",
-        "createdAt": "2026-10-29T19:34:08Z",
-        "history": [
-          {
-            "status": "active",
-            "at": "2026-10-29T19:34:08Z",
-            "by": "Holmes",
-            "note": "Untracked-файлов: 13: Workspace/analytics/2026-10-29/report.md, Workspace/analytics/2026-10-29/salary_extract_cache.json, Workspace/analytics/2026-10-29/salary_extracted.csv, tools/analytics_report.py"
-          },
-          {
-            "stage": "in-progress",
-            "at": "2026-11-01T09:07:49Z"
-          },
-          {
-            "stage": "test",
-            "at": "2026-11-03T06:43:23Z"
-          },
-          {
-            "status": "done",
-            "at": "2026-11-04T06:13:36Z"
-          }
-        ],
-        "stage": "test",
-        "completedAt": "2026-11-04T06:13:36Z"
-      },
       {
         "id": "merge-branches-d002",
         "title": "Слияние веток по D-002",
@@ -745,7 +847,8 @@ window.EVO_BRIEF = {
             "note": "Закрыто 04.11 (E-046): merge origin/main (PR #2) в feature_1.8.6 → push origin/main (5057dcb), локальная main создана, ветки feature_1.8.6/1.8.5/1.8.2 удалены локально и на origin. Работа продолжается на main."
           }
         ],
-        "stage": "in-progress"
+        "stage": "in-progress",
+        "busy": null
       }
     ],
     "all": [
@@ -763,9 +866,15 @@ window.EVO_BRIEF = {
             "at": "2026-11-05T00:35:00Z",
             "by": "ZCode",
             "note": "Идея Sovereign 05.11 в чате. Заложена в Сделать; ждёт сдачи data-foundation."
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-05T20:46:01Z",
+            "by": "ZCode"
           }
         ],
-        "stage": "todo"
+        "stage": "test",
+        "busy": null
       },
       {
         "id": "clean-empty-stubs",
@@ -854,7 +963,8 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:14:15Z"
           }
         ],
-        "stage": "todo"
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "data-foundation",
@@ -889,10 +999,33 @@ window.EVO_BRIEF = {
             "stage": "test",
             "at": "2026-11-04T19:52:07Z",
             "by": "ZCode"
+          },
+          {
+            "stage": "in-progress",
+            "at": "2026-11-05T19:47:33Z",
+            "by": "ZCode"
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-05T19:47:53Z",
+            "by": "ZCode"
           }
         ],
         "stage": "test",
-        "owner": "агент-строитель ZCode (Л-1…Л-5, старт 23:58)"
+        "owner": "агент-строитель ZCode (Л-1…Л-5, старт 23:58)",
+        "comments": [
+          {
+            "by": "Sovereign",
+            "text": "Night shift accepted: envelope, journal, gates, busy-lock.",
+            "at": "2026-11-05T20:06:23Z"
+          },
+          {
+            "by": "Sovereign",
+            "text": "Ночная смена принята: конверт, журнал, врата, busy-лок. ✅",
+            "at": "2026-11-05T20:06:32Z"
+          }
+        ],
+        "busy": null
       },
       {
         "id": "higgsfield-pilot-test",
@@ -951,10 +1084,16 @@ window.EVO_BRIEF = {
             "at": "2026-11-05T01:00:00Z",
             "by": "ZCode",
             "note": "Старт агента-пилота: SDK-осмотр, один безопасный прогон (auth-check/dry-run, БЕЗ платных вызовов), полная документация. Живой кадр — после ключа от Sovereign."
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-05T19:39:58Z",
+            "by": "ZCode"
           }
         ],
-        "stage": "in-progress",
-        "owner": "агент-пилот ZCode (Higgsfield SDK+docs, старт 05.11)"
+        "stage": "test",
+        "owner": "агент-пилот ZCode (Higgsfield SDK+docs, старт 05.11)",
+        "busy": null
       },
       {
         "id": "holmes-host-noise",
@@ -975,7 +1114,8 @@ window.EVO_BRIEF = {
             "at": "2026-11-01T08:56:15Z"
           }
         ],
-        "stage": "analysis"
+        "stage": "analysis",
+        "busy": null
       },
       {
         "id": "holmes-uncommitted-edits",
@@ -996,37 +1136,27 @@ window.EVO_BRIEF = {
             "at": "2026-11-03T06:51:12Z"
           }
         ],
-        "stage": "in-progress"
+        "stage": "in-progress",
+        "busy": null
       },
       {
-        "id": "holmes-untracked-files",
-        "title": "Холмс: разобрать untracked-файлы (коммит или .gitignore)",
-        "source": "Holmes",
+        "id": "jobs-registry-hardening",
+        "title": "Тех-долг реестра джобов: stale-running и типы полей (P2 ревизора)",
+        "source": "Sovereign",
         "priority": "regular",
-        "status": "done",
-        "createdAt": "2026-10-29T19:34:08Z",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Отчёт ревизора ночи: (1) dashboard-server.py:1148-1177 — running-статус джоба зависает навечно после краха сервера (daemon-поток умер, в jobs_state.json остался started_at без finished_at → вечный 409). Чинить: при старте сервера/чтении state считать запись мёртвой если started_at старше timeout_s+запас. (2) int(timeout_s) вне try + _load_jobs_registry не проверяет типы (timeout_s строка → 500). Чинить: валидация типов в загрузчике (timeout_s int>0, enabled bool). ПРАВИЛА: git запрещён, малые вставки, unittest зелёный (80 тестов), сервер 8765 не рестартовать (сделает вахтёр).",
         "history": [
           {
             "status": "active",
-            "at": "2026-10-29T19:34:08Z",
-            "by": "Holmes",
-            "note": "Untracked-файлов: 13: Workspace/analytics/2026-10-29/report.md, Workspace/analytics/2026-10-29/salary_extract_cache.json, Workspace/analytics/2026-10-29/salary_extracted.csv, tools/analytics_report.py"
-          },
-          {
-            "stage": "in-progress",
-            "at": "2026-11-01T09:07:49Z"
-          },
-          {
-            "stage": "test",
-            "at": "2026-11-03T06:43:23Z"
-          },
-          {
-            "status": "done",
-            "at": "2026-11-04T06:13:36Z"
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
           }
         ],
-        "stage": "test",
-        "completedAt": "2026-11-04T06:13:36Z"
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "kali-pentest-lab",
@@ -1144,7 +1274,8 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:13:35Z"
           }
         ],
-        "stage": "test"
+        "stage": "test",
+        "busy": null
       },
       {
         "id": "keepass-master-password-backup",
@@ -1164,7 +1295,27 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:13:39Z"
           }
         ],
-        "stage": "analysis"
+        "stage": "analysis",
+        "busy": null
+      },
+      {
+        "id": "master-profile-gaps",
+        "title": "Заполнить 6 пробелов фактуры master-profile.json (конвейер откликов)",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Файл: Workspace/private/resume/master-profile.json (зона данных Sovereign, вне git). Пробелы из todo-поля: (1) реальные цифры в 3 кейсах proposals/2026-11-04/ — помечены TODO; (2) ссылки-доказательства (репо, HAR, runbook); (3) preferences.rate/hours — своя ставка; (4) links: портфолио/GitHub/профили; (5) подтвердить «8+ лет» и уровень Kubernetes (противоречие откликов 03/07/09 vs 12); (6) какие навыки из «предлагаемого подхода» считать реальными. ПРАВИЛА: git запрещён; не выдумывать факты — только из существующих материалов Workspace/private/proposals/; чего нет — остаётся null/TODO с пометкой. Кейсы править в 2026-11-04/*.md синхронно с профилем.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+          }
+        ],
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "merge-branches-d002",
@@ -1207,7 +1358,8 @@ window.EVO_BRIEF = {
             "note": "Закрыто 04.11 (E-046): merge origin/main (PR #2) в feature_1.8.6 → push origin/main (5057dcb), локальная main создана, ветки feature_1.8.6/1.8.5/1.8.2 удалены локально и на origin. Работа продолжается на main."
           }
         ],
-        "stage": "in-progress"
+        "stage": "in-progress",
+        "busy": null
       },
       {
         "id": "money-lanes-2026-11-05",
@@ -1251,9 +1403,16 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T19:35:00Z",
             "by": "ZCode",
             "note": "Создана по команде Дмитрия 04.11 ~19:35 Тшк («запиши все это в задачу на завтра») — каталог денежных лейнов из интернет-исследования «как зарабатывают AI-айтишники 2026»."
+          },
+          {
+            "status": "active",
+            "at": "2026-11-06T00:40:00Z",
+            "by": "ZCode",
+            "note": "Ночная «десятка агентов» исполнена 10/10 по команде Дмитрия («запустить десяток агентов, чтобы жрали токены с пользой»): ресёрч R1 voice (Vapi+свой шлюз, себест. $0.02-0.09/мин, узкое место UZ-номера — Telnyx от $50/мес, узб. язык не готов → MVP на русском), R2 Frigate (N100 тянет 6-8 камер, LPR встроен 0.16, демо $560-1150, RMR $15-40/объект, аргумент ЗРУ-547), R3 прайс-карта (Kwork демпинг 500₽, Upwork n8n+AI $100-180/ч, OLX УЗ живой 135+ объявлений, вход: парсер 5-8K₽/бот 12-18K₽/AI-автоматизация 25-50K₽), R4 n8n-пакеты («Заявка под контролем» 45-70K₽, «Репутация» 60-90K₽, «Цифровой офис» 90-150K₽ + абонентка), R5 приватные LLM (Qwen3+vLLM, MoE на CPU €45-90/мес, ВАЖНО: УЗ отменил локализацию персданных 03.2026 — продавать через ТКО и коммерч. тайну), C1 объявления 4 площадок, C2 сценарии звонков СТО/клиника, C3 кейсы+резюме RU/EN, K1 код-скелет voice-агента (FastAPI+Vapi Custom LLM+Telegram), K2 план Frigate-стенда (демо без железа на mp4-цикле). Артефакты: Workspace/analytics/research/_agents-2026-11-04/ (сводка SUMMARY-utro-2026-11-05.md). Расход ~6.87M. Гочи: спавн только последовательно (пары рвёт concurrency), сон хоста убивает фон."
           }
         ],
-        "stage": "analysis"
+        "stage": "analysis",
+        "busy": null
       },
       {
         "id": "money-radar-orders",
@@ -1268,7 +1427,8 @@ window.EVO_BRIEF = {
             "at": "2026-10-29T20:45:00Z",
             "note": "Приоритет Sovereign: реальные деньги любой ценой. Вести всесторонне: (1) триаж-доска Workspace/analytics/orders_board.json + orders_report.md (tools/orders_triage.py) — перспективные/основной/отсев, ручная сортировка сохраняется; (2) подключить к агрегатору биржи заказов (fl.ru, kwork — функции уже есть в tools/job_search.py, в снапшот 29.10 не попали); (3) подтягивать has_salary и свежесть; (4) готовить первые отклики на перспективные заказы (скраперы/парсеры/боты/LLM/DevOps); (5) задействовать все ресурсы платформы: агрегатор, экстракция зарплат, дашборд Trading Quarter, агенты. MVP уже стоит, работаем итерациями."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "morning-review-agent-diagnostics",
@@ -1286,7 +1446,27 @@ window.EVO_BRIEF = {
             "by": "Sovereign",
             "note": "Создано по просьбе Дмитрия «запиши результат и оставь на утро задачу — еще раз ознакомиться»"
           }
-        ]
+        ],
+        "busy": null
+      },
+      {
+        "id": "resume-pipeline-collision",
+        "title": "Коллизия двойного исполнения: найти профиль «Резюме-конвейера»",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Контекст: ночью суб-агент «Резюме-конвейер» соседней сессии Sovereign исполнял (вероятно) лейн Л-4 параллельно с ночным писарем — возможен второй master-profile.json или черновики вне канона. ЗАДАЧА: обследовать Workspace/private/resume/ и workspace-черновики параллельных сессий; найти артефакты «Резюме-конвейера»; свести в один канон (канон = Workspace/private/resume/master-profile.json от ночного писаря, 27 навыков/5 кейсов); чужие черновики — не удалить, а влить недостающее и пометить merged. ОТЧЁТ: список найденных артефактов + что влито. Git запрещён; приватную зону наружу не выносить.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+          }
+        ],
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "rotate-langsmith-freellmapi",
@@ -1316,7 +1496,8 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
-        "description": "Ротация LangSmith + FreeLLMAPI ключей (аудит 04.11: ключи в локальном reflog-коммите 1164ed7, origin чист; sk-ant — dummy)"
+        "description": "Ротация LangSmith + FreeLLMAPI ключей (аудит 04.11: ключи в локальном reflog-коммите 1164ed7, origin чист; sk-ant — dummy)",
+        "busy": null
       },
       {
         "id": "sec-todo-2026-11-05",
@@ -1334,7 +1515,8 @@ window.EVO_BRIEF = {
             "by": "ZCode (E-047, выжимка по просьбе Sovereign)",
             "note": "ГОТОВО 04.11: (1) «Целевой стенд» в AI Sandbox → Инструменты — цели-чипы + галочки проверок → nmap_probe, прогон и скриншот ок (app.js?v=12, languages.js?v=3); (2) найден и закрыт routing-drift баг /api/sandbox/run (V-06), сервер 8765 перезапущен — ожили и эндпоинты E-046; (3) VULN-PROGRAM.md в Workspace/pentest/2026-11-04-vuln-program/ (вне git): 12 уязвимостей Platform + 12 индустриальных классов + фазы Ф-1..Ф-5; (4) Kali: VM headless 192.168.238.128, снапшот pre-pentest-2026-11-04, консоль-блок для шага 7 сохранён Дмитрием. || НА 05.11: [1] Ротация sk-ant руками Sovereign (V-01, P1, ~10 мин: панель Anthropic → новый ключ → Vault → правка Workspace/main.py:17) — критерий: secret_scan RED=0. [2] Консоль-блок Kali (учётка watson) → ZCode поднимает Juice Shop (target-server.sh) → скан 192.168.238.128 через стенд → фазовый отчёт в Workspace/pentest/2026-11-04-juiceshop/. [3] После ротации: слово на вычистку git-истории (filter-repo/BFG по sk-ant, 709b2c5). [4] Ф-1 остаток: rae-work HAR/chrome-profile под пароль/удалить (куки hh!), мастер-пароль на Vault, pre-commit hook secret_scan. [5] Коммит кода стенда — когда разобраны чужие правки в app.js/dashboard-server (сейчас не смешивать)."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "staff-agents-2026-11-05",
@@ -1352,7 +1534,8 @@ window.EVO_BRIEF = {
             "by": "ZCode",
             "note": "Установлены в ~/.zcode/agents/ из каталога agency-agents (230+): engineering-devops-automator.md и engineering-technical-writer.md. Штат: 8 ролей. Зачем: (1) DevOps Automator — инфраструктурная автоматизация, CI/CD, операции: родная стихия Дмитрия, усилит tools/ops (бэкап/healthcheck), переезд Platform на хостинг (план fffc974), рутину вакансий DevOps; (2) Technical Writer — документация, README, гайды: закрывает БЛОКЕР №1 поиска работы (3 кейса для резюме + визитка в Workspace/private/resume/), описания услуг/откликов, устаревшие README Platform. Как работают: как остальные 6 — вызов в ZCode-окне (агент = роль с промптом; рантайма как у Холмса/Хантера нет и не нужно), привязка к задаче → прогон → отчёт. НОВЫЕ ТИПЫ УЖЕ ВИДНЫ СИСТЕМЕ БЕЗ ПЕРЕЗАПУСКА (хост подхватил живьём). Смоук 05.11 00:2x: Technical Writer живой — микрозадача справки за 88 сек / ~22k токенов, чистый русский текст + «СМОУК ОК»; первая попытка упёрлась в «user concurrency limit» (слот соседнего чата) — повтор через 45 с прошёл. Утром: демонстрация по живой задаче (кейс №1 для резюме техписателем, healthcheck-скрипт девопсом)."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "staff-hh-dashboard-loss",
@@ -1368,7 +1551,8 @@ window.EVO_BRIEF = {
             "by": "Code Reviewer (пилот штата, E-023)",
             "note": "P1: карточки hh из HTML-фолбэка получают date=''; parse_date даёт datetime.min; сортировка уносит их в хвост, слайс [:60] вырезает первыми. Верифицировано: results.json — 60 hh-записей, все с пустой датой; vacancies.js — 0 записей hh. Фикс: пустую дату подставлять временем запуска (hh-выдача отсортирована по свежести) или трактовать пустую дату как now в ключе сортировки. Файл: tools/job_search.py:133, 388, 400."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "staff-secrets-rotation",
@@ -1384,7 +1568,8 @@ window.EVO_BRIEF = {
             "by": "Secrets & Credential Hygiene Engineer (пилот штата, E-023)",
             "note": "P1: реальные LANGSMITH_API_KEY и FREE_LLM_API_KEY лежат plaintext в C:/Users/temp/.zcode/cli/artifacts/session_c87212841fb8241f72e3dd5a6f5e7333/ (call_99ddca97… — эхо .env, call_fcdf812e…). Git-история чиста (P0 нет, 262 коммита). Действия по санкции Sovereign: (1) удалить два artifact-файла; (2) ротировать LANGSMITH_API_KEY (smith.langchain.com) и FREE_LLM_API_KEY (шлюз :31415); (3) обновить Workspace/.env и KeePassXC. P2: pre-commit сканер (gitleaks); заглушку sk-… из Workspace/main.py:17 убрать из tracked-кода."
           }
-        ]
+        ],
+        "busy": null
       },
       {
         "id": "study-ai-agents",
@@ -1448,7 +1633,27 @@ window.EVO_BRIEF = {
             "at": "2026-10-30T16:33:00Z",
             "note": "Создана ZCode по прямому указанию Дмитрия («создай в AI задачу — изучение агентов»); декомпозиция заложена в JSON. 30.10 ~21:33 local (UTC+5)."
           }
-        ]
+        ],
+        "busy": null
+      },
+      {
+        "id": "task-lock-hardening",
+        "title": "Тех-долг task_lock: валидация task_id, докстринг журнала, кран тестов (P2 ревизора)",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-05T20:07:02Z",
+        "description": "Отчёт ревизора ночи: (1) tools/lib/task_lock.py — task_id нигде не валидируется: путь-траверсал ../.. и glob-инъекция *?[ в acquire/heartbeat/release/status/claims. Чинить: отклонять task_id с /, \\, .., glob-метасимволами (по образцу TASK_ID_PATTERN из task_store). (2) tools/lib/log_event.py:8-10 — докстринг противоречит фиксу Д-2 (обновить, оговорка про многопроцессную запись). (3) тесты TaskLockTest пишут в ПРОДОВЫЙ events.jsonl — завести кран (параметр journal_path/монки-патч). ПРАВИЛА: git запрещён, unittest зелёный, сервер не трогать.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-05T20:07:02Z",
+            "by": "ZCode",
+            "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+          }
+        ],
+        "stage": "todo",
+        "busy": null
       },
       {
         "id": "update-current-context",
@@ -1468,66 +1673,70 @@ window.EVO_BRIEF = {
             "at": "2026-11-04T06:28:17Z"
           }
         ],
-        "stage": "in-progress"
+        "stage": "in-progress",
+        "busy": null
       }
     ]
   },
   "hunter": {
-    "generatedAt": "2026-11-04T22:57:36+05:00",
-    "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-04); находок с вилкой: 0; OLX-находки: 253 (2026-10-31); очередь поручений: 0.",
+    "generatedAt": "2026-11-06T00:17:08+05:00",
+    "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-06); находок с вилкой: 19; OLX-находки: 253 (2026-10-31); очередь поручений: 0.",
     "top": [
-      {
-        "title": "Cloud Engineer Automation",
-        "url": "https://remoteOK.com/remote-jobs/remote-cloud-engineer-automation-smile-digital-health-1137600",
-        "source": "RemoteOK",
-        "date": "2026-10-29",
-        "category": "DevOps/инфраструктура",
-        "status": "perspective"
-      },
-      {
-        "title": "Senior Back-end Developer",
-        "url": "https://remotive.com/remote-jobs/software-development/senior-back-end-developer-2091135",
-        "source": "Remotive",
-        "date": "2026-10-27",
-        "category": "",
-        "status": "main"
-      },
       {
         "title": "💻 Front‑End AI‑инженер 🏢 Accenture • 🌍 Remote 💰 $54K - $205K/год 🛠 Стек: JavaScript, TypeS",
         "url": "https://t.me/remote_jobs_ru/444",
         "source": "Telegram @remote_jobs_ru",
         "date": "2026-10-26",
         "category": "сайты/вёрстка",
-        "status": "perspective"
+        "status": "perspective",
+        "salary": "$4500–17083/мес"
       },
       {
-        "title": "Senior Software Engineer LATAM",
-        "url": "https://remoteOK.com/remote-jobs/remote-senior-software-engineer-latam-wagmo-1137572",
-        "source": "RemoteOK",
-        "date": "2026-10-26",
-        "category": "сайты/вёрстка",
-        "status": "perspective"
+        "title": "Ask HN: Who is hiring? (October 2026)",
+        "url": "https://news.ycombinator.com/item?id=50059584",
+        "source": "HN (Ask HN: Who is hiring? (October 2026))",
+        "date": "2026-10-12",
+        "category": "AI/LLM",
+        "status": "perspective",
+        "salary": "$1160–1600/мес"
       },
       {
-        "title": "Solutions Engineer",
-        "url": "https://remoteOK.com/remote-jobs/remote-solutions-engineer-onebrief-1137568",
-        "source": "RemoteOK",
-        "date": "2026-10-24",
-        "category": "DevOps/инфраструктура",
-        "status": "perspective"
+        "title": "Ask HN: Who is hiring? (October 2026)",
+        "url": "https://news.ycombinator.com/item?id=49940381",
+        "source": "HN (Ask HN: Who is hiring? (October 2026))",
+        "date": "2026-10-03",
+        "category": "",
+        "status": "main",
+        "salary": "$11667–22000/мес"
+      },
+      {
+        "title": "Ask HN: Who is hiring? (October 2026)",
+        "url": "https://news.ycombinator.com/item?id=49934530",
+        "source": "HN (Ask HN: Who is hiring? (October 2026))",
+        "date": "2026-10-02",
+        "category": "AI/LLM",
+        "status": "perspective",
+        "salary": "$12500–21667/мес"
+      },
+      {
+        "title": "Ask HN: Who is hiring? (October 2026)",
+        "url": "https://news.ycombinator.com/item?id=49929553",
+        "source": "HN (Ask HN: Who is hiring? (October 2026))",
+        "date": "2026-10-02",
+        "category": "",
+        "status": "main",
+        "salary": "$9417–16417/мес"
       }
     ],
     "full": "Workspace/analytics/hunter/digest.json"
   },
   "git": {
-    "branch": "main",
-    "lastCommit": "5057dcb Merge origin/main (PR #2 merge commit) into feature_1.8.6",
-    "dirtyFiles": 58
+    "branch": "release/1.8.6",
+    "lastCommit": "dd4113c Security fixes from AI-code audit (A-01..A-04): per-tool args allowlist on /api/sandbox/run (CWE-88, PoC-verified 400), safeUrl scheme check for external feed hrefs (CWE-79), escapeHtml in estate-staff and Holmes branch renders; pre-commit secret gate hooks (tools/security/hooks, install after key rotation)",
+    "dirtyFiles": 35
   },
   "agent": {
-    "model": "dots-studio/dots-3-note-preview:free",
-    "summary": "Утро 05.11. Контекст: дата 2026-11-05, ветка main, коммит 5057dcb, 58 грязных файлов. Ключевые изменения: Platform v1.8.4 (AI Sandbox usage ledger, Hunter cabinet, security contour), Barrymore dashboard с кэшированным Morning Brief и жизненным циклом задач. Срочные задачи: Kali лаборатория (стадия test, шаги 1–3 закрыты, идёт хозяйство VM), ротация ключей LangSmith/FreeLLMAPI (todo), шум авто-коммитов Холмса (анализ), ротация sk-ant (todo на 05.11), hh-вакансии не доходят до дашборда (баг в tools/job_search.py). Регулярные: data-foundation (test), Higgsfield пилот (in-progress), новый штат +2 (DevOps Automator, Technical Writer), обновление CURRENT.md (in-progress). Hunter: 125 перспективных + 32 основных вакансий, 253 OLX-находки, очередь поручений пуста.",
-    "nextStep": "Обновить контекст Barrymore: сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md, устранить устаревшие указания на создание Morning Brief, проверить качество доклада после обновления, отдельно разобраться с tools/barrymore/logger.py (без merge/commit/удаления без решения Sovereign)."
+    "error": "LLM gateway HTTP 502 {\"error\":{\"message\":\"All 3 routed attempt(s) failed with upstream provider errors (error ×3). This is a provider-side failure, not a problem with your request; retry, or check provider status. Attempt"
   },
-  "_sourceFingerprint": "f9c1291e5055a44ba5811c6b709da67dea617aa69273cc3775b2469fe9ba6b8b"
+  "_sourceFingerprint": "c82155afc264c24cab9a082704b1656493f3a3e3e39b6ca2931717d2287fadbb"
 };

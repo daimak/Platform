@@ -1,0 +1,18 @@
+{
+  "id": "master-profile-gaps",
+  "title": "Заполнить 6 пробелов фактуры master-profile.json (конвейер откликов)",
+  "source": "Sovereign",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-11-05T20:07:02Z",
+  "description": "Файл: Workspace/private/resume/master-profile.json (зона данных Sovereign, вне git). Пробелы из todo-поля: (1) реальные цифры в 3 кейсах proposals/2026-11-04/ — помечены TODO; (2) ссылки-доказательства (репо, HAR, runbook); (3) preferences.rate/hours — своя ставка; (4) links: портфолио/GitHub/профили; (5) подтвердить «8+ лет» и уровень Kubernetes (противоречие откликов 03/07/09 vs 12); (6) какие навыки из «предлагаемого подхода» считать реальными. ПРАВИЛА: git запрещён; не выдумывать факты — только из существующих материалов Workspace/private/proposals/; чего нет — остаётся null/TODO с пометкой. Кейсы править в 2026-11-04/*.md синхронно с профилем.",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-05T20:07:02Z",
+      "by": "ZCode",
+      "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+    }
+  ],
+  "stage": "todo"
+}

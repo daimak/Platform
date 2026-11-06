@@ -23,8 +23,13 @@
     {
       "status": "done",
       "at": "2026-11-04T06:13:36Z"
+    },
+    {
+      "status": "archived",
+      "at": "2026-11-06T07:10:21Z"
     }
   ],
   "stage": "test",
-  "completedAt": "2026-11-04T06:13:36Z"
+  "completedAt": "2026-11-04T06:13:36Z",
+  "archivedAt": "2026-11-06T07:10:21Z"
 }

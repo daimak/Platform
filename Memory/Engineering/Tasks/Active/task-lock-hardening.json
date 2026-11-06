@@ -1,0 +1,18 @@
+{
+  "id": "task-lock-hardening",
+  "title": "Тех-долг task_lock: валидация task_id, докстринг журнала, кран тестов (P2 ревизора)",
+  "source": "Sovereign",
+  "priority": "regular",
+  "status": "active",
+  "createdAt": "2026-11-05T20:07:02Z",
+  "description": "Отчёт ревизора ночи: (1) tools/lib/task_lock.py — task_id нигде не валидируется: путь-траверсал ../.. и glob-инъекция *?[ в acquire/heartbeat/release/status/claims. Чинить: отклонять task_id с /, \\, .., glob-метасимволами (по образцу TASK_ID_PATTERN из task_store). (2) tools/lib/log_event.py:8-10 — докстринг противоречит фиксу Д-2 (обновить, оговорка про многопроцессную запись). (3) тесты TaskLockTest пишут в ПРОДОВЫЙ events.jsonl — завести кран (параметр journal_path/монки-патч). ПРАВИЛА: git запрещён, unittest зелёный, сервер не трогать.",
+  "history": [
+    {
+      "status": "active",
+      "at": "2026-11-05T20:07:02Z",
+      "by": "ZCode",
+      "note": "Создана ZCode по задаче Sovereign (раздача на 4 ч, ночь 06.11)"
+    }
+  ],
+  "stage": "todo"
+}

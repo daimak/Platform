@@ -31,8 +31,30 @@
       "stage": "test",
       "at": "2026-11-04T19:52:07Z",
       "by": "ZCode"
+    },
+    {
+      "stage": "in-progress",
+      "at": "2026-11-05T19:47:33Z",
+      "by": "ZCode"
+    },
+    {
+      "stage": "test",
+      "at": "2026-11-05T19:47:53Z",
+      "by": "ZCode"
     }
   ],
   "stage": "test",
-  "owner": "агент-строитель ZCode (Л-1…Л-5, старт 23:58)"
+  "owner": "агент-строитель ZCode (Л-1…Л-5, старт 23:58)",
+  "comments": [
+    {
+      "by": "Sovereign",
+      "text": "Night shift accepted: envelope, journal, gates, busy-lock.",
+      "at": "2026-11-05T20:06:23Z"
+    },
+    {
+      "by": "Sovereign",
+      "text": "Ночная смена принята: конверт, журнал, врата, busy-лок. ✅",
+      "at": "2026-11-05T20:06:32Z"
+    }
+  ]
 }
