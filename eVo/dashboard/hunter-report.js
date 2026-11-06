@@ -1,69 +1,148 @@
 window.EVO_HUNTER_REPORT = {
- "generatedAt": "2026-11-04T22:57:36+05:00",
- "snapshot": "2026-11-04",
- "boardUpdated": "2026-11-01T21:33:17+05:00",
- "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-04); находок с вилкой: 0; OLX-находки: 253 (2026-10-31); очередь поручений: 0.",
+ "generatedAt": "2026-11-06T00:17:08+05:00",
+ "snapshot": "2026-11-06",
+ "boardUpdated": "2026-11-06T00:17:08+05:00",
+ "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-06); находок с вилкой: 19; OLX-находки: 253 (2026-10-31); очередь поручений: 0.",
  "counts": {
   "perspective": 125,
   "main": 32,
   "outset": 0,
   "jobsTotal": 157,
-  "jobsWithSalary": 0,
+  "jobsWithSalary": 19,
   "olxItems": 253,
   "queue": 0
  },
  "top": [
-  {
-   "title": "Cloud Engineer Automation",
-   "url": "https://remoteOK.com/remote-jobs/remote-cloud-engineer-automation-smile-digital-health-1137600",
-   "source": "RemoteOK",
-   "date": "2026-10-29",
-   "category": "DevOps/инфраструктура",
-   "status": "perspective"
-  },
-  {
-   "title": "Senior Back-end Developer",
-   "url": "https://remotive.com/remote-jobs/software-development/senior-back-end-developer-2091135",
-   "source": "Remotive",
-   "date": "2026-10-27",
-   "category": "",
-   "status": "main"
-  },
   {
    "title": "💻 Front‑End AI‑инженер 🏢 Accenture • 🌍 Remote 💰 $54K - $205K/год 🛠 Стек: JavaScript, TypeS",
    "url": "https://t.me/remote_jobs_ru/444",
    "source": "Telegram @remote_jobs_ru",
    "date": "2026-10-26",
    "category": "сайты/вёрстка",
-   "status": "perspective"
+   "status": "perspective",
+   "salary": "$4500–17083/мес"
   },
   {
-   "title": "Senior Software Engineer LATAM",
-   "url": "https://remoteOK.com/remote-jobs/remote-senior-software-engineer-latam-wagmo-1137572",
-   "source": "RemoteOK",
-   "date": "2026-10-26",
-   "category": "сайты/вёрстка",
-   "status": "perspective"
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=50059584",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "date": "2026-10-12",
+   "category": "AI/LLM",
+   "status": "perspective",
+   "salary": "$1160–1600/мес"
   },
   {
-   "title": "Solutions Engineer",
-   "url": "https://remoteOK.com/remote-jobs/remote-solutions-engineer-onebrief-1137568",
-   "source": "RemoteOK",
-   "date": "2026-10-24",
-   "category": "DevOps/инфраструктура",
-   "status": "perspective"
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49940381",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "date": "2026-10-03",
+   "category": "",
+   "status": "main",
+   "salary": "$11667–22000/мес"
   },
   {
-   "title": "Senior DevOps Engineer",
-   "url": "https://remoteOK.com/remote-jobs/remote-senior-devops-engineer-lemon-io-1137557",
-   "source": "RemoteOK",
-   "date": "2026-10-22",
-   "category": "DevOps/инфраструктура",
-   "status": "perspective"
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49934530",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "date": "2026-10-02",
+   "category": "AI/LLM",
+   "status": "perspective",
+   "salary": "$12500–21667/мес"
+  },
+  {
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49929553",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "date": "2026-10-02",
+   "category": "",
+   "status": "main",
+   "salary": "$9417–16417/мес"
+  },
+  {
+   "title": "Ask HN: Who is hiring? (October 2026)",
+   "url": "https://news.ycombinator.com/item?id=49928677",
+   "source": "HN (Ask HN: Who is hiring? (October 2026))",
+   "date": "2026-10-02",
+   "category": "скраперы/парсеры",
+   "status": "perspective",
+   "salary": "$10000–14167/мес"
   }
  ],
  "observatory": {
-  "salaries": [],
+  "salaries": [
+   {
+    "title": "💻 Front‑End AI‑инженер 🏢 Accenture • 🌍 Remote 💰 $54K - $205K/год 🛠 Стек: JavaScript, TypeS",
+    "url": "https://t.me/remote_jobs_ru/444",
+    "source": "Telegram @remote_jobs_ru",
+    "date": "2026-10-26",
+    "category": "сайты/вёрстка",
+    "status": "perspective",
+    "salary": "$4500–17083/мес"
+   },
+   {
+    "title": "Senior Software Engineer LATAM",
+    "url": "https://remoteOK.com/remote-jobs/remote-senior-software-engineer-latam-wagmo-1137572",
+    "source": "RemoteOK",
+    "date": "2026-10-26",
+    "category": "сайты/вёрстка",
+    "status": "perspective",
+    "salary": ""
+   },
+   {
+    "title": "Solutions Engineer",
+    "url": "https://remoteOK.com/remote-jobs/remote-solutions-engineer-onebrief-1137568",
+    "source": "RemoteOK",
+    "date": "2026-10-24",
+    "category": "DevOps/инфраструктура",
+    "status": "perspective",
+    "salary": ""
+   },
+   {
+    "title": "Senior DevOps Engineer",
+    "url": "https://remoteOK.com/remote-jobs/remote-senior-devops-engineer-lemon-io-1137557",
+    "source": "RemoteOK",
+    "date": "2026-10-22",
+    "category": "DevOps/инфраструктура",
+    "status": "perspective",
+    "salary": ""
+   },
+   {
+    "title": "Software Engineer, AI Coding Tasks",
+    "url": "https://remotive.com/remote-jobs/software-development/software-engineer-ai-coding-tasks-2091158",
+    "source": "Remotive",
+    "date": "2026-10-17",
+    "category": "AI/LLM",
+    "status": "perspective",
+    "salary": ""
+   },
+   {
+    "title": "Software Engineer AI Coding Tasks",
+    "url": "https://remoteOK.com/remote-jobs/remote-software-engineer-ai-coding-tasks-askable-1137538",
+    "source": "RemoteOK",
+    "date": "2026-10-17",
+    "category": "AI/LLM",
+    "status": "perspective",
+    "salary": ""
+   },
+   {
+    "title": "Tech Lead Full-Stack Rails Engineer",
+    "url": "https://remotive.com/remote-jobs/software-development/tech-lead-full-stack-rails-engineer-2069746",
+    "source": "Remotive",
+    "date": "2026-10-14",
+    "category": "сайты/вёрстка",
+    "status": "perspective",
+    "salary": ""
+   },
+   {
+    "title": "Ask HN: Who is hiring? (October 2026)",
+    "url": "https://news.ycombinator.com/item?id=50059584",
+    "source": "HN (Ask HN: Who is hiring? (October 2026))",
+    "date": "2026-10-12",
+    "category": "AI/LLM",
+    "status": "perspective",
+    "salary": "$1160–1600/мес"
+   }
+  ],
   "perspective": [
    {
     "title": "Cloud Engineer Automation",
@@ -166,7 +245,7 @@ window.EVO_HUNTER_REPORT = {
  },
  "sources": {
   "board": "Workspace/analytics/orders_board.json",
-  "snapshot": "Workspace/analytics/2026-11-04/jobs.csv",
+  "snapshot": "Workspace/analytics/2026-11-06/jobs.csv",
   "olx": "tools/olx_production_data.json",
   "queue": "%LOCALAPPDATA%/Platform/Hunter/assignments.json"
  }

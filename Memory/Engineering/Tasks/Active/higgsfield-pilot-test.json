@@ -55,8 +55,13 @@
       "at": "2026-11-05T01:00:00Z",
       "by": "ZCode",
       "note": "Старт агента-пилота: SDK-осмотр, один безопасный прогон (auth-check/dry-run, БЕЗ платных вызовов), полная документация. Живой кадр — после ключа от Sovereign."
+    },
+    {
+      "stage": "test",
+      "at": "2026-11-05T19:39:58Z",
+      "by": "ZCode"
     }
   ],
-  "stage": "in-progress",
+  "stage": "test",
   "owner": "агент-пилот ZCode (Higgsfield SDK+docs, старт 05.11)"
 }
