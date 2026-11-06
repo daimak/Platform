@@ -44,7 +44,10 @@ def append_event(kind: str, source: str, payload=None, log_path=None) -> dict:
         line = json.dumps(envelope, ensure_ascii=False)
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "a", encoding="utf-8") as handle:
-            handle.write("\n" + line)
+            # В пустой файл пишем без ведущего "\n": первая строка журнала — JSON.
+            # (fix Д-2 ночной смены 2026-11-05: раньше образовывалась пустая строка 1.)
+            prefix = "" if handle.tell() == 0 else "\n"
+            handle.write(prefix + line)
         return {"ok": True, "path": str(path), "ts": produced_at}
     except Exception as error:  # падение журнала никогда не ломает вызывающий код
         return {"ok": False, "error": str(error)}

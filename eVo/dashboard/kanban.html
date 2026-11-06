@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -142,6 +142,31 @@
     .kbm-hist { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px dashed rgba(255,255,255,0.06); }
     .kbm-hist:last-child { border-bottom: none; }
     .kbm-hist-when { font-size: 0.64rem; color: var(--text-muted, #7d8aa0); min-width: 118px; }
+
+    /* комментарии к карточке (Sovereign 2026-11-06) */
+    .kbm-comment {
+      padding: 7px 10px; margin: 6px 0;
+      background: rgba(15, 27, 54, 0.55); border: 1px solid rgba(94,234,212,0.10);
+      border-radius: 8px;
+    }
+    .kbm-comment-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 3px; }
+    .kbm-comment-head b { color: #7dd3fc; font-size: 0.72rem; }
+    .kbm-comment-text { color: #cbd5e1; font-size: 0.78rem; white-space: pre-wrap; word-break: break-word; }
+    .kbm-comment-input {
+      width: 100%; box-sizing: border-box; resize: vertical; min-height: 58px;
+      background: rgba(10, 18, 36, 0.7); color: #e2e8f0;
+      border: 1px solid rgba(94,234,212,0.22); border-radius: 8px;
+      padding: 8px 10px; font: inherit; font-size: 0.78rem; outline: none;
+    }
+    .kbm-comment-input:focus { border-color: rgba(94,234,212,0.5); }
+    .kbm-comment-send {
+      margin-top: 8px; cursor: pointer;
+      background: rgba(94,234,212,0.12); color: #5eead4;
+      border: 1px solid rgba(94,234,212,0.35); border-radius: 8px;
+      padding: 6px 14px; font: inherit; font-size: 0.74rem;
+    }
+    .kbm-comment-send:hover { background: rgba(94,234,212,0.2); }
+    .kbm-comment-send:disabled { opacity: 0.45; cursor: wait; }
     @media (max-width: 760px) { .kbm-meta { grid-template-columns: 1fr 1fr; } .kb-board { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
@@ -154,6 +179,6 @@
   <div class="kb-board" id="kb-board"></div>
   <div class="kb-toast" id="kb-toast"></div>
   <div class="kbm-overlay" id="kb-modal"><div class="kbm-panel"><div class="kbm-body" id="kbm-body"></div></div></div>
-  <script src="kanban.js?v=6"></script>
+  <script src="kanban.js?v=7"></script>
 </body>
 </html>
