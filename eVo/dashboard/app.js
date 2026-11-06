@@ -657,6 +657,7 @@ function openIslandModal(islandKey) {
     initAiSandboxControls();
     initSecurityContourControls();
     initSecurityTools();
+    initSandboxExcursion();
   }
   if (islandKey === "holmesStudy") {
     initHolmesReports();
@@ -1893,6 +1894,9 @@ function buildIslandContentHTML(islandKey, data, lang) {
           <button class="ai-sandbox-tab" id="ai-sandbox-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-tools" data-ai-sandbox-tab tabindex="-1">
             ${data.toolsTab || "Инструменты"}
           </button>
+          <button class="ai-sandbox-tab" id="ai-sandbox-excursion-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-excursion" data-ai-sandbox-tab tabindex="-1">
+            ${data.excursionTab || "Экскурсия"}
+          </button>
         </div>
         <section class="ai-sandbox-tab-panel" id="ai-sandbox-overview" role="tabpanel" aria-labelledby="ai-sandbox-overview-tab">
         <div class="glass-panel">
@@ -2033,6 +2037,9 @@ function buildIslandContentHTML(islandKey, data, lang) {
             </div>
             <div id="sandbox-result-targets" style="margin-top:10px;"></div>
           </div>
+        </section>
+        <section class="ai-sandbox-tab-panel" id="ai-sandbox-excursion" role="tabpanel" aria-labelledby="ai-sandbox-excursion-tab" tabindex="0" hidden>
+          <div id="sandbox-excursion-root"></div>
         </section>
       `;
 
@@ -2647,4 +2654,117 @@ function escapeHtml(str) {
 function safeUrl(value) {
   const raw = String(value == null ? "" : value).trim();
   return /^(https?:)?\/\//i.test(raw) ? escapeHtml(raw) : "#";
+}
+/** Экскурсия по рейсам агентов (запрос Sovereign 07.11): визуальный граф
+ * «откуда всё шло → как реализовывалось» внутри AI Sandbox. Данные —
+ * window.EVO_EXCURSION из excursion-data.js (генератор
+ * tools/barrymore/build-excursion.py, источник — events.jsonl + карточки). */
+function initSandboxExcursion() {
+  const root = document.getElementById("sandbox-excursion-root");
+  if (!root || root.dataset.ready) return;
+  const data = window.EVO_EXCURSION;
+  if (!data || !Array.isArray(data.flights) || !data.flights.length) {
+    root.innerHTML = '<div style="color:var(--text-muted); font-size:0.86rem;">Нет снимка. Перегенерируй: python tools/barrymore/build-excursion.py</div>';
+    return;
+  }
+  root.dataset.ready = "1";
+  const flightsHtml = data.flights.map(excursionFlightHtml).join("");
+  root.innerHTML = `
+    <style>
+      .exc-flight { margin-bottom: 22px; }
+      .exc-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+      .exc-title { color: #fff; font-size: 0.95rem; font-weight: 600; }
+      .exc-verdict { font-size: 0.68rem; padding: 2px 9px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.5); color: #34d399; }
+      .exc-sub { color: var(--text-muted, #7d8aa0); font-size: 0.74rem; margin-bottom: 10px; }
+      .exc-flow { display: flex; align-items: stretch; flex-wrap: wrap; gap: 6px; }
+      .exc-node { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 7px 10px; cursor: pointer; min-width: 86px; transition: border-color 0.12s ease; }
+      .exc-node:hover { border-color: rgba(94,234,212,0.55); }
+      .exc-node.is-open { border-color: rgba(94,234,212,0.9); }
+      .exc-node-time { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted, #7d8aa0); }
+      .exc-node-label { color: #eef2f7; font-size: 0.78rem; margin-top: 2px; }
+      .exc-arrow { align-self: center; color: #475569; font-size: 0.85rem; padding: 0 2px; }
+      .exc-node.exc-kind-idea { border-left: 3px solid #67e8f9; }
+      .exc-node.exc-kind-spec { border-left: 3px solid #c4b5fd; }
+      .exc-node.exc-kind-agent { border-left: 3px solid #fbbf24; }
+      .exc-node.exc-kind-lane { border-left: 3px solid #7dd3fc; min-width: 200px; flex: 1; }
+      .exc-node.exc-kind-storm { border-left: 3px solid #fb7185; }
+      .exc-node.exc-kind-storm .exc-node-label { color: #fb7185; }
+      .exc-node.exc-kind-artifact { border-left: 3px solid #a7f3d0; }
+      .exc-node.exc-kind-finish { border-left: 3px solid #34d399; }
+      .exc-node.exc-kind-accept { border-left: 3px solid #5eead4; }
+      .exc-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+      .exc-chip { font-size: 0.68rem; color: #bae6fd; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 7px; padding: 2px 7px; cursor: pointer; }
+      .exc-chip:hover { border-color: rgba(56,189,248,0.7); }
+      .exc-chip.is-open { background: rgba(56,189,248,0.25); }
+      .exc-detail { margin-top: 10px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); border-radius: 9px; padding: 10px 12px; color: #cbd5e1; font-size: 0.8rem; line-height: 1.55; }
+      .exc-detail:empty { display: none; }
+      .exc-detail b { color: #fff; }
+      .exc-detail .exc-refs { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
+      .exc-detail .exc-refs code { font-family: var(--font-mono); font-size: 0.7rem; color: #94a3b8; }
+    </style>
+    ${flightsHtml}`;
+  wireExcursionClicks(root);
+}
+
+function excursionFlightHtml(flight) {
+  const nodes = flight.nodes.map((node, i) => {
+    const arrow = i > 0 ? '<div class="exc-arrow">→</div>' : "";
+    if (node.kind === "lane" && Array.isArray(node.chips)) {
+      const chips = node.chips.map((chip, ci) =>
+        `<span class="exc-chip" role="button" tabindex="0" data-flight="${escapeHtml(flight.id)}" data-node="${i}" data-chip="${ci}">${escapeHtml(chip.name)}</span>`
+      ).join("");
+      return `${arrow}<div class="exc-node exc-kind-lane" data-flight="${escapeHtml(flight.id)}" data-node="${i}">
+        <div class="exc-node-time">${escapeHtml(node.time || "")}</div>
+        <div class="exc-node-label">${escapeHtml(node.label)}</div>
+        <div class="exc-chips">${chips}</div>
+      </div>`;
+    }
+    return `${arrow}<div class="exc-node exc-kind-${escapeHtml(node.kind)}" role="button" tabindex="0" data-flight="${escapeHtml(flight.id)}" data-node="${i}">
+      <div class="exc-node-time">${escapeHtml(node.time || "")}</div>
+      <div class="exc-node-label">${escapeHtml(node.label)}</div>
+    </div>`;
+  }).join("");
+  return `
+    <div class="exc-flight" data-flight-id="${escapeHtml(flight.id)}">
+      <div class="exc-head"><span class="exc-title">${escapeHtml(flight.title)}</span><span class="exc-verdict">${escapeHtml(flight.verdict)}</span></div>
+      <div class="exc-sub">${escapeHtml(flight.subtitle || "")}</div>
+      <div class="exc-flow">${nodes}</div>
+      <div class="exc-detail" data-detail-for="${escapeHtml(flight.id)}"></div>
+    </div>`;
+}
+
+function wireExcursionClicks(root) {
+  const data = window.EVO_EXCURSION;
+  const showDetail = (flightId, nodeIdx, chipIdx) => {
+    const flight = (data.flights || []).find((f) => f.id === flightId);
+    if (!flight) return;
+    const node = flight.nodes[nodeIdx];
+    if (!node) return;
+    let title = node.label, time = node.time || "", detail = node.detail || "", refs = node.refs || [];
+    if (typeof chipIdx === "number" && Array.isArray(node.chips) && node.chips[chipIdx]) {
+      const chip = node.chips[chipIdx];
+      title = chip.name; detail = chip.detail || ""; refs = chip.refs || node.refs || [];
+    }
+    if (Array.isArray(node.files) && node.files.length && !detail) {
+      detail = node.files.map((f) =>
+        `${f.path}${f.private ? " — приватная зона (путь без содержимого)" : f.size != null ? ` — ${f.size} байт` : f.exists ? "" : " — нет на диске"}`
+      ).join("; ");
+    }
+    const drawer = root.querySelector(`[data-detail-for="${flightId}"]`);
+    if (!drawer) return;
+    drawer.innerHTML = `<b>${escapeHtml(title)}</b>${time ? ` <span style="color:var(--text-muted); font-size:0.72rem;">· ${escapeHtml(time)}</span>` : ""}<div style="margin-top:4px;">${escapeHtml(detail || "деталей нет")}</div>` +
+      (refs.length ? `<div class="exc-refs">${refs.map((r) => `<code>${escapeHtml(r)}</code>`).join("")}</div>` : "");
+  };
+  root.querySelectorAll(".exc-node, .exc-chip").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      root.querySelectorAll(".is-open").forEach((x) => x.classList.remove("is-open"));
+      el.classList.add("is-open");
+      showDetail(el.dataset.flight, Number(el.dataset.node),
+        el.dataset.chip != null ? Number(el.dataset.chip) : undefined);
+    });
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.click(); }
+    });
+  });
 }
