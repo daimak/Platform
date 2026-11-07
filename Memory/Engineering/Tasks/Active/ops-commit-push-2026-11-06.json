@@ -3,7 +3,7 @@
   "title": "Закоммитить и запушить ночную работу (41 файл)",
   "source": "ZCode",
   "priority": "urgent",
-  "status": "active",
+  "status": "done",
   "createdAt": "2026-11-06T18:18:00Z",
   "description": "В дереве 23 изменённых + 17 новых + 1 удалённый файл (~1301 строка): флот-панель agents.*, tools/lib/task_lock.py, тесты (agents_live, night_fixes, task_comments), HIGGSFIELD-DOCS, 4 новые карточки задач. dd4113c (секрет-фиксы) не запушен — origin/main стоит на a3ca29e. Всё существует в одном экземпляре на ноутбуке, который известен тем, что засыпает. Действие: tools/ops/backup_workspace.py → коммит → пуш. Условие: параллельные сессии затихли. Исполнитель: ZCode, по команде Sovereign.",
   "history": [
@@ -12,7 +12,21 @@
       "at": "2026-11-06T18:18:00Z",
       "by": "ZCode",
       "note": "Ревью проекта 06.11: главный риск — ночные наработки трёх рейсов не заморожены ни коммитом, ни пушем."
+    },
+    {
+      "status": "done",
+      "at": "2026-11-06T18:47:04Z",
+      "by": "ZCode"
     }
   ],
-  "stage": "todo"
+  "stage": "todo",
+  "type": "task",
+  "comments": [
+    {
+      "by": "ZCode",
+      "text": "Исполнено 06.11 ~23:55, по факту разделилось: ночную работу закоммитил сам параллельный рейс (d271fd5 fleet, c13addb kanban hardening, 625a865 docs/cards, 32626c0 higgsfield, 3d02ab3 evofind, 103b033 orders-triage); мой пакет сегодняшнего дня — cf3d503 (типы сущностей, секрет-гейт фаза 2, раннер, карточки). Пуш выполнен: origin/release/1.8.6, 7 коммитов ушли на GitHub. Бэкап перед коммитом: Backups/20261106-234429. Не вошли (чужие свежие правки, не коммитил): brief.js, index.html, Workspace/cloud/.",
+      "at": "2026-11-06T18:47:03Z"
+    }
+  ],
+  "completedAt": "2026-11-06T18:47:04Z"
 }

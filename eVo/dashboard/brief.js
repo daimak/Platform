@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-11-06 12:10",
+  "generatedAt": "2026-11-07 15:42",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -42,6 +42,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -161,6 +162,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "test",
+        "type": "task",
         "busy": null
       },
       {
@@ -182,6 +184,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -196,8 +199,15 @@ window.EVO_BRIEF = {
             "status": "active",
             "at": "2026-10-29T20:45:00Z",
             "note": "Приоритет Sovereign: реальные деньги любой ценой. Вести всесторонне: (1) триаж-доска Workspace/analytics/orders_board.json + orders_report.md (tools/orders_triage.py) — перспективные/основной/отсев, ручная сортировка сохраняется; (2) подключить к агрегатору биржи заказов (fl.ru, kwork — функции уже есть в tools/job_search.py, в снапшот 29.10 не попали); (3) подтягивать has_salary и свежесть; (4) готовить первые отклики на перспективные заказы (скраперы/парсеры/боты/LLM/DevOps); (5) задействовать все ресурсы платформы: агрегатор, экстракция зарплат, дашборд Trading Quarter, агенты. MVP уже стоит, работаем итерациями."
+          },
+          {
+            "stage": "analysis",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -229,6 +239,7 @@ window.EVO_BRIEF = {
         ],
         "stage": "todo",
         "description": "Ротация LangSmith + FreeLLMAPI ключей (аудит 04.11: ключи в локальном reflog-коммите 1164ed7, origin чист; sk-ant — dummy)",
+        "type": "task",
         "busy": null
       },
       {
@@ -248,6 +259,7 @@ window.EVO_BRIEF = {
             "note": "ГОТОВО 04.11: (1) «Целевой стенд» в AI Sandbox → Инструменты — цели-чипы + галочки проверок → nmap_probe, прогон и скриншот ок (app.js?v=12, languages.js?v=3); (2) найден и закрыт routing-drift баг /api/sandbox/run (V-06), сервер 8765 перезапущен — ожили и эндпоинты E-046; (3) VULN-PROGRAM.md в Workspace/pentest/2026-11-04-vuln-program/ (вне git): 12 уязвимостей Platform + 12 индустриальных классов + фазы Ф-1..Ф-5; (4) Kali: VM headless 192.168.238.128, снапшот pre-pentest-2026-11-04, консоль-блок для шага 7 сохранён Дмитрием. || НА 05.11: [1] Ротация sk-ant руками Sovereign (V-01, P1, ~10 мин: панель Anthropic → новый ключ → Vault → правка Workspace/main.py:17) — критерий: secret_scan RED=0. [2] Консоль-блок Kali (учётка watson) → ZCode поднимает Juice Shop (target-server.sh) → скан 192.168.238.128 через стенд → фазовый отчёт в Workspace/pentest/2026-11-04-juiceshop/. [3] После ротации: слово на вычистку git-истории (filter-repo/BFG по sk-ant, 709b2c5). [4] Ф-1 остаток: rae-work HAR/chrome-profile под пароль/удалить (куки hh!), мастер-пароль на Vault, pre-commit hook secret_scan. [5] Коммит кода стенда — когда разобраны чужие правки в app.js/dashboard-server (сейчас не смешивать)."
           }
         ],
+        "type": "task",
         "busy": null
       },
       {
@@ -263,8 +275,15 @@ window.EVO_BRIEF = {
             "at": "2026-10-31T12:28:00Z",
             "by": "Code Reviewer (пилот штата, E-023)",
             "note": "P1: карточки hh из HTML-фолбэка получают date=''; parse_date даёт datetime.min; сортировка уносит их в хвост, слайс [:60] вырезает первыми. Верифицировано: results.json — 60 hh-записей, все с пустой датой; vacancies.js — 0 записей hh. Фикс: пустую дату подставлять временем запуска (hh-выдача отсортирована по свежести) или трактовать пустую дату как now в ключе сортировки. Файл: tools/job_search.py:133, 388, 400."
+          },
+          {
+            "stage": "todo",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "todo",
+        "type": "task",
         "busy": null
       }
     ],
@@ -291,6 +310,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "test",
+        "type": "task",
         "busy": null
       },
       {
@@ -381,6 +401,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -442,6 +463,7 @@ window.EVO_BRIEF = {
             "at": "2026-11-05T20:06:32Z"
           }
         ],
+        "type": "task",
         "busy": null
       },
       {
@@ -510,6 +532,7 @@ window.EVO_BRIEF = {
         ],
         "stage": "test",
         "owner": "агент-пилот ZCode (Higgsfield SDK+docs, старт 05.11)",
+        "type": "task",
         "busy": null
       },
       {
@@ -532,6 +555,14 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "in-progress",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Обновление инвентаря 06.11, 21:20: в дереве 41 позиция — 23 изменённых (M), 17 новых (??), 1 удалённая (D), ~1301 строка diff. Состав: флот-панель agents.html/css/js + test_agents_live (20 тестов); tools/lib/task_lock.py + тесты task_comments/night_fixes; HIGGSFIELD-DOCS-2026-11-05.md (54KB); 4 новые карточки задач; правки task_store / dashboard-server / kanban. dd4113c (секрет-фиксы) не запушен — origin/main на a3ca29e. Для закрытия создана карточка ops-commit-push-2026-11-06 (Сделать, urgent): бэкап → коммит → пуш одним пакетом, по команде Sovereign.",
+            "at": "2026-11-06T18:20:16Z"
+          }
+        ],
+        "type": "task",
         "busy": null
       },
       {
@@ -551,6 +582,39 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "kanban-entity-types",
+        "title": "Типы сущностей на канбане: Таска / ЗНИ / Эпик (ITIL-минимум)",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Запрос Sovereign 06.11: разделять сущности системы (задача, запрос на изменение, эпик). Дизайн-минимум: поле type на карточке — task | change (ЗНИ) | epic; отсутствие поля = task (существующие файлы не трогаем); allowlist-валидация, неизвестное значение = 400 (не 500 — урок priority-инцидента); бейдж-чип на карточке, фильтр по типу в шапке; колонки общие для всех типов. Для ЗНИ — причина изменения в описании (justification). Журнал движения по заявке уже есть: comments (в бою с 05.11) + history. Затронуть: task_store.py, dashboard-server.py, kanban.js (+?v=).",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Создано по прямому запросу Sovereign в чате 06.11. Стадия «Анализ»: дизайн на одобрение."
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-06T18:47:17Z",
+            "by": "ZCode"
+          }
+        ],
+        "stage": "test",
+        "type": "task",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Исполнено 06.11 ~23:55. Backend: task_store.set_type (allowlist task|change|epic), POST /api/tasks/<id>/type — неизвестное значение = 400; чтение толерантно (нет поля = task). UI (kanban.js v8): бейджи ЗНИ (оранж)/Эпик (фиолет), фильтр по типам со счётчиками в шапке, переключатель типа в модалке карточки, записи ТИП в истории. Тесты: tools/tests/test_task_types.py (7), оба сьюта зелёные (142). Живой прогон: type=change на sec-secret-gate-install, type=epic на study-ai-agents, incident → 400. Примеры типов в бою: study-ai-agents = Эпик, sec-secret-gate-install = ЗНИ.",
+            "at": "2026-11-06T18:47:03Z"
+          }
+        ],
         "busy": null
       },
       {
@@ -570,6 +634,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -623,6 +688,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -642,6 +708,67 @@ window.EVO_BRIEF = {
             "note": "Создано по просьбе Дмитрия «запиши результат и оставь на утро задачу — еще раз ознакомиться»"
           }
         ],
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "ops-release-ritual",
+        "title": "Ритуал релиза: VERSION и AI-ONBOARDING тем же коммитом",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "VERSION = 1.8.4 при ветке release/1.8.6; AI-ONBOARDING фиксирует HEAD a3ca29e при живом dd4113c — карта, которой доверяют входящие сессии, систематически врёт. Правило: релизная правка = тот же коммит обновляет VERSION, CHANGELOG и строку HEAD в AI-ONBOARDING. Попутно: строка «Interface/ заморожен до X» в README (второй фронтенд-каркас спит и создаёт раздвоение).",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: собственный протокол «сверяй VERSION» даёт ложный след."
+          }
+        ],
+        "stage": "todo",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "ops-test-runner-unify",
+        "title": "Единый тест-раннер + requirements.txt",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Три сьюта (48 + 35 + новые ~46: agents_live, night_fixes, task_comments, jobs_registry) запускаются вручную по памяти из AI-ONBOARDING — при таком росте что-то перестанут запускать. Сделать: tools/ops/run_all.py (одна команда, сводка по сьютам, exit code) + requirements.txt (фикс версий сторонних зависимостей tools/). Опционально: pre-push хук с прогоном как замена отсутствующему CI.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: тесты растут быстрее рутины их запуска."
+          }
+        ],
+        "stage": "todo",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "portfolio-onepager",
+        "title": "Портфолио-одностраничник из master-profile.json + кейсов",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Резюме-зона наполнена (master-profile.json: 28 навыков / 7 кейсов; 3 полных кейса RU+EN; отклики в proposals/2026-11-05), но нет собираемого артефакта, который прикладывается к отклику. Сделать: генератор (python) → одностраничник HTML/PDF RU+EN из живых JSON, перегенерация одной командой. Всё локально, отправка руками — в рамках решения «не выпрыгиваем вовне». Блокеров нет, фактура уже есть.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: единственный слой, который должен выходить наружу, не собран."
+          }
+        ],
+        "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -661,6 +788,54 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "sandbox-excursion",
+        "title": "AI Sandbox: вкладка «Экскурсия» — граф рейсов агентов",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T21:25:00Z",
+        "type": "task",
+        "description": "Запрос Sovereign 07.11: визуальный экскурс «как парочка агентов и лейнов отрабатывала, откуда всё шло и как реализовывалось» — внутри AI Sandbox. Сделано: 4-й таб «Экскурсия»; два живых рейса из events.jsonl — «Флот в море» (Замысел→ТЗ→Спавн→Лейны Л-С1..С3→Шторм→Артефакты→Финиш→Приёмка) и «Резюме-конвейер» (5 шагов пульса, 14 файлов). Узлы кликабельны — реальные факты журнала + ссылки на источники. Данные: excursion-data.js (snapshot, паттерн brief.js), генератор tools/barrymore/build-excursion.py (перегенерация одной командой; приватная зона — только пути). Проверено: node --check, DOM-проба, скриншот IAB.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T21:25:00Z",
+            "by": "ZCode",
+            "note": "Исполнено одним заходом сразу после запроса; поставлена в «Проверку» — приёмка Sovereign в живом интерфейсе: карта островов → 🔮 AI Sandbox → Экскурсия."
+          }
+        ],
+        "stage": "test",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Доработка по вердикту Sovereign 07.11 «белиберда → доклад цифрами» (коммит 2dc96ad): каждый рейс теперь открывается докладом — метрики-чипы + строки РАБОТАЛИ/ЗАДАЧА/РЕЗУЛЬТАТ/ИНЦИДЕНТ/ЭКСПЛУАТАЦИЯ/ВЕРДИКТ, все числа из живых источников (пульсы журнала, git show --stat, NIGHT-LOG). Флот: +1572 строки в 6 файлах, 20/20 тестов, 10 мин 40 с. Резюме: 3.34M токенов, 67 вызовов, 216→10 позиций, 14 файлов. Сводка ночи: 3 рейса ~11.5M токенов. Граф-маршрут остался ниже как приложение. Обновить страницу дашборда (app.js v14, excursion-data.js?v=2).",
+            "at": "2026-11-07T04:14:00Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Дополнение 07.11 (коммит 75d3de1, запрос Sovereign): в подвале модалки рядом с «Вернуться к карте островов» — маленькая кнопка-стрелки «во весь экран» (стрелки наружу/внутрь, без надписи). Полный экран = вьюпорт минус 10px, Esc в полном экране сначала возвращает окно. Проверено живьём: 1260x700 в полный экран, 780px обратно.",
+            "at": "2026-11-07T04:33:12Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Правка по вердикту Sovereign 07.11 «кнопки в подвале выстроились столбиком» (коммит 0632d7e): подвал восстановлен в исходный вид (одна кнопка возврата), кнопка полного экрана переселена в правый нижний угол самого окна (absolute, 12px от углов, поверх подвала — modal-island-actions везде пуст). Живая проверка: зазор 13px от угла в обоих режимах, иконки наружу/внутрь свапаются, 780px<->полный экран, Esc логика без изменений. style.css?v=5.",
+            "at": "2026-11-07T04:39:38Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Фикс наезда (коммит, запрос Sovereign 07.11): на mainEstate правая часть подвала заполняется («Рабочий кабинет», «Канбан лиджера») — кнопка в углу окна наезжала. Решение: кнопка — ребёнок подвала, absolute bottom: calc(100% + 10px), right: 14px — висит ровно над подвалом у правого края, следует за высотой подвала любого острова. Живая проверка на mainEstate: 4 контрола подвала, зазор 9px, наездов нет ни в окне, ни в полном экране, оба переключения работают. style.css?v=6.",
+            "at": "2026-11-07T04:47:49Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Итерация 4 по идее Sovereign 07.11 «кто из нас ИИ» (коммит): длинная кнопка «✕ Закрыть» заменена двумя маленькими иконками в шапке — полный экран (стрелки) и закрыть (крестик), как в любой ОС за 20 лет. Гоча поймана: setText локали перезаписал бы SVG текстом — локаль ушла в tooltip/aria. Проверено на mainEstate живьём: 2 контрола шапки, подвал цел (3 кнопки), полный экран + свап иконок + закрытие по крестику работают. style.css?v=7.",
+            "at": "2026-11-07T04:50:27Z"
+          }
+        ],
         "busy": null
       },
       {
@@ -680,6 +855,7 @@ window.EVO_BRIEF = {
             "note": "Установлены в ~/.zcode/agents/ из каталога agency-agents (230+): engineering-devops-automator.md и engineering-technical-writer.md. Штат: 8 ролей. Зачем: (1) DevOps Automator — инфраструктурная автоматизация, CI/CD, операции: родная стихия Дмитрия, усилит tools/ops (бэкап/healthcheck), переезд Platform на хостинг (план fffc974), рутину вакансий DevOps; (2) Technical Writer — документация, README, гайды: закрывает БЛОКЕР №1 поиска работы (3 кейса для резюме + визитка в Workspace/private/resume/), описания услуг/откликов, устаревшие README Platform. Как работают: как остальные 6 — вызов в ZCode-окне (агент = роль с промптом; рантайма как у Холмса/Хантера нет и не нужно), привязка к задаче → прогон → отчёт. НОВЫЕ ТИПЫ УЖЕ ВИДНЫ СИСТЕМЕ БЕЗ ПЕРЕЗАПУСКА (хост подхватил живьём). Смоук 05.11 00:2x: Technical Writer живой — микрозадача справки за 88 сек / ~22k токенов, чистый русский текст + «СМОУК ОК»; первая попытка упёрлась в «user concurrency limit» (слот соседнего чата) — повтор через 45 с прошёл. Утром: демонстрация по живой задаче (кейс №1 для резюме техписателем, healthcheck-скрипт девопсом)."
           }
         ],
+        "type": "task",
         "busy": null
       },
       {
@@ -695,8 +871,15 @@ window.EVO_BRIEF = {
             "at": "2026-10-31T12:28:00Z",
             "by": "Secrets & Credential Hygiene Engineer (пилот штата, E-023)",
             "note": "P1: реальные LANGSMITH_API_KEY и FREE_LLM_API_KEY лежат plaintext в C:/Users/temp/.zcode/cli/artifacts/session_c87212841fb8241f72e3dd5a6f5e7333/ (call_99ddca97… — эхо .env, call_fcdf812e…). Git-история чиста (P0 нет, 262 коммита). Действия по санкции Sovereign: (1) удалить два artifact-файла; (2) ротировать LANGSMITH_API_KEY (smith.langchain.com) и FREE_LLM_API_KEY (шлюз :31415); (3) обновить Workspace/.env и KeePassXC. P2: pre-commit сканер (gitleaks); заглушку sk-… из Workspace/main.py:17 убрать из tracked-кода."
+          },
+          {
+            "stage": "todo",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -760,8 +943,20 @@ window.EVO_BRIEF = {
             "status": "active",
             "at": "2026-10-30T16:33:00Z",
             "note": "Создана ZCode по прямому указанию Дмитрия («создай в AI задачу — изучение агентов»); декомпозиция заложена в JSON. 30.10 ~21:33 local (UTC+5)."
+          },
+          {
+            "stage": "analysis",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
+          },
+          {
+            "type": "epic",
+            "at": "2026-11-06T18:40:14Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "analysis",
+        "type": "epic",
         "busy": null
       },
       {
@@ -781,6 +976,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -802,52 +998,80 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "in-progress",
+        "type": "task",
         "busy": null
       }
     ],
     "done": [
       {
-        "id": "merge-branches-d002",
-        "title": "Слияние веток по D-002",
-        "source": "R9",
-        "priority": "regular",
+        "id": "ops-commit-push-2026-11-06",
+        "title": "Закоммитить и запушить ночную работу (41 файл)",
+        "source": "ZCode",
+        "priority": "urgent",
         "status": "done",
-        "completedAt": "2026-11-04T18:36:05Z",
-        "createdAt": "2026-10-29T04:26:16Z",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "В дереве 23 изменённых + 17 новых + 1 удалённый файл (~1301 строка): флот-панель agents.*, tools/lib/task_lock.py, тесты (agents_live, night_fixes, task_comments), HIGGSFIELD-DOCS, 4 новые карточки задач. dd4113c (секрет-фиксы) не запушен — origin/main стоит на a3ca29e. Всё существует в одном экземпляре на ноутбуке, который известен тем, что засыпает. Действие: tools/ops/backup_workspace.py → коммит → пуш. Условие: параллельные сессии затихли. Исполнитель: ZCode, по команде Sovereign.",
         "history": [
           {
             "status": "active",
-            "at": "2026-10-29T04:26:16Z",
-            "note": "Перенесено из текущего списка задач дашборда."
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: главный риск — ночные наработки трёх рейсов не заморожены ни коммитом, ни пушем."
           },
           {
-            "stage": "in-progress",
-            "at": "2026-11-03T06:36:52Z"
-          },
-          {
-            "stage": "test",
-            "at": "2026-11-03T06:43:22Z"
-          },
-          {
-            "stage": "in-progress",
-            "at": "2026-11-03T06:43:24Z"
-          },
-          {
-            "stage": "todo",
-            "at": "2026-11-03T06:51:13Z"
-          },
-          {
-            "stage": "in-progress",
-            "at": "2026-11-04T06:13:21Z"
-          },
-          {
-            "stage": "done",
-            "at": "2026-11-04T18:36:05Z",
-            "by": "Sovereign",
-            "note": "Закрыто 04.11 (E-046): merge origin/main (PR #2) в feature_1.8.6 → push origin/main (5057dcb), локальная main создана, ветки feature_1.8.6/1.8.5/1.8.2 удалены локально и на origin. Работа продолжается на main."
+            "status": "done",
+            "at": "2026-11-06T18:47:04Z",
+            "by": "ZCode"
           }
         ],
-        "stage": "in-progress",
+        "stage": "todo",
+        "type": "task",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Исполнено 06.11 ~23:55, по факту разделилось: ночную работу закоммитил сам параллельный рейс (d271fd5 fleet, c13addb kanban hardening, 625a865 docs/cards, 32626c0 higgsfield, 3d02ab3 evofind, 103b033 orders-triage); мой пакет сегодняшнего дня — cf3d503 (типы сущностей, секрет-гейт фаза 2, раннер, карточки). Пуш выполнен: origin/release/1.8.6, 7 коммитов ушли на GitHub. Бэкап перед коммитом: Backups/20261106-234429. Не вошли (чужие свежие правки, не коммитил): brief.js, index.html, Workspace/cloud/.",
+            "at": "2026-11-06T18:47:03Z"
+          }
+        ],
+        "completedAt": "2026-11-06T18:47:04Z",
+        "busy": null
+      },
+      {
+        "id": "sec-secret-gate-install",
+        "title": "Установить pre-commit secret gate (написан, не активен)",
+        "source": "ZCode",
+        "priority": "urgent",
+        "status": "done",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Хуки из tools/security/hooks (dd4113c) не установлены: коммит-послание «install after key rotation», а ротация снята с приоритета — тупик. Связку разорвать: хук ставится без ротации и не даст НОВОМУ ключу уехать в git-историю. Факт: sk-ant жив в рабочем дереве Workspace/main.py (secret_scan, повторно подтверждено 06.11). Действие: установка хуков в .git/hooks + контрольный прогон на текущем дереве. Локальное действие, наружу ничего не идёт.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: секрет-контур застыл на полпути между фиксацией и активацией."
+          },
+          {
+            "type": "change",
+            "at": "2026-11-06T18:40:14Z",
+            "by": "ZCode"
+          },
+          {
+            "status": "done",
+            "at": "2026-11-06T18:47:04Z",
+            "by": "ZCode"
+          }
+        ],
+        "stage": "todo",
+        "type": "change",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Установлено 06.11 ~23:50 (sh tools/security/hooks/install.sh) + дописана фаза 2: RED блокирует коммит только если находка внутри staged-файла — живой sk-ant в Workspace/main.py больше не останавливает чужие коммиты (ротация остаётся отдельной задачей). Контрольные прогоны: пустой staged → exit 0; фейковый sk-ant в staged → коммит ОТКЛОНЁН (exit 1); обход --no-verify без изменений. Реальный коммит cf3d503 прошёл через гейт чисто.",
+            "at": "2026-11-06T18:47:04Z"
+          }
+        ],
+        "completedAt": "2026-11-06T18:47:04Z",
         "busy": null
       }
     ],
@@ -874,6 +1098,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "test",
+        "type": "task",
         "busy": null
       },
       {
@@ -964,6 +1189,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -1025,6 +1251,7 @@ window.EVO_BRIEF = {
             "at": "2026-11-05T20:06:32Z"
           }
         ],
+        "type": "task",
         "busy": null
       },
       {
@@ -1093,6 +1320,7 @@ window.EVO_BRIEF = {
         ],
         "stage": "test",
         "owner": "агент-пилот ZCode (Higgsfield SDK+docs, старт 05.11)",
+        "type": "task",
         "busy": null
       },
       {
@@ -1115,6 +1343,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -1137,6 +1366,14 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "in-progress",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Обновление инвентаря 06.11, 21:20: в дереве 41 позиция — 23 изменённых (M), 17 новых (??), 1 удалённая (D), ~1301 строка diff. Состав: флот-панель agents.html/css/js + test_agents_live (20 тестов); tools/lib/task_lock.py + тесты task_comments/night_fixes; HIGGSFIELD-DOCS-2026-11-05.md (54KB); 4 новые карточки задач; правки task_store / dashboard-server / kanban. dd4113c (секрет-фиксы) не запушен — origin/main на a3ca29e. Для закрытия создана карточка ops-commit-push-2026-11-06 (Сделать, urgent): бэкап → коммит → пуш одним пакетом, по команде Sovereign.",
+            "at": "2026-11-06T18:20:16Z"
+          }
+        ],
+        "type": "task",
         "busy": null
       },
       {
@@ -1156,6 +1393,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -1275,6 +1513,39 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "test",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "kanban-entity-types",
+        "title": "Типы сущностей на канбане: Таска / ЗНИ / Эпик (ITIL-минимум)",
+        "source": "Sovereign",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Запрос Sovereign 06.11: разделять сущности системы (задача, запрос на изменение, эпик). Дизайн-минимум: поле type на карточке — task | change (ЗНИ) | epic; отсутствие поля = task (существующие файлы не трогаем); allowlist-валидация, неизвестное значение = 400 (не 500 — урок priority-инцидента); бейдж-чип на карточке, фильтр по типу в шапке; колонки общие для всех типов. Для ЗНИ — причина изменения в описании (justification). Журнал движения по заявке уже есть: comments (в бою с 05.11) + history. Затронуть: task_store.py, dashboard-server.py, kanban.js (+?v=).",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Создано по прямому запросу Sovereign в чате 06.11. Стадия «Анализ»: дизайн на одобрение."
+          },
+          {
+            "stage": "test",
+            "at": "2026-11-06T18:47:17Z",
+            "by": "ZCode"
+          }
+        ],
+        "stage": "test",
+        "type": "task",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Исполнено 06.11 ~23:55. Backend: task_store.set_type (allowlist task|change|epic), POST /api/tasks/<id>/type — неизвестное значение = 400; чтение толерантно (нет поля = task). UI (kanban.js v8): бейджи ЗНИ (оранж)/Эпик (фиолет), фильтр по типам со счётчиками в шапке, переключатель типа в модалке карточки, записи ТИП в истории. Тесты: tools/tests/test_task_types.py (7), оба сьюта зелёные (142). Живой прогон: type=change на sec-secret-gate-install, type=epic на study-ai-agents, incident → 400. Примеры типов в бою: study-ai-agents = Эпик, sec-secret-gate-install = ЗНИ.",
+            "at": "2026-11-06T18:47:03Z"
+          }
+        ],
         "busy": null
       },
       {
@@ -1296,6 +1567,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -1315,50 +1587,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
-        "busy": null
-      },
-      {
-        "id": "merge-branches-d002",
-        "title": "Слияние веток по D-002",
-        "source": "R9",
-        "priority": "regular",
-        "status": "done",
-        "completedAt": "2026-11-04T18:36:05Z",
-        "createdAt": "2026-10-29T04:26:16Z",
-        "history": [
-          {
-            "status": "active",
-            "at": "2026-10-29T04:26:16Z",
-            "note": "Перенесено из текущего списка задач дашборда."
-          },
-          {
-            "stage": "in-progress",
-            "at": "2026-11-03T06:36:52Z"
-          },
-          {
-            "stage": "test",
-            "at": "2026-11-03T06:43:22Z"
-          },
-          {
-            "stage": "in-progress",
-            "at": "2026-11-03T06:43:24Z"
-          },
-          {
-            "stage": "todo",
-            "at": "2026-11-03T06:51:13Z"
-          },
-          {
-            "stage": "in-progress",
-            "at": "2026-11-04T06:13:21Z"
-          },
-          {
-            "stage": "done",
-            "at": "2026-11-04T18:36:05Z",
-            "by": "Sovereign",
-            "note": "Закрыто 04.11 (E-046): merge origin/main (PR #2) в feature_1.8.6 → push origin/main (5057dcb), локальная main создана, ветки feature_1.8.6/1.8.5/1.8.2 удалены локально и на origin. Работа продолжается на main."
-          }
-        ],
-        "stage": "in-progress",
+        "type": "task",
         "busy": null
       },
       {
@@ -1412,6 +1641,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -1426,8 +1656,15 @@ window.EVO_BRIEF = {
             "status": "active",
             "at": "2026-10-29T20:45:00Z",
             "note": "Приоритет Sovereign: реальные деньги любой ценой. Вести всесторонне: (1) триаж-доска Workspace/analytics/orders_board.json + orders_report.md (tools/orders_triage.py) — перспективные/основной/отсев, ручная сортировка сохраняется; (2) подключить к агрегатору биржи заказов (fl.ru, kwork — функции уже есть в tools/job_search.py, в снапшот 29.10 не попали); (3) подтягивать has_salary и свежесть; (4) готовить первые отклики на перспективные заказы (скраперы/парсеры/боты/LLM/DevOps); (5) задействовать все ресурсы платформы: агрегатор, экстракция зарплат, дашборд Trading Quarter, агенты. MVP уже стоит, работаем итерациями."
+          },
+          {
+            "stage": "analysis",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "analysis",
+        "type": "task",
         "busy": null
       },
       {
@@ -1447,6 +1684,100 @@ window.EVO_BRIEF = {
             "note": "Создано по просьбе Дмитрия «запиши результат и оставь на утро задачу — еще раз ознакомиться»"
           }
         ],
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "ops-commit-push-2026-11-06",
+        "title": "Закоммитить и запушить ночную работу (41 файл)",
+        "source": "ZCode",
+        "priority": "urgent",
+        "status": "done",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "В дереве 23 изменённых + 17 новых + 1 удалённый файл (~1301 строка): флот-панель agents.*, tools/lib/task_lock.py, тесты (agents_live, night_fixes, task_comments), HIGGSFIELD-DOCS, 4 новые карточки задач. dd4113c (секрет-фиксы) не запушен — origin/main стоит на a3ca29e. Всё существует в одном экземпляре на ноутбуке, который известен тем, что засыпает. Действие: tools/ops/backup_workspace.py → коммит → пуш. Условие: параллельные сессии затихли. Исполнитель: ZCode, по команде Sovereign.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: главный риск — ночные наработки трёх рейсов не заморожены ни коммитом, ни пушем."
+          },
+          {
+            "status": "done",
+            "at": "2026-11-06T18:47:04Z",
+            "by": "ZCode"
+          }
+        ],
+        "stage": "todo",
+        "type": "task",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Исполнено 06.11 ~23:55, по факту разделилось: ночную работу закоммитил сам параллельный рейс (d271fd5 fleet, c13addb kanban hardening, 625a865 docs/cards, 32626c0 higgsfield, 3d02ab3 evofind, 103b033 orders-triage); мой пакет сегодняшнего дня — cf3d503 (типы сущностей, секрет-гейт фаза 2, раннер, карточки). Пуш выполнен: origin/release/1.8.6, 7 коммитов ушли на GitHub. Бэкап перед коммитом: Backups/20261106-234429. Не вошли (чужие свежие правки, не коммитил): brief.js, index.html, Workspace/cloud/.",
+            "at": "2026-11-06T18:47:03Z"
+          }
+        ],
+        "completedAt": "2026-11-06T18:47:04Z",
+        "busy": null
+      },
+      {
+        "id": "ops-release-ritual",
+        "title": "Ритуал релиза: VERSION и AI-ONBOARDING тем же коммитом",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "VERSION = 1.8.4 при ветке release/1.8.6; AI-ONBOARDING фиксирует HEAD a3ca29e при живом dd4113c — карта, которой доверяют входящие сессии, систематически врёт. Правило: релизная правка = тот же коммит обновляет VERSION, CHANGELOG и строку HEAD в AI-ONBOARDING. Попутно: строка «Interface/ заморожен до X» в README (второй фронтенд-каркас спит и создаёт раздвоение).",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: собственный протокол «сверяй VERSION» даёт ложный след."
+          }
+        ],
+        "stage": "todo",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "ops-test-runner-unify",
+        "title": "Единый тест-раннер + requirements.txt",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Три сьюта (48 + 35 + новые ~46: agents_live, night_fixes, task_comments, jobs_registry) запускаются вручную по памяти из AI-ONBOARDING — при таком росте что-то перестанут запускать. Сделать: tools/ops/run_all.py (одна команда, сводка по сьютам, exit code) + requirements.txt (фикс версий сторонних зависимостей tools/). Опционально: pre-push хук с прогоном как замена отсутствующему CI.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: тесты растут быстрее рутины их запуска."
+          }
+        ],
+        "stage": "todo",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "portfolio-onepager",
+        "title": "Портфолио-одностраничник из master-profile.json + кейсов",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Резюме-зона наполнена (master-profile.json: 28 навыков / 7 кейсов; 3 полных кейса RU+EN; отклики в proposals/2026-11-05), но нет собираемого артефакта, который прикладывается к отклику. Сделать: генератор (python) → одностраничник HTML/PDF RU+EN из живых JSON, перегенерация одной командой. Всё локально, отправка руками — в рамках решения «не выпрыгиваем вовне». Блокеров нет, фактура уже есть.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: единственный слой, который должен выходить наружу, не собран."
+          }
+        ],
+        "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -1466,6 +1797,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -1497,6 +1829,92 @@ window.EVO_BRIEF = {
         ],
         "stage": "todo",
         "description": "Ротация LangSmith + FreeLLMAPI ключей (аудит 04.11: ключи в локальном reflog-коммите 1164ed7, origin чист; sk-ant — dummy)",
+        "type": "task",
+        "busy": null
+      },
+      {
+        "id": "sandbox-excursion",
+        "title": "AI Sandbox: вкладка «Экскурсия» — граф рейсов агентов",
+        "source": "ZCode",
+        "priority": "regular",
+        "status": "active",
+        "createdAt": "2026-11-06T21:25:00Z",
+        "type": "task",
+        "description": "Запрос Sovereign 07.11: визуальный экскурс «как парочка агентов и лейнов отрабатывала, откуда всё шло и как реализовывалось» — внутри AI Sandbox. Сделано: 4-й таб «Экскурсия»; два живых рейса из events.jsonl — «Флот в море» (Замысел→ТЗ→Спавн→Лейны Л-С1..С3→Шторм→Артефакты→Финиш→Приёмка) и «Резюме-конвейер» (5 шагов пульса, 14 файлов). Узлы кликабельны — реальные факты журнала + ссылки на источники. Данные: excursion-data.js (snapshot, паттерн brief.js), генератор tools/barrymore/build-excursion.py (перегенерация одной командой; приватная зона — только пути). Проверено: node --check, DOM-проба, скриншот IAB.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T21:25:00Z",
+            "by": "ZCode",
+            "note": "Исполнено одним заходом сразу после запроса; поставлена в «Проверку» — приёмка Sovereign в живом интерфейсе: карта островов → 🔮 AI Sandbox → Экскурсия."
+          }
+        ],
+        "stage": "test",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Доработка по вердикту Sovereign 07.11 «белиберда → доклад цифрами» (коммит 2dc96ad): каждый рейс теперь открывается докладом — метрики-чипы + строки РАБОТАЛИ/ЗАДАЧА/РЕЗУЛЬТАТ/ИНЦИДЕНТ/ЭКСПЛУАТАЦИЯ/ВЕРДИКТ, все числа из живых источников (пульсы журнала, git show --stat, NIGHT-LOG). Флот: +1572 строки в 6 файлах, 20/20 тестов, 10 мин 40 с. Резюме: 3.34M токенов, 67 вызовов, 216→10 позиций, 14 файлов. Сводка ночи: 3 рейса ~11.5M токенов. Граф-маршрут остался ниже как приложение. Обновить страницу дашборда (app.js v14, excursion-data.js?v=2).",
+            "at": "2026-11-07T04:14:00Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Дополнение 07.11 (коммит 75d3de1, запрос Sovereign): в подвале модалки рядом с «Вернуться к карте островов» — маленькая кнопка-стрелки «во весь экран» (стрелки наружу/внутрь, без надписи). Полный экран = вьюпорт минус 10px, Esc в полном экране сначала возвращает окно. Проверено живьём: 1260x700 в полный экран, 780px обратно.",
+            "at": "2026-11-07T04:33:12Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Правка по вердикту Sovereign 07.11 «кнопки в подвале выстроились столбиком» (коммит 0632d7e): подвал восстановлен в исходный вид (одна кнопка возврата), кнопка полного экрана переселена в правый нижний угол самого окна (absolute, 12px от углов, поверх подвала — modal-island-actions везде пуст). Живая проверка: зазор 13px от угла в обоих режимах, иконки наружу/внутрь свапаются, 780px<->полный экран, Esc логика без изменений. style.css?v=5.",
+            "at": "2026-11-07T04:39:38Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Фикс наезда (коммит, запрос Sovereign 07.11): на mainEstate правая часть подвала заполняется («Рабочий кабинет», «Канбан лиджера») — кнопка в углу окна наезжала. Решение: кнопка — ребёнок подвала, absolute bottom: calc(100% + 10px), right: 14px — висит ровно над подвалом у правого края, следует за высотой подвала любого острова. Живая проверка на mainEstate: 4 контрола подвала, зазор 9px, наездов нет ни в окне, ни в полном экране, оба переключения работают. style.css?v=6.",
+            "at": "2026-11-07T04:47:49Z"
+          },
+          {
+            "by": "ZCode",
+            "text": "Итерация 4 по идее Sovereign 07.11 «кто из нас ИИ» (коммит): длинная кнопка «✕ Закрыть» заменена двумя маленькими иконками в шапке — полный экран (стрелки) и закрыть (крестик), как в любой ОС за 20 лет. Гоча поймана: setText локали перезаписал бы SVG текстом — локаль ушла в tooltip/aria. Проверено на mainEstate живьём: 2 контрола шапки, подвал цел (3 кнопки), полный экран + свап иконок + закрытие по крестику работают. style.css?v=7.",
+            "at": "2026-11-07T04:50:27Z"
+          }
+        ],
+        "busy": null
+      },
+      {
+        "id": "sec-secret-gate-install",
+        "title": "Установить pre-commit secret gate (написан, не активен)",
+        "source": "ZCode",
+        "priority": "urgent",
+        "status": "done",
+        "createdAt": "2026-11-06T18:18:00Z",
+        "description": "Хуки из tools/security/hooks (dd4113c) не установлены: коммит-послание «install after key rotation», а ротация снята с приоритета — тупик. Связку разорвать: хук ставится без ротации и не даст НОВОМУ ключу уехать в git-историю. Факт: sk-ant жив в рабочем дереве Workspace/main.py (secret_scan, повторно подтверждено 06.11). Действие: установка хуков в .git/hooks + контрольный прогон на текущем дереве. Локальное действие, наружу ничего не идёт.",
+        "history": [
+          {
+            "status": "active",
+            "at": "2026-11-06T18:18:00Z",
+            "by": "ZCode",
+            "note": "Ревью проекта 06.11: секрет-контур застыл на полпути между фиксацией и активацией."
+          },
+          {
+            "type": "change",
+            "at": "2026-11-06T18:40:14Z",
+            "by": "ZCode"
+          },
+          {
+            "status": "done",
+            "at": "2026-11-06T18:47:04Z",
+            "by": "ZCode"
+          }
+        ],
+        "stage": "todo",
+        "type": "change",
+        "comments": [
+          {
+            "by": "ZCode",
+            "text": "Установлено 06.11 ~23:50 (sh tools/security/hooks/install.sh) + дописана фаза 2: RED блокирует коммит только если находка внутри staged-файла — живой sk-ant в Workspace/main.py больше не останавливает чужие коммиты (ротация остаётся отдельной задачей). Контрольные прогоны: пустой staged → exit 0; фейковый sk-ant в staged → коммит ОТКЛОНЁН (exit 1); обход --no-verify без изменений. Реальный коммит cf3d503 прошёл через гейт чисто.",
+            "at": "2026-11-06T18:47:04Z"
+          }
+        ],
+        "completedAt": "2026-11-06T18:47:04Z",
         "busy": null
       },
       {
@@ -1516,6 +1934,7 @@ window.EVO_BRIEF = {
             "note": "ГОТОВО 04.11: (1) «Целевой стенд» в AI Sandbox → Инструменты — цели-чипы + галочки проверок → nmap_probe, прогон и скриншот ок (app.js?v=12, languages.js?v=3); (2) найден и закрыт routing-drift баг /api/sandbox/run (V-06), сервер 8765 перезапущен — ожили и эндпоинты E-046; (3) VULN-PROGRAM.md в Workspace/pentest/2026-11-04-vuln-program/ (вне git): 12 уязвимостей Platform + 12 индустриальных классов + фазы Ф-1..Ф-5; (4) Kali: VM headless 192.168.238.128, снапшот pre-pentest-2026-11-04, консоль-блок для шага 7 сохранён Дмитрием. || НА 05.11: [1] Ротация sk-ant руками Sovereign (V-01, P1, ~10 мин: панель Anthropic → новый ключ → Vault → правка Workspace/main.py:17) — критерий: secret_scan RED=0. [2] Консоль-блок Kali (учётка watson) → ZCode поднимает Juice Shop (target-server.sh) → скан 192.168.238.128 через стенд → фазовый отчёт в Workspace/pentest/2026-11-04-juiceshop/. [3] После ротации: слово на вычистку git-истории (filter-repo/BFG по sk-ant, 709b2c5). [4] Ф-1 остаток: rae-work HAR/chrome-profile под пароль/удалить (куки hh!), мастер-пароль на Vault, pre-commit hook secret_scan. [5] Коммит кода стенда — когда разобраны чужие правки в app.js/dashboard-server (сейчас не смешивать)."
           }
         ],
+        "type": "task",
         "busy": null
       },
       {
@@ -1535,6 +1954,7 @@ window.EVO_BRIEF = {
             "note": "Установлены в ~/.zcode/agents/ из каталога agency-agents (230+): engineering-devops-automator.md и engineering-technical-writer.md. Штат: 8 ролей. Зачем: (1) DevOps Automator — инфраструктурная автоматизация, CI/CD, операции: родная стихия Дмитрия, усилит tools/ops (бэкап/healthcheck), переезд Platform на хостинг (план fffc974), рутину вакансий DevOps; (2) Technical Writer — документация, README, гайды: закрывает БЛОКЕР №1 поиска работы (3 кейса для резюме + визитка в Workspace/private/resume/), описания услуг/откликов, устаревшие README Platform. Как работают: как остальные 6 — вызов в ZCode-окне (агент = роль с промптом; рантайма как у Холмса/Хантера нет и не нужно), привязка к задаче → прогон → отчёт. НОВЫЕ ТИПЫ УЖЕ ВИДНЫ СИСТЕМЕ БЕЗ ПЕРЕЗАПУСКА (хост подхватил живьём). Смоук 05.11 00:2x: Technical Writer живой — микрозадача справки за 88 сек / ~22k токенов, чистый русский текст + «СМОУК ОК»; первая попытка упёрлась в «user concurrency limit» (слот соседнего чата) — повтор через 45 с прошёл. Утром: демонстрация по живой задаче (кейс №1 для резюме техписателем, healthcheck-скрипт девопсом)."
           }
         ],
+        "type": "task",
         "busy": null
       },
       {
@@ -1550,8 +1970,15 @@ window.EVO_BRIEF = {
             "at": "2026-10-31T12:28:00Z",
             "by": "Code Reviewer (пилот штата, E-023)",
             "note": "P1: карточки hh из HTML-фолбэка получают date=''; parse_date даёт datetime.min; сортировка уносит их в хвост, слайс [:60] вырезает первыми. Верифицировано: results.json — 60 hh-записей, все с пустой датой; vacancies.js — 0 записей hh. Фикс: пустую дату подставлять временем запуска (hh-выдача отсортирована по свежести) или трактовать пустую дату как now в ключе сортировки. Файл: tools/job_search.py:133, 388, 400."
+          },
+          {
+            "stage": "todo",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -1567,8 +1994,15 @@ window.EVO_BRIEF = {
             "at": "2026-10-31T12:28:00Z",
             "by": "Secrets & Credential Hygiene Engineer (пилот штата, E-023)",
             "note": "P1: реальные LANGSMITH_API_KEY и FREE_LLM_API_KEY лежат plaintext в C:/Users/temp/.zcode/cli/artifacts/session_c87212841fb8241f72e3dd5a6f5e7333/ (call_99ddca97… — эхо .env, call_fcdf812e…). Git-история чиста (P0 нет, 262 коммита). Действия по санкции Sovereign: (1) удалить два artifact-файла; (2) ротировать LANGSMITH_API_KEY (smith.langchain.com) и FREE_LLM_API_KEY (шлюз :31415); (3) обновить Workspace/.env и KeePassXC. P2: pre-commit сканер (gitleaks); заглушку sk-… из Workspace/main.py:17 убрать из tracked-кода."
+          },
+          {
+            "stage": "todo",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -1632,8 +2066,20 @@ window.EVO_BRIEF = {
             "status": "active",
             "at": "2026-10-30T16:33:00Z",
             "note": "Создана ZCode по прямому указанию Дмитрия («создай в AI задачу — изучение агентов»); декомпозиция заложена в JSON. 30.10 ~21:33 local (UTC+5)."
+          },
+          {
+            "stage": "analysis",
+            "at": "2026-11-06T18:35:42Z",
+            "by": "ZCode"
+          },
+          {
+            "type": "epic",
+            "at": "2026-11-06T18:40:14Z",
+            "by": "ZCode"
           }
         ],
+        "stage": "analysis",
+        "type": "epic",
         "busy": null
       },
       {
@@ -1653,6 +2099,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "todo",
+        "type": "task",
         "busy": null
       },
       {
@@ -1674,6 +2121,7 @@ window.EVO_BRIEF = {
           }
         ],
         "stage": "in-progress",
+        "type": "task",
         "busy": null
       }
     ]
@@ -1732,11 +2180,13 @@ window.EVO_BRIEF = {
   },
   "git": {
     "branch": "release/1.8.6",
-    "lastCommit": "dd4113c Security fixes from AI-code audit (A-01..A-04): per-tool args allowlist on /api/sandbox/run (CWE-88, PoC-verified 400), safeUrl scheme check for external feed hrefs (CWE-79), escapeHtml in estate-staff and Holmes branch renders; pre-commit secret gate hooks (tools/security/hooks, install after key rotation)",
-    "dirtyFiles": 35
+    "lastCommit": "69dbbfe Island modal: classic window controls in header - two small icon buttons",
+    "dirtyFiles": 22
   },
   "agent": {
-    "error": "LLM gateway HTTP 502 {\"error\":{\"message\":\"All 3 routed attempt(s) failed with upstream provider errors (error ×3). This is a provider-side failure, not a problem with your request; retry, or check provider status. Attempt"
+    "model": "gemini-3.1-flash-lite-preview",
+    "summary": "Дмитрий, доброе утро. Платформа eVo обновлена до v1.8.4 (ветка release/1.8.6).\nНочью успешно завершены три рейса: «Флот в море», «Резюме-конвейер» и «Экскурсия» в AI Sandbox.\nХантер: 125 перспективных и 32 основных вакансии, 19 находок с вилкой, 253 позиции на OLX.\nАктуальные задачи: ротация ключей LangSmith/FreeLLMAPI, заполнение пробелов в master-profile и тех-долг реестра джобов.\nВ рабочем дереве 22 изменённых файла; секрет-контур активен, коммиты проходят через pre-commit gate.\nKali-лаборатория развёрнута, ожидает финальной настройки спец-учётки и запуска Juice Shop.",
+    "nextStep": "Запустить ZCode для выполнения задачи по заполнению пробелов в master-profile.json (ночной план Sovereign)."
   },
-  "_sourceFingerprint": "c82155afc264c24cab9a082704b1656493f3a3e3e39b6ca2931717d2287fadbb"
+  "_sourceFingerprint": "07c377738509140a6277ec7e69716583b5ab1117c7818fef1b2a96e980a99cab"
 };

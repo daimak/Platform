@@ -1,0 +1,14 @@
+# uptime-kuma.yml — мониторинг стендов (кто кого проверяет: сама машина + partners).
+# Порт: 3001 (http://<ip>:3001). Первый вход — создание админа через UI.
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: evo-uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime-kuma-data:/app/data
+
+volumes:
+  uptime-kuma-data:

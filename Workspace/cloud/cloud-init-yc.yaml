@@ -1,0 +1,99 @@
+#cloud-config
+# cloud-init-yc.yaml — user-data для ВМ Yandex Cloud Ubuntu 24.04 LTS.
+# Рождается уже настроенной: то же самое, что bootstrap.sh, но до первого логина.
+#
+# Единственная правка руками (Дмитрий): заменить {{SSH_PUBLIC_KEY}} на
+# содержимое своего ПУБЛИЧНОГО ключа (~/.ssh/id_ed25519.pub), одна строка.
+# Секретов в файле нет и быть не должно.
+#
+# Как применяется:
+#   yc compute instance create \
+#     --name evo-stand-yc --hostname evo-stand-yc \
+#     --zone ru-central1-a \
+#     --network-interface subnet-name=default-ru-central1-a,nat-ip-version=ipv4 \
+#     --create-boot-disk image-folder-id=standard-images,image-family=ubuntu-2404-lts \
+#     --metadata-from-file user-data=cloud-init-yc.yaml
+#   (--ssh-key НЕ передавать: наш ключ уже в user-data; иначе создастся лишний yc-user)
+#
+# После первой загрузки файл править бессмысленно — user-data применяется один раз.
+
+hostname: evo-stand-yc
+timezone: Asia/Tashkent
+ssh_pwauth: false
+disable_root: true
+
+users:
+  - name: deploy
+    gecos: EVO deploy
+    groups: [adm, sudo]
+    shell: /bin/bash
+    lock_passwd: true
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    ssh_authorized_keys:
+      - "{{SSH_PUBLIC_KEY}}"
+
+package_update: true
+package_upgrade: true
+packages:
+  - ufw
+  - fail2ban
+  - unattended-upgrades
+  - ca-certificates
+  - curl
+  - gnupg
+  - jq
+  - htop
+  - git
+  - openssh-server
+
+write_files:
+  # fail2ban: Ubuntu 24.04 без rsyslog/auth.log — только systemd backend
+  - path: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      backend = systemd
+      bantime = 1h
+      findtime = 10m
+      maxretry = 5
+
+      [sshd]
+      enabled = true
+      backend = systemd
+  # 00- префикс обязателен: sshd_config.d читается до основного конфига,
+  # «первое значение выигрывает» — надо быть раньше 50-cloud-init.conf
+  - path: /etc/ssh/sshd_config.d/00-evo-hardening.conf
+    content: |
+      PermitRootLogin prohibit-password
+      PasswordAuthentication no
+      PubkeyAuthentication yes
+      KbdInteractiveAuthentication no
+  - path: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+
+runcmd:
+  # ufw: 22, 80, 443 + порты стенда (juice-shop 3000, dvwa 8081, n8n 5678,
+  # uptime-kuma 3001, wireguard 51820/udp, k3s 6443)
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw allow 3000/tcp
+  - ufw allow 8081/tcp
+  - ufw allow 5678/tcp
+  - ufw allow 3001/tcp
+  - ufw allow 51820/udp
+  - ufw allow 6443/tcp
+  - ufw --force enable
+  - systemctl enable --now fail2ban
+  - systemctl restart ssh
+  # docker + compose plugin (get.docker.com сам идемпотентен, но проверяем)
+  - sh -c 'command -v docker >/dev/null 2>&1 || curl -fsSL https://get.docker.com | sh'
+  - systemctl enable --now docker
+  - usermod -aG docker deploy
+
+final_message: |
+  EVO bootstrap (yc) завершён после $UPTIME секунд. deploy готов, docker стоит.
+  Проверка: ssh deploy@<вм_ip>, затем sudo bash probe-machine.sh

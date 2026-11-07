@@ -1,0 +1,32 @@
+# dvwa.yml — DVWA (Damn Vulnerable Web Application) + MariaDB.
+# Порт: 8081 (http://<ip>:8081). Логин admin/password — сменить после первого входа.
+# Пароль БД генерируется deploy-polygons.sh (openssl rand) в .env рядом с compose.
+services:
+  dvwa:
+    image: ghcr.io/digininja/dvwa:latest
+    container_name: evo-dvwa
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      - dvwa-db
+    environment:
+      DB_SERVER: dvwa-db
+      DB_DATABASE: dvwa
+      DB_USERNAME: dvwa
+      DB_PASSWORD: "${DVWA_DB_PASSWORD:?не задан DVWA_DB_PASSWORD — генерируется deploy-polygons.sh}"
+
+  dvwa-db:
+    image: mysql:8.0
+    container_name: evo-dvwa-db
+    restart: unless-stopped
+    volumes:
+      - dvwa-db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DVWA_DB_ROOT_PASSWORD:?не задан DVWA_DB_ROOT_PASSWORD — генерируется deploy-polygons.sh}"
+      MYSQL_DATABASE: dvwa
+      MYSQL_USER: dvwa
+      MYSQL_PASSWORD: "${DVWA_DB_PASSWORD:?не задан DVWA_DB_PASSWORD}"
+
+volumes:
+  dvwa-db-data:

@@ -1793,9 +1793,52 @@ function buildTQRadarHTML() {
 }
 
 /**
+ * Динамическая вкладка внутренней зоны: локальный серверный плагин из
+ * приватного каталога сам сообщает метку и разметку (/api/internal/tab).
+ * Плагина нет — вкладки нет. Здесь только generic-механика, никакого
+ * содержимого — фактура живёт вне git (Workspace/private/internal/).
+ */
+async function installInternalTab() {
+  try {
+    const response = await fetch("/api/internal/tab");
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!data || !data.label || !data.html) return;
+    const tablist = document.querySelector('.ai-sandbox-tabs[role="tablist"]');
+    if (!tablist || document.getElementById("tq-internal-tab")) return;
+    const tab = document.createElement("button");
+    tab.className = "ai-sandbox-tab";
+    tab.id = "tq-internal-tab";
+    tab.type = "button";
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-selected", "false");
+    tab.setAttribute("aria-controls", "tq-panel-internal");
+    tab.setAttribute("data-tq-tab", "");
+    tab.tabIndex = -1;
+    tab.textContent = data.label;
+    const panel = document.createElement("section");
+    panel.className = "ai-sandbox-tab-panel";
+    panel.id = "tq-panel-internal";
+    panel.setAttribute("role", "tabpanel");
+    panel.setAttribute("aria-labelledby", "tq-internal-tab");
+    panel.hidden = true;
+    panel.innerHTML = data.html;
+    panel.querySelectorAll("script").forEach((old) => {
+      const fresh = document.createElement("script");
+      fresh.textContent = old.textContent;
+      old.replaceWith(fresh);
+    });
+    tablist.appendChild(tab);
+    tablist.parentElement.appendChild(panel);
+    initTradingQuarterTabs();
+  } catch (_) { /* плагина нет — вкладки нет */ }
+}
+
+/**
  * Переключение вкладок Trading Quarter (та же механика, что в aiSandbox).
  */
 function initTradingQuarterTabs() {
+  void installInternalTab();
   const tabs = Array.from(document.querySelectorAll('[data-tq-tab][role="tab"]'));
   if (!tabs.length) return;
 

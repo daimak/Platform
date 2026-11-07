@@ -17,10 +17,26 @@
       cursor: default;
     }
 
-    /* ---- фон: цельный арт-референс (World_map_v1) ---- */
+    /* ---- фон: размытый атмосферный задник (та же карта) + фрейм с полным артом.
+       Карта всегда видна ЦЕЛИКОМ (правило E-014: ни обрезок, ни чёрных полос) ---- */
     .worldmap-bg {
       position: absolute; inset: 0; z-index: 1;
       background: url("assets/world-map-v1.png") center / cover no-repeat;
+      filter: blur(26px) brightness(0.5) saturate(1.1);
+      transform: scale(1.12);
+    }
+    .map-frame {
+      position: absolute; inset: 0; margin: auto;
+      width: min(100vw, calc(100vh * 1600 / 900));
+      aspect-ratio: 1600 / 900;
+      z-index: 2;
+      background: url("assets/world-map-v1.png") center / 100% 100% no-repeat;
+      border-radius: 6px;
+      box-shadow: 0 0 90px rgba(0, 0, 0, 0.75);
+    }
+    .map-frame::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 4; pointer-events: none;
+      box-shadow: inset 0 0 60px 18px rgba(10, 22, 38, 0.55);
     }
 
     .title {
@@ -95,17 +111,18 @@
     }
     @keyframes pulse { 50% { opacity: 0.45; } }
 
-    /* зум выбранного континента */
-    .map.zooming { transition: transform 0.6s cubic-bezier(0.5, 0, 0.8, 0.4), opacity 0.6s ease; }
-    .map.zooming { transform-origin: var(--zx, 50%) var(--zy, 50%); }
-    .map.zooming.zoom { transform: scale(4.2); opacity: 0; }
+    /* зум выбранного континента (зумим весь фрейм: арт + зоны + гербы) */
+    .map-frame.zooming { transition: transform 0.6s cubic-bezier(0.5, 0, 0.8, 0.4), opacity 0.6s ease; }
+    .map-frame.zooming { transform-origin: var(--zx, 50%) var(--zy, 50%); }
+    .map-frame.zooming.zoom { transform: scale(4.2); opacity: 0; }
   </style>
 </head>
 <body>
   <div class="worldmap-bg"></div>
 
-  <!-- ======== КАРТА: клик-зоны поверх арт-референса ======== -->
-  <svg class="map" id="map" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <!-- ======== КАРТА: фрейм с полным артом + клик-зоны ======== -->
+  <div class="map-frame" id="map-frame">
+  <svg class="map" id="map" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet">
     <!-- ====== АРХИПЕЛАГ 1: ESTATE (левый центр) ====== -->
     <g class="continent" data-world="index.html" data-name="ГЛАВНАЯ УСАДЬБА">
       <ellipse class="hitzone" cx="451" cy="405" rx="210" ry="125"/>
@@ -129,6 +146,7 @@
   <div class="gerb" style="left: 28.2%; top: 36%;">🏰</div>
   <div class="gerb" style="left: 59%; top: 66.5%;">🌀</div>
   <div class="gerb" style="left: 72.2%; top: 36%;">⚙️</div>
+  </div><!-- /map-frame -->
 
   <div class="title">КАРТА МИРА eVo</div>
   <div class="subtitle">цифровая цивилизация из трёх архипелагов · эпоха первая</div>
@@ -139,18 +157,19 @@
   <script>
     "use strict";
     const map = document.getElementById("map");
+    const frame = document.getElementById("map-frame");
     const dive = document.getElementById("dive");
     const diveLabel = document.getElementById("dive-label");
     document.querySelectorAll(".continent").forEach((c) => {
       c.addEventListener("click", () => {
         const r = c.querySelector(".hitzone").getBoundingClientRect();
-        const vb = map.viewBox.baseVal;
-        const zx = ((r.left + r.width / 2) / innerWidth * 100).toFixed(1) + "%";
-        const zy = ((r.top + r.height / 2) / innerHeight * 100).toFixed(1) + "%";
-        map.classList.add("zooming");
-        map.style.setProperty("--zx", zx);
-        map.style.setProperty("--zy", zy);
-        requestAnimationFrame(() => map.classList.add("zoom"));
+        const fr = frame.getBoundingClientRect();
+        const zx = ((r.left + r.width / 2 - fr.left) / fr.width * 100).toFixed(1) + "%";
+        const zy = ((r.top + r.height / 2 - fr.top) / fr.height * 100).toFixed(1) + "%";
+        frame.classList.add("zooming");
+        frame.style.setProperty("--zx", zx);
+        frame.style.setProperty("--zy", zy);
+        requestAnimationFrame(() => frame.classList.add("zoom"));
         diveLabel.textContent = c.dataset.name;
         dive.classList.add("open");
         setTimeout(() => { location.href = c.dataset.world; }, 750);

@@ -70,15 +70,25 @@ function linkify(s) {
 
 /* ---------- доска ---------- */
 
+function createdLine(task) {
+  const iso = task.createdAt || (Array.isArray(task.history) && task.history[0] && task.history[0].at) || "";
+  if (!iso) return "";
+  try {
+    return "Дата создания: " + new Date(iso).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  } catch (_) { return ""; }
+}
+
 function cardHtml(task) {
   const pr = task.priority === "urgent" ? "urgent" : "regular";
   const badge = task.status === "done"
     ? '<span class="kb-badge done-badge">DONE</span>'
     : `<span class="kb-badge ${pr}">${pr === "urgent" ? "URGENT" : "REGULAR"}</span>`;
   const source = task.source ? `<span class="kb-badge">${esc(task.source)}</span>` : "";
+  const created = createdLine(task);
   return `
     <div class="kb-card ${pr}" data-id="${esc(task.id)}">
       <div class="kb-card-title">${esc(task.title)}</div>
+      ${created ? `<div class="kb-card-created" style="font-size:0.63rem;color:#7c8aa0;margin-top:2px;">${esc(created)}</div>` : ""}
       <div class="kb-card-foot">${badge}${source}${typeBadgeHtml(task)}<span class="kb-card-id">${esc(task.id)}</span></div>
     </div>`;
 }
