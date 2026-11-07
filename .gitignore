@@ -38,6 +38,9 @@ tools/_probe_*
 # Personal data (resume etc.) — local only, never commit
 Workspace/private/
 
+# Rendered docs with real (private) coordinates — see Docs/TEMPLATING.md
+Docs/generated/
+
 # Sandbox interior & pentest artifacts — never commit (AI Sandbox visibility rule, Sovereign 31.10)
 Workspace/pentest/
 Workspace/reports/
