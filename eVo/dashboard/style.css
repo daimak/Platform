@@ -542,12 +542,14 @@ body {
   color: #fca5a5;
 }
 
-/* Кнопка-стрелки «во весь экран»: маленькая, в правом нижнем углу самого
-   окна (запрос Sovereign 07.11: из подвала убрать — там толкотня) */
+/* Кнопка-стрелки «во весь экран»: маленькая, висит ровно НАД подвалом у его
+   правого края (запрос Sovereign 07.11: в подвале толкотня с кнопками
+   островов, в углу окна — наезд на actions; якорь к подвалу = всегда над
+   ними, какой бы высоты подвал ни был) */
 .btn-fullscreen {
   position: absolute;
-  right: 12px;
-  bottom: 12px;
+  right: 14px;
+  bottom: calc(100% + 10px);
   z-index: 5;
   display: inline-flex;
   align-items: center;
@@ -891,6 +893,7 @@ body {
 }
 
 .modal-footer {
+  position: relative; /* якорь для кнопки полного экрана (.btn-fullscreen) */
   display: flex;
   align-items: center;
   justify-content: space-between;
