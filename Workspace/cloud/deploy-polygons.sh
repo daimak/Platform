@@ -55,7 +55,14 @@ N8N_WEBHOOK_URL_PLACEHOLDER=http://localhost:5678/"
       fi
       content="WG_SERVERURL=$serverurl"
       ;;
-    *) return 0 ;;
+    *)
+      # сервис без секретов: всё равно создаём пустой .env — compose требует его
+      # (--env-file на несуществующий файл падает "couldn't find env file")
+      : > "$envfile"
+      chmod 600 "$envfile"
+      log "$svc: .env пустой создан (секретов у сервиса нет)"
+      return 0
+      ;;
   esac
   printf '%s\n' "$content" > "$envfile"
   chmod 600 "$envfile"
