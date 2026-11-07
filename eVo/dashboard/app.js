@@ -2669,6 +2669,7 @@ function initSandboxExcursion() {
   }
   root.dataset.ready = "1";
   const flightsHtml = data.flights.map(excursionFlightHtml).join("");
+  const summary = data.summary ? `<div class="exc-summary">${escapeHtml(data.summary)}</div>` : "";
   root.innerHTML = `
     <style>
       .exc-flight { margin-bottom: 22px; }
@@ -2676,6 +2677,16 @@ function initSandboxExcursion() {
       .exc-title { color: #fff; font-size: 0.95rem; font-weight: 600; }
       .exc-verdict { font-size: 0.68rem; padding: 2px 9px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.5); color: #34d399; }
       .exc-sub { color: var(--text-muted, #7d8aa0); font-size: 0.74rem; margin-bottom: 10px; }
+      .exc-summary { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; padding: 8px 12px; color: #cbd5e1; font-size: 0.8rem; margin-bottom: 14px; }
+      .exc-report { margin-bottom: 12px; }
+      .exc-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+      .exc-metric { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.35); border-radius: 9px; padding: 6px 12px; min-width: 96px; }
+      .exc-metric b { display: block; color: #34d399; font-family: var(--font-mono); font-size: 1.05rem; }
+      .exc-metric span { color: var(--text-muted, #7d8aa0); font-size: 0.64rem; }
+      .exc-row { display: flex; gap: 8px; padding: 3px 0; font-size: 0.8rem; line-height: 1.5; }
+      .exc-row-label { color: #7dd3fc; min-width: 96px; flex-shrink: 0; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 2px; }
+      .exc-row-value { color: #cbd5e1; }
+      .exc-route-caption { color: var(--text-muted, #7d8aa0); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; margin: 12px 0 6px; }
       .exc-flow { display: flex; align-items: stretch; flex-wrap: wrap; gap: 6px; }
       .exc-node { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 7px 10px; cursor: pointer; min-width: 86px; transition: border-color 0.12s ease; }
       .exc-node:hover { border-color: rgba(94,234,212,0.55); }
@@ -2702,6 +2713,7 @@ function initSandboxExcursion() {
       .exc-detail .exc-refs { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
       .exc-detail .exc-refs code { font-family: var(--font-mono); font-size: 0.7rem; color: #94a3b8; }
     </style>
+    ${summary}
     ${flightsHtml}`;
   wireExcursionClicks(root);
 }
@@ -2724,10 +2736,21 @@ function excursionFlightHtml(flight) {
       <div class="exc-node-label">${escapeHtml(node.label)}</div>
     </div>`;
   }).join("");
+  /* Доклад цифрами (требование Sovereign 07.11): метрики-чипы + строки отчёта */
+  const metrics = (Array.isArray(flight.metrics) && flight.metrics.length)
+    ? `<div class="exc-metrics">${flight.metrics.map((m) =>
+        `<div class="exc-metric"><b>${escapeHtml(m.value)}</b><span>${escapeHtml(m.label)}</span></div>`).join("")}</div>`
+    : "";
+  const rows = (Array.isArray(flight.reportRows) && flight.reportRows.length)
+    ? flight.reportRows.map((r) =>
+        `<div class="exc-row"><span class="exc-row-label">${escapeHtml(r.label)}</span><span class="exc-row-value">${escapeHtml(r.value)}</span></div>`).join("")
+    : "";
   return `
     <div class="exc-flight" data-flight-id="${escapeHtml(flight.id)}">
       <div class="exc-head"><span class="exc-title">${escapeHtml(flight.title)}</span><span class="exc-verdict">${escapeHtml(flight.verdict)}</span></div>
       <div class="exc-sub">${escapeHtml(flight.subtitle || "")}</div>
+      <div class="exc-report">${metrics}${rows}</div>
+      <div class="exc-route-caption">Маршрут рейса</div>
       <div class="exc-flow">${nodes}</div>
       <div class="exc-detail" data-detail-for="${escapeHtml(flight.id)}"></div>
     </div>`;
