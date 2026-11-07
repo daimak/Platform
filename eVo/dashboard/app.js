@@ -1055,6 +1055,8 @@ function initModalControls() {
   if (btnClose) btnClose.addEventListener("click", closeIslandModal);
   if (btnRefreshBarrymore) btnRefreshBarrymore.addEventListener("click", refreshBarrymoreBrief);
   if (btnBack) btnBack.addEventListener("click", closeIslandModal);
+  const btnFullscreen = document.getElementById("btn-island-fullscreen");
+  if (btnFullscreen) btnFullscreen.addEventListener("click", toggleIslandFullscreen);
 
   if (backdrop) {
     backdrop.addEventListener("click", (e) => {
@@ -1075,13 +1077,27 @@ function initModalControls() {
     });
   }
 
-  // Закрытие по Escape
+  // Закрытие по Escape: в полном экране Esc сначала возвращает оконный режим
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
+      const fullscreenWin = document.querySelector(".island-modal-window.is-fullscreen");
+      if (fullscreenWin) {
+        fullscreenWin.classList.remove("is-fullscreen");
+        return;
+      }
       closeIslandModal();
       closeWorkspaceModal();
     }
   });
+}
+
+/** Полноэкранный режим окна острова (запрос Sovereign 07.11): маленькая
+ * кнопка-стрелки рядом с «Вернуться к карте островов» разворачивает окно
+ * во весь экран и возвращает в оконный режим. Стиль — style.css
+ * (.is-fullscreen + .btn-fullscreen, иконки наружу/внутрь). */
+function toggleIslandFullscreen() {
+  const win = document.querySelector(".island-modal-window");
+  if (win) win.classList.toggle("is-fullscreen");
 }
 
 async function refreshBarrymoreBrief(options = {}) {
