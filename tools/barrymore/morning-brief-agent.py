@@ -37,6 +37,7 @@ ROOT = Path(__file__).resolve().parents[2]
 ENV_PATH = ROOT / "Workspace" / ".env"
 OUT_PATH = ROOT / "eVo" / "dashboard" / "brief.js"
 HUNTER_DIGEST_PATH = ROOT / "Workspace" / "analytics" / "hunter" / "digest.json"
+PEER_NOTES_PATH = ROOT / "Workspace" / "agents" / "peer-notes.jsonl"
 LLM_TIMEOUT_SEC = 90
 BRIEF_PREFIX = "window.EVO_BRIEF = "
 TASHKENT = timezone(timedelta(hours=5), "Tashkent")
@@ -52,7 +53,10 @@ SYSTEM_PROMPT = (
     "Если передана секция aiUsage, сообщи только измеренные значения и явно "
     "отделяй неизвестное от нуля; не делай выводов о расходах без подтверждённых сумм. "
     "Если передана секция hunter (выжимка Хантера), включи её в доклад одной "
-    "строкой, только факты из неё; полная часть живёт на Navigation Observatory."
+    "строкой, только факты из неё; полная часть живёт на Navigation Observatory. "
+    "Если передана секция peerNotes (переписка агентов), назови её одной "
+    "короткой строкой вида «Переписка: N заметок за сутки» и в двух словах суть "
+    "последней; заметки целиком не пересказывай — полная часть в модалке стюарда."
 )
 
 AI_USAGE_SYSTEM_PROMPT = (
@@ -123,6 +127,35 @@ def hunter_digest() -> dict | None:
     }
 
 
+def peer_notes_digest() -> dict:
+    """Переписка агентов («Заметка соседу», run_agent.py → peer-notes.jsonl):
+    сколько заметок за последние 24 ч + суть последней, не более пары слов."""
+    since = (datetime.now(timezone.utc) - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%S")
+    items: list[dict] = []
+    try:
+        for line in PEER_NOTES_PATH.read_text(encoding="utf-8-sig", errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(entry, dict) and entry.get("ts") and entry.get("text"):
+                items.append(entry)
+    except OSError:
+        pass
+    recent = [e for e in items if str(e.get("ts", "")) >= since]
+    latest = max(items, key=lambda e: str(e.get("ts", ""))) if items else None
+    digest: dict = {"last24h": len(recent)}
+    if latest:
+        digest["latest"] = (
+            f"{latest.get('from', '')} → {latest.get('to', '')}: "
+            + " ".join(str(latest.get("text", "")).split())[:80]
+        )
+    return digest
+
+
 def collect_sources() -> dict:
     current = read("Memory/Context/CURRENT.md")
     state = read("Memory/Engineering/STATE.md")
@@ -155,6 +188,7 @@ def collect_sources() -> dict:
         "changes": changes[-5:],
         "tasks": dashboard_tasks(archive_expired=False),
         "hunter": hunter_digest(),
+        "peerNotes": peer_notes_digest(),
         "git": {
             "branch": git("branch", "--show-current"),
             "lastCommit": git("log", "-1", "--pretty=format:%h %s"),
