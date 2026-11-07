@@ -7,7 +7,7 @@ services:
     container_name: evo-dvwa
     restart: unless-stopped
     ports:
-      - "8081:80"
+      - "127.0.0.1:8081:80"
     depends_on:
       - dvwa-db
     environment:
