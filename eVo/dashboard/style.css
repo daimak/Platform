@@ -450,6 +450,7 @@ body {
 }
 
 .island-modal-window {
+  position: relative;
   width: 100%;
   max-width: 780px;
   max-height: 88vh;
@@ -541,15 +542,24 @@ body {
   color: #fca5a5;
 }
 
-/* Кнопка-стрелки «во весь экран»: маленькая квадратная, иконки наружу/внутрь */
-.modal-footer-left { display: flex; align-items: center; gap: 10px; }
-
+/* Кнопка-стрелки «во весь экран»: маленькая, в правом нижнем углу самого
+   окна (запрос Sovereign 07.11: из подвала убрать — там толкотня) */
 .btn-fullscreen {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 5;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 8px 9px;
   line-height: 0;
+  background: rgba(10, 20, 40, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  color: var(--text-secondary, #cbd5e1);
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .btn-fullscreen:hover {
