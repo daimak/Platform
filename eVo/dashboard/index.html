@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
   <link rel="stylesheet" href="harbor-ship.css?v=10">
   <style>
     /* Trading Quarter: аккордеоны бирж (вкладка «Заказы») */
@@ -251,22 +251,23 @@
 
       <!-- Нижняя панель окна -->
       <div class="modal-footer" id="modal-island-footer">
-        <div class="modal-footer-left">
-          <button class="modal-close-btn" id="btn-back-to-map">← Вернуться к карте островов</button>
-          <button class="modal-close-btn btn-fullscreen" id="btn-island-fullscreen" type="button"
-            aria-label="Во весь экран" title="Во весь экран">
-            <svg class="ico-expand" width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-            <svg class="ico-collapse" width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m0 0h3a2 2 0 0 1 2 2v3"/></svg>
-          </button>
-        </div>
+        <button class="modal-close-btn" id="btn-back-to-map">← Вернуться к карте островов</button>
         <div id="modal-island-actions">
           <!-- Специфические кнопки действий -->
         </div>
       </div>
+
+      <!-- Полноэкранный режим: маленькая кнопка-стрелки в правом нижнем углу
+           самого окна (запрос Sovereign 07.11) — там никто ничего не ищет -->
+      <button class="btn-fullscreen" id="btn-island-fullscreen" type="button"
+        aria-label="Во весь экран" title="Во весь экран">
+        <svg class="ico-expand" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        <svg class="ico-collapse" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m0 0h3a2 2 0 0 1 2 2v3"/></svg>
+      </button>
     </div>
   </div>
 
