@@ -542,37 +542,44 @@ body {
   color: #fca5a5;
 }
 
-/* Кнопка-стрелки «во весь экран»: маленькая, висит ровно НАД подвалом у его
-   правого края (запрос Sovereign 07.11: в подвале толкотня с кнопками
-   островов, в углу окна — наезд на actions; якорь к подвалу = всегда над
-   ними, какой бы высоты подвал ни был) */
-.btn-fullscreen {
-  position: absolute;
-  right: 14px;
-  bottom: calc(100% + 10px);
-  z-index: 5;
+/* Оконные контролы в шапке модалки (Sovereign 07.11: «квадратик с крестиком
+   и так значит закрыть»): две маленькие иконки — во весь экран и закрыть */
+.modal-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-icon-btn {
+  width: 34px;
+  height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 9px;
   line-height: 0;
-  background: rgba(10, 20, 40, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   color: var(--text-secondary, #cbd5e1);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btn-fullscreen:hover {
+.modal-icon-btn:hover {
   background: rgba(94, 234, 212, 0.14);
   border-color: rgba(94, 234, 212, 0.45);
   color: #5eead4;
 }
 
-.btn-fullscreen .ico-collapse { display: none; }
-.island-modal-window.is-fullscreen .btn-fullscreen .ico-expand { display: none; }
-.island-modal-window.is-fullscreen .btn-fullscreen .ico-collapse { display: inline; }
+.modal-icon-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.modal-icon-btn .ico-collapse { display: none; }
+.island-modal-window.is-fullscreen #btn-island-fullscreen .ico-expand { display: none; }
+.island-modal-window.is-fullscreen #btn-island-fullscreen .ico-collapse { display: inline; }
 
 .modal-toolbar {
   display: flex;
@@ -893,7 +900,6 @@ body {
 }
 
 .modal-footer {
-  position: relative; /* якорь для кнопки полного экрана (.btn-fullscreen) */
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -2622,7 +2622,13 @@ function updateLanguage() {
     refreshBriefButton.setAttribute("aria-label", lang.refreshBriefBtn);
     refreshBriefButton.title = lang.refreshBriefBtn;
   }
-  setText("btn-close-island-modal", lang.closeBtnText);
+  /* Кнопка закрытия — иконка ✕ (запрос Sovereign 07.11: «квадратик с крестиком
+     и так значит закрыть»), текст локали уходит в tooltip/aria, не в содержимое */
+  const closeBtnEl = document.getElementById("btn-close-island-modal");
+  if (closeBtnEl) {
+    closeBtnEl.title = lang.closeBtnText || "Закрыть";
+    closeBtnEl.setAttribute("aria-label", lang.closeBtnText || "Закрыть");
+  }
   setText("btn-back-to-map", lang.backToMapBtn);
 
   // Кнопки языка
