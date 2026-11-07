@@ -1,5 +1,10 @@
 # Ранбук: облачная ВМ «Мастерская» — деплой Platform Evo в Яндекс.Облако
 
+> ⚙️ Файл генерируется из `templates/cloud-vm-runbook.md.j2` командой
+> `python tools/render_templates.py` — руками не править (правки затрутся).
+> Приватные координаты живут в `Workspace/private/vars/` (вне git) —
+> протокол: Docs/TEMPLATING.md
+
 **Дата:** 2026-11-07 · **Исполнитель:** ZCode (санкция Sovereign) · **Статус:** выполнено, работает
 **Запись в журнале:** E-052 (Memory/Engineering/LOG.md)
 
@@ -20,11 +25,11 @@
 
 | Параметр | Значение |
 |---|---|
-| Провайдер | Яндекс.Облако (облако/каталог см. в личных заметках Sovereign) |
+| Провайдер | Яндекс.Облако, облако `<cloud_name>`, каталог `<cloud_folder>` |
 | Конфигурация | Intel Ice Lake, **2 vCPU / 4 ГБ RAM / 20 ГБ SSD** |
 | ОС | Ubuntu 24.04 LTS (ядро 6.8) |
-| Публичный IP | `<VM_PUBLIC_IP>` — **не хранить в публичном репо** (репо читает весь интернет) |
-| Логин | `daimak`, sudo-группа |
+| Публичный IP | `<vm_public_ip>` (приватная координата: Workspace/private/vars/cloud-vm.json) |
+| Логин | `<vm_user>`, sudo-группа |
 | Доступ | только по SSH-ключам; OS Login выключен; парольный вход sshd выключен |
 | Своп | 2 ГБ `/swapfile` (в fstab) |
 
@@ -40,7 +45,7 @@
 4. **Платформа**: `git clone git@github.com:daimak/Platform.git ~/Platform` (ветка main)
 5. **venv**: `~/venv-platform` + `pip install -r requirements.txt` (beautifulsoup4, curl_cffi)
 6. **Дашборд** — systemd-сервис `/etc/systemd/system/barrymore-dashboard.service`:
-   пользователь `daimak`, рабочая папка `~/Platform`, команда
+   пользователь `<vm_user>`, рабочая папка `~/Platform`, команда
    `~/venv-platform/bin/python3 tools/barrymore/dashboard-server.py`, `Restart=on-failure`
 7. **nginx-прокси для туннеля** — `/etc/nginx/sites-available/dashboard-loopback`:
    слушает `127.0.0.1:8766`, `proxy_pass http://127.0.0.1:8765`,
@@ -78,7 +83,7 @@
 
 **Открыть морду** (с машины Sovereign):
 ```bash
-ssh -f -N -L 18765:127.0.0.1:8766 daimak@<VM_PUBLIC_IP>
+ssh -f -N -L 18765:127.0.0.1:8766 <vm_user>@<vm_public_ip>
 # затем в браузере: http://127.0.0.1:18765
 ```
 Если порт занят старым туннелем (Windows): `taskkill //IM ssh.exe //F` (убьёт все ssh-сессии —
@@ -86,7 +91,7 @@ ssh -f -N -L 18765:127.0.0.1:8766 daimak@<VM_PUBLIC_IP>
 
 **Обновить платформу на ВМ:**
 ```bash
-ssh daimak@<VM_PUBLIC_IP>
+ssh <vm_user>@<vm_public_ip>
 cd ~/Platform && git pull
 sudo systemctl restart barrymore-dashboard
 ```
