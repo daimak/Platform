@@ -44,17 +44,24 @@
 
       <div class="hud-right">
         <div style="display: flex; align-items: center; gap: 14px; margin-right: 20px;">
-          <a href="world-map.html?v=11" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(230, 200, 119, 0.12); border-color: #b08d3e; color: #e6c877; display: flex; align-items: center; gap: 8px;">
-            <span>🗺</span> КАРТА МИРА
-          </a>
+          <button id="planet-btn" class="planet-btn" type="button" aria-label="Миры поместья — выбор архипелага" title="Миры поместья">
+            <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+              <defs>
+                <radialGradient id="planet-g" cx="35%" cy="30%" r="80%">
+                  <stop offset="0%" stop-color="#a5f3fc"/>
+                  <stop offset="45%" stop-color="#0ea5e9"/>
+                  <stop offset="100%" stop-color="#0c4a6e"/>
+                </radialGradient>
+              </defs>
+              <circle cx="16" cy="16" r="10.5" fill="url(#planet-g)"/>
+              <ellipse cx="16" cy="16" rx="15" ry="4.6" fill="none" stroke="rgba(186,230,253,0.6)" stroke-width="1.3" transform="rotate(-16 16 16)"/>
+              <circle cx="12.5" cy="13.5" r="1.5" fill="#86efac"/>
+              <circle cx="19.5" cy="18.5" r="1.3" fill="#fb7185"/>
+              <circle cx="17" cy="11.8" r="1.1" fill="#fbbf24"/>
+            </svg>
+          </button>
           <a href="kanban.html" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(56, 189, 248, 0.15); border-color: var(--accent-cyan); color: #38bdf8; display: flex; align-items: center; gap: 8px;">
             <span>📋</span> КАНБАН
-          </a>
-          <a href="maelstorm.html" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(251, 113, 133, 0.15); border-color: var(--accent-rose); color: #fb7185; display: flex; align-items: center; gap: 8px;">
-            <span>🌀</span> MAELSTORM
-          </a>
-          <a href="engine-core.html" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(245, 158, 11, 0.15); border-color: var(--accent-amber); color: #fbbf24; display: flex; align-items: center; gap: 8px;">
-            <span>⚙️</span> ENGINE CORE
           </a>
         </div>
         <div class="lang-switch">
@@ -326,6 +333,121 @@
     </div>
   </div>
 
+  <!-- Планета миров: кнопка + меню-четверть сферы (ZCode 07.11, заказ Sovereign:
+       одна кнопка вместо трёх мировых, архипелаги на дуге, клик = переход) -->
+  <nav id="planet-menu" class="planet-menu" aria-label="Миры поместья">
+    <a class="planet-node" href="world-map.html?v=12"><span class="pn-icon">🗺</span><span class="pn-label">Карта мира</span></a>
+    <a class="planet-node" href="maelstorm.html"><span class="pn-icon">🌀</span><span class="pn-label">Маэльшторм</span></a>
+    <a class="planet-node" href="engine-core.html"><span class="pn-icon">⚙️</span><span class="pn-label">Engine Core</span></a>
+    <button id="pm-gear" class="pm-gear" type="button" title="Настройки меню" aria-label="Настройки меню">⚙</button>
+  </nav>
+  <div id="planet-settings" class="planet-settings" hidden>
+    <div class="ps-row"><span>Размер</span><input type="range" id="ps-size" min="120" max="300" step="10" value="200"></div>
+    <div class="ps-row"><span>Прозрачность</span><input type="range" id="ps-op" min="30" max="100" step="5" value="92"></div>
+    <div class="ps-row"><span>Цвет</span><span class="ps-swatches">
+      <button class="ps-swatch" data-rgb="56,189,248" style="background:rgb(56,189,248)" title="Лазурь"></button>
+      <button class="ps-swatch" data-rgb="94,234,212" style="background:rgb(94,234,212)" title="Морская"></button>
+      <button class="ps-swatch" data-rgb="230,200,119" style="background:rgb(230,200,119)" title="Золото"></button>
+      <button class="ps-swatch" data-rgb="251,113,133" style="background:rgb(251,113,133)" title="Роза"></button>
+      <button class="ps-swatch" data-rgb="167,139,250" style="background:rgb(167,139,250)" title="Аметист"></button>
+    </span></div>
+    <div class="ps-row"><span>Анимация</span><span class="ps-anims">
+      <button class="ps-anim" data-anim="">Пружина</button>
+      <button class="ps-anim" data-anim="pm-anim-smooth">Плавно</button>
+      <button class="ps-anim" data-anim="pm-anim-quick">Быстро</button>
+    </span></div>
+    <div class="ps-row"><span>Градиент</span><input type="checkbox" id="ps-grad" checked></div>
+  </div>
+  <style>
+    .planet-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(10,18,36,.72);border:1px solid rgba(94,234,212,.35);box-shadow:0 0 14px rgba(56,189,248,.25);transition:box-shadow .2s ease,transform .2s ease;padding:0}
+    .planet-btn:hover{box-shadow:0 0 22px rgba(94,234,212,.5);transform:translateY(-1px)}
+    .planet-menu{position:fixed;width:var(--pm-size,200px);height:var(--pm-size,200px);border-radius:14px 0 14px 100%;z-index:70;transform-origin:100% 0;transform:scale(.25);opacity:0;pointer-events:none;transition:transform .26s cubic-bezier(.34,1.4,.64,1),opacity .16s ease}
+    .planet-menu.pm-anim-smooth{transition:transform .35s cubic-bezier(.22,.61,.36,1),opacity .22s ease}
+    .planet-menu.pm-anim-quick{transition:transform .14s cubic-bezier(.2,.7,.4,1),opacity .1s ease}
+    .planet-menu::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 100% 0,rgba(var(--pm-accent,56,189,248),.2),rgba(10,18,36,.92) 60%);box-shadow:0 12px 34px rgba(0,0,0,.4);opacity:var(--pm-op,.92);transition:opacity .15s ease;-webkit-mask-image:radial-gradient(circle at 100% 0,#000 52%,transparent 97%);mask-image:radial-gradient(circle at 100% 0,#000 52%,transparent 97%)}
+    .planet-menu.pm-flat::before{background:rgba(10,18,36,.9)}
+    .planet-menu.open{transform:scale(1);opacity:1;pointer-events:auto}
+    .planet-node{position:absolute;transform:translate(50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;opacity:0;transition:opacity .2s ease}
+    .planet-menu.open .planet-node{opacity:1}
+    .planet-node:nth-of-type(2){transition-delay:.05s}
+    .planet-node:nth-of-type(3){transition-delay:.1s}
+    .pn-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;background:rgba(10,18,36,.9);border:1.5px solid rgba(148,163,184,.4);transition:transform .15s ease,box-shadow .15s ease}
+    .planet-node:hover .pn-icon{transform:scale(1.12)}
+    .pn-label{font-size:.6rem;color:#e2e8f0;letter-spacing:.2px;text-shadow:0 1px 3px rgba(0,0,0,.85);white-space:nowrap}
+    /* узлы на ВНЕШНЕЙ дуге окна (центр дуги — планета в углу); проценты масштабируются с размером */
+    .planet-node:nth-of-type(1){right:80%;top:20%}
+    .planet-node:nth-of-type(2){right:58%;top:58%}
+    .planet-node:nth-of-type(3){right:20%;top:80%}
+    .planet-node:nth-of-type(1) .pn-icon{border-color:rgba(230,200,119,.55)}
+    .planet-node:nth-of-type(2) .pn-icon{border-color:rgba(251,113,133,.55)}
+    .planet-node:nth-of-type(3) .pn-icon{border-color:rgba(251,191,36,.55)}
+    .planet-node:nth-of-type(1):hover .pn-icon{box-shadow:0 0 18px rgba(230,200,119,.45)}
+    .planet-node:nth-of-type(2):hover .pn-icon{box-shadow:0 0 18px rgba(251,113,133,.45)}
+    .planet-node:nth-of-type(3):hover .pn-icon{box-shadow:0 0 18px rgba(251,191,36,.45)}
+    .pm-gear{position:absolute;right:12px;top:12px;width:20px;height:20px;border-radius:50%;border:1px solid rgba(148,163,184,.35);background:rgba(10,18,36,.85);color:#94a3b8;font-size:.62rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:color .15s ease,border-color .15s ease}
+    .pm-gear:hover{color:#e2e8f0;border-color:rgba(94,234,212,.55)}
+    .planet-settings{position:fixed;z-index:71;width:190px;padding:10px 12px;border-radius:12px;background:rgba(10,18,36,.94);border:1px solid rgba(94,234,212,.28);box-shadow:0 14px 40px rgba(0,0,0,.5);backdrop-filter:blur(8px);font-size:.62rem;color:#cbd5e1}
+    .planet-settings[hidden]{display:none}
+    .ps-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0}
+    .ps-row>span:first-child{letter-spacing:.2px}
+    .ps-row input[type=range]{width:96px;accent-color:#5eead4;height:12px}
+    .ps-row input[type=checkbox]{accent-color:#5eead4}
+    .ps-swatches{display:flex;gap:6px}
+    .ps-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);cursor:pointer;padding:0}
+    .ps-swatch.sel{border-color:#fff}
+    .ps-anims{display:flex;gap:4px}
+    .ps-anim{font-size:.58rem;padding:2px 6px;border-radius:8px;border:1px solid rgba(148,163,184,.35);background:rgba(10,18,36,.8);color:#cbd5e1;cursor:pointer}
+    .ps-anim.sel{border-color:rgba(94,234,212,.6);color:#e2e8f0}
+  </style>
+  <script>
+  (function(){
+    var btn=document.getElementById('planet-btn'),menu=document.getElementById('planet-menu');
+    var gear=document.getElementById('pm-gear'),panel=document.getElementById('planet-settings');
+    if(!btn||!menu)return;
+    var LS='evo_planet_menu_v1';
+    function apply(s){
+      menu.style.setProperty('--pm-size',s.size+'px');
+      menu.style.setProperty('--pm-op',s.op/100);
+      menu.style.setProperty('--pm-accent',s.rgb);
+      menu.classList.toggle('pm-flat',!s.grad);
+      menu.classList.remove('pm-anim-smooth','pm-anim-quick');
+      if(s.anim)menu.classList.add(s.anim);
+      if(panel){
+        document.getElementById('ps-size').value=s.size;
+        document.getElementById('ps-op').value=s.op;
+        document.getElementById('ps-grad').checked=s.grad;
+        var sw=panel.querySelectorAll('.ps-swatch');
+        for(var i=0;i<sw.length;i++)sw[i].classList.toggle('sel',sw[i].getAttribute('data-rgb')===s.rgb);
+        var an=panel.querySelectorAll('.ps-anim');
+        for(var j=0;j<an.length;j++)an[j].classList.toggle('sel',(an[j].getAttribute('data-anim')||'')===s.anim);
+      }
+    }
+    var st={size:200,op:92,rgb:'56,189,248',anim:'',grad:true};
+    try{var raw=localStorage.getItem(LS);if(raw){var p=JSON.parse(raw);for(var k in st)if(p[k]!==undefined)st[k]=p[k];}}catch(e){}
+    apply(st);
+    function save(){try{localStorage.setItem(LS,JSON.stringify(st));}catch(e){}}
+    function place(){
+      var r=btn.getBoundingClientRect();
+      menu.style.top=(r.bottom-6)+'px';menu.style.right=(window.innerWidth-r.right)+'px';
+      if(panel){var sz=parseInt(getComputedStyle(menu).width)||200;panel.style.top=(r.bottom-6+sz+8)+'px';panel.style.right=(window.innerWidth-r.right)+'px';}
+    }
+    function close(){menu.classList.remove('open');if(panel)panel.hidden=true;}
+    btn.addEventListener('click',function(e){e.stopPropagation();if(!menu.classList.contains('open')){place();if(panel)panel.hidden=true;}menu.classList.toggle('open');});
+    if(gear)gear.addEventListener('click',function(e){e.stopPropagation();var willShow=panel.hidden;panel.hidden=!willShow;place();});
+    document.addEventListener('click',function(e){if(menu.classList.contains('open')&&!menu.contains(e.target)&&!btn.contains(e.target)&&!(panel&&!panel.hidden&&panel.contains(e.target)))close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    window.addEventListener('resize',close);
+    if(panel){
+      document.getElementById('ps-size').addEventListener('input',function(){st.size=+this.value;apply(st);save();place();});
+      document.getElementById('ps-op').addEventListener('input',function(){st.op=+this.value;apply(st);save();});
+      document.getElementById('ps-grad').addEventListener('change',function(){st.grad=this.checked;apply(st);save();});
+      var sw=panel.querySelectorAll('.ps-swatch');
+      for(var i=0;i<sw.length;i++)sw[i].addEventListener('click',function(){st.rgb=this.getAttribute('data-rgb');apply(st);save();});
+      var an=panel.querySelectorAll('.ps-anim');
+      for(var j=0;j<an.length;j++)an[j].addEventListener('click',function(){st.anim=this.getAttribute('data-anim')||'';apply(st);save();});
+    }
+  })();
+  </script>
   <script src="languages.js?v=3"></script>
   <script src="brief.js"></script>
   <script src="vacancies.js"></script>
@@ -333,7 +455,7 @@
   <script src="hunter-report.js?v=1"></script>
   <script src="tasks.js"></script>
   <script src="excursion-data.js?v=2"></script>
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
   <script src="harbor-ship.js?v=10"></script>
 </body>
 </html>

@@ -25,6 +25,39 @@ ROOT = Path(__file__).resolve().parents[2]
 DASHBOARD = ROOT / "eVo" / "dashboard"
 AGENT = ROOT / "tools" / "barrymore" / "morning-brief-agent.py"
 PORT = 8765
+
+
+def _load_internal_plugin():
+    """Внутренняя зона: необязательный локальный плагин из приватного каталога
+    (вне git). Сервер ничего не знает о его содержимом — целиком делегирует
+    /api/internal/* (контракт: handle(method, path, query, headers, body)).
+    Нет файла или не загрузился — роут просто не существует."""
+    try:
+        plugin_path = ROOT / "Workspace" / "private" / "internal" / "api.py"
+        if not plugin_path.is_file():
+            return None
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("internal_zone_api", plugin_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    except Exception:
+        logging.exception("Internal zone plugin load failed")
+        return None
+
+
+INTERNAL_PLUGIN = _load_internal_plugin()
+
+
+def _handle_internal(method: str, path: str, query: str, headers, body) -> tuple:
+    if INTERNAL_PLUGIN is None:
+        return 404, {"error": "Внутренний модуль не установлен."}
+    try:
+        return INTERNAL_PLUGIN.handle(method, path, query, headers, body)
+    except Exception:
+        logging.exception("Internal zone plugin failed")
+        return 500, {"error": "Внутренний модуль недоступен."}
+
 REFRESH_LOCK = threading.Lock()
 TASK_LOCK = threading.Lock()
 HUNTER_LOCK = threading.Lock()
@@ -452,6 +485,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self._send_json(403, {"error": "Доступ разрешён только с локального компьютера."})
             return
         request_path = urlsplit(self.path).path
+        if request_path.startswith("/api/internal/"):
+            status, payload = _handle_internal("GET", request_path, urlsplit(self.path).query, self.headers, None)
+            self._send_json(status, payload)
+            return
         if request_path == "/AI-SANDBOX-HISTORY.md":
             self.send_response(302)
             self.send_header("Location", "/ai-sandbox-history.html")
@@ -662,7 +699,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             "/api/watson/run",
             "/api/riskscan/run",
         }
-        if request_path not in body_routes | bodyless_routes and not task_done and not task_stage and not task_comment and not task_type and not jobs_run and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route, sandbox_run_route):
+        if request_path.startswith("/api/internal/") and request_path not in body_routes | bodyless_routes:
+            pass  # внутренний модуль: проходит whitelist ниже, делегируется после Origin-проверки
+        elif request_path not in body_routes | bodyless_routes and not task_done and not task_stage and not task_comment and not task_type and not jobs_run and request_path not in (hunter_tasks_route, security_route, security_targets_route, holmes_implement_route, sandbox_run_route):
             self._send_json(404, {"error": "Неизвестный локальный endpoint."})
             return
 
@@ -680,6 +719,16 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             or parsed_origin.netloc.casefold() != self.headers.get("Host", "").casefold()
         ):
             self._send_json(403, {"error": "Обновление разрешено только из локального дашборда."})
+            return
+
+        if request_path.startswith("/api/internal/"):
+            try:
+                payload_body = self._read_json_body() if (self.headers.get("Content-Length") or "0") != "0" else None
+            except (ValueError, json.JSONDecodeError):
+                self._send_json(400, {"error": "Некорректное JSON-тело."})
+                return
+            status, payload = _handle_internal("POST", request_path, urlsplit(self.path).query, self.headers, payload_body)
+            self._send_json(status, payload)
             return
 
         if request_path in bodyless_routes and self.headers.get("Content-Length", "0") != "0":

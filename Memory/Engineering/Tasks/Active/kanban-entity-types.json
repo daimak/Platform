@@ -12,7 +12,20 @@
       "at": "2026-11-06T18:18:00Z",
       "by": "ZCode",
       "note": "Создано по прямому запросу Sovereign в чате 06.11. Стадия «Анализ»: дизайн на одобрение."
+    },
+    {
+      "stage": "test",
+      "at": "2026-11-06T18:47:17Z",
+      "by": "ZCode"
     }
   ],
-  "stage": "analysis"
+  "stage": "test",
+  "type": "task",
+  "comments": [
+    {
+      "by": "ZCode",
+      "text": "Исполнено 06.11 ~23:55. Backend: task_store.set_type (allowlist task|change|epic), POST /api/tasks/<id>/type — неизвестное значение = 400; чтение толерантно (нет поля = task). UI (kanban.js v8): бейджи ЗНИ (оранж)/Эпик (фиолет), фильтр по типам со счётчиками в шапке, переключатель типа в модалке карточки, записи ТИП в истории. Тесты: tools/tests/test_task_types.py (7), оба сьюта зелёные (142). Живой прогон: type=change на sec-secret-gate-install, type=epic на study-ai-agents, incident → 400. Примеры типов в бою: study-ai-agents = Эпик, sec-secret-gate-install = ЗНИ.",
+      "at": "2026-11-06T18:47:03Z"
+    }
+  ]
 }

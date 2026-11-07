@@ -47,3 +47,7 @@ YYYY-MM-DD | change | reason | RFC
 2026-10-29 | Maelstorm research beacons and translucent island markers | clarify island roles and reduce map clutter until hover | —
 
 2026-10-29 | Platform v1.8.4: AI Sandbox usage ledger and security contour, Hunter cabinet in Core Citadel, project onboarding and context handoff | improve AI visibility, controlled safety checks, and continuity between sessions | —
+
+2026-11-07 | Platform v1.8.7: planet button and worlds menu on index, world map v2 base (World_map_v2.png + generation prompt), excursion report-first tab with hard numbers, classic window controls in island modals, agents fleet panel (agents.html, dashboard-server +318 lines), kanban entity types (task/change/epic) and creation dates on cards, secret-gate phase 2 (RED on staged), ITIL task types API, evofind search, orders-triage radar | ship accepted night+day work as a version | —
+
+2026-11-07 | cloud polygon kit Workspace/cloud/: bootstrap.sh, cloud-init for DigitalOcean and Yandex Cloud, compose stacks (DVWA, Juice Shop, n8n, Uptime Kuma, WireGuard), k3s installer, probe script, onboarding spec | one-command security/lab polygons on free cloud tiers | —

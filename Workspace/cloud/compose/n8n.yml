@@ -1,0 +1,21 @@
+# n8n.yml — автоматизация workflows (внутренние задачи Platform Evo).
+# Порт: 5678 (http://<ip>:5678). Первый вход — создание владельца через UI.
+# WEBHOOK_URL: плейсхолдер — заменить на публичный адрес/домен при необходимости.
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: evo-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    environment:
+      GENERIC_TIMEZONE: Asia/Tashkent
+      TZ: Asia/Tashkent
+      N8N_SECURE_COOKIE: "false"   # пока http без reverse-proxy; при https — "true"
+      N8N_HOST: "${N8N_HOST_PLACEHOLDER:-localhost}"
+      WEBHOOK_URL: "${N8N_WEBHOOK_URL_PLACEHOLDER:-http://localhost:5678/}"
+
+volumes:
+  n8n-data:
