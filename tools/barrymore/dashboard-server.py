@@ -747,6 +747,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 logging.exception("Agents history read failed")
                 self._send_json(500, {"error": f"Не удалось собрать причалы: {error}"})
             return
+        if request_path == "/api/tokens/usage":
+            # «Штаб» (COMMAND CENTER): расход токенов по фактуре model-io-*.jsonl;
+            # read-only, файлы вне git, кэш 60 с внутри снапшота.
+            try:
+                self._send_json(200, tokens_usage_snapshot())
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Tokens usage read failed")
+                self._send_json(500, {"error": f"Не удалось собрать расход токенов: {error}"})
+            return
         super().do_GET()
 
     def _read_json_body(self) -> dict:
@@ -1696,6 +1705,96 @@ def _agent_live_entry(ship: str, voyage: list, moment: datetime) -> dict:
         "elapsed_min": round(elapsed_min, 1) if elapsed_min is not None else None,
         "events_recent": recent,
     }
+
+
+TOKEN_ROLL_DIR = Path.home() / ".zcode" / "cli" / "rollout"
+_TOKEN_CACHE = {"ts": 0.0, "data": None}
+
+
+def tokens_usage_snapshot(max_files: int = 40) -> dict:
+    """Агрегат GET /api/tokens/usage: расход токенов по фактуре model-io-*.jsonl.
+
+    «Штаб» (панель COMMAND CENTER): единица расхода = inputTokens+outputTokens+
+    cacheReadTokens+cacheWriteTokens из response.usage (методика аудита z.ai,
+    верифицирована 31.10). Файлы вне git, панель только читает; кэш 60 с —
+    файлы дневные, но строки могут быть мегабайтными.
+    """
+    moment = time.time()
+    if _TOKEN_CACHE["data"] is not None and moment - _TOKEN_CACHE["ts"] < 60:
+        return _TOKEN_CACHE["data"]
+    try:
+        files = sorted(
+            TOKEN_ROLL_DIR.glob("model-io-*.jsonl"),
+            key=lambda path: path.stat().st_mtime,
+            reverse=True,
+        )[:max_files]
+    except OSError:
+        files = []
+
+    def _num(mapping: dict, key: str) -> float:
+        value = mapping.get(key)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return 0
+        return value
+
+    per_hour: dict = {}
+    per_day: dict = {}
+    sessions: list = []
+    for path in files:
+        session_tokens = 0
+        first_ts = None
+        last_ts = None
+        try:
+            with path.open("r", encoding="utf-8") as handle:
+                for line in handle:
+                    if '"usage"' not in line:
+                        continue  # быстрая отсечка: парсим только строки с расходом
+                    try:
+                        envelope = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    response = envelope.get("response") or {}
+                    usage = response.get("usage") if isinstance(response, dict) else None
+                    if not isinstance(usage, dict):
+                        continue
+                    spent = (
+                        _num(usage, "inputTokens")
+                        + _num(usage, "outputTokens")
+                        + _num(usage, "cacheReadTokens")
+                        + _num(usage, "cacheWriteTokens")
+                    )
+                    if spent <= 0:
+                        continue
+                    session_tokens += spent
+                    ts = envelope.get("startedAt") or envelope.get("completedAt")
+                    if not ts:
+                        continue
+                    text = str(ts)
+                    if first_ts is None:
+                        first_ts = ts
+                    last_ts = ts
+                    per_hour[text[:13]] = per_hour.get(text[:13], 0) + spent
+                    per_day[text[:10]] = per_day.get(text[:10], 0) + spent
+        except OSError:
+            continue
+        if session_tokens > 0:
+            sessions.append({
+                "session": path.name.replace("model-io-", "").replace(".jsonl", ""),
+                "tokens": session_tokens,
+                "first_ts": first_ts,
+                "last_ts": last_ts,
+            })
+    sessions.sort(key=lambda item: str(item.get("last_ts") or ""), reverse=True)
+    data = {
+        "generated_at": _utc_now_iso(),
+        "total_observed": sum(per_day.values()),
+        "per_hour": [{"bucket": key, "tokens": value} for key, value in sorted(per_hour.items())],
+        "per_day": [{"bucket": key, "tokens": value} for key, value in sorted(per_day.items())],
+        "sessions": sessions[:15],
+    }
+    _TOKEN_CACHE["ts"] = moment
+    _TOKEN_CACHE["data"] = data
+    return data
 
 
 def agents_live_snapshot(log_path=None, now=None) -> dict:

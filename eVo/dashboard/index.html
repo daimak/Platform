@@ -60,9 +60,8 @@
               <circle cx="17" cy="11.8" r="1.1" fill="#fbbf24"/>
             </svg>
           </button>
-          <a href="kanban.html" class="btn-action-primary" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: rgba(56, 189, 248, 0.15); border-color: var(--accent-cyan); color: #38bdf8; display: flex; align-items: center; gap: 8px;">
-            <span>📋</span> КАНБАН
-          </a>
+          <a href="kanban.html" class="kanban-btn" aria-label="Канбан" title="Канбан">📋</a>
+          <a href="command-center.html" class="kanban-btn" aria-label="Штаб — Command Center" title="Штаб — вся система как на ладони">🎛</a>
         </div>
         <div class="lang-switch">
           <button class="lang-btn" id="lang-ru">RU</button>
@@ -124,16 +123,22 @@
             <span class="plaque-brief-dot"></span>
             <span>Переписка: <span id="peer-count">0</span></span><span class="plaque-brief-arrow">→</span>
           </div>
+          <!-- Дверь в Штаб через стюарда (08.11, Sovereign: «доступ через Бэрримора как минимум») -->
+          <a class="plaque-cc-link" id="barrymore-cc-link" href="command-center.html"
+             title="Штаб — вся система: топливо, конвейер, решения">
+            <span>🎛 Штаб</span><span class="plaque-brief-arrow">→</span>
+          </a>
         </div>
 
-        <!-- 2b. Ярлычок флота — гавань Немо, корабли в море (вход в agents.html).
+        <!-- 2b. Ярлычок флота — гавань Немо, корабли в море. 08.11 (заказ Sovereign):
+             открывает всплывающее окно на этой странице, новую вкладку не создаёт.
              Ярлычок канбана снят 06.11: дублировал кнопку «Канбан» в HUD (минимализм Sovereign) -->
-        <a class="kanban-shortcut" href="agents.html" target="_blank" rel="noopener noreferrer"
-           aria-label="Флот агентов — корабли в море" title="Флот агентов — корабли в море">
+        <button class="kanban-shortcut" id="fleet-shortcut" type="button"
+                aria-label="Флот агентов — корабли в море" title="Флот агентов — корабли в море">
           <span class="kanban-shortcut-icon" aria-hidden="true">🚢</span>
           <span class="kanban-shortcut-text">Флот в море</span>
           <span class="kanban-shortcut-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
 
         <!-- 3. Мастерская eVo (eVo Workshop) — строго над трубами мастерской -->
         <div class="island-hotspot beacon-amber" style="top: 28.5%; left: 72.4%;" data-island="workshop">
@@ -363,8 +368,12 @@
     <div class="ps-row"><span>Градиент</span><input type="checkbox" id="ps-grad" checked></div>
   </div>
   <style>
-    .planet-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(10,18,36,.72);border:1px solid rgba(94,234,212,.35);box-shadow:0 0 14px rgba(56,189,248,.25);transition:box-shadow .2s ease,transform .2s ease;padding:0}
-    .planet-btn:hover{box-shadow:0 0 22px rgba(94,234,212,.5);transform:translateY(-1px)}
+    .planet-btn,.kanban-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(10,18,36,.72);border:1px solid rgba(94,234,212,.35);box-shadow:0 0 14px rgba(56,189,248,.25);transition:box-shadow .2s ease,transform .2s ease;padding:0}
+    .planet-btn:hover,.kanban-btn:hover{box-shadow:0 0 22px rgba(94,234,212,.5);transform:translateY(-1px)}
+    .kanban-btn{text-decoration:none;font-size:16px;line-height:1}
+    /* Дверь «🎛 Штаб» у плашки Бэрримора: справа-снизу, рядом с Review/Перепиской */
+    .plaque-cc-link{position:absolute;right:-10px;bottom:-24px;display:inline-flex;align-items:center;gap:7px;padding:5px 12px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;color:#7dd3fc;background:rgba(8,20,38,.9);border:1px solid rgba(56,189,248,.5);border-radius:8px;white-space:nowrap;text-decoration:none;cursor:pointer;z-index:5;transition:background .15s ease,border-color .15s ease}
+    .plaque-cc-link:hover{background:rgba(56,189,248,.18);border-color:rgba(125,211,252,.85)}
     .planet-menu{position:fixed;width:var(--pm-size,200px);height:var(--pm-size,200px);border-radius:14px 0 14px 100%;z-index:70;transform-origin:100% 0;transform:scale(.25);opacity:0;pointer-events:none;transition:transform .26s cubic-bezier(.34,1.4,.64,1),opacity .16s ease}
     .planet-menu.pm-anim-smooth{transition:transform .35s cubic-bezier(.22,.61,.36,1),opacity .22s ease}
     .planet-menu.pm-anim-quick{transition:transform .14s cubic-bezier(.2,.7,.4,1),opacity .1s ease}
@@ -450,6 +459,90 @@
       var an=panel.querySelectorAll('.ps-anim');
       for(var j=0;j<an.length;j++)an[j].addEventListener('click',function(){st.anim=this.getAttribute('data-anim')||'';apply(st);save();});
     }
+  })();
+  </script>
+  <style>
+    #fleet-shortcut { font: inherit; cursor: pointer; }
+    #fleet-modal-backdrop { z-index: 120; }
+    #fleet-modal-window { width: min(1100px, 92vw); max-width: min(1100px, 92vw); height: min(820px, 86vh); }
+    #fleet-modal-window.is-fullscreen { width: 100%; max-width: none; height: 100%; }
+    #fleet-modal-window .modal-body { flex: 1; padding: 0; overflow: hidden; }
+    #fleet-frame { width: 100%; height: 100%; border: 0; display: block; background: #0b1220; }
+    #fleet-modal-window.is-fullscreen #fleet-modal-full .ico-expand { display: none; }
+    #fleet-modal-window.is-fullscreen #fleet-modal-full .ico-collapse { display: inline; }
+    #fleet-modal-full .ico-collapse { display: none; }
+  </style>
+
+  <!-- ================= ВСПЛЫВАЮЩЕЕ ОКНО «ФЛОТ В МОРЕ» ================= -->
+  <div class="island-modal-backdrop" id="fleet-modal-backdrop">
+    <div class="island-modal-window" id="fleet-modal-window" role="dialog" aria-label="Флот в море">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">🚢</div>
+          <div class="modal-title-group">
+            <span class="panel-label">ФЛОТ АГЕНТОВ · ЖУРНАЛ РЕЙСОВ</span>
+            <h3>Флот в море</h3>
+            <p id="modal-island-subtitle-fleet">Корабли в море, штормы и причалы — живой журнал событий</p>
+          </div>
+        </div>
+        <div class="modal-toolbar">
+          <div class="modal-window-controls">
+            <a class="modal-icon-btn" href="agents.html" target="_blank" rel="noopener noreferrer"
+               aria-label="Открыть полной страницей" title="Открыть полной страницей">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6m4-3h6v6m0-6L10 14"/></svg>
+            </a>
+            <button class="modal-icon-btn" id="fleet-modal-full" type="button"
+              aria-label="Во весь экран" title="Во весь экран">
+              <svg class="ico-expand" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              <svg class="ico-collapse" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m0 0h3a2 2 0 0 1 2 2v3"/></svg>
+            </button>
+            <button class="modal-icon-btn modal-icon-close" id="fleet-modal-close" type="button"
+              aria-label="Закрыть" title="Закрыть">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe id="fleet-frame" title="Панель «Флот в море»" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+  <script>
+  /* Всплывающее окно «Флот в море» (08.11, заказ Sovereign: без новой вкладки).
+     Переиспользует классы окон Estate (island-modal-*), iframe с agents.html —
+     панель живёт своей жизнью (автообновление 15 с), при закрытии выгружается.
+     Скрипт стоит ПОСЛЕ разметки: элементы должны существовать к моменту подвески. */
+  (function () {
+    var btn = document.getElementById('fleet-shortcut');
+    var bd = document.getElementById('fleet-modal-backdrop');
+    var win = document.getElementById('fleet-modal-window');
+    var frame = document.getElementById('fleet-frame');
+    if (!btn || !bd || !win || !frame) return;
+    function open() { bd.classList.add('open'); frame.src = 'agents.html?embed=1'; }
+    function close() {
+      bd.classList.remove('open');
+      win.classList.remove('is-fullscreen');
+      frame.src = 'about:blank'; // не гоняем автообновление флота в фоне
+    }
+    btn.addEventListener('click', open);
+    // дверь Бэрримора → Штаб: не пускаем клик в модалку стюарда
+    var ccLink = document.getElementById('barrymore-cc-link');
+    if (ccLink) ccLink.addEventListener('click', function (e) { e.stopPropagation(); });
+    document.getElementById('fleet-modal-close').addEventListener('click', close);
+    document.getElementById('fleet-modal-full').addEventListener('click', function () {
+      win.classList.toggle('is-fullscreen');
+    });
+    bd.addEventListener('click', function (e) { if (e.target === bd) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && bd.classList.contains('open')) close();
+    });
   })();
   </script>
   <script src="languages.js?v=3"></script>

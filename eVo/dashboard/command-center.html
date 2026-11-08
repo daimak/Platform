@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMMAND CENTER — штаб поместья</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="command-center.css?v=1">
+</head>
+<body>
+
+  <main class="cc-page">
+
+    <header class="estate-top-hud cc-hud">
+      <div class="hud-left">
+        <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 14px;">
+          <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+          <div class="hud-title-group">
+            <span class="hud-title">COMMAND CENTER</span>
+            <span class="hud-subtitle">Штаб поместья · вся система как на ладони</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="hud-right">
+        <div class="cc-counters" id="cc-counters">
+          <span class="cc-counter"><strong id="cc-tokens-total">—</strong><em>токенов набл.</em></span>
+          <span class="cc-counter"><strong id="cc-count-sea">—</strong><em>в море</em></span>
+          <span class="cc-counter cc-counter-storm"><strong id="cc-count-storm">—</strong><em>штормят</em></span>
+          <span class="cc-counter"><strong id="cc-count-dock">—</strong><em>причалы</em></span>
+          <span class="cc-counter cc-counter-time"><em id="cc-updated">…</em></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-left: 18px;">
+          <button class="cc-icon-btn" id="cc-refresh" type="button" title="Обновить сейчас">↻</button>
+          <a class="cc-icon-btn" href="agents.html" title="Флот в море — оперативная таблица">⛵</a>
+          <a class="cc-icon-btn" href="maelstorm-observatory.html" title="Обсерватория Маэльшторма — живая картина">🌀</a>
+          <a class="cc-icon-btn" href="world-map.html?v=12" title="Карта мира">🗺</a>
+          <a class="cc-icon-btn" href="index.html" title="Estate">🏰</a>
+        </div>
+      </div>
+    </header>
+
+    <p id="cc-status" class="cc-status" hidden role="alert"></p>
+
+    <div class="cc-grid">
+
+      <!-- ТОКЕНЫ: куда уходит топливо -->
+      <section class="glass-panel cc-panel cc-panel-tokens" aria-label="Токены">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">ТОПЛИВО · TOKENS</p>
+            <h2>Токены</h2>
+          </div>
+          <span class="cc-muted" id="cc-tokens-generated">…</span>
+        </div>
+        <div class="cc-tokens-body">
+          <div class="cc-gauge">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="cc-gauge-track" cx="60" cy="60" r="52"/>
+              <circle class="cc-gauge-fill" id="cc-gauge-fill" cx="60" cy="60" r="52"/>
+            </svg>
+            <div class="cc-gauge-center">
+              <strong id="cc-gauge-value">—</strong>
+              <em>остаток</em>
+            </div>
+          </div>
+          <div class="cc-tokens-numbers">
+            <div class="cc-balance-row">
+              <label for="cc-balance-input" class="cc-muted">Остаток по счётчику, M:</label>
+              <input id="cc-balance-input" type="number" min="0" step="1" placeholder="напр. 260">
+              <span class="cc-muted" id="cc-balance-saved"></span>
+            </div>
+            <div class="cc-token-stats">
+              <span>сегодня: <strong id="cc-today">—</strong></span>
+              <span>за 7 дней: <strong id="cc-week">—</strong></span>
+              <span>пик за час: <strong id="cc-peak">—</strong></span>
+              <span>сессий: <strong id="cc-sessions">—</strong></span>
+              <span>при текущей скорости сгорит через: <strong id="cc-burnout">—</strong></span>
+            </div>
+            <canvas id="cc-sparkline" height="72" aria-label="Расход по часам"></canvas>
+            <div class="cc-muted cc-spark-caption">расход по часам (наблюдаемый период)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- КОНВЕЙЕР: корабли и лейны -->
+      <section class="glass-panel cc-panel" aria-label="Конвейер">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">КОНВЕЙЕР · FLEET</p>
+            <h2>Конвейер</h2>
+          </div>
+        </div>
+        <div class="cc-conveyor">
+          <div class="cc-big"><strong id="cc-lanes-done">—</strong><em>лейнов закрыто</em></div>
+          <ul class="cc-ships" id="cc-ships"></ul>
+        </div>
+      </section>
+
+      <!-- АРТЕФАКТЫ: что вернулось с моря -->
+      <section class="glass-panel cc-panel" aria-label="Артефакты">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">РЕЗУЛЬТАТ · АРТЕФАКТЫ</p>
+            <h2>Артефакты</h2>
+          </div>
+        </div>
+        <ul class="cc-artifacts" id="cc-artifacts"></ul>
+      </section>
+
+      <!-- ЖДЁТ СЛОВА: развилки Дмитрия -->
+      <section class="glass-panel cc-panel cc-panel-decisions" aria-label="Ждёт слова">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">ЖДЁТ СЛОВА · DECISIONS</p>
+            <h2>Ждёт слова</h2>
+          </div>
+          <span class="cc-muted" id="cc-decisions-count"></span>
+        </div>
+        <ul class="cc-decisions" id="cc-decisions"></ul>
+      </section>
+
+      <!-- БЛОКЕРЫ ДЕНЕГ -->
+      <section class="glass-panel cc-panel cc-panel-money" aria-label="Блокеры денег">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">ДЕНЬГИ · БЛОКЕРЫ</p>
+            <h2>Деньги</h2>
+          </div>
+          <span class="cc-muted">$300–600 к 09–10.11</span>
+        </div>
+        <ul class="cc-blockers" id="cc-blockers"></ul>
+      </section>
+
+      <!-- СИГНАЛЫ: лента журнала -->
+      <section class="glass-panel cc-panel cc-panel-tape" aria-label="Сигналы">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">ЖУРНАЛ · СИГНАЛЫ</p>
+            <h2>Сигналы</h2>
+          </div>
+        </div>
+        <ul class="cc-tape" id="cc-tape"></ul>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="command-center.js?v=2"></script>
+</body>
+</html>

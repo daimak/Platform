@@ -85,10 +85,10 @@
             <span class="beacon-icon">🌀</span>
           </div>
           <div class="island-hover-card">
-            <div class="hover-badge">UNKNOWN & DEEP STUDY</div>
-            <div class="hover-title">MAELSTROM OBSERVATORY</div>
-            <div class="hover-subtitle">Центральный водоворот • Исследование неизведанного</div>
-            <div class="hover-action-hint">👆 Открыть исследовательскую заметку</div>
+            <div class="hover-badge">AGENTS & DEEP STUDY</div>
+            <div class="hover-title">MAELSTORM OBSERVATORY</div>
+            <div class="hover-subtitle">Центральный водоворот • Живая картина работы агентов</div>
+            <div class="hover-action-hint">👆 Открыть обсерваторию</div>
           </div>
         </div>
 
@@ -224,5 +224,18 @@
   <script src="brief.js"></script>
   <script src="tasks.js"></script>
   <script src="app.js"></script>
+  <script>
+    // MAELSTROM OBSERVATORY — маяк агентов: клик уводит на живую картину
+    // (app.js открыл бы исследовательскую заметку; перехватываем в capture-фазе).
+    (function () {
+      var beacon = document.querySelector('.island-hotspot[data-island="maelstromObservatory"]');
+      if (!beacon) return;
+      beacon.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        window.location.href = 'maelstorm-observatory.html';
+      }, true);
+    })();
+  </script>
 </body>
 </html>

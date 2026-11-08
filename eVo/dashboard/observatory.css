@@ -1,0 +1,408 @@
+/* ==========================================================================
+   MAELSTORM OBSERVATORY — живая картина работы агентов.
+   Слой картины (canvas) + HTML-подписи (текст выделяется — правило поместья).
+   Данные: /api/agents/live + /api/agents/history (панель только читает).
+   ========================================================================== */
+
+.obs-page {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(120% 120% at 50% 42%, #0a2135 0%, #061525 46%, #02090f 100%);
+  overflow: hidden;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+#obs-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.obs-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.obs-layer > * { pointer-events: auto; }
+
+/* --- HUD ------------------------------------------------------------------ */
+
+.obs-hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 30;
+}
+
+.obs-counters {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 6px 16px;
+  border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.25));
+  border-radius: 12px;
+  background: rgba(4, 18, 31, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.obs-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+}
+
+.obs-counter strong {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.15rem;
+  color: #e2e8f0;
+}
+
+.obs-counter em {
+  font-style: normal;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted, #94a3b8);
+}
+
+.obs-counter-storm strong { color: #f87171; }
+.obs-counter-tasks strong { color: #fbbf24; }
+.obs-counter-time em { letter-spacing: 0.04em; text-transform: none; font-size: 0.68rem; }
+
+.obs-icon-btn {
+  width: 34px; height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  text-decoration: none;
+  color: #cbd5e1;
+  background: rgba(10, 33, 53, 0.6);
+  border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.25));
+  border-radius: 10px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.obs-icon-btn:hover { color: #38bdf8; border-color: rgba(56, 189, 248, 0.55); }
+
+.obs-status {
+  position: absolute;
+  top: 76px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  margin: 0;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  color: #fca5a5;
+  background: rgba(60, 12, 16, 0.8);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: 10px;
+}
+
+/* --- Подписи кораблей ------------------------------------------------------ */
+
+.obs-ship-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(4, 18, 31, 0.72);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  backdrop-filter: blur(3px);
+  cursor: pointer;
+  max-width: 230px;
+  transition: border-color 0.15s ease;
+  user-select: text;
+}
+
+.obs-ship-label:hover { border-color: rgba(56, 189, 248, 0.85); }
+
+.obs-ship-label .obs-ship-name {
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.72rem;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.obs-ship-label .obs-ship-task {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.62rem;
+  color: var(--text-muted, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.obs-ship-label .obs-ship-lanes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.obs-ship-label .obs-lanes-scale {
+  width: 54px; height: 4px;
+  border-radius: 2px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+}
+
+.obs-ship-label .obs-lanes-fill {
+  height: 100%;
+  background: #38bdf8;
+  border-radius: 2px;
+}
+
+.obs-ship-label .obs-lanes-text {
+  font-size: 0.6rem;
+  color: #7dd3fc;
+}
+
+.obs-ship-label.pulse-calm { border-color: rgba(148, 163, 184, 0.3); opacity: 0.72; }
+.obs-ship-label.pulse-calm .obs-lanes-fill { background: #94a3b8; }
+.obs-ship-label.pulse-storm { border-color: rgba(248, 113, 113, 0.75); }
+.obs-ship-label.pulse-storm .obs-ship-name { color: #fca5a5; }
+.obs-ship-label.pulse-storm .obs-lanes-fill { background: #f87171; }
+
+/* --- Причалы ---------------------------------------------------------------- */
+
+.obs-dock-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(4, 18, 31, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  cursor: pointer;
+  max-width: 200px;
+  user-select: text;
+  animation: obsFadeIn 0.6s ease;
+}
+
+@keyframes obsFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.obs-dock-label:hover { border-color: rgba(52, 211, 153, 0.6); }
+
+.obs-dock-label .obs-dock-name {
+  font-size: 0.62rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.obs-dock-label .obs-dock-verdict {
+  font-size: 0.56rem;
+  color: var(--text-muted, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.obs-dock-label.verdict-accepted .obs-dock-verdict { color: #34d399; }
+.obs-dock-label.verdict-rework .obs-dock-verdict { color: #fbbf24; }
+
+/* --- Шлюпки (мини-задачи в бухте) ------------------------------------------- */
+
+.obs-task-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: rgba(30, 22, 4, 0.66);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  font-size: 0.62rem;
+  color: #fde68a;
+  cursor: pointer;
+  max-width: 190px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: text;
+  animation: obsFadeIn 0.6s ease;
+}
+
+.obs-task-label:hover { border-color: rgba(253, 230, 138, 0.85); color: #fef3c7; }
+
+/* --- Карточка корабля / рейса ------------------------------------------------ */
+
+.obs-card {
+  position: absolute;
+  top: 84px; right: 20px;
+  z-index: 35;
+  width: 360px;
+  max-height: calc(100% - 120px);
+  overflow: auto;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(4, 18, 31, 0.88);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  backdrop-filter: blur(8px);
+  user-select: text;
+}
+
+.obs-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.obs-card-head h3 {
+  margin: 2px 0 0;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.95rem;
+  color: #e2e8f0;
+}
+
+.obs-card-task {
+  margin: 8px 0 12px;
+  font-size: 0.72rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.obs-card-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.obs-card-metrics span {
+  padding: 4px 8px;
+  font-size: 0.66rem;
+  color: #cbd5e1;
+  background: rgba(10, 33, 53, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+}
+
+.obs-card-metrics span.storm { color: #fca5a5; border-color: rgba(248, 113, 113, 0.45); }
+
+.obs-card-lanes { margin: 12px 0 4px; }
+
+.obs-card-lanes .obs-lanes-scale {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+}
+
+.obs-card-lanes .obs-lanes-fill {
+  height: 100%;
+  background: #38bdf8;
+  transition: width 0.4s ease;
+}
+
+.obs-card-lanes .obs-lanes-text {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.64rem;
+  color: #7dd3fc;
+}
+
+.obs-card-tape { margin-top: 12px; }
+
+.obs-card-tape ul,
+#obs-card-tape ul {
+  list-style: none;
+  list-style-position: inside;
+  margin: 6px 0 0;
+  padding: 0;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.obs-card-tape li,
+#obs-card-tape li {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.64rem;
+  color: #cbd5e1;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+/* маркер-точка: внутри потока, ровно на уровне строки текста (просьба Sovereign 09.11) */
+.obs-card-tape li::before,
+#obs-card-tape li::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.55);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.obs-card-tape li time { color: var(--text-muted, #94a3b8); flex-shrink: 0; }
+.obs-card-tape li .tape-kind { color: #7dd3fc; flex-shrink: 0; }
+.obs-card-tape li.storm-row .tape-kind { color: #fca5a5; }
+
+/* --- Лента сигналов ---------------------------------------------------------- */
+
+.obs-tape {
+  position: absolute;
+  left: 20px; bottom: 20px;
+  z-index: 30;
+  width: 380px;
+  max-height: 190px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(4, 18, 31, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(6px);
+  user-select: text;
+}
+
+.obs-tape ul {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  overflow: auto;
+  max-height: 140px;
+}
+
+.obs-tape ul::-webkit-scrollbar { width: 6px; }
+.obs-tape ul::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 3px; }
+.obs-tape ul::-webkit-scrollbar-track { background: rgba(148, 163, 184, 0.08); }
+
+.obs-tape li {
+  display: flex;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 0.66rem;
+  color: #cbd5e1;
+}
+
+.obs-tape li time { color: var(--text-muted, #94a3b8); flex-shrink: 0; }
+.obs-tape li .tape-ship { color: #7dd3fc; flex-shrink: 0; max-width: 150px; }
+.obs-tape li.storm-row { color: #fca5a5; }
+
+/* --- Узкие экраны ------------------------------------------------------------ */
+
+@media (max-width: 1100px) {
+  .obs-counters { gap: 10px; }
+  .obs-card { width: 300px; }
+  .obs-tape { width: 300px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #obs-canvas { display: none; }
+  .obs-page { background: radial-gradient(120% 120% at 50% 42%, #0a2135 0%, #061525 46%, #02090f 100%); }
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAELSTORM OBSERVATORY — живая картина работы агентов</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="observatory.css?v=3">
+</head>
+<body>
+
+  <main class="obs-page">
+
+    <!-- Живая картина: океан, воронка, корабли -->
+    <canvas id="obs-canvas" aria-label="Визуальная картина работы агентов"></canvas>
+
+    <!-- Подписи кораблей (HTML-слой поверх картины, текст выделяется) -->
+    <div id="obs-ship-labels" class="obs-layer"></div>
+
+    <!-- Шлюпки: мини-задачи в бухте (проба пера) -->
+    <div id="obs-task-labels" class="obs-layer"></div>
+
+    <!-- Дуга причалов (HTML-слой, текст выделяется) -->
+    <div id="obs-dock-labels" class="obs-layer"></div>
+
+    <!-- HUD -->
+    <header class="estate-top-hud obs-hud">
+      <div class="hud-left">
+        <a href="maelstorm.html" style="text-decoration: none; display: flex; align-items: center; gap: 14px;">
+          <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+          <div class="hud-title-group">
+            <span class="hud-title">MAELSTORM OBSERVATORY</span>
+            <span class="hud-subtitle">Живая картина работы агентов · Обсерватория Маэльшторма</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="hud-right">
+        <div class="obs-counters" id="obs-counters">
+          <span class="obs-counter"><strong id="obs-count-sea">—</strong><em>в море</em></span>
+          <span class="obs-counter obs-counter-storm"><strong id="obs-count-storm">—</strong><em>штормят</em></span>
+          <span class="obs-counter"><strong id="obs-count-dock">—</strong><em>причалы</em></span>
+          <span class="obs-counter obs-counter-tasks"><strong id="obs-count-tasks">—</strong><em>в бухте</em></span>
+          <span class="obs-counter obs-counter-time"><em id="obs-updated">…</em></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-left: 18px;">
+          <button class="obs-icon-btn" id="obs-refresh" type="button" title="Обновить сейчас">↻</button>
+          <a class="obs-icon-btn" href="agents.html" title="Флот в море — оперативная таблица">⛵</a>
+          <a class="obs-icon-btn" href="world-map.html?v=12" title="Карта мира">🗺</a>
+          <a class="obs-icon-btn" href="index.html" title="Estate">🏰</a>
+        </div>
+      </div>
+    </header>
+
+    <p id="obs-status" class="obs-status" hidden role="alert"></p>
+
+    <!-- Карточка корабля / рейса (справа) -->
+    <aside id="obs-card" class="obs-card" hidden>
+      <div class="obs-card-head">
+        <div>
+          <span class="panel-label" id="obs-card-badge">КОРАБЛЬ В МОРЕ</span>
+          <h3 id="obs-card-title">—</h3>
+        </div>
+        <button class="obs-icon-btn" id="obs-card-close" type="button" title="Закрыть">✕</button>
+      </div>
+      <p id="obs-card-task" class="obs-card-task"></p>
+      <div id="obs-card-metrics" class="obs-card-metrics"></div>
+      <div id="obs-card-lanes" class="obs-card-lanes"></div>
+      <div id="obs-card-tape" class="obs-card-tape"></div>
+    </aside>
+
+    <!-- Лента сигналов (слева внизу) -->
+    <section id="obs-tape" class="obs-tape" hidden>
+      <div class="obs-tape-head"><span class="panel-label">СИГНАЛЫ</span></div>
+      <ul id="obs-tape-list"></ul>
+    </section>
+
+  </main>
+
+  <script src="observatory.js?v=2"></script>
+</body>
+</html>

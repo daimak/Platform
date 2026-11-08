@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-11-07 15:42",
+  "generatedAt": "2026-11-09 04:11",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -14,11 +14,11 @@ window.EVO_BRIEF = {
     "nextStep": "По указанию пользователя: слияние веток по D-002 (после проверки) либо продуктовые шаги (R4 — Morning Brief read-only MVP)."
   },
   "changes": [
-    "2026-10-29 | Barrymore brief refresh button in dashboard; loopback-only local server runs the existing generator and returns the fresh report to the open modal | refresh Morning Brief on demand | —",
-    "2026-10-29 | Barrymore dashboard starts at Windows logon; source fingerprints avoid unchanged LLM runs; explicit Done tasks retain history for 48h before archival | persistent brief and task lifecycle | —",
-    "2026-10-29 | Platform v1.8.3: Tashkent time, silent Windows startup, cached Morning Brief, durable Barrymore task history and Graphify project report | on-demand, low-noise project overview | —",
-    "2026-10-29 | Maelstorm research beacons and translucent island markers | clarify island roles and reduce map clutter until hover | —",
-    "2026-10-29 | Platform v1.8.4: AI Sandbox usage ledger and security contour, Hunter cabinet in Core Citadel, project onboarding and context handoff | improve AI visibility, controlled safety checks, and continuity between sessions | —"
+    "2026-11-07 | cloud polygon kit Workspace/cloud/: bootstrap.sh, cloud-init for DigitalOcean and Yandex Cloud, compose stacks (DVWA, Juice Shop, n8n, Uptime Kuma, WireGuard), k3s installer, probe script, onboarding spec | one-command security/lab polygons on free cloud tiers | —",
+    "2026-11-07 | cloud workshop VM: Platform deployed to Yandex Cloud (Ubuntu 24.04, systemd dashboard service, loopback + SSH-tunnel access, read-only deploy key, runbook Docs/CLOUD-VM-RUNBOOK-2026-11-07-ZCode.md) | month-to-income workshop and showcase for the agent estate; dashboard stays private (one-way door) | —",
+    "2026-11-07 | templating protocol (Docs/TEMPLATING.md): Jinja2 templates in templates/ as source of truth, private per-host vars in Workspace/private/vars (untracked), renderer tools/render_templates.py with placeholder-safe repo mode, runbook converted to template | infra coordinates out of session memory and out of the public repo | —",
+    "2026-11-07 | cloud VM security lab: docker + compose, apt toolkit, practice targets from cloud kit bound to loopback only (fixes: compose 0.0.0.0 bindings and missing empty .env for secretless services) | docker bypasses ufw; lab targets must never face the internet; inventory kept in private zone | —",
+    "2026-11-07 | agent peer notes (\"Заметка соседу\"): agents may append one short note-to-a-neighbor line to routine LLM reports (run_agent.py -> Workspace/agents/peer-notes.jsonl, untracked); Barrymore plaque shows unread counter, digest panel in steward modal, GET/POST /api/peer-notes; Morning Brief gains one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1 | agents occasionally show initiative and cross-talk at near-zero cost; launch stays manual (leash mode) | —"
   ],
   "tasks": {
     "urgent": [
@@ -1002,79 +1002,7 @@ window.EVO_BRIEF = {
         "busy": null
       }
     ],
-    "done": [
-      {
-        "id": "ops-commit-push-2026-11-06",
-        "title": "Закоммитить и запушить ночную работу (41 файл)",
-        "source": "ZCode",
-        "priority": "urgent",
-        "status": "done",
-        "createdAt": "2026-11-06T18:18:00Z",
-        "description": "В дереве 23 изменённых + 17 новых + 1 удалённый файл (~1301 строка): флот-панель agents.*, tools/lib/task_lock.py, тесты (agents_live, night_fixes, task_comments), HIGGSFIELD-DOCS, 4 новые карточки задач. dd4113c (секрет-фиксы) не запушен — origin/main стоит на a3ca29e. Всё существует в одном экземпляре на ноутбуке, который известен тем, что засыпает. Действие: tools/ops/backup_workspace.py → коммит → пуш. Условие: параллельные сессии затихли. Исполнитель: ZCode, по команде Sovereign.",
-        "history": [
-          {
-            "status": "active",
-            "at": "2026-11-06T18:18:00Z",
-            "by": "ZCode",
-            "note": "Ревью проекта 06.11: главный риск — ночные наработки трёх рейсов не заморожены ни коммитом, ни пушем."
-          },
-          {
-            "status": "done",
-            "at": "2026-11-06T18:47:04Z",
-            "by": "ZCode"
-          }
-        ],
-        "stage": "todo",
-        "type": "task",
-        "comments": [
-          {
-            "by": "ZCode",
-            "text": "Исполнено 06.11 ~23:55, по факту разделилось: ночную работу закоммитил сам параллельный рейс (d271fd5 fleet, c13addb kanban hardening, 625a865 docs/cards, 32626c0 higgsfield, 3d02ab3 evofind, 103b033 orders-triage); мой пакет сегодняшнего дня — cf3d503 (типы сущностей, секрет-гейт фаза 2, раннер, карточки). Пуш выполнен: origin/release/1.8.6, 7 коммитов ушли на GitHub. Бэкап перед коммитом: Backups/20261106-234429. Не вошли (чужие свежие правки, не коммитил): brief.js, index.html, Workspace/cloud/.",
-            "at": "2026-11-06T18:47:03Z"
-          }
-        ],
-        "completedAt": "2026-11-06T18:47:04Z",
-        "busy": null
-      },
-      {
-        "id": "sec-secret-gate-install",
-        "title": "Установить pre-commit secret gate (написан, не активен)",
-        "source": "ZCode",
-        "priority": "urgent",
-        "status": "done",
-        "createdAt": "2026-11-06T18:18:00Z",
-        "description": "Хуки из tools/security/hooks (dd4113c) не установлены: коммит-послание «install after key rotation», а ротация снята с приоритета — тупик. Связку разорвать: хук ставится без ротации и не даст НОВОМУ ключу уехать в git-историю. Факт: sk-ant жив в рабочем дереве Workspace/main.py (secret_scan, повторно подтверждено 06.11). Действие: установка хуков в .git/hooks + контрольный прогон на текущем дереве. Локальное действие, наружу ничего не идёт.",
-        "history": [
-          {
-            "status": "active",
-            "at": "2026-11-06T18:18:00Z",
-            "by": "ZCode",
-            "note": "Ревью проекта 06.11: секрет-контур застыл на полпути между фиксацией и активацией."
-          },
-          {
-            "type": "change",
-            "at": "2026-11-06T18:40:14Z",
-            "by": "ZCode"
-          },
-          {
-            "status": "done",
-            "at": "2026-11-06T18:47:04Z",
-            "by": "ZCode"
-          }
-        ],
-        "stage": "todo",
-        "type": "change",
-        "comments": [
-          {
-            "by": "ZCode",
-            "text": "Установлено 06.11 ~23:50 (sh tools/security/hooks/install.sh) + дописана фаза 2: RED блокирует коммит только если находка внутри staged-файла — живой sk-ant в Workspace/main.py больше не останавливает чужие коммиты (ротация остаётся отдельной задачей). Контрольные прогоны: пустой staged → exit 0; фейковый sk-ant в staged → коммит ОТКЛОНЁН (exit 1); обход --no-verify без изменений. Реальный коммит cf3d503 прошёл через гейт чисто.",
-            "at": "2026-11-06T18:47:04Z"
-          }
-        ],
-        "completedAt": "2026-11-06T18:47:04Z",
-        "busy": null
-      }
-    ],
+    "done": [],
     "all": [
       {
         "id": "agents-fleet",
@@ -1688,39 +1616,6 @@ window.EVO_BRIEF = {
         "busy": null
       },
       {
-        "id": "ops-commit-push-2026-11-06",
-        "title": "Закоммитить и запушить ночную работу (41 файл)",
-        "source": "ZCode",
-        "priority": "urgent",
-        "status": "done",
-        "createdAt": "2026-11-06T18:18:00Z",
-        "description": "В дереве 23 изменённых + 17 новых + 1 удалённый файл (~1301 строка): флот-панель agents.*, tools/lib/task_lock.py, тесты (agents_live, night_fixes, task_comments), HIGGSFIELD-DOCS, 4 новые карточки задач. dd4113c (секрет-фиксы) не запушен — origin/main стоит на a3ca29e. Всё существует в одном экземпляре на ноутбуке, который известен тем, что засыпает. Действие: tools/ops/backup_workspace.py → коммит → пуш. Условие: параллельные сессии затихли. Исполнитель: ZCode, по команде Sovereign.",
-        "history": [
-          {
-            "status": "active",
-            "at": "2026-11-06T18:18:00Z",
-            "by": "ZCode",
-            "note": "Ревью проекта 06.11: главный риск — ночные наработки трёх рейсов не заморожены ни коммитом, ни пушем."
-          },
-          {
-            "status": "done",
-            "at": "2026-11-06T18:47:04Z",
-            "by": "ZCode"
-          }
-        ],
-        "stage": "todo",
-        "type": "task",
-        "comments": [
-          {
-            "by": "ZCode",
-            "text": "Исполнено 06.11 ~23:55, по факту разделилось: ночную работу закоммитил сам параллельный рейс (d271fd5 fleet, c13addb kanban hardening, 625a865 docs/cards, 32626c0 higgsfield, 3d02ab3 evofind, 103b033 orders-triage); мой пакет сегодняшнего дня — cf3d503 (типы сущностей, секрет-гейт фаза 2, раннер, карточки). Пуш выполнен: origin/release/1.8.6, 7 коммитов ушли на GitHub. Бэкап перед коммитом: Backups/20261106-234429. Не вошли (чужие свежие правки, не коммитил): brief.js, index.html, Workspace/cloud/.",
-            "at": "2026-11-06T18:47:03Z"
-          }
-        ],
-        "completedAt": "2026-11-06T18:47:04Z",
-        "busy": null
-      },
-      {
         "id": "ops-release-ritual",
         "title": "Ритуал релиза: VERSION и AI-ONBOARDING тем же коммитом",
         "source": "ZCode",
@@ -1877,44 +1772,6 @@ window.EVO_BRIEF = {
             "at": "2026-11-07T04:50:27Z"
           }
         ],
-        "busy": null
-      },
-      {
-        "id": "sec-secret-gate-install",
-        "title": "Установить pre-commit secret gate (написан, не активен)",
-        "source": "ZCode",
-        "priority": "urgent",
-        "status": "done",
-        "createdAt": "2026-11-06T18:18:00Z",
-        "description": "Хуки из tools/security/hooks (dd4113c) не установлены: коммит-послание «install after key rotation», а ротация снята с приоритета — тупик. Связку разорвать: хук ставится без ротации и не даст НОВОМУ ключу уехать в git-историю. Факт: sk-ant жив в рабочем дереве Workspace/main.py (secret_scan, повторно подтверждено 06.11). Действие: установка хуков в .git/hooks + контрольный прогон на текущем дереве. Локальное действие, наружу ничего не идёт.",
-        "history": [
-          {
-            "status": "active",
-            "at": "2026-11-06T18:18:00Z",
-            "by": "ZCode",
-            "note": "Ревью проекта 06.11: секрет-контур застыл на полпути между фиксацией и активацией."
-          },
-          {
-            "type": "change",
-            "at": "2026-11-06T18:40:14Z",
-            "by": "ZCode"
-          },
-          {
-            "status": "done",
-            "at": "2026-11-06T18:47:04Z",
-            "by": "ZCode"
-          }
-        ],
-        "stage": "todo",
-        "type": "change",
-        "comments": [
-          {
-            "by": "ZCode",
-            "text": "Установлено 06.11 ~23:50 (sh tools/security/hooks/install.sh) + дописана фаза 2: RED блокирует коммит только если находка внутри staged-файла — живой sk-ant в Workspace/main.py больше не останавливает чужие коммиты (ротация остаётся отдельной задачей). Контрольные прогоны: пустой staged → exit 0; фейковый sk-ant в staged → коммит ОТКЛОНЁН (exit 1); обход --no-verify без изменений. Реальный коммит cf3d503 прошёл через гейт чисто.",
-            "at": "2026-11-06T18:47:04Z"
-          }
-        ],
-        "completedAt": "2026-11-06T18:47:04Z",
         "busy": null
       },
       {
@@ -2178,15 +2035,18 @@ window.EVO_BRIEF = {
     ],
     "full": "Workspace/analytics/hunter/digest.json"
   },
+  "peerNotes": {
+    "last24h": 0
+  },
   "git": {
-    "branch": "release/1.8.6",
-    "lastCommit": "69dbbfe Island modal: classic window controls in header - two small icon buttons",
-    "dirtyFiles": 22
+    "branch": "release/1.8.7",
+    "lastCommit": "8783415 Merge origin/main (cloud VM lab E-052..E-059) into release/1.8.7",
+    "dirtyFiles": 50
   },
   "agent": {
-    "model": "gemini-3.1-flash-lite-preview",
-    "summary": "Дмитрий, доброе утро. Платформа eVo обновлена до v1.8.4 (ветка release/1.8.6).\nНочью успешно завершены три рейса: «Флот в море», «Резюме-конвейер» и «Экскурсия» в AI Sandbox.\nХантер: 125 перспективных и 32 основных вакансии, 19 находок с вилкой, 253 позиции на OLX.\nАктуальные задачи: ротация ключей LangSmith/FreeLLMAPI, заполнение пробелов в master-profile и тех-долг реестра джобов.\nВ рабочем дереве 22 изменённых файла; секрет-контур активен, коммиты проходят через pre-commit gate.\nKali-лаборатория развёрнута, ожидает финальной настройки спец-учётки и запуска Juice Shop.",
-    "nextStep": "Запустить ZCode для выполнения задачи по заполнению пробелов в master-profile.json (ночной план Sovereign)."
+    "model": "dots-studio/dots-3-note-preview:free",
+    "summary": "Утренний доклад (снимок 2026-11-09 04:11): дата в CURRENT.md устарела — 2026-08-05 при фактической генерации 09.11. Следующее действие из CURRENT.md: сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md, устранить устаревшие указания на создание Morning Brief, проверить качество доклада после обновления контекста, отдельно разобраться с неотслеживаемым tools/barrymore/logger.py. Merge, commit или удаление файлов — только по отдельному решению Sovereign. STATE.md: слияние веток по D-002 (после проверки) или продуктивные шаги R4 — Morning Brief read-only MVP. CHANGELOG: 7.11 добавлены cloud polygon kit, cloud VM в Yandex Cloud, templating protocol, cloud VM security lab и agent peer notes («Заметка соседу») — agents могут добавлять одну строку в routine LLM reports, в дашборде и модалке стюарда появится дigest panel, Morning Brief обретёт one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1. Git: branch release/1.8.7, последний коммит Merge origin/main (cloud VM lab E-052..E-059), 50 грязных файлов. Хантер: 125 перспективных + 32 основных (снимок 06.11), находок с вилкой 19, OLX-находки 253 (31.10), очередь поручений 0. Переписка: 0 заметок за сутки.",
+    "nextStep": "Актуализировать контекст Barrymore: сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md, устранить устаревшие указания на создание Morning Brief, проверить качество доклада после обновления контекста, отдельно разобраться с неотслеживаемым tools/barrymore/logger.py."
   },
-  "_sourceFingerprint": "07c377738509140a6277ec7e69716583b5ab1117c7818fef1b2a96e980a99cab"
+  "_sourceFingerprint": "50fcf00faef0d0b60396de23455ae454fd362730605577a79ecf47ce8748fbc9"
 };

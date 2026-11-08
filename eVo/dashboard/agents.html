@@ -10,6 +10,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="agents.css?v=1">
+  <script>
+    // Встраивание (всплывающее окно Эстейта): ?embed=1 прячет шапку и футер страницы —
+    // их роль играет шапка окна. Полная страница открывается без параметра.
+    if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add('embed');
+  </script>
+  <style>
+    html.embed .fleet-header, html.embed .fleet-footer { display: none; }
+    html.embed .fleet-page { padding-top: 18px; }
+  </style>
 </head>
 <body>
 
@@ -23,6 +32,7 @@
         Панель только читает: кто не пишет события agent.* — для флота не существует.</p>
       </div>
       <nav class="fleet-actions">
+        <a class="btn-action-primary" href="maelstorm-observatory.html">🌀 Обсерватория</a>
         <a class="btn-action-primary" href="index.html">← На карту Estate</a>
         <button class="btn-action-primary" id="fleet-refresh" type="button">Обновить сейчас</button>
       </nav>
