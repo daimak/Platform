@@ -29,6 +29,14 @@ if [ -z "$staged" ]; then
 fi
 staged_count=$(printf '%s\n' "$staged" | grep -c .)
 
+# Правило Sovereign (07.11): приватная зона (касса, резюме, внутренние данные)
+# не должна попадать в git НИКОГДА — жёсткий RED независимо от результата сканера.
+if printf '%s\n' "$staged" | grep -q '^Workspace/private/'; then
+    say "RED: в staged файлы приватной зоны Workspace/private/ — коммит отклонён."
+    say "Если попали случайно: git restore --staged <файлы>. Приватное живёт вне git."
+    exit 1
+fi
+
 scanner="$git_root/tools/security/secret_scan.py"
 command -v python >/dev/null 2>&1 || fail_open "python не найден в PATH."
 [ -f "$scanner" ] || fail_open "сканер не найден: $scanner."
