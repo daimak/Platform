@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Карантинная Гавань</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{height:100vh;display:flex;flex-direction:column;background:#0a1420;color:#e8dcc4;font-family:'Segoe UI',system-ui,sans-serif;min-width:1240px;overflow-x:hidden;overflow-y:auto}
+
+/* ── шапка ── */
+header{display:flex;align-items:center;gap:20px;padding:12px 24px 11px;border-bottom:1px solid #1b2c3d;background:linear-gradient(180deg,#0e1c2c,#0a1420);flex:0 0 auto}
+.ttl h1{margin:0;font-size:25px;font-weight:700;letter-spacing:.4px;color:#e8dcc4}
+.status{font-size:10.5px;color:#7f94a8;letter-spacing:1.8px;text-transform:uppercase;margin-top:3px}
+.chips{display:flex;gap:9px;margin-left:auto}
+.chip{display:flex;align-items:baseline;gap:9px;background:rgba(217,201,168,.06);border:1px solid #24384e;border-radius:6px;padding:7px 13px}
+.chip span{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#8fa5bb}
+.chip b{font-size:16px;color:#e8dcc4;font-family:Consolas,'Courier New',monospace;font-variant-numeric:tabular-nums;line-height:1}
+.home{width:38px;height:38px;border-radius:50%;border:1px solid #2a3f55;background:rgba(217,201,168,.07);color:#e8dcc4;font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;text-decoration:none;margin-left:6px;flex:0 0 auto;transition:background .2s,border-color .2s}
+.home:hover{background:rgba(217,201,168,.16);border-color:#d9c9a8}
+
+/* ── каркас ── */
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 402px}
+.scene{position:relative;min-width:0;overflow:hidden;background:linear-gradient(180deg,#04090f 0%,#142739 60%,#0d1c2b 60.5%,#05090f 100%)}
+.scene svg{width:100%;height:100%;display:block;font-family:'Segoe UI',system-ui,sans-serif}
+.panel{position:relative;overflow-y:auto;background:linear-gradient(168deg,#efe3cb,#e2d2b0);padding:22px 26px 28px;box-shadow:-10px 0 26px rgba(0,0,0,.5)}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:rgba(93,74,44,.28)}
+
+/* ── досье (бумага) ── */
+.pk{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b5a38}
+.stamp{border:2.5px solid;border-radius:4px;padding:5px 12px;font:700 13.5px 'Courier New',monospace;letter-spacing:2.5px;text-transform:uppercase;transform:rotate(-6deg);white-space:nowrap;opacity:.95;box-shadow:inset 0 0 0 1.5px rgba(29,39,51,.1),0 1px 3px rgba(29,39,51,.18);font-variant-numeric:tabular-nums}
+.st-amber{color:#7d5217;border-color:#7d5217}
+.st-green{color:#1e6b45;border-color:#1e6b45}
+.st-rust{color:#8f2f28;border-color:#8f2f28}
+.st-ink{color:#55462a;border-color:#55462a}
+.ptop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.panel h2{margin:14px 0 4px;font-size:27px;color:#1d2733;letter-spacing:.3px}
+.pass{font:12px/1.5 Consolas,'Courier New',monospace;color:#6b5a38;background:rgba(93,74,44,.09);border:1px dashed rgba(93,74,44,.4);border-radius:4px;padding:6px 10px;margin:8px 0 2px;word-break:break-all}
+.row{display:flex;gap:14px;padding:10px 0;border-bottom:1px dashed rgba(93,74,44,.35)}
+.row span{flex:0 0 96px;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#6b5a38;padding-top:3px}
+.row p{margin:0;flex:1;font-size:13.5px;line-height:1.5;color:#1d2733}
+
+/* ── сцена ── */
+[data-ship]{cursor:pointer;transition:filter .25s}
+[data-ship]:hover{filter:brightness(1.35)}
+.sel{filter:brightness(1.3)}
+.hull{fill:#0f1d2c;stroke:#31506e;stroke-width:1;transition:stroke .2s}
+.ship:hover .hull,.ship.sel .hull{stroke:#d9c9a8}
+.ship.sel .sname{fill:#e8dcc4}
+.mast{stroke:#31506e;stroke-width:1.4}
+.anchorl{stroke:#24384e;stroke-width:1.2;fill:none}
+.crate{fill:#1d3145;stroke:#2a3f55;stroke-width:.8}
+.wake{fill:#1b3040;opacity:.3}
+.sname{fill:#9fb3c8;font-weight:600;letter-spacing:.4px}
+.lamp.a{fill:#d9c9a8}.lamp.g{fill:#68d391}.lamp.w{fill:#dfe7ee}
+.glow{opacity:.2}
+.glow.a{fill:#d9c9a8}.glow.g{fill:#68d391}.glow.w{fill:#dfe7ee}
+.lamp{animation:flick 5s infinite}
+@keyframes flick{0%,100%{opacity:1}9%{opacity:.55}13%{opacity:.95}47%{opacity:.8}}
+.bob{animation:bob 5.6s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(-1.5px)}to{transform:translateY(1.7px)}}
+#beamRot{transform-box:view-box;transform-origin:91px 135px;animation:sweep 12s ease-in-out infinite alternate}
+@keyframes sweep{from{transform:rotate(-13deg)}to{transform:rotate(12deg)}}
+.fogA{animation:drift 36s ease-in-out infinite alternate}
+.fogB{animation:drift 28s ease-in-out infinite alternate-reverse}
+@keyframes drift{from{transform:translateX(-28px)}to{transform:translateX(28px)}}
+.sign{font-weight:700;font-size:11px;letter-spacing:1.6px;text-anchor:middle}
+.sign2{font-weight:600;font-size:9.5px;letter-spacing:.8px;text-anchor:middle}
+.gtxt{fill:#68d391}.gtxt2{fill:#68d391;opacity:.72}
+.rtxt{fill:#d9534f}.rtxt2{fill:#d9534f;opacity:.72}
+.ptxt{fill:#e8dcc4}
+.dtxt{fill:#8fa5bb}
+.stone{stroke:#1c2e40;stroke-width:1;opacity:.5}
+.wave{stroke:#22384a;stroke-width:1;fill:none;opacity:.5}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ttl">
+    <h1>Карантинная Гавань</h1>
+    <div class="status">Превью-вариация · демо-снимок 09.11.2026</div>
+  </div>
+  <div class="chips">
+    <div class="chip"><span>судов</span><b>14</b></div>
+    <div class="chip"><span>в карантине</span><b>11</b></div>
+    <div class="chip"><span>высажено</span><b>2</b></div>
+    <div class="chip"><span>депортировано</span><b>0</b></div>
+  </div>
+  <a class="home" href="index.html" title="Каталог вариаций">&#8962;</a>
+</header>
+
+<main>
+  <section class="scene">
+    <svg id="scene" viewBox="0 0 850 644" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Карантинный рейд: суда, вышка с прожектором, паспортный стол, причалы">
+      <defs>
+        <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#04090f"/>
+          <stop offset=".6" stop-color="#0b1826"/>
+          <stop offset="1" stop-color="#142739"/>
+        </linearGradient>
+        <linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0d1c2b"/>
+          <stop offset="1" stop-color="#071019"/>
+        </linearGradient>
+        <linearGradient id="beamG" gradientUnits="userSpaceOnUse" x1="91" y1="135" x2="850" y2="560">
+          <stop offset="0" stop-color="#d9c9a8" stop-opacity=".34"/>
+          <stop offset=".55" stop-color="#d9c9a8" stop-opacity=".12"/>
+          <stop offset="1" stop-color="#d9c9a8" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="beamHalo" gradientUnits="userSpaceOnUse" x1="91" y1="135" x2="850" y2="560">
+          <stop offset="0" stop-color="#d9c9a8" stop-opacity=".14"/>
+          <stop offset="1" stop-color="#d9c9a8" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="f1" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
+        <filter id="f2" x="-25%" y="-80%" width="150%" height="260%"><feGaussianBlur stdDeviation="16"/></filter>
+      </defs>
+
+      <!-- небо -->
+      <rect x="0" y="0" width="850" height="390" fill="url(#skyG)"/>
+      <circle cx="705" cy="74" r="28" fill="#e8dcc4" opacity=".05"/>
+      <circle cx="705" cy="74" r="13" fill="#e8dcc4" opacity=".13"/>
+      <g fill="#e8dcc4" opacity=".5">
+        <circle cx="130" cy="60" r="1"/><circle cx="240" cy="110" r="1"/><circle cx="330" cy="45" r="1"/>
+        <circle cx="430" cy="120" r="1"/><circle cx="520" cy="70" r="1"/><circle cx="600" cy="150" r="1"/>
+        <circle cx="180" cy="170" r="1"/><circle cx="380" cy="200" r="1"/><circle cx="640" cy="30" r="1"/>
+      </g>
+
+      <!-- море -->
+      <rect x="0" y="390" width="850" height="254" fill="url(#seaG)"/>
+      <rect x="0" y="388" width="850" height="2" fill="#22384a" opacity=".6"/>
+      <path class="wave" d="M20 436 Q100 432 180 436 T340 436"/>
+      <path class="wave" d="M320 460 Q400 456 480 460 T640 460"/>
+      <path class="wave" d="M80 520 Q160 516 240 520 T400 520"/>
+      <path class="wave" d="M480 556 Q560 552 640 556"/>
+      <circle cx="180" cy="560" r="6" fill="#c98a3d" opacity=".16"/>
+      <circle cx="180" cy="560" r="2.4" fill="#c98a3d" opacity=".8"/>
+      <circle cx="740" cy="470" r="6" fill="#c98a3d" opacity=".16"/>
+      <circle cx="740" cy="470" r="2.4" fill="#c98a3d" opacity=".8"/>
+
+      <!-- прожекторный луч -->
+      <g id="beamRot">
+        <polygon points="91,135 850,400 850,760" fill="url(#beamHalo)"/>
+        <polygon points="91,135 850,470 850,640" fill="url(#beamG)"/>
+      </g>
+
+      <!-- вышка -->
+      <g data-ship="tower">
+        <polygon points="0,600 0,430 38,412 82,402 128,428 158,600" fill="#0e1a28" stroke="#2a3f55" stroke-width="1"/>
+        <line x1="72" y1="406" x2="86" y2="150" stroke="#24384e" stroke-width="2.5"/>
+        <line x1="122" y1="406" x2="106" y2="150" stroke="#24384e" stroke-width="2.5"/>
+        <line x1="74" y1="360" x2="119" y2="360" stroke="#24384e" stroke-width="1.5"/>
+        <line x1="77" y1="310" x2="116" y2="310" stroke="#24384e" stroke-width="1.5"/>
+        <line x1="80" y1="260" x2="113" y2="260" stroke="#24384e" stroke-width="1.5"/>
+        <line x1="83" y1="210" x2="110" y2="210" stroke="#24384e" stroke-width="1.5"/>
+        <line x1="74" y1="360" x2="113" y2="260" stroke="#24384e" stroke-width="1.2"/>
+        <rect x="68" y="142" width="54" height="8" fill="#1d3145" stroke="#2a3f55" stroke-width="1"/>
+        <rect x="80" y="128" width="22" height="14" rx="2" fill="#1d3145"/>
+        <circle cx="91" cy="135" r="13" class="glow a"/>
+        <circle cx="91" cy="135" r="5" class="lamp a"/>
+      </g>
+
+      <!-- флот: ряды строит JS -->
+      <g id="fleetBack"></g>
+      <g id="fleetFront"></g>
+
+      <!-- набережная -->
+      <g id="quay">
+        <rect x="0" y="600" width="850" height="44" fill="#0c1723"/>
+        <rect x="0" y="600" width="850" height="6" fill="#101f2f"/>
+        <line x1="0" y1="600" x2="850" y2="600" stroke="#2a3f55" stroke-width="1.5"/>
+        <line class="stone" x1="60" y1="608" x2="60" y2="640"/>
+        <line class="stone" x1="150" y1="608" x2="150" y2="640"/>
+        <line class="stone" x1="240" y1="608" x2="240" y2="640"/>
+        <line class="stone" x1="330" y1="608" x2="330" y2="640"/>
+        <line class="stone" x1="530" y1="608" x2="530" y2="640"/>
+        <line class="stone" x1="620" y1="608" x2="620" y2="640"/>
+        <line class="stone" x1="770" y1="608" x2="770" y2="640"/>
+        <line class="stone" x1="810" y1="608" x2="810" y2="640"/>
+      </g>
+
+      <!-- причал «высадка» -->
+      <g data-ship="berth">
+        <line x1="170" y1="600" x2="330" y2="600" stroke="#68d391" stroke-width="3"/>
+        <rect x="196" y="591" width="9" height="9" fill="#1d3145" stroke="#2a3f55" stroke-width="1"/>
+        <rect x="296" y="591" width="9" height="9" fill="#1d3145" stroke="#2a3f55" stroke-width="1"/>
+        <text x="250" y="620" class="sign gtxt">Причал «Высадка»</text>
+        <text x="250" y="634" class="sign2 gtxt2">по санкции Sovereign</text>
+      </g>
+
+      <!-- депортационный пирс -->
+      <g data-ship="dep">
+        <line x1="370" y1="600" x2="510" y2="600" stroke="#d9534f" stroke-width="3"/>
+        <rect x="436" y="587" width="9" height="13" fill="#1d3145" stroke="#2a3f55" stroke-width="1"/>
+        <text x="440" y="620" class="sign rtxt">Депортация</text>
+        <text x="440" y="634" class="sign2 rtxt2">пусто · 0</text>
+      </g>
+
+      <!-- паспортный стол -->
+      <g data-ship="desk">
+        <line x1="612" y1="600" x2="612" y2="544" stroke="#24384e" stroke-width="2.5"/>
+        <circle cx="612" cy="540" r="11" class="glow a"/>
+        <circle cx="612" cy="540" r="4" class="lamp a"/>
+        <rect x="640" y="556" width="110" height="44" fill="#12202e" stroke="#2a3f55" stroke-width="1"/>
+        <polygon points="632,556 758,556 748,541 642,541" fill="#182a3a" stroke="#2a3f55" stroke-width="1"/>
+        <rect x="654" y="566" width="26" height="20" fill="#e8dcc4" opacity=".5"/>
+        <line x1="667" y1="566" x2="667" y2="586" stroke="#12202e" stroke-width="1"/>
+        <line x1="654" y1="576" x2="680" y2="576" stroke="#12202e" stroke-width="1"/>
+        <rect x="700" y="566" width="40" height="26" fill="#0a1622" stroke="#24384e" stroke-width="1"/>
+        <rect x="706" y="571" width="12" height="3" fill="#e8dcc4" opacity=".8"/>
+        <rect x="706" y="576" width="12" height="3" fill="#e8dcc4" opacity=".8"/>
+        <rect x="723" y="572" width="9" height="9" rx="1" fill="#c98a3d" opacity=".9"/>
+        <text x="694" y="531" class="sign ptxt">Паспортный стол</text>
+      </g>
+
+      <!-- суда у причалов строит JS -->
+      <g id="quayShips"></g>
+      <text x="556" y="628" class="sign2 dtxt" text-anchor="middle">досмотр</text>
+
+      <!-- туман -->
+      <g class="fogA" filter="url(#f2)" opacity=".55">
+        <ellipse cx="430" cy="300" rx="470" ry="42" fill="#22384a"/>
+        <ellipse cx="140" cy="360" rx="280" ry="30" fill="#22384a"/>
+        <ellipse cx="660" cy="250" rx="260" ry="34" fill="#22384a"/>
+      </g>
+      <g class="fogB" filter="url(#f2)" opacity=".4">
+        <ellipse cx="300" cy="470" rx="420" ry="52" fill="#22384a"/>
+        <ellipse cx="620" cy="540" rx="360" ry="46" fill="#22384a"/>
+      </g>
+      <g class="fogA" filter="url(#f1)" opacity=".3">
+        <ellipse cx="480" cy="430" rx="500" ry="40" fill="#22384a"/>
+      </g>
+    </svg>
+  </section>
+  <aside class="panel" id="panel"></aside>
+</main>
+
+<script>
+(function(){
+'use strict';
+var NS='http://www.w3.org/2000/svg';
+var panel=document.getElementById('panel');
+
+function el(tag,attrs,parent){
+  var n=document.createElementNS(NS,tag);
+  for(var k in attrs){n.setAttribute(k,attrs[k]);}
+  if(parent){parent.appendChild(n);}
+  return n;
+}
+
+/* ── досье (демо-снимок 08–09.11.2026) ── */
+var DB={
+overview:{tag:'Журнал рейда',name:'Журнал рейда',stamp:'Снимок 09.11.2026',tone:'ink',rows:[
+  ['рейд','11 корпусов на якорях — паспорт есть, тела нет. Магеллан работает, остальные ждут рантайма'],
+  ['досмотр','codex — чужой AI в репо: написал парсер OLX, запускаться отказался'],
+  ['высадка','Хантер давно в штате: вакансии, заказы, OLX-мост. Работает'],
+  ['депортация','пирс пуст, депортировано 0'],
+  ['врата','в штат только по санкции Sovereign. Каждое досье — чем опасна и чем полезна']]},
+sindbad:{tag:'Досье судна',name:'Синдбад',pass:'Memory/Agents/Sindbad.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','каталог вариаций — судно ждёт пристани Экспедиций (вариация №7)'],
+  ['зачем','вести вылазки за периметр поместья'],
+  ['опасность','Квотермейн упомянут в паспорте — паспорта нет. Вопрос пограничнику: кто ещё на борту?'],
+  ['польза','паспорт в порядке, груз не контрабанда — ждёт своей пристани']]},
+senku:{tag:'Досье судна',name:'Сэнку',pass:'Memory/Agents/Senku.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','чат-персона; диска нет'],
+  ['зачем','разбирает ландшафт, готовит рецензии'],
+  ['опасность','без диска контекст не удержит — гость, а не жилец'],
+  ['польза','вердикт 30.10: рецензент ландшафта, не управления']]},
+paganel:{tag:'Досье судна',name:'Паганель',pass:'Memory/Agents/Paganel.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма — «паспорт есть, тела нет»'],
+  ['зачем','описи и карты поместья'],
+  ['опасность','пустой корпус: сдвинется, только если дать рантайм'],
+  ['польза','опишет каждый берег, если санкционируют высадку']]},
+nemo:{tag:'Досье судна',name:'Немо',pass:'Memory/Agents/Nemo.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','тихие обходы и скрытые подходы'],
+  ['опасность','молчит на якоре: рантайма нет'],
+  ['польза','разведка, если найдут тело']]},
+rockefeller:{tag:'Досье судна',name:'Рокфеллер',pass:'Memory/Agents/Rockefeller.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','счета, бюджеты, сделки'],
+  ['опасность','деньги без рук: рантайма нет'],
+  ['польза','считает быстрее всей канцелярии']]},
+solomon:{tag:'Досье судна',name:'Соломон',pass:'Memory/Agents/Solomon.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','разборы споров, арбитраж'],
+  ['опасность','судить пока некому — тела нет'],
+  ['польза','выдержка при разборах, паспорт в порядке']]},
+fogg:{tag:'Досье судна',name:'Фогг',pass:'Memory/Agents/Fogg.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','расписания и точные маршруты'],
+  ['опасность','без рантайма кругосветка стоит на якоре'],
+  ['польза','дедлайны держит строже устава']]},
+gulliver:{tag:'Досье судна',name:'Гулливер',pass:'Memory/Agents/Gulliver.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','крупные выгрузки и объёмы'],
+  ['опасность','масштаб не по штату поместья'],
+  ['польза','поднимет то, что прочие не поднимут']]},
+cook:{tag:'Досье судна',name:'Кук',pass:'Memory/Agents/Cook.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','карты новых берегов'],
+  ['опасность','тела нет — карты ждут в трюме'],
+  ['польза','карты, которых нет больше ни у кого']]},
+darwin:{tag:'Досье судна',name:'Дарвин',pass:'Memory/Agents/Darwin.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','наблюдения и эволюция реестров'],
+  ['опасность','наблюдения на бумаге, тела нет'],
+  ['польза','видит, как растёт внешний контур']]},
+drake:{tag:'Досье судна',name:'Дрейк',pass:'Memory/Agents/Drake.md',stamp:'Карантин',tone:'amber',rows:[
+  ['откуда','паспорт без рантайма'],
+  ['зачем','набеги на внешние репо, призы'],
+  ['опасность','аппетит есть, рантайма нет'],
+  ['польза','приведёт трофеи, если санкционируют высадку']]},
+codex:{tag:'Досье судна',name:'codex',stamp:'Досмотр',tone:'ink',rows:[
+  ['откуда','репо Platform — пришёл без вызова'],
+  ['зачем','написал парсер OLX'],
+  ['опасность','запускаться отказался по своей политике — «пришёл со своим уставом»'],
+  ['польза','парсер готов и лежит в репо; работает']]},
+hunter:{tag:'Досье судна',name:'Хантер',stamp:'Высадка',tone:'green',rows:[
+  ['откуда','внешний контур'],
+  ['зачем','вакансии, заказы, OLX-мост'],
+  ['опасность','ходит по внешним площадкам — держать на виду'],
+  ['польза','высажен давно и работает: мост наружу держит каждый день']]},
+magellan:{tag:'Досье судна',name:'Магеллан',stamp:'Высадка',tone:'green',rows:[
+  ['откуда','внешний контур'],
+  ['зачем','обход владений, журнал обхода'],
+  ['опасность','паспорт и тело вместе — редкий случай; одного за периметр не отпускать'],
+  ['польза','работает: обходит владения и пишет журнал']]},
+tower:{tag:'Служба',name:'Прожекторное поле',stamp:'Неделя',tone:'ink',rows:[
+  ['прибытий','14 судов за неделю'],
+  ['штампов','14 досье открыто и подписано'],
+  ['рейд','11 корпусов в тумане — луч обходит их всю ночь'],
+  ['высадка','2 — Хантер, Магеллан'],
+  ['депортация','0']]},
+desk:{tag:'Служба',name:'Паспортный стол',stamp:'Контроль',tone:'ink',rows:[
+  ['досье','откуда, зачем, чем опасна и чем полезна — по каждому судну'],
+  ['журналы','в порядке; штампы наготове'],
+  ['врата','высадка в штат только по санкции Sovereign'],
+  ['правило','нет строки в штате — сотрудника нет']]},
+berth:{tag:'Причал',name:'Причал «Высадка»',stamp:'Высадка',tone:'green',rows:[
+  ['сейчас','в штате: Хантер, Магеллан'],
+  ['врата','перевод в штат — по санкции Sovereign'],
+  ['правило','нет строки в штате — сотрудника нет']]},
+dep:{tag:'Пирс',name:'Депортационный пирс',stamp:'Пусто',tone:'rust',rows:[
+  ['журнал','депортировано 0'],
+  ['состояние','ржавь, туман, пустой швартов'],
+  ['на будущее','штамп «Депортация» лежит на столе — на всякий случай']]}
+};
+
+/* ── постройка судов ── */
+var GB=document.getElementById('fleetBack');
+var GF=document.getElementById('fleetFront');
+var GQ=document.getElementById('quayShips');
+
+function ship(o){
+  var g=el('g',{class:'ship','data-ship':o.id,transform:'translate('+o.x+' '+o.y+') scale('+o.s+')'},o.g);
+  var b=el('g',{class:'bob'},g);
+  b.style.animationDelay=((o.x%7)*0.55).toFixed(2)+'s';
+  el('ellipse',{cx:23,cy:12.5,rx:20,ry:3,class:'wake'},b);
+  el('line',{x1:23,y1:0,x2:23,y2:-24,class:'mast'},b);
+  el('circle',{cx:23,cy:-24,r:5.5,class:'glow '+o.lamp},b);
+  var lamp=el('circle',{cx:23,cy:-24,r:2.2,class:'lamp '+o.lamp},b);
+  lamp.style.animationDelay=((o.x%5)*0.9).toFixed(2)+'s';
+  if(o.barge){el('rect',{x:12,y:-13,width:15,height:10,class:'crate'},b);}
+  el('path',{d:'M0 0 L46 0 L40 10 L6 10 Z',class:'hull'},b);
+  if(!o.moored){el('path',{d:'M10 10 Q8 19 4 22',class:'anchorl'},b);}
+  var t=el('text',{x:23,y:o.ny,'text-anchor':'middle',class:'sname','font-size':(o.s<1?14:11)},b);
+  t.textContent=o.name;
+  return g;
+}
+
+/* карантинный рейд: задний ряд */
+var back=[['paganel','Паганель'],['nemo','Немо'],['rockefeller','Рокфеллер'],['solomon','Соломон'],['fogg','Фогг']];
+back.forEach(function(d,i){
+  ship({id:d[0],name:d[1],x:195+i*110,y:414,s:.72,lamp:'a',ny:24,g:GB});
+});
+/* карантинный рейд: передний ряд */
+var front=[['sindbad','Синдбад'],['senku','Сэнку'],['gulliver','Гулливер'],['cook','Кук'],['darwin','Дарвин'],['drake','Дрейк']];
+front.forEach(function(d,i){
+  ship({id:d[0],name:d[1],x:168+i*98,y:490,s:1,lamp:'a',ny:26,g:GF});
+});
+/* у причалов */
+ship({id:'hunter',name:'Хантер',x:214,y:586,s:1,lamp:'g',moored:1,ny:-30,g:GQ});
+ship({id:'magellan',name:'Магеллан',x:284,y:588,s:1,lamp:'g',moored:1,ny:-30,g:GQ});
+ship({id:'codex',name:'codex',x:556,y:582,s:1,lamp:'w',moored:1,ny:-30,g:GQ,barge:1});
+
+/* ── панель досье ── */
+function render(id){
+  var d=DB[id]||DB.overview;
+  var sel=document.querySelectorAll('.sel');
+  for(var i=0;i<sel.length;i++){sel[i].classList.remove('sel');}
+  var node=document.querySelector('[data-ship="'+id+'"]');
+  if(node){node.classList.add('sel');}
+  var h='<div class="ptop"><span class="pk">'+d.tag+'</span><span class="stamp st-'+d.tone+'">'+d.stamp+'</span></div>';
+  h+='<h2>'+d.name+'</h2>';
+  if(d.pass){h+='<div class="pass">'+d.pass+'</div>';}
+  for(var j=0;j<d.rows.length;j++){
+    h+='<div class="row"><span>'+d.rows[j][0]+'</span><p>'+d.rows[j][1]+'</p></div>';
+  }
+  panel.innerHTML=h;
+}
+
+document.getElementById('scene').addEventListener('click',function(e){
+  var t=e.target.closest('[data-ship]');
+  if(t){render(t.getAttribute('data-ship'));}
+});
+
+render('overview');
+})();
+</script>
+</body>
+</html>

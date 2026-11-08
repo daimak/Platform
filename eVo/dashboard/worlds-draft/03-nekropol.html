@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Некрополь · Platform — превью-вариация</title>
+<style>
+  :root{
+    --water:#0a0e14; --moon:#b8c4d4; --stone:#2a3240; --rust:#7a5544; --ghost:#7fbf9e;
+    --line:#232e3c; --muted:#8494a8; --text:#cfd8e2; --bright:#e6ecf4;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:#06090d;color:var(--text);font-family:system-ui,"Segoe UI",Roboto,sans-serif;
+       overflow:hidden;font-variant-numeric:tabular-nums}
+  .app{height:100vh;display:flex;flex-direction:column}
+
+  header{display:flex;align-items:center;gap:18px;padding:10px 18px;border-bottom:1px solid #151d28;background:#080c12}
+  .h-left{margin-right:auto;min-width:0}
+  h1{margin:0;font-size:24px;font-weight:650;letter-spacing:.02em;color:var(--bright)}
+  .sub{font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin-top:2px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .chip{display:flex;align-items:baseline;gap:7px;border:1px solid var(--line);border-radius:999px;
+        padding:5px 12px;background:rgba(42,50,64,.25);white-space:nowrap}
+  .chip .l{font-size:11px;color:var(--muted)}
+  .chip .n{font-size:14px;font-weight:600;color:var(--bright)}
+  .home{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;
+        border:1px solid var(--line);background:rgba(42,50,64,.3);color:var(--moon);font-size:19px;
+        text-decoration:none;flex:none;transition:border-color .15s,box-shadow .15s,color .15s}
+  .home:hover{border-color:#4a5872;box-shadow:0 0 10px rgba(184,196,212,.25);color:var(--bright)}
+
+  .stage{position:relative;flex:1;min-height:0}
+  .stage svg{width:100%;height:100%;display:block}
+
+  /* панель данных */
+  #panel{position:absolute;top:14px;right:14px;width:332px;max-height:calc(100% - 28px);overflow:auto;
+         background:rgba(9,13,19,.9);border:1px solid var(--stone);border-radius:14px;
+         padding:16px 18px 14px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+  .kicker{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ghost);opacity:.9}
+  #p-n{margin:6px 0 12px;font-size:19px;line-height:1.25;color:var(--bright);font-weight:600}
+  .row{display:flex;gap:10px;padding:5px 0;border-top:1px solid rgba(35,46,60,.5)}
+  .rl{flex:none;width:92px;font-size:11px;color:var(--muted);padding-top:2px}
+  .rv{font-size:13px;color:var(--text);line-height:1.4}
+  #p-note{margin-top:10px;font-size:12px;color:#a2b1c2;border-left:2px solid #3a4759;padding:2px 0 2px 9px;line-height:1.4}
+  .q{margin-top:13px;font-size:12px;color:var(--moon);letter-spacing:.03em}
+  .btns{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .b{font:inherit;font-size:12.5px;padding:7px 13px;border-radius:9px;cursor:default;background:transparent}
+  .b.up{border:1px solid rgba(127,191,158,.55);color:var(--ghost)}
+  .b.down{border:1px solid rgba(122,85,68,.75);color:#c6a07f}
+  .demo{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px;letter-spacing:.08em}
+  .foot{margin-top:12px;font-size:11px;color:var(--muted)}
+
+  /* сцена */
+  .hit{cursor:pointer}
+  .hit:hover{filter:brightness(1.35)}
+  .hit.sel{filter:brightness(1.4) drop-shadow(0 0 7px rgba(184,196,212,.4))}
+  .bob{animation:bob 7s ease-in-out infinite alternate}
+  @keyframes bob{from{transform:translateY(0)}to{transform:translateY(4px)}}
+  .float{animation:float 6s ease-in-out infinite alternate}
+  @keyframes float{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+  .moonpath{animation:shim 5s ease-in-out infinite alternate}
+  @keyframes shim{from{opacity:.72}to{opacity:1}}
+  .rip{transform-box:fill-box;transform-origin:center;animation:rip 4.5s linear infinite}
+  .rip2{animation-delay:2.2s}
+  @keyframes rip{0%{transform:scale(.45);opacity:.55}100%{transform:scale(1.5);opacity:0}}
+  .pulse{animation:pulse 3.5s ease-in-out infinite alternate}
+  @keyframes pulse{from{opacity:.55}to{opacity:1}}
+  .mono{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace}
+  @media (prefers-reduced-motion:reduce){.bob,.float,.moonpath,.rip,.pulse{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div class="h-left">
+    <h1>Некрополь</h1>
+    <div class="sub">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+  </div>
+  <div class="chips">
+    <span class="chip"><span class="l">кораблей</span><span class="n">3</span></span>
+    <span class="chip"><span class="l">надгробий</span><span class="n">3</span></span>
+    <span class="chip"><span class="l">призраков</span><span class="n">2</span></span>
+    <span class="chip"><span class="l">воскресений</span><span class="n">0</span></span>
+  </div>
+  <a class="home" href="index.html" title="В каталог вариаций">⌂</a>
+</header>
+
+<div class="stage">
+<svg id="scene" viewBox="0 0 1280 660" preserveAspectRatio="xMidYMid slice" role="img"
+     aria-label="Некрополь: чёрная вода, затонувшие рейсы, надгробия, призраки reflog">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0f16"/><stop offset="1" stop-color="#111823"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#101925"/><stop offset=".45" stop-color="#0a0e14"/><stop offset="1" stop-color="#05080c"/>
+    </linearGradient>
+    <linearGradient id="shoreG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a2230"/><stop offset="1" stop-color="#0a0e14"/>
+    </linearGradient>
+    <linearGradient id="stoneG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a4557"/><stop offset=".55" stop-color="#2a3240"/><stop offset="1" stop-color="#171d28"/>
+    </linearGradient>
+    <radialGradient id="moonG">
+      <stop offset="0" stop-color="#e9eff7"/><stop offset=".7" stop-color="#ccd6e3"/><stop offset="1" stop-color="#b8c4d4"/>
+    </radialGradient>
+    <radialGradient id="halo">
+      <stop offset="0" stop-color="#b8c4d4" stop-opacity=".4"/><stop offset="1" stop-color="#b8c4d4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ghalo">
+      <stop offset="0" stop-color="#7fbf9e" stop-opacity=".45"/><stop offset="1" stop-color="#7fbf9e" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="b3" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="b6" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="6"/></filter>
+  </defs>
+
+  <!-- небо -->
+  <rect x="0" y="0" width="1280" height="322" fill="url(#sky)"/>
+  <g fill="#b8c4d4">
+    <circle cx="80" cy="60" r="1.2" opacity=".5"/><circle cx="150" cy="110" r="1" opacity=".35"/>
+    <circle cx="195" cy="30" r="1.4" opacity=".55"/><circle cx="400" cy="110" r="1" opacity=".3"/>
+    <circle cx="420" cy="50" r="1.2" opacity=".45"/><circle cx="520" cy="120" r="1" opacity=".3"/>
+    <circle cx="600" cy="70" r="1.3" opacity=".5"/><circle cx="700" cy="40" r="1" opacity=".35"/>
+    <circle cx="760" cy="140" r="1.1" opacity=".3"/><circle cx="860" cy="90" r="1.2" opacity=".4"/>
+    <circle cx="950" cy="50" r="1" opacity=".3"/><circle cx="1050" cy="130" r="1.3" opacity=".45"/>
+    <circle cx="1150" cy="80" r="1.1" opacity=".4"/><circle cx="1230" cy="160" r="1" opacity=".3"/>
+    <circle cx="60" cy="170" r="1" opacity=".25"/><circle cx="480" cy="170" r="1" opacity=".3"/>
+  </g>
+
+  <!-- луна -->
+  <circle cx="270" cy="130" r="115" fill="url(#halo)"/>
+  <circle cx="270" cy="130" r="38" fill="url(#moonG)"/>
+  <circle cx="258" cy="120" r="7" fill="#a9b6c6" opacity=".5"/>
+  <circle cx="283" cy="142" r="5" fill="#a9b6c6" opacity=".45"/>
+  <circle cx="268" cy="150" r="4" fill="#a9b6c6" opacity=".4"/>
+
+  <!-- дальний берег с чужими надгробиями -->
+  <g fill="#0c1119">
+    <path d="M0 322 L0 304 Q45 292 95 300 Q140 306 180 302 L180 322 Z"/>
+    <rect x="34" y="290" width="4" height="11" rx="1"/><rect x="60" y="287" width="4" height="12" rx="1"/>
+    <rect x="112" y="291" width="4" height="10" rx="1"/><rect x="142" y="293" width="4" height="9" rx="1"/>
+    <path d="M1120 322 Q1200 298 1280 306 L1280 322 Z"/>
+    <rect x="1180" y="294" width="4" height="10" rx="1"/><rect x="1215" y="298" width="4" height="8" rx="1"/>
+  </g>
+
+  <!-- вода -->
+  <rect x="0" y="320" width="1280" height="340" fill="url(#sea)"/>
+  <line x1="0" y1="320" x2="1280" y2="320" stroke="#1e2937" opacity=".6"/>
+  <ellipse cx="270" cy="322" rx="170" ry="12" fill="#b8c4d4" opacity=".07" filter="url(#b6)"/>
+
+  <!-- лунная дорожка -->
+  <g class="moonpath" stroke="#cfd9e4" stroke-linecap="round" fill="none" filter="url(#b3)">
+    <path d="M212 334 H338" stroke-width="4" opacity=".20"/>
+    <path d="M248 356 H326" stroke-width="3.5" opacity=".16"/>
+    <path d="M206 380 H342" stroke-width="4" opacity=".14"/>
+    <path d="M256 406 H324" stroke-width="3" opacity=".12"/>
+    <path d="M224 436 H348" stroke-width="3.5" opacity=".10"/>
+    <path d="M252 468 H322" stroke-width="3" opacity=".09"/>
+    <path d="M236 504 H330" stroke-width="3.5" opacity=".07"/>
+    <path d="M258 544 H316" stroke-width="3" opacity=".06"/>
+    <path d="M242 584 H312" stroke-width="3" opacity=".05"/>
+  </g>
+
+  <!-- рябь -->
+  <g stroke="#1c2734" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".45">
+    <path d="M60 350 H150"/><path d="M395 372 H520"/><path d="M600 345 H670"/><path d="M790 338 H900"/>
+    <path d="M1010 360 H1130"/><path d="M1140 334 H1225"/><path d="M60 430 H190"/><path d="M520 440 H640"/>
+    <path d="M840 430 H970"/><path d="M1060 452 H1160"/><path d="M320 515 H450"/><path d="M660 560 H780"/>
+    <path d="M950 545 H1060"/><path d="M140 592 H240"/><path d="M1080 592 H1210"/><path d="M720 350 H780"/>
+  </g>
+
+  <!-- рейс Higgsfield-1 -->
+  <g class="hit" data-key="ship1" transform="translate(700,412) rotate(-7)">
+    <g class="bob">
+      <path d="M-58 -12 L58 -12 L44 26 Q0 36 -44 26 Z" fill="#080b10"/>
+      <path d="M-58 -12 L58 -12" stroke="#2e3a4c" stroke-width="1.6" opacity=".55" fill="none"/>
+      <rect x="-20" y="-24" width="28" height="12" fill="#080b10"/>
+      <line x1="0" y1="-12" x2="8" y2="-52" stroke="#10161f" stroke-width="2.5"/>
+      <line x1="14" y1="-60" x2="21" y2="-90" stroke="#10161f" stroke-width="2"/>
+      <line x1="-14" y1="-34" x2="18" y2="-40" stroke="#10161f" stroke-width="1.5"/>
+      <circle cx="36" cy="2" r="2.6" fill="#223048" opacity=".5"/>
+      <circle cx="44" cy="-12" r="2" fill="#223048" opacity=".4"/>
+      <circle cx="33" cy="-16" r="1.7" fill="#223048" opacity=".35"/>
+    </g>
+  </g>
+
+  <!-- рейс Карты-1 -->
+  <g class="hit" data-key="ship2" transform="translate(890,492) rotate(5)">
+    <g class="bob" style="animation-delay:-2.5s">
+      <g transform="scale(-1 1)">
+        <path d="M-58 -12 L58 -12 L44 26 Q0 36 -44 26 Z" fill="#080b10"/>
+        <path d="M-58 -12 L58 -12" stroke="#2e3a4c" stroke-width="1.6" opacity=".5" fill="none"/>
+        <rect x="-16" y="-24" width="24" height="12" fill="#080b10"/>
+        <line x1="0" y1="-12" x2="-7" y2="-54" stroke="#10161f" stroke-width="2.5"/>
+        <line x1="-13" y1="-62" x2="-19" y2="-88" stroke="#10161f" stroke-width="2"/>
+        <line x1="-18" y1="-38" x2="12" y2="-44" stroke="#10161f" stroke-width="1.5"/>
+        <circle cx="38" cy="0" r="2.4" fill="#223048" opacity=".45"/>
+        <circle cx="44" cy="-14" r="1.8" fill="#223048" opacity=".4"/>
+        <circle cx="30" cy="-20" r="1.6" fill="#223048" opacity=".35"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- зомби-лейн В-1 -->
+  <g class="hit" data-key="ship3" transform="translate(575,522) rotate(-4) scale(.85)">
+    <g class="bob" style="animation-delay:-4s">
+      <path d="M-52 -10 L52 -10 L40 24 Q0 32 -40 24 Z" fill="#090d13"/>
+      <path d="M-52 -10 L52 -10" stroke="#7fbf9e" stroke-width="1.5" opacity=".3" fill="none"/>
+      <rect x="-16" y="-22" width="24" height="11" fill="#090d13"/>
+      <line x1="0" y1="-10" x2="-6" y2="-46" stroke="#10161f" stroke-width="2.5"/>
+      <line x1="-11" y1="-54" x2="-17" y2="-78" stroke="#10161f" stroke-width="2"/>
+      <g class="pulse">
+        <circle cx="-17" cy="-80" r="13" fill="url(#ghalo)"/>
+        <circle cx="-17" cy="-80" r="3" fill="#8fd0ac" opacity=".95"/>
+      </g>
+      <circle cx="30" cy="0" r="2.2" fill="#223048" opacity=".4"/>
+      <circle cx="24" cy="-12" r="1.7" fill="#223048" opacity=".35"/>
+    </g>
+  </g>
+
+  <!-- толща воды поверх кораблей -->
+  <rect x="0" y="322" width="1280" height="338" fill="url(#sea)" opacity=".25" pointer-events="none"/>
+
+  <!-- призрак: Д-2, пустая строка журнала -->
+  <g class="hit" data-key="ghost1" transform="translate(430,0)">
+    <circle cx="0" cy="340" r="30" fill="url(#ghalo)" opacity=".6"/>
+    <g class="float">
+      <path d="M0 312 C 12 326 15 344 10 360 C 7 367 3 363 0 368 C -3 363 -7 367 -10 360 C -15 344 -12 326 0 312 Z"
+            fill="#7fbf9e" opacity=".28" filter="url(#b3)"/>
+      <path d="M0 312 C 12 326 15 344 10 360 C 7 367 3 363 0 368 C -3 363 -7 367 -10 360 C -15 344 -12 326 0 312 Z"
+            transform="translate(0 340) scale(.55) translate(0 -340)" fill="#a8d4bd" opacity=".5" filter="url(#b3)"/>
+    </g>
+    <ellipse class="rip" cx="0" cy="323" rx="30" ry="5" fill="none" stroke="#7fbf9e" stroke-width="1.5" opacity=".4"/>
+    <ellipse class="rip rip2" cx="0" cy="323" rx="18" ry="3.5" fill="none" stroke="#7fbf9e" stroke-width="1.2" opacity=".3"/>
+  </g>
+
+  <!-- призраки: одиннадцать паспортов -->
+  <g class="hit" data-key="ghost2" transform="translate(560,0)">
+    <circle cx="2" cy="344" r="34" fill="url(#ghalo)" opacity=".45"/>
+    <g class="float" style="animation-delay:-3s">
+      <path d="M0 312 C 12 326 15 344 10 360 C 7 367 3 363 0 368 C -3 363 -7 367 -10 360 C -15 344 -12 326 0 312 Z"
+            transform="translate(-26 350) scale(.55) translate(0 -340)" fill="#8fa39b" opacity=".35" filter="url(#b3)"/>
+      <path d="M0 312 C 12 326 15 344 10 360 C 7 367 3 363 0 368 C -3 363 -7 367 -10 360 C -15 344 -12 326 0 312 Z"
+            transform="translate(2 338) scale(.5) translate(0 -340)" fill="#8fa39b" opacity=".4" filter="url(#b3)"/>
+      <path d="M0 312 C 12 326 15 344 10 360 C 7 367 3 363 0 368 C -3 363 -7 367 -10 360 C -15 344 -12 326 0 312 Z"
+            transform="translate(30 352) scale(.48) translate(0 -340)" fill="#8fa39b" opacity=".3" filter="url(#b3)"/>
+    </g>
+    <ellipse class="rip" cx="2" cy="323" rx="44" ry="6" fill="none" stroke="#7fbf9e" stroke-width="1.5" opacity=".35"/>
+    <ellipse class="rip rip2" cx="2" cy="323" rx="26" ry="4" fill="none" stroke="#7fbf9e" stroke-width="1.2" opacity=".25"/>
+    <text class="mono" x="46" y="308" font-size="11" fill="#7fbf9e" opacity=".55">×11</text>
+  </g>
+
+  <!-- берег -->
+  <path d="M0 600 C 200 585 400 595 640 610 C 900 622 1100 618 1280 606 L1280 660 L0 660 Z" fill="url(#shoreG)"/>
+  <path d="M0 600 C 200 585 400 595 640 610 C 900 622 1100 618 1280 606" fill="none" stroke="#26313f" stroke-width="1.5" opacity=".6"/>
+  <g fill="#202a38" opacity=".5">
+    <ellipse cx="240" cy="616" rx="10" ry="3"/><ellipse cx="420" cy="622" rx="12" ry="3.5"/>
+    <ellipse cx="700" cy="630" rx="14" ry="4"/><ellipse cx="980" cy="628" rx="11" ry="3.5"/>
+    <ellipse cx="860" cy="618" rx="8" ry="2.5"/>
+  </g>
+
+  <!-- надгробие: ключ sk-ant -->
+  <g class="hit" data-key="grave1" transform="translate(150,598) rotate(-5)">
+    <ellipse cx="0" cy="4" rx="34" ry="6" fill="#04060a" opacity=".55"/>
+    <path d="M-26 0 L-26 -66 A26 26 0 0 1 26 -66 L26 0 Z" fill="url(#stoneG)" stroke="#141a24"/>
+    <path d="M-26 -66 A26 26 0 0 1 26 -66" fill="none" stroke="#4a5872" stroke-width="1.6" opacity=".55"/>
+    <line x1="-26" y1="-6" x2="-26" y2="-58" stroke="#7a5544" stroke-width="1.4" opacity=".5"/>
+    <text class="mono" x="0" y="-50" font-size="13" fill="#9fb0c2" text-anchor="middle">sk-ant</text>
+    <text class="mono" x="17" y="-76" font-size="15" fill="#a07a5c" text-anchor="middle">*</text>
+  </g>
+
+  <!-- надгробие: пять старых задач -->
+  <g class="hit" data-key="grave2" transform="translate(312,602)">
+    <ellipse cx="0" cy="4" rx="44" ry="6" fill="#04060a" opacity=".55"/>
+    <path d="M-40 0 L-40 -38 Q-40 -58 -20 -58 L20 -58 Q40 -58 40 -38 L40 0 Z" fill="url(#stoneG)" stroke="#141a24"/>
+    <path d="M-40 -38 Q-40 -58 -20 -58 L20 -58 Q40 -58 40 -38" fill="none" stroke="#4a5872" stroke-width="1.5" opacity=".5"/>
+    <text class="mono" x="0" y="-32" font-size="12.5" fill="#9fb0c2" text-anchor="middle">задачи ×5</text>
+    <text class="mono" x="0" y="-16" font-size="9" fill="#6e7d90" text-anchor="middle">archived=1</text>
+  </g>
+
+  <!-- надгробие: ветка feature_1.8.5 -->
+  <g class="hit" data-key="grave3" transform="translate(468,608) rotate(3)">
+    <ellipse cx="0" cy="4" rx="32" ry="5.5" fill="#04060a" opacity=".55"/>
+    <path d="M-23 0 L-23 -78 A23 23 0 0 1 23 -78 L23 0 Z" fill="url(#stoneG)" stroke="#141a24"/>
+    <path d="M-23 -78 A23 23 0 0 1 23 -78" fill="none" stroke="#4a5872" stroke-width="1.5" opacity=".55"/>
+    <text class="mono" x="0" y="-62" font-size="9.5" fill="#9fb0c2" text-anchor="middle">feature</text>
+    <text class="mono" x="0" y="-49" font-size="9.5" fill="#9fb0c2" text-anchor="middle">1.8.5</text>
+    <text class="mono" x="0" y="-30" font-size="7.5" fill="#6e7d90" text-anchor="middle">поглощена</text>
+  </g>
+
+  <!-- фонарь сторожа -->
+  <g>
+    <line x1="565" y1="606" x2="565" y2="546" stroke="#1a222e" stroke-width="3"/>
+    <line x1="565" y1="548" x2="578" y2="542" stroke="#1a222e" stroke-width="2"/>
+    <g class="pulse"><circle cx="582" cy="547" r="16" fill="url(#halo)" opacity=".5"/></g>
+    <rect x="574" y="538" width="15" height="17" rx="3.5" fill="#0c1118" stroke="#39445a" stroke-width="1.2"/>
+    <circle cx="581.5" cy="546.5" r="4" fill="#cfd9e4" opacity=".85"/>
+    <ellipse cx="565" cy="608" rx="16" ry="4" fill="#04060a" opacity=".5"/>
+  </g>
+</svg>
+
+<aside id="panel">
+  <div class="kicker" id="p-k">ритуал недели</div>
+  <h2 id="p-n">Воскресить или похоронить</h2>
+  <div id="p-rows">
+    <div class="row"><span class="rl">список выносит</span><span class="rv">сторож, каждую неделю</span></div>
+    <div class="row"><span class="rl">решает</span><span class="rv">только Sovereign</span></div>
+    <div class="row"><span class="rl">воскресений</span><span class="rv">0 — никто пока не поднялся</span></div>
+  </div>
+  <div id="p-note">на столе 8 дел: 3 рейса, 3 надгробия, 2 призрака</div>
+  <div class="q">воскресить или похоронить?</div>
+  <div class="btns">
+    <button type="button" class="b up">воскресить</button>
+    <button type="button" class="b down">похоронить</button>
+    <span class="demo">демо</span>
+  </div>
+  <div class="foot" id="p-f">чёрная вода помнит всё</div>
+</aside>
+</div>
+
+</div>
+
+<script>
+var CASES = {
+  ship1: {k:'затонувший рейс', n:'Рейс Higgsfield-1',
+    rows:[['чем был','ходил к клиенту Higgsfield по расписанию'],
+          ['как умер','рестарт клиента в ночь на 05.11 — на поверхность не вышел']],
+    note:'лежит рядом с Карты-1: в ту ночь шли вместе',
+    f:'список сторожа · решает только Sovereign'},
+  ship2: {k:'затонувший рейс', n:'Рейс Карты-1',
+    rows:[['чем был','второй рейс той же смены, ходил за картами'],
+          ['как умер','та же ночь на 05.11: рестарт клиента забрал оба']],
+    note:'на дне лежат нос к носу',
+    f:'список сторожа · решает только Sovereign'},
+  ship3: {k:'зомби-лейн', n:'Лейн В-1',
+    rows:[['чем был','рабочий лейн ночной смены'],
+          ['как умер','разрыв связи списал его — но он поднялся сам']],
+    note:'зомби: ходит с зелёным огоньком, мёртвым его считать нельзя',
+    f:'список сторожа · решает только Sovereign'},
+  grave1: {k:'надгробие с оговоркой', n:'Ключ sk-ant',
+    rows:[['чем был','рабочий ключ платформы'],
+          ['как умер','ротацию сняли с приоритета — ключ отложили, не выбросили']],
+    note:'звёздочка на камне: ещё может пригодиться',
+    f:'список сторожа · решает только Sovereign'},
+  grave2: {k:'надгробие', n:'Пять старых задач',
+    rows:[['чем был','задачи Task List: «сделаю потом»'],
+          ['как умер','archived=1 — пять штук одним утром']],
+    note:'архив молчит; камень самый широкий',
+    f:'список сторожа · решает только Sovereign'},
+  grave3: {k:'надгробие', n:'Ветка feature_1.8.5',
+    rows:[['чем был','ветка разработки, вела к релизу 1.8.5'],
+          ['как умер','поглощена — чужие коммиты вобрали её изменения']],
+    note:'в git-истории ещё читается',
+    f:'список сторожа · решает только Sovereign'},
+  ghost1: {k:'призрак reflog', n:'Д-2, пустая строка журнала',
+    rows:[['чем был','строка в журнале — запись без тела'],
+          ['как умер','журнал стёрся, от Д-2 осталась пустая строка']],
+    note:'ждёт пакет allowlist-фикса — пока не похоронена',
+    f:'список сторожа · решает только Sovereign'},
+  ghost2: {k:'стая призраков', n:'Одиннадцать паспортов',
+    rows:[['чем был','паспорта агентов: имена, права, расписания'],
+          ['как умер','рантайм ушёл на дно — паспорта остались висеть']],
+    note:'спят, не мертвы: серый статус, изредка всплывают',
+    f:'список сторожа · решает только Sovereign'}
+};
+
+var RITUAL = {k:'ритуал недели', n:'Воскресить или похоронить',
+  rows:[['список выносит','сторож, каждую неделю'],
+        ['решает','только Sovereign'],
+        ['воскресений','0 — никто пока не поднялся']],
+  note:'на столе 8 дел: 3 рейса, 3 надгробия, 2 призрака',
+  f:'чёрная вода помнит всё'};
+
+var pk = document.getElementById('p-k'),
+    pn = document.getElementById('p-n'),
+    pr = document.getElementById('p-rows'),
+    pnote = document.getElementById('p-note'),
+    pf = document.getElementById('p-f');
+
+function render(id){
+  var d = (id && CASES[id]) ? CASES[id] : RITUAL;
+  pk.textContent = d.k;
+  pn.textContent = d.n;
+  pf.textContent = d.f;
+  while (pr.firstChild) { pr.removeChild(pr.firstChild); }
+  for (var i = 0; i < d.rows.length; i++){
+    var row = document.createElement('div');
+    row.className = 'row';
+    var l = document.createElement('span');
+    l.className = 'rl';
+    l.textContent = d.rows[i][0];
+    var v = document.createElement('span');
+    v.className = 'rv';
+    v.textContent = d.rows[i][1];
+    row.appendChild(l);
+    row.appendChild(v);
+    pr.appendChild(row);
+  }
+  if (d.note){ pnote.hidden = false; pnote.textContent = d.note; }
+  else { pnote.hidden = true; }
+  var hits = document.querySelectorAll('.hit');
+  for (var j = 0; j < hits.length; j++){
+    if (hits[j].getAttribute('data-key') === id){ hits[j].classList.add('sel'); }
+    else { hits[j].classList.remove('sel'); }
+  }
+}
+
+document.getElementById('scene').addEventListener('click', function(e){
+  var t = (e.target && e.target.closest) ? e.target.closest('[data-key]') : null;
+  render(t ? t.getAttribute('data-key') : null);
+});
+
+render(null);
+</script>
+</body>
+</html>

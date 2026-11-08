@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Маячная Служба — превью-вариация</title>
+<style>
+  :root{
+    --bg:#0a1420; --fog:#22384a; --stone:#2a3240; --fire:#f6ad55;
+    --alarm:#f56565; --good:#68d391; --cold:#4a5568;
+    --txt:#dce6f0; --dim:#7e93a8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  header{display:flex; align-items:center; gap:16px; padding:14px 22px 8px; flex-wrap:wrap}
+  h1{margin:0; font-size:29px; font-weight:650; letter-spacing:.3px; color:#eef3f9}
+  .status{margin-top:3px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim)}
+  .chips{display:flex; gap:8px; margin-left:auto; flex-wrap:wrap; align-items:center}
+  .chip{display:flex; align-items:baseline; gap:7px; padding:6px 11px; border:1px solid var(--fog); border-radius:10px; background:rgba(34,56,74,.16)}
+  .chip .k{font-size:11px; color:var(--dim)}
+  .chip .v{font-size:15px; font-weight:600; color:#eef3f9; font-variant-numeric:tabular-nums}
+  .chip.warn{border-color:rgba(245,101,101,.45); background:rgba(245,101,101,.08)}
+  .chip.warn .v{color:var(--alarm)}
+  a.home{width:38px; height:38px; border-radius:50%; border:1px solid var(--fog); background:#12202e; color:#d5e2ee; display:grid; place-items:center; font-size:17px; text-decoration:none; flex:none}
+  a.home:hover{border-color:var(--fire); color:var(--fire)}
+  main{position:relative; flex:1; overflow:hidden}
+  main svg{position:absolute; inset:0; width:100%; height:100%; display:block}
+
+  .beacon{cursor:pointer}
+  .lbl{fill:#7e93a8; font-size:11px; font-variant-numeric:tabular-nums}
+  .beacon:hover .lbl{fill:#c2d2e0}
+  .beacon.sel .lbl{fill:#f2f6fa; font-weight:600}
+  .ring{opacity:0; transition:opacity .18s}
+  .beacon.sel .ring{opacity:.9; animation:ringspin 16s linear infinite}
+  @keyframes ringspin{to{stroke-dashoffset:-220}}
+  .flame{transform-box:fill-box; transform-origin:50% 50%; animation:flick 2.6s ease-in-out infinite}
+  .fa-alarm{animation-duration:1.15s}
+  .fa-good{animation-duration:3.8s}
+  @keyframes flick{0%,100%{opacity:.72; transform:scale(.94)} 50%{opacity:1; transform:scale(1.12)}}
+  .star{animation:tw 6s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.15} 50%{opacity:.85}}
+  .fog{animation:drift 24s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translateX(-26px)} to{transform:translateX(26px)}}
+
+  .panel{position:absolute; top:14px; right:18px; width:294px; padding:16px 18px 15px; background:rgba(13,22,34,.93); border:1px solid var(--fog); border-radius:14px}
+  .fire{display:inline-flex; align-items:center; gap:8px; font-size:11.5px; letter-spacing:.09em; text-transform:uppercase; padding:4px 11px; border-radius:999px; margin-bottom:10px; font-weight:600}
+  .fire .dot{width:8px; height:8px; border-radius:50%; flex:none}
+  .fire.st-on{background:rgba(246,173,85,.13); color:#f6ad55}   .fire.st-on .dot{background:#f6ad55}
+  .fire.st-alarm{background:rgba(245,101,101,.15); color:#f56565} .fire.st-alarm .dot{background:#f56565; animation:blink 1.2s ease-in-out infinite}
+  .fire.st-good{background:rgba(104,211,145,.13); color:#68d391}  .fire.st-good .dot{background:#68d391}
+  .fire.st-dark{background:rgba(74,85,104,.24); color:#8fa3b8}    .fire.st-dark .dot{background:#4a5568}
+  @keyframes blink{0%,100%{opacity:1} 50%{opacity:.35}}
+  .panel h2{margin:2px 0 12px; font-size:20px; font-weight:620; color:#f0f5fa; line-height:1.25}
+  .row{display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-top:1px solid rgba(34,56,74,.55); font-size:13px}
+  .row .kk{color:var(--dim); flex:none}
+  .row .val{color:#e6edf4; text-align:right; font-variant-numeric:tabular-nums}
+  .quote{margin-top:12px; padding:2px 0 2px 12px; border-left:2px solid var(--fire); font-style:italic; font-size:13.5px; color:#c9d7e4; line-height:1.45}
+  .keeper{position:absolute; left:22px; bottom:12px; font-size:12px; color:#7e93a8; max-width:600px; line-height:1.4}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <h1>Маячная Служба</h1>
+    <div class="status">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+  </div>
+  <div class="chips">
+    <div class="chip"><span class="k">маяков</span><span class="v">10</span></div>
+    <div class="chip"><span class="k">горит</span><span class="v">6</span></div>
+    <div class="chip"><span class="k">тёмных</span><span class="v">3</span></div>
+    <div class="chip warn"><span class="k">тревога</span><span class="v">1</span></div>
+  </div>
+  <a class="home" href="index.html" aria-label="В каталог вариаций">⌂</a>
+</header>
+
+<main>
+  <svg id="scene" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Цепь маяков берега сигналов"></svg>
+
+  <aside class="panel">
+    <div class="fire st-alarm" id="p-fire"><span class="dot"></span><span id="p-fire-t">тревога</span></div>
+    <h2 id="p-name">—</h2>
+    <div class="row"><span class="kk">контур</span><span class="val" id="p-contour">—</span></div>
+    <div class="row"><span class="kk">последняя вспышка</span><span class="val" id="p-flash">—</span></div>
+    <div class="quote" id="p-phrase">—</div>
+  </aside>
+
+  <div class="keeper">Смотритель — watchdog и крон-пинальщик: маяк не звонит клиенту и не трогает прод — светит и пишет в журнал.</div>
+</main>
+
+<script>
+(function(){
+  var COL = { on:'#f6ad55', alarm:'#f56565', good:'#68d391', dark:'#4a5568' };
+  var FIRE = { on:'горит', alarm:'тревога', good:'весть', dark:'тёмный' };
+
+  var B = [
+    { n:'Дашборд 8765',          c:'миры',    f:'alarm', t:'09.11 21:07 — рестарт затянулся',  p:'Command Center: /api/tokens/usage ждёт рестарта 8765', h:122, a:-26, dur:9 },
+    { n:'Флот агентов',          c:'агенты',  f:'on',    t:'09.11 21:12 — рейс завершён',      p:'Свет держится с утра',                                 h:98,  a:-14, dur:11 },
+    { n:'Крон-радар денег 21:30',c:'кроны',   f:'on',    t:'09.11 21:30 — по расписанию',      p:'Вспыхнул ровно в 21:30 — деньги посчитаны',            h:106, a:-36, dur:8 },
+    { n:'Kwork-конвейер',        c:'агенты',  f:'good',  t:'09.11 21:04 — приёмка прошла',     p:'Kwork аккаунт daimak зарегистрирован',                 h:90,  a:-18, dur:10 },
+    { n:'Ночной диспетчер',      c:'кроны',   f:'dark',  t:'09.11 06:40 — рейсы кончились',    p:'Молчит 6 часов — стоит пнуть',                         h:80,  a:0,   dur:0 },
+    { n:'Kali-полигон',          c:'серверы', f:'dark',  t:'08.11 23:15 — эпик отложен',       p:'Темнота — тоже донесение',                             h:86,  a:0,   dur:0 },
+    { n:'Higgsfield',            c:'серверы', f:'dark',  t:'08.11 18:30 — ждёт санкции',       p:'Молчу, пока не дадут слово',                           h:76,  a:0,   dur:0 },
+    { n:'Evofind :8973',         c:'серверы', f:'on',    t:'09.11 21:26 — отвечает',           p:'Отвечает на пинги, свет ровный',                       h:100, a:-20, dur:9.5 },
+    { n:'Внутренняя касса',      c:'кроны',   f:'on',    t:'09.11 21:19 — приход записан',     p:'Касса закрыта, приход записан',                        h:88,  a:-30, dur:12 },
+    { n:'Dark Watch',            c:'миры',    f:'on',    t:'09.11 21:33 — зажёгся',            p:'Свежий контур — зажёг вчера, свет держится',           h:112, a:-24, dur:8.5 }
+  ];
+
+  function shoreY(x){ return 556 + 36*Math.sin(Math.PI*x/1280); }
+
+  function beamGrad(id, c, o){
+    return '<linearGradient id="beam-'+id+'" x1="0" y1="0" x2="1" y2="0">'
+      + '<stop offset="0" stop-color="'+c+'" stop-opacity="'+o+'"/>'
+      + '<stop offset="1" stop-color="'+c+'" stop-opacity="0"/></linearGradient>';
+  }
+
+  function labelSVG(x, y, n){
+    if(n.length > 13){
+      var mid = Math.floor(n.length/2), idx = -1;
+      for(var d=0; d<n.length; d++){
+        if(mid-d >= 0 && n.charAt(mid-d) === ' '){ idx = mid-d; break; }
+        if(mid+d < n.length && n.charAt(mid+d) === ' '){ idx = mid+d; break; }
+      }
+      if(idx > 0){
+        return '<text class="lbl" x="'+x+'" y="'+y+'" text-anchor="middle">'
+          + '<tspan x="'+x+'">'+n.slice(0,idx)+'</tspan>'
+          + '<tspan x="'+x+'" dy="13">'+n.slice(idx+1)+'</tspan></text>';
+      }
+    }
+    return '<text class="lbl" x="'+x+'" y="'+y+'" text-anchor="middle">'+n+'</text>';
+  }
+
+  function beaconSVG(i){
+    var b = B[i];
+    var xf = 96 + i*(1088/9);
+    var x  = xf.toFixed(1);
+    var yv = shoreY(xf);
+    var y  = yv.toFixed(1);
+    var top = yv - b.h;
+    var t = top.toFixed(1);
+    var lcy = (top-10.5).toFixed(1);
+    var col = COL[b.f];
+    var s = '<g class="beacon" data-i="'+i+'">';
+    s += '<rect x="'+(xf-34).toFixed(1)+'" y="'+(top-50).toFixed(1)+'" width="68" height="'+(b.h+90)+'" fill="transparent" pointer-events="all"/>';
+    s += '<path d="M'+(xf-12).toFixed(1)+' '+y+' L'+(xf-6.5).toFixed(1)+' '+t+' L'+(xf+6.5).toFixed(1)+' '+t+' L'+(xf+12).toFixed(1)+' '+y+' Z" fill="url(#stone)"/>';
+    s += '<path d="M'+(xf-12).toFixed(1)+' '+y+' L'+(xf-6.5).toFixed(1)+' '+t+'" stroke="#4a5a70" stroke-width="1" opacity="0.5" fill="none"/>';
+    s += '<path d="M'+(xf-8.4).toFixed(1)+' '+(top+b.h*0.35).toFixed(1)+' L'+(xf+8.4).toFixed(1)+' '+(top+b.h*0.35).toFixed(1)+'" stroke="#1c2532" stroke-width="2" opacity="0.7"/>';
+    s += '<path d="M'+(xf-10.2).toFixed(1)+' '+(top+b.h*0.68).toFixed(1)+' L'+(xf+10.2).toFixed(1)+' '+(top+b.h*0.68).toFixed(1)+'" stroke="#1c2532" stroke-width="2" opacity="0.7"/>';
+    s += '<path d="M'+(xf-3.5).toFixed(1)+' '+y+' L'+(xf-3.5).toFixed(1)+' '+(yv-11).toFixed(1)+' Q'+xf+' '+(yv-17).toFixed(1)+' '+(xf+3.5).toFixed(1)+' '+(yv-11).toFixed(1)+' L'+(xf+3.5).toFixed(1)+' '+y+' Z" fill="#0c1420"/>';
+    s += '<rect x="'+(xf-10).toFixed(1)+'" y="'+(top-4).toFixed(1)+'" width="20" height="3.5" rx="1.2" fill="#1a2330"/>';
+    if(b.f === 'dark'){
+      s += '<rect x="'+(xf-6).toFixed(1)+'" y="'+(top-17).toFixed(1)+'" width="12" height="13" rx="2" fill="#111a26" stroke="#3f4d60" stroke-width="1"/>';
+      s += '<circle cx="'+x+'" cy="'+lcy+'" r="3" fill="#4a5568" opacity="0.9"/>';
+    } else {
+      s += '<g pointer-events="none">';
+      s += '<circle cx="'+x+'" cy="'+lcy+'" r="24" fill="'+col+'" opacity="0.07"/>';
+      s += '<circle cx="'+x+'" cy="'+lcy+'" r="13" fill="'+col+'" opacity="0.16"/>';
+      s += '<rect x="'+(xf-6).toFixed(1)+'" y="'+(top-17).toFixed(1)+'" width="12" height="13" rx="2" fill="'+col+'" opacity="0.22"/>';
+      s += '<g transform="translate('+x+' '+lcy+') rotate('+b.a+')"><g>'
+        + '<animateTransform attributeName="transform" type="rotate" values="-55;55;-55" dur="'+b.dur+'s" begin="'+(-i*1.9-1.2).toFixed(1)+'s" repeatCount="indefinite"/>'
+        + '<path d="M0 0 L440 -56 L440 56 Z" fill="url(#beam-'+b.f+')"/></g></g>';
+      s += '<circle class="flame fa-'+b.f+'" cx="'+x+'" cy="'+lcy+'" r="4.2" fill="'+col+'"/>';
+      s += '<circle cx="'+x+'" cy="'+lcy+'" r="1.8" fill="#ffffff" opacity="0.9"/>';
+      s += '</g>';
+      s += '<ellipse cx="'+x+'" cy="'+(yv+3).toFixed(1)+'" rx="26" ry="5.5" fill="'+col+'" opacity="0.13"/>';
+    }
+    s += '<path d="M'+(xf-8.5).toFixed(1)+' '+(top-17).toFixed(1)+' L'+xf+' '+(top-28).toFixed(1)+' L'+(xf+8.5).toFixed(1)+' '+(top-17).toFixed(1)+' Z" fill="#151e2b"/>';
+    s += '<circle cx="'+x+'" cy="'+(top-28).toFixed(1)+'" r="1.6" fill="#39465a"/>';
+    s += '<circle class="ring" cx="'+x+'" cy="'+lcy+'" r="30" fill="none" stroke="'+col+'" stroke-width="1.3" stroke-dasharray="4 7"/>';
+    s += labelSVG(xf.toFixed(1), (yv+20).toFixed(1), b.n);
+    s += '</g>';
+    return s;
+  }
+
+  function build(){
+    var s = '<defs>'
+      + '<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1420"/><stop offset="1" stop-color="#0e1c2c"/></linearGradient>'
+      + '<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e1e30"/><stop offset="1" stop-color="#0a1521"/></linearGradient>'
+      + '<linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#17222f"/><stop offset="1" stop-color="#0b131e"/></linearGradient>'
+      + '<linearGradient id="stone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a4556"/><stop offset="0.55" stop-color="#2a3240"/><stop offset="1" stop-color="#1f2735"/></linearGradient>'
+      + beamGrad('on', '#f6ad55', '0.5')
+      + beamGrad('alarm', '#f56565', '0.55')
+      + beamGrad('good', '#68d391', '0.45')
+      + '</defs>';
+    s += '<rect width="1280" height="720" fill="url(#sky)"/>';
+    for(var i=0; i<80; i++){
+      var sx = (Math.random()*1280).toFixed(0);
+      var sy = (Math.random()*300).toFixed(0);
+      var r  = (Math.random()*1.1 + 0.5).toFixed(2);
+      var op = (Math.random()*0.55 + 0.25).toFixed(2);
+      var cls = Math.random() < 0.5
+        ? ' class="star" style="animation-delay:-'+(Math.random()*6).toFixed(1)+'s;animation-duration:'+(4+Math.random()*5).toFixed(1)+'s"'
+        : '';
+      s += '<circle cx="'+sx+'" cy="'+sy+'" r="'+r+'" fill="#cfe0ee" opacity="'+op+'"'+cls+'/>';
+    }
+    s += '<circle cx="176" cy="96" r="46" fill="#b9c7d6" opacity="0.05"/>'
+      + '<circle cx="176" cy="96" r="32" fill="#b9c7d6" opacity="0.08"/>'
+      + '<circle cx="176" cy="96" r="22" fill="#b9c7d6" opacity="0.75"/>'
+      + '<circle cx="169" cy="90" r="4" fill="#9fb0c2" opacity="0.5"/>'
+      + '<circle cx="183" cy="102" r="3" fill="#9fb0c2" opacity="0.4"/>';
+    s += '<rect x="0" y="336" width="1280" height="330" fill="url(#sea)"/>';
+    s += '<rect x="0" y="336" width="1280" height="1.5" fill="#2c4560" opacity="0.8"/>';
+    var shim = [[352,120,410],[380,690,320],[412,250,540],[446,900,270],[478,70,300],[502,560,380]];
+    for(var k=0; k<shim.length; k++){
+      s += '<rect x="'+shim[k][1]+'" y="'+shim[k][0]+'" width="'+shim[k][2]+'" height="1.3" rx="0.6" fill="#33506c" opacity="0.4"/>';
+    }
+    s += '<ellipse cx="176" cy="360" rx="30" ry="2.5" fill="#b9c7d6" opacity="0.10"/>'
+      + '<ellipse cx="176" cy="376" rx="22" ry="2" fill="#b9c7d6" opacity="0.08"/>'
+      + '<ellipse cx="176" cy="394" rx="14" ry="1.8" fill="#b9c7d6" opacity="0.06"/>';
+    s += '<ellipse class="fog" style="animation-duration:26s" cx="430" cy="470" rx="270" ry="26" fill="#22384a" opacity="0.18"/>';
+    s += '<ellipse class="fog" style="animation-duration:31s;animation-delay:-9s" cx="930" cy="502" rx="310" ry="30" fill="#22384a" opacity="0.15"/>';
+    s += '<ellipse class="fog" style="animation-duration:21s;animation-delay:-4s" cx="660" cy="425" rx="220" ry="20" fill="#22384a" opacity="0.13"/>';
+    var line = 'M0 ' + shoreY(0).toFixed(1);
+    for(var lx=32; lx<1280; lx+=32){ line += ' L' + lx + ' ' + shoreY(lx).toFixed(1); }
+    line += ' L1280 ' + shoreY(1280).toFixed(1);
+    s += '<path d="' + line + ' L1280 720 L0 720 Z" fill="url(#land)"/>';
+    s += '<path d="' + line + '" fill="none" stroke="#2a4258" stroke-width="1.5" opacity="0.9"/>';
+    for(var j=0; j<B.length; j++){ s += beaconSVG(j); }
+    return s;
+  }
+
+  function show(i){
+    var b = B[i], col = COL[b.f];
+    document.getElementById('p-name').textContent = b.n;
+    document.getElementById('p-contour').textContent = b.c;
+    document.getElementById('p-flash').textContent = b.t;
+    document.getElementById('p-fire').className = 'fire st-' + b.f;
+    document.getElementById('p-fire-t').textContent = FIRE[b.f];
+    var q = document.getElementById('p-phrase');
+    q.textContent = b.p;
+    q.style.borderColor = col;
+    var els = document.querySelectorAll('#scene .beacon');
+    for(var j=0; j<els.length; j++){
+      if(j === i){ els[j].classList.add('sel'); } else { els[j].classList.remove('sel'); }
+    }
+  }
+
+  document.getElementById('scene').innerHTML = build();
+  var els = document.querySelectorAll('#scene .beacon');
+  for(var i=0; i<els.length; i++){
+    (function(idx){
+      els[idx].addEventListener('click', function(){ show(idx); });
+    })(i);
+  }
+  show(0);
+})();
+</script>
+</body>
+</html>

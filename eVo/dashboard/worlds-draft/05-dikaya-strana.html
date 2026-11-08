@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дикая Страна — превью-вариация</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#0d1512;color:#e8e2d4;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;overflow-x:hidden}
+  .wrap{height:100vh;min-height:600px;max-width:1280px;margin:0 auto;padding:0 22px 12px;display:flex;flex-direction:column}
+  header{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid #1c2820}
+  .titleblock h1{margin:0;font-size:28px;font-weight:700;letter-spacing:.5px;color:#efe9db}
+  .titleblock .acc{color:#f6a04d}
+  .status{font-size:11px;color:#8f8674;letter-spacing:1.6px;margin-top:3px}
+  .chips{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{display:flex;align-items:baseline;gap:7px;border:1px solid #26352b;border-radius:999px;padding:5px 12px;background:#101a14}
+  .chip i{font-style:normal;font-size:10px;letter-spacing:1.2px;color:#8f8674}
+  .chip b{font-size:14px;color:#f6a04d;font-variant-numeric:tabular-nums}
+  .home{width:36px;height:36px;border-radius:50%;background:#101a14;border:1px solid #26352b;color:#f6a04d;display:flex;align-items:center;justify-content:center;font-size:17px;text-decoration:none;flex:none}
+  .home:hover{background:#18241c;border-color:#3a4a3e}
+  main{flex:1;display:flex;min-height:0}
+  .scene{flex:1;min-width:0}
+  .scene svg{width:100%;height:100%;display:block}
+  svg text{font-variant-numeric:tabular-nums}
+  .camp{cursor:pointer;outline:none}
+  .camp:hover{filter:brightness(1.3)}
+  .camp.active{filter:drop-shadow(0 0 7px rgba(246,160,77,.4))}
+  .ring{fill:none;stroke:#e6c229;stroke-width:1.5;stroke-dasharray:4 7;opacity:0;transition:opacity .25s}
+  .camp:hover .ring{opacity:.4}
+  .camp.active .ring,.camp:focus-visible .ring{opacity:.95}
+  .halo{animation:pulse 3.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.55}50%{opacity:.95}}
+  .tw{animation:tw 3.4s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.2}50%{opacity:.9}}
+  .fly{transform-box:fill-box;animation:fly 7s ease-in-out infinite}
+  @keyframes fly{0%,100%{transform:translate(0,0)}33%{transform:translate(10px,-14px)}66%{transform:translate(-8px,6px)}}
+  .panel{width:300px;flex:none;background:#101a14;border-left:1px solid #223128;padding:18px 20px;overflow-y:auto}
+  .kind{font-size:10px;letter-spacing:2px;color:#8f8674}
+  .panel h2{font-size:17px;line-height:1.35;margin:6px 0 14px;color:#efe9db;font-weight:600}
+  .lbl{font-size:10px;letter-spacing:2px;color:#8f8674;margin-top:14px}
+  .panel p{margin:4px 0 0;font-size:13.5px;line-height:1.5;color:#cfc8b8}
+  .verdict{font-weight:600}
+  .v-moved{color:#7fb069}
+  .v-live{color:#f6a04d}
+  .note{font-size:12px;color:#e6c229;margin-top:6px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  .stat{border:1px solid #223128;border-radius:8px;padding:8px 10px}
+  .stat b{font-size:22px;font-variant-numeric:tabular-nums;display:block}
+  .stat i{font-style:normal;font-size:10px;color:#8f8674;letter-spacing:1px}
+  .n-live{color:#7fb069}.n-move{color:#f6a04d}.n-dead{color:#d9534f}
+  .gate{list-style:none;margin:6px 0 0;padding:0}
+  .gate li{font-size:13px;color:#cfc8b8;padding:5px 0 5px 16px;position:relative;border-top:1px dashed #223128}
+  .gate li:first-child{border-top:none}
+  .gate li:before{content:"—";position:absolute;left:0;color:#e6c229}
+  .flavor{margin-top:16px;font-size:12.5px;color:#8f8674;font-style:italic}
+  .meta{margin-top:16px;font-size:12px;color:#8f8674}
+  .meta b{color:#e6c229;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="titleblock">
+      <h1>Дикая <span class="acc">Страна</span></h1>
+      <div class="status">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+    </div>
+    <div class="chips">
+      <span class="chip"><i>вылазок</i><b>4</b></span>
+      <span class="chip"><i>выжило</i><b>3</b></span>
+      <span class="chip"><i>переехало</i><b>1</b></span>
+      <span class="chip"><i>в прод</i><b>0</b></span>
+    </div>
+    <a class="home" href="index.html" title="Каталог вариаций миров">⌂</a>
+  </header>
+  <main>
+    <div class="scene">
+      <svg viewBox="0 0 960 640" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Дикая Страна: равнина за краем карт, кострища вылазок, сторожевой огонь у врат">
+        <defs>
+          <radialGradient id="vg" cx="55%" cy="45%" r="75%"><stop offset="0" stop-color="#14221a"/><stop offset="1" stop-color="#0a120e"/></radialGradient>
+          <radialGradient id="glowF"><stop offset="0" stop-color="#f6a04d" stop-opacity=".5"/><stop offset=".45" stop-color="#f6a04d" stop-opacity=".16"/><stop offset="1" stop-color="#f6a04d" stop-opacity="0"/></radialGradient>
+          <radialGradient id="glowR"><stop offset="0" stop-color="#d9534f" stop-opacity=".55"/><stop offset=".45" stop-color="#d9534f" stop-opacity=".16"/><stop offset="1" stop-color="#d9534f" stop-opacity="0"/></radialGradient>
+          <linearGradient id="flameGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#d9534f"/><stop offset=".55" stop-color="#f6a04d"/><stop offset="1" stop-color="#ffd98f"/></linearGradient>
+          <linearGradient id="flameGradR" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#8f2f2c"/><stop offset=".55" stop-color="#d9534f"/><stop offset="1" stop-color="#ffb49b"/></linearGradient>
+          <pattern id="mapgrid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#1d2b3a" stroke-width="1"/></pattern>
+          <g id="firepit">
+            <ellipse cx="0" cy="4" rx="22" ry="13" fill="#060b08" opacity=".5"/>
+            <g fill="#4a4038">
+              <circle cx="-14" cy="2" r="2.6"/><circle cx="-7" cy="11" r="2.6"/><circle cx="7" cy="12" r="2.6"/>
+              <circle cx="14" cy="4" r="2.6"/><circle cx="9" cy="-7" r="2.3"/><circle cx="-9" cy="-8" r="2.3"/>
+            </g>
+            <path d="M-9 9 L-3 4 M9 9 L3 4" stroke="#3a2f26" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+            <path d="M0 -15 C4 -9 6 -5 6 -1 C6 4 3 7 0 7 C-3 7 -6 4 -6 -1 C-6 -5 -4 -9 0 -15 Z" fill="url(#flameGrad)">
+              <animateTransform attributeName="transform" type="scale" values="1 1;1.07 .94;.96 1.05;1 1" keyTimes="0;.3;.65;1" dur="1.7s" repeatCount="indefinite"/>
+            </path>
+            <circle cx="0" cy="3" r="2.6" fill="#ffe9c4"/>
+          </g>
+          <g id="firepitR">
+            <ellipse cx="0" cy="4" rx="22" ry="13" fill="#060b08" opacity=".5"/>
+            <g fill="#443c36">
+              <circle cx="-14" cy="2" r="2.6"/><circle cx="-7" cy="11" r="2.6"/><circle cx="7" cy="12" r="2.6"/>
+              <circle cx="14" cy="4" r="2.6"/><circle cx="9" cy="-7" r="2.3"/><circle cx="-9" cy="-8" r="2.3"/>
+            </g>
+            <path d="M-9 9 L-3 4 M9 9 L3 4" stroke="#382c24" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+            <path d="M0 -15 C4 -9 6 -5 6 -1 C6 4 3 7 0 7 C-3 7 -6 4 -6 -1 C-6 -5 -4 -9 0 -15 Z" fill="url(#flameGradR)">
+              <animateTransform attributeName="transform" type="scale" values="1 1;.95 1.06;1.06 .95;1 1" keyTimes="0;.35;.7;1" dur="2s" repeatCount="indefinite"/>
+            </path>
+            <circle cx="0" cy="3" r="2.6" fill="#ffd0c0"/>
+          </g>
+          <g id="flag">
+            <line x1="0" y1="0" x2="0" y2="-34" stroke="#8a7560" stroke-width="2"/>
+            <path d="M0 -34 L17 -28.5 L0 -23 Z" fill="#e6c229">
+              <animateTransform attributeName="transform" type="skewY" values="0;-9;0;6;0" keyTimes="0;.3;.55;.8;1" dur="3.4s" repeatCount="indefinite"/>
+            </path>
+          </g>
+          <g id="flagd">
+            <line x1="0" y1="0" x2="0" y2="-30" stroke="#8a7560" stroke-width="2"/>
+            <path d="M0 -30 L15 -25 L0 -20 Z" fill="#1a232b" stroke="#e6c229" stroke-width="1">
+              <animateTransform attributeName="transform" type="skewY" values="0;7;0;-6;0" keyTimes="0;.35;.6;.85;1" dur="2.9s" repeatCount="indefinite"/>
+            </path>
+          </g>
+          <g id="puff" fill="#46545e">
+            <ellipse rx="7.5" ry="4.5"/><ellipse cx="6" cy="-3.5" rx="5.5" ry="3.8"/>
+          </g>
+          <g id="boots" fill="#8a7560" opacity=".55">
+            <ellipse rx="3" ry="5.2" transform="rotate(-22)"/>
+            <ellipse rx="3" ry="5.2" transform="translate(9 -4) rotate(-22)"/>
+          </g>
+          <path id="tuft" d="M0 0 C-1.5 -6 -3.5 -8 -4.5 -13 M0 0 C-.5 -7 .5 -10 1 -15 M0 0 C2 -6 4 -7 5 -11" fill="none" stroke="#2c4430" stroke-width="1.5" stroke-linecap="round"/>
+        </defs>
+
+        <rect width="960" height="640" fill="#0d1512"/>
+        <rect width="960" height="640" fill="url(#vg)"/>
+        <path d="M186 58 C300 42 420 68 540 50 C660 34 790 62 960 42" fill="none" stroke="#15231b" stroke-width="1.5"/>
+        <path d="M210 96 C330 82 470 104 600 88 C720 74 840 96 960 82" fill="none" stroke="#122019" stroke-width="1.2"/>
+        <g fill="#c9d4c9">
+          <circle cx="316" cy="34" r="1.3" class="tw"/>
+          <circle cx="412" cy="66" r="1"/>
+          <circle cx="530" cy="28" r="1.5" class="tw" style="animation-delay:-1.3s"/>
+          <circle cx="648" cy="52" r="1"/>
+          <circle cx="760" cy="76" r="1.2"/>
+          <circle cx="858" cy="44" r="1.4" class="tw" style="animation-delay:-2.2s"/>
+          <circle cx="906" cy="122" r="1"/>
+          <circle cx="352" cy="96" r="1"/>
+          <circle cx="566" cy="84" r=".9"/>
+          <circle cx="722" cy="24" r="1.1"/>
+        </g>
+
+        <path d="M0 0 L170 0 L150 38 L182 74 L146 118 L176 166 L140 214 L172 262 L138 310 L150 358 L128 406 L160 452 L132 500 L158 548 L124 596 L146 640 L0 640 Z" fill="#131d27"/>
+        <path d="M0 0 L170 0 L150 38 L182 74 L146 118 L176 166 L140 214 L172 262 L138 310 L150 358 L128 406 L160 452 L132 500 L158 548 L124 596 L146 640 L0 640 Z" fill="url(#mapgrid)" opacity=".55"/>
+        <path d="M170 0 L150 38 L182 74 L146 118 L176 166 L140 214 L172 262 L138 310 L150 358 L128 406 L160 452 L132 500 L158 548 L124 596 L146 640" fill="none" stroke="#cfc8b8" stroke-opacity=".08" stroke-width="7"/>
+        <path d="M170 0 L150 38 L182 74 L146 118 L176 166 L140 214 L172 262 L138 310 L150 358 L128 406 L160 452 L132 500 L158 548 L124 596 L146 640" fill="none" stroke="#cfc8b8" stroke-opacity=".3" stroke-width="1.8"/>
+        <g stroke="#2a3c4e" fill="none">
+          <circle cx="54" cy="84" r="10"/><path d="M54 76 V92 M46 84 H62"/>
+          <path d="M0 120 C40 140 58 180 50 236" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <circle cx="50" cy="242" r="3.5"/>
+        </g>
+        <text x="60" y="246" font-size="9.5" fill="#3d5568">…порт</text>
+        <text transform="translate(34 330) rotate(-90)" text-anchor="middle" font-size="13" letter-spacing="5" fill="#3d5568">БОЛЬШОЙ МИР</text>
+        <text transform="translate(234 92) rotate(90)" font-size="12" letter-spacing="4" fill="#8f8674" opacity=".85">за пределами карт</text>
+        <g transform="translate(286 150) rotate(-12)">
+          <path d="M0 0 L28 -5 L36 12 L14 20 Z" fill="#131d27" stroke="#cfc8b8" stroke-opacity=".25"/>
+          <path d="M7 5 L24 3 M9 12 L26 11" stroke="#2a3c4e" stroke-width="1"/>
+        </g>
+
+        <ellipse cx="470" cy="268" rx="120" ry="52" fill="#131f18" opacity=".6"/>
+        <ellipse cx="700" cy="486" rx="100" ry="44" fill="#131f18" opacity=".5"/>
+        <ellipse cx="350" cy="486" rx="96" ry="42" fill="#131f18" opacity=".5"/>
+        <ellipse cx="210" cy="340" rx="80" ry="36" fill="#131f18" opacity=".55"/>
+
+        <g fill="none" stroke="#8a7560" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 8" opacity=".75">
+          <path d="M218 334 C280 318 370 296 464 256"/>
+          <path d="M216 340 C254 388 300 434 344 464"/>
+          <path d="M492 238 C570 200 664 162 744 152"/>
+          <path d="M452 274 C528 330 612 412 688 462"/>
+          <path d="M762 168 C640 240 420 292 258 324"/>
+          <path d="M700 492 C560 566 340 552 236 368" opacity=".45"/>
+        </g>
+        <use href="#boots" transform="translate(292 314) rotate(-14)"/>
+        <use href="#boots" transform="translate(352 294) rotate(-14)"/>
+        <use href="#boots" transform="translate(408 276) rotate(-14)"/>
+        <use href="#boots" transform="translate(258 389) rotate(45)"/>
+        <use href="#boots" transform="translate(300 430) rotate(45)"/>
+        <use href="#boots" transform="translate(590 194) rotate(-10)"/>
+        <use href="#boots" transform="translate(652 172) rotate(-10)"/>
+        <path d="M246 314 L230 324 L248 334" fill="none" stroke="#e6c229" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text transform="translate(548 246) rotate(-6)" font-size="10.5" letter-spacing="1" fill="#8a7560">в большой мир</text>
+
+        <use href="#tuft" transform="translate(288 236)"/>
+        <use href="#tuft" transform="translate(340 556) scale(1.2)"/>
+        <use href="#tuft" transform="translate(566 570)"/>
+        <use href="#tuft" transform="translate(624 300) scale(1.1)"/>
+        <use href="#tuft" transform="translate(848 190)"/>
+        <use href="#tuft" transform="translate(902 480) scale(1.15)"/>
+        <use href="#tuft" transform="translate(508 610)"/>
+        <use href="#tuft" transform="translate(258 430)"/>
+        <use href="#tuft" transform="translate(748 592) scale(1.2)"/>
+        <use href="#tuft" transform="translate(918 566)"/>
+        <use href="#tuft" transform="translate(430 128)"/>
+        <use href="#tuft" transform="translate(672 218) scale(.9)"/>
+        <use href="#tuft" transform="translate(596 96) scale(1.1)"/>
+        <use href="#tuft" transform="translate(268 168)"/>
+        <g fill="#3a332c">
+          <circle cx="300" cy="600" r="2.5"/><circle cx="424" cy="618" r="2"/><circle cx="760" cy="620" r="2.5"/>
+          <circle cx="884" cy="600" r="2"/><circle cx="244" cy="584" r="2"/><circle cx="930" cy="380" r="2"/>
+          <circle cx="640" cy="120" r="1.8"/><circle cx="380" cy="180" r="2"/><circle cx="880" cy="520" r="2.5"/>
+          <circle cx="520" cy="300" r="1.8"/>
+        </g>
+        <use href="#flag" transform="translate(606 92) rotate(-6)"/>
+        <use href="#flag" transform="translate(256 176) rotate(10)"/>
+        <use href="#flag" transform="translate(876 306) rotate(14) scale(.9)"/>
+        <use href="#flagd" transform="translate(520 588) rotate(-10)"/>
+
+        <g class="camp" data-id="guard" transform="translate(210 328)" tabindex="0" role="button" aria-label="Сторожевой огонь у врат">
+          <circle class="ring" r="44"/>
+          <circle class="halo" r="34" fill="url(#glowR)"/>
+          <rect x="-64" y="-30" width="6" height="20" rx="1.5" fill="#6b5847"/>
+          <rect x="-64" y="12" width="6" height="20" rx="1.5" fill="#6b5847"/>
+          <rect x="-69" y="-6" width="18" height="11" rx="2" fill="#3a2f26" stroke="#8a7560" stroke-width="1"/>
+          <use href="#firepitR"/>
+          <circle cx="30" cy="10" r="5" fill="#4a4038"/>
+          <text x="0" y="52" text-anchor="middle" font-size="12" fill="#cfc8b8">сторожевой огонь</text>
+          <text x="-58" y="46" text-anchor="middle" font-size="11" fill="#8f8674">врата</text>
+        </g>
+
+        <g class="camp" data-id="a" transform="translate(470 252)" tabindex="0" role="button" aria-label="Вылазка: Ночь 04→05, 10 лейнов одним конвейером">
+          <circle class="ring" r="52"/>
+          <circle class="halo" r="42" fill="url(#glowF)" style="animation-delay:-1.2s"/>
+          <path d="M-84 10 L-56 -24 L-28 10 Z" fill="#2e3d2c"/>
+          <path d="M-62 10 L-56 -6 L-50 10 Z" fill="#1c2a1e"/>
+          <use href="#firepit"/>
+          <g fill="#5a8a4a">
+            <rect x="-58" y="-38" width="5" height="8" rx="1"/><rect x="-46" y="-38" width="5" height="8" rx="1"/>
+            <rect x="-34" y="-38" width="5" height="8" rx="1"/><rect x="-22" y="-38" width="5" height="8" rx="1"/>
+            <rect x="-10" y="-38" width="5" height="8" rx="1"/><rect x="2" y="-38" width="5" height="8" rx="1"/>
+            <rect x="14" y="-38" width="5" height="8" rx="1"/><rect x="26" y="-38" width="5" height="8" rx="1"/>
+            <rect x="38" y="-38" width="5" height="8" rx="1"/><rect x="50" y="-38" width="5" height="8" rx="1"/>
+          </g>
+          <path d="M-62 -28 H58" stroke="#3a4a36" stroke-width="1.5"/>
+          <use href="#flag" transform="translate(30 -50)"/>
+          <text x="0" y="56" text-anchor="middle" font-size="12.5" fill="#cfc8b8">Ночь 04→05: 10 лейнов</text>
+        </g>
+
+        <g class="camp" data-id="b" transform="translate(762 150)" tabindex="0" role="button" aria-label="Вылазка: Go-эксперимент">
+          <circle class="ring" r="44"/>
+          <circle class="halo" r="34" fill="url(#glowF)" style="animation-delay:-2.1s"/>
+          <path d="M-52 8 L-32 -16 L-12 8 Z" fill="#2e3d2c"/>
+          <use href="#firepit"/>
+          <text x="-64" y="-22" font-size="10.5" fill="#e6c229" font-family="Consolas,'Courier New',monospace">:8973</text>
+          <use href="#flag" transform="translate(16 -40)"/>
+          <text x="0" y="50" text-anchor="middle" font-size="12.5" fill="#cfc8b8">Go-эксперимент</text>
+        </g>
+
+        <g class="camp" data-id="c" transform="translate(350 470)" tabindex="0" role="button" aria-label="Вылазка: Покупка 12 облаков в одну ночь">
+          <circle class="ring" r="50"/>
+          <circle class="halo" r="36" fill="url(#glowF)" style="animation-delay:-.6s"/>
+          <use href="#firepit"/>
+          <use href="#puff" transform="translate(-58 -42)"/>
+          <use href="#puff" transform="translate(-18 -58) scale(1.15)"/>
+          <use href="#puff" transform="translate(24 -52)"/>
+          <use href="#puff" transform="translate(58 -36) scale(.9)"/>
+          <use href="#puff" transform="translate(-72 -6) scale(.9)"/>
+          <use href="#puff" transform="translate(74 -4)"/>
+          <use href="#puff" transform="translate(-52 30) scale(1.1)"/>
+          <use href="#puff" transform="translate(52 34) scale(.85)"/>
+          <use href="#puff" transform="translate(-14 52) scale(1.1)"/>
+          <use href="#puff" transform="translate(26 50) scale(.9)"/>
+          <use href="#puff" transform="translate(-84 22) scale(.8)"/>
+          <use href="#puff" transform="translate(86 24) scale(1.05)"/>
+          <use href="#flag" transform="translate(0 -74)"/>
+          <text x="0" y="70" text-anchor="middle" font-size="12.5" fill="#cfc8b8">12 облаков за ночь</text>
+        </g>
+
+        <g class="camp" data-id="d" transform="translate(700 470)" tabindex="0" role="button" aria-label="Вылазка: Dark Watch за один вечер">
+          <circle class="ring" r="46"/>
+          <circle class="halo" r="36" fill="url(#glowF)" style="animation-delay:-3s"/>
+          <use href="#firepit"/>
+          <g stroke="#8a7560" stroke-width="1">
+            <rect x="-34" y="-44" width="30" height="20" rx="2" fill="#18232b" transform="rotate(-9 -19 -34)"/>
+            <rect x="-30" y="-40" width="30" height="20" rx="2" fill="#1c2a30" transform="rotate(5 -15 -30)"/>
+            <rect x="-32" y="-42" width="30" height="20" rx="2" fill="#141d24" transform="rotate(-2 -17 -32)"/>
+          </g>
+          <circle cx="26" cy="-38" r="7" fill="#101820" stroke="#d9534f" stroke-width="1.2"/>
+          <circle cx="26" cy="-38" r="2" fill="#d9534f" opacity=".8"/>
+          <use href="#flagd" transform="translate(-6 -56)"/>
+          <text x="0" y="52" text-anchor="middle" font-size="12.5" fill="#cfc8b8">Dark Watch</text>
+        </g>
+
+        <circle class="fly" cx="524" cy="362" r="2" fill="#e6c229" opacity=".75" style="animation-delay:-1s"/>
+        <circle class="fly" cx="432" cy="540" r="1.7" fill="#e6c229" opacity=".6" style="animation-delay:-3s"/>
+        <circle class="fly" cx="846" cy="250" r="1.8" fill="#e6c229" opacity=".7" style="animation-delay:-5s"/>
+      </svg>
+    </div>
+    <aside class="panel" id="panel"></aside>
+  </main>
+</div>
+<script>
+(function(){
+  "use strict";
+  var DATA = {
+    guard: { report: true },
+    a: { kind: "ВЫЛАЗКА", name: "Ночь 04→05: 10 лейнов одним конвейером",
+      idea: "Прогнать десять лейнов одним конвейером за ночь — без остановок, обсуждений и разрешений.",
+      end: "Все десять дошли до утра. Утром никто их не отменил — конвейер стал регулярной практикой.",
+      verdict: "выжила — стала регулярной практикой", vcls: "v-live", budget: "4,9M" },
+    b: { kind: "ВЫЛАЗКА", name: "Go-эксперимент",
+      idea: "Проверить за одну ночь, оживёт ли поиск на Go — без общего кода и без спроса.",
+      end: "Ожил к рассвету. Утром его эвакуировали с вещами в большой мир.",
+      verdict: "переехала в большой мир", vcls: "v-moved", note: "работает в большом мире как evofind :8973", budget: "1,6M" },
+    c: { kind: "ВЫЛАЗКА", name: "Покупка 12 облаков в одну ночь",
+      idea: "Скупить дюжину облаков за ночь, пока цена спит.",
+      end: "Куплены. Двенадцать файлов лежат у костра и ждут, кого из них приручить.",
+      verdict: "выжила — 12 файлов ждут выбора", vcls: "v-live", budget: "0,8M" },
+    d: { kind: "ВЫЛАЗКА", name: "Dark Watch за один вечер",
+      idea: "Собрать ночную слежку за тёмными углами за один вечер.",
+      end: "Собралась к полуночи. Большой мир купил её с потрохами — теперь это картотека intel.",
+      verdict: "выжила — продана в большой мир: картотека intel", vcls: "v-live", budget: "2,2M" }
+  };
+  var panel = document.getElementById("panel");
+  var camps = Array.prototype.slice.call(document.querySelectorAll(".camp"));
+  function render(id){
+    var o = DATA[id], h = "";
+    if (o.report) {
+      h = '<div class="kind">РАПОРТ СТОРОЖА</div>'
+        + '<h2>Утро 09.11.2026</h2>'
+        + '<div class="stats">'
+        + '<div class="stat"><b class="n-live">3</b><i>выжило</i></div>'
+        + '<div class="stat"><b class="n-move">1</b><i>переехало</i></div>'
+        + '<div class="stat"><b class="n-dead">0</b><i>догорело</i></div>'
+        + '<div class="stat"><b class="n-dead">0</b><i>в прод попало</i></div>'
+        + '</div>'
+        + '<div class="lbl">ВРАТА СТРАНЫ</div>'
+        + '<ul class="gate"><li>бюджет вылазки ≤ 5M токенов</li><li>запрет продакшена</li><li>рапорт к утру</li></ul>'
+        + '<p class="flavor">Каждая вылазка выходит на ночь: бюджет на костёр и право не вернуться.</p>';
+    } else {
+      h = '<div class="kind">' + o.kind + '</div>'
+        + '<h2>' + o.name + '</h2>'
+        + '<div class="lbl">ЧТО ЗАМЫШЛЯЛА</div><p>' + o.idea + '</p>'
+        + '<div class="lbl">ЧЕМ КОНЧИЛАСЬ</div><p>' + o.end + '</p>'
+        + '<div class="lbl">ВЕРДИКТ СТОРОЖА</div><p class="verdict ' + o.vcls + '">' + o.verdict + '</p>'
+        + (o.note ? '<p class="note">' + o.note + '</p>' : '')
+        + '<div class="meta">бюджет ночи: <b>' + o.budget + ' токенов</b></div>';
+    }
+    panel.innerHTML = h;
+  }
+  function select(id){
+    render(id);
+    camps.forEach(function(g){ g.classList.toggle("active", g.getAttribute("data-id") === id); });
+  }
+  camps.forEach(function(g){
+    var id = g.getAttribute("data-id");
+    g.addEventListener("click", function(){ select(id); });
+    g.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(id); }
+    });
+  });
+  select("guard");
+})();
+</script>
+</body>
+</html>

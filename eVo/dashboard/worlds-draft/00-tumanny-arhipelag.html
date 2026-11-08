@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Туманный Архипелаг — Platform Evo · превью-вариация</title>
+<style>
+:root{--teal:#4fd1c5;--amber:#b3a476;--ink:#c7d5e2;--dim:#7e94a8}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#060d15;overflow-x:hidden}
+body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink)}
+header{display:flex;align-items:center;gap:16px;padding:14px 22px 10px;max-width:1324px;margin:0 auto}
+.ttl h1{font-size:26px;font-weight:600;margin:0;letter-spacing:.02em;color:#eaf2f8}
+.ttl .sub{font-size:11px;letter-spacing:.14em;color:var(--dim);margin-top:3px}
+.chips{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.chip{display:flex;align-items:baseline;gap:7px;padding:5px 12px;border:1px solid rgba(79,209,197,.18);border-radius:999px;background:rgba(34,56,74,.35)}
+.chip .cl{font-size:11px;color:var(--dim);white-space:nowrap}
+.chip .cv{font-size:14px;font-weight:600;color:#eaf2f8;font-variant-numeric:tabular-nums}
+.home{width:40px;height:40px;border-radius:50%;border:1px solid rgba(79,209,197,.35);background:rgba(10,20,32,.85);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:18px;text-decoration:none;flex:none}
+.home:hover{border-color:var(--teal);color:var(--teal)}
+.stage{position:relative;max-width:1280px;margin:0 auto;border:1px solid rgba(79,209,197,.12);border-radius:16px;overflow:hidden}
+.stage svg{display:block;width:100%;height:auto}
+.panel{position:absolute;top:84px;right:16px;width:330px;background:rgba(8,16,26,.92);border:1px solid rgba(79,209,197,.22);border-radius:14px;padding:16px 18px}
+.p-name{font-size:17px;font-weight:600;color:#eaf2f8}
+.p-status{font-size:11px;letter-spacing:.1em;margin-top:4px;text-transform:uppercase}
+.p-status.ok{color:var(--teal)}
+.p-status.dim{color:var(--amber)}
+.p-status.dark{color:var(--dim)}
+.p-rows{margin-top:12px;border-top:1px solid rgba(126,148,168,.18);padding-top:10px}
+.p-row{display:flex;justify-content:space-between;gap:12px;padding:3px 0}
+.p-row span{font-size:11px;color:var(--dim)}
+.p-row b{font-size:12.5px;font-weight:600;color:#dce8f2;font-variant-numeric:tabular-nums;text-align:right}
+.p-phrase{margin-top:12px;font-size:13px;line-height:1.45;color:#a8c3d4}
+.p-check{margin-top:10px;font-size:10.5px;letter-spacing:.06em;color:#6d8296}
+.lbl{font-size:12.5px;fill:#9db4c8;transition:fill .2s}
+.lbl.teal{fill:var(--teal)}
+.lbl.amber{fill:var(--amber)}
+.lbl.sm{font-size:10.5px}
+.lbl2{font-size:10.5px;fill:#7e94a8;letter-spacing:.04em}
+.obj{cursor:pointer}
+.obj:hover .lbl{fill:#eaf2f8}
+.obj.sel .lbl{fill:var(--teal)}
+.obj .hit{fill:transparent;pointer-events:all}
+.obj.sel .hit{stroke:rgba(79,209,197,.5);stroke-width:1;stroke-dasharray:4 4;fill:rgba(79,209,197,.04)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@keyframes bob2{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes pulse{0%,100%{opacity:.18}50%{opacity:.34}}
+@keyframes driftA{from{transform:translateX(-50px)}to{transform:translateX(70px)}}
+@keyframes driftB{from{transform:translateX(60px)}to{transform:translateX(-70px)}}
+@keyframes wisp{from{transform:translateX(-350px)}to{transform:translateX(1650px)}}
+@keyframes watch{0%,100%{transform:translate(0,0);opacity:.5}50%{transform:translate(40px,8px);opacity:.85}}
+.island-main{animation:bob 12s ease-in-out infinite}
+.buoy-g{animation:bob2 6.5s ease-in-out infinite}
+.glow{animation:pulse 7s ease-in-out infinite}
+.fogA{animation:driftA 47s ease-in-out infinite}
+.fogB{animation:driftB 61s ease-in-out infinite}
+.fogC{animation:driftA 83s ease-in-out infinite}
+.wisp{animation:wisp 90s linear infinite}
+.wisp2{animation:wisp 120s linear infinite;animation-delay:-55s}
+.watcher{animation:watch 36s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.island-main,.buoy-g,.glow,.fogA,.fogB,.fogC,.wisp,.wisp2,.watcher{animation:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ttl">
+    <h1>Туманный Архипелаг</h1>
+    <div class="sub">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+  </div>
+  <div class="chips">
+    <div class="chip"><span class="cl">машины</span><span class="cv">5</span></div>
+    <div class="chip"><span class="cl">живых</span><span class="cv">1</span></div>
+    <div class="chip"><span class="cl">портов открыто</span><span class="cv">0</span></div>
+    <div class="chip"><span class="cl">в тумане</span><span class="cv">4</span></div>
+  </div>
+  <a class="home" href="index.html" aria-label="Каталог вариаций">⌂</a>
+</header>
+
+<main class="stage">
+<svg id="scene" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Туманное море с островами-машинами">
+  <defs>
+    <linearGradient id="gSea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10233a"/>
+      <stop offset=".5" stop-color="#0a1420"/>
+      <stop offset="1" stop-color="#070e16"/>
+    </linearGradient>
+    <radialGradient id="gGlow">
+      <stop offset="0" stop-color="#4fd1c5" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#4fd1c5" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gFog">
+      <stop offset="0" stop-color="#22384a" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#22384a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gMoon">
+      <stop offset="0" stop-color="#c7d5e2" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#c7d5e2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gEye">
+      <stop offset="0" stop-color="#9db4c8" stop-opacity=".9"/>
+      <stop offset=".4" stop-color="#9db4c8" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#9db4c8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#gSea)"/>
+
+  <!-- луна за туманом -->
+  <circle cx="150" cy="96" r="70" fill="url(#gMoon)" opacity=".5"/>
+  <circle cx="150" cy="96" r="26" fill="#c7d5e2" opacity=".14"/>
+
+  <!-- вода -->
+  <line x1="0" y1="430" x2="1280" y2="430" stroke="#1c3346" stroke-width="1" opacity=".8"/>
+  <g stroke="#1b3145" stroke-width="1.5" fill="none" opacity=".7">
+    <path d="M40 520 h120 M230 545 h90 M380 560 h140 M600 530 h100 M760 570 h120 M980 545 h140 M1120 585 h90 M300 640 h180 M700 650 h150 M1040 660 h110 M120 600 h100 M520 610 h90 M880 610 h70"/>
+  </g>
+
+  <!-- силуэты в тумане: не поднятые машины -->
+  <g class="obj" data-id="oracle">
+    <path d="M700 448 Q 775 396 850 448 Z" fill="#8a7a55" opacity=".28"/>
+    <ellipse cx="775" cy="420" rx="105" ry="28" fill="url(#gFog)" opacity=".85"/>
+    <text class="lbl amber" x="775" y="478" text-anchor="middle">Oracle Cloud</text>
+    <text class="lbl2" x="775" y="494" text-anchor="middle">не поднята</text>
+    <rect class="hit" x="690" y="388" width="170" height="112"/>
+  </g>
+  <g class="obj" data-id="do">
+    <path d="M855 448 Q 915 404 975 448 Z" fill="#8a7a55" opacity=".26"/>
+    <ellipse cx="915" cy="424" rx="100" ry="26" fill="url(#gFog)" opacity=".85"/>
+    <text class="lbl amber" x="915" y="478" text-anchor="middle">DigitalOcean</text>
+    <text class="lbl2" x="915" y="494" text-anchor="middle">не поднята</text>
+    <rect class="hit" x="845" y="396" width="140" height="104"/>
+  </g>
+  <g class="obj" data-id="vultr">
+    <path d="M1015 448 Q 1060 410 1105 448 Z" fill="#8a7a55" opacity=".24"/>
+    <ellipse cx="1060" cy="426" rx="85" ry="24" fill="url(#gFog)" opacity=".9"/>
+    <text class="lbl amber" x="1060" y="478" text-anchor="middle">Vultr</text>
+    <text class="lbl2" x="1060" y="494" text-anchor="middle">не поднята</text>
+    <rect class="hit" x="1005" y="402" width="110" height="98"/>
+  </g>
+  <g class="obj" data-id="n100">
+    <path d="M1120 462 L1170 428 L1205 420 L1245 442 L1268 462 Z" fill="#8a7a55" opacity=".38"/>
+    <rect x="1188" y="424" width="26" height="18" rx="2" fill="#16283c"/>
+    <path d="M1184 424 L1201 411 L1218 424 Z" fill="#1b3149"/>
+    <circle cx="1199" cy="433" r="9" fill="#d9a441" opacity=".18"/>
+    <rect x="1196" y="429" width="7" height="7" fill="#d9a441" opacity=".8"/>
+    <ellipse cx="1195" cy="428" rx="110" ry="28" fill="url(#gFog)" opacity=".65"/>
+    <text class="lbl amber" x="1200" y="496" text-anchor="middle">Локальный N100</text>
+    <text class="lbl2" x="1200" y="512" text-anchor="middle">Frigate · готовится</text>
+    <rect class="hit" x="1115" y="405" width="160" height="115"/>
+  </g>
+
+  <!-- тихое наблюдение в атмосфере -->
+  <g class="obj watcher" data-id="watcher">
+    <circle cx="745" cy="300" r="34" fill="url(#gEye)"/>
+    <circle cx="745" cy="300" r="3" fill="#9db4c8"/>
+    <text class="lbl2" x="745" y="264" text-anchor="middle">дальний огонь</text>
+    <rect class="hit" x="700" y="240" width="90" height="100"/>
+  </g>
+
+  <!-- слои тумана -->
+  <g class="fogA" opacity=".55"><ellipse cx="290" cy="452" rx="560" ry="70" fill="url(#gFog)"/></g>
+  <g class="fogB" opacity=".6"><ellipse cx="900" cy="440" rx="640" ry="64" fill="url(#gFog)"/></g>
+  <g class="fogC" opacity=".5"><ellipse cx="620" cy="430" rx="820" ry="52" fill="url(#gFog)"/></g>
+  <g opacity=".4"><ellipse cx="640" cy="660" rx="820" ry="80" fill="url(#gFog)"/></g>
+
+  <!-- живой остров: Kali VM -->
+  <g class="obj island-main" data-id="kali">
+    <ellipse class="glow" cx="280" cy="450" rx="300" ry="80" fill="url(#gGlow)"/>
+    <ellipse cx="280" cy="505" rx="230" ry="22" fill="url(#gGlow)" opacity=".45"/>
+    <path d="M38 474 L118 468 L152 432 L186 398 L216 354 L246 332 L282 350 L312 386 L352 414 L402 438 L462 464 L542 474 Z" fill="#132435" stroke="#4fd1c5" stroke-opacity=".4" stroke-width="1.4"/>
+    <rect x="304" y="360" width="36" height="26" rx="2" fill="#16283c"/>
+    <path d="M300 360 L322 344 L344 360 Z" fill="#1b3149"/>
+    <rect x="314" y="368" width="9" height="10" rx="1" fill="#8a7a55" opacity=".75"/>
+    <text class="lbl teal" x="280" y="565" text-anchor="middle" font-size="13">Kali VM · 192.168.238.128</text>
+    <rect class="hit" x="30" y="180" width="520" height="300"/>
+    <g class="obj" data-id="lighthouse">
+      <polygon points="238,334 254,334 251,236 241,236" fill="#1b3149"/>
+      <rect x="243" y="248" width="6" height="12" rx="1" fill="#0e1c2b"/>
+      <rect x="236" y="228" width="20" height="9" rx="2" fill="#22384a"/>
+      <rect x="240" y="214" width="12" height="14" rx="2" fill="#0c1926" stroke="#33506b" stroke-width="1"/>
+      <path d="M238 214 L246 205 L254 214 Z" fill="#22384a"/>
+      <text class="lbl" x="246" y="188" text-anchor="middle">маяк vm-tunnel · тьма</text>
+      <rect class="hit" x="206" y="196" width="80" height="150"/>
+    </g>
+  </g>
+
+  <!-- причал и спящие краны-сервисы -->
+  <polygon points="392,442 604,452 604,459 392,449" fill="#1a2f44"/>
+  <g stroke="#1a2f44" stroke-width="3">
+    <line x1="405" y1="450" x2="405" y2="468"/>
+    <line x1="445" y1="451" x2="445" y2="469"/>
+    <line x1="485" y1="452" x2="485" y2="470"/>
+    <line x1="525" y1="453" x2="525" y2="471"/>
+    <line x1="565" y1="454" x2="565" y2="472"/>
+    <line x1="595" y1="455" x2="595" y2="472"/>
+  </g>
+  <text class="lbl2" x="495" y="545" text-anchor="middle">причал · сервисы спят</text>
+
+  <g class="obj" data-id="juice">
+    <line x1="420" y1="446" x2="420" y2="394" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="404" y1="400" x2="440" y2="394" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="434" y1="395" x2="434" y2="420" stroke="#8a7a55" stroke-width="1.4"/>
+    <rect x="431" y="420" width="6" height="5" fill="#8a7a55" opacity=".9"/>
+    <circle cx="420" cy="394" r="2.2" fill="#8a7a55"/>
+    <text class="lbl amber sm" x="420" y="520" text-anchor="middle">Juice Shop</text>
+    <rect class="hit" x="398" y="386" width="44" height="140"/>
+  </g>
+  <g class="obj" data-id="dvwa">
+    <line x1="468" y1="447" x2="468" y2="395" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="452" y1="401" x2="488" y2="395" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="482" y1="396" x2="482" y2="421" stroke="#8a7a55" stroke-width="1.4"/>
+    <rect x="479" y="421" width="6" height="5" fill="#8a7a55" opacity=".9"/>
+    <circle cx="468" cy="395" r="2.2" fill="#8a7a55"/>
+    <text class="lbl amber sm" x="468" y="520" text-anchor="middle">DVWA</text>
+    <rect class="hit" x="446" y="387" width="44" height="139"/>
+  </g>
+  <g class="obj" data-id="n8n">
+    <line x1="516" y1="448" x2="516" y2="396" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="500" y1="402" x2="536" y2="396" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="530" y1="397" x2="530" y2="422" stroke="#8a7a55" stroke-width="1.4"/>
+    <rect x="527" y="422" width="6" height="5" fill="#8a7a55" opacity=".9"/>
+    <circle cx="516" cy="396" r="2.2" fill="#8a7a55"/>
+    <text class="lbl amber sm" x="516" y="520" text-anchor="middle">n8n</text>
+    <rect class="hit" x="494" y="388" width="44" height="138"/>
+  </g>
+  <g class="obj" data-id="kuma">
+    <line x1="564" y1="449" x2="564" y2="397" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="548" y1="403" x2="584" y2="397" stroke="#8a7a55" stroke-width="3"/>
+    <line x1="578" y1="398" x2="578" y2="423" stroke="#8a7a55" stroke-width="1.4"/>
+    <rect x="575" y="423" width="6" height="5" fill="#8a7a55" opacity=".9"/>
+    <circle cx="564" cy="397" r="2.2" fill="#8a7a55"/>
+    <text class="lbl amber sm" x="564" y="520" text-anchor="middle">Kuma</text>
+    <rect class="hit" x="542" y="389" width="44" height="137"/>
+  </g>
+
+  <!-- буй: сервер дашборда -->
+  <g class="obj buoy-g" data-id="buoy">
+    <line x1="640" y1="492" x2="640" y2="505" stroke="#8a7a55" stroke-width="2"/>
+    <circle cx="640" cy="509" r="6" fill="#1a2f44" stroke="#8a7a55" stroke-width="1.5"/>
+    <circle cx="640" cy="509" r="15" fill="none" stroke="#4fd1c5" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
+    <text class="lbl sm" x="640" y="545" text-anchor="middle">сервер дашборда · 8765</text>
+    <rect class="hit" x="608" y="478" width="64" height="74"/>
+  </g>
+
+  <!-- ползущие клочья тумана -->
+  <g class="wisp" opacity=".5"><ellipse cx="0" cy="470" rx="240" ry="26" fill="url(#gFog)"/></g>
+  <g class="wisp2" opacity=".4"><ellipse cx="0" cy="418" rx="300" ry="22" fill="url(#gFog)"/></g>
+</svg>
+
+<aside class="panel" id="panel"></aside>
+</main>
+
+<script>
+(function(){
+  var INFO = {
+    world: {
+      name: 'Туманный Архипелаг',
+      status: 'туман держит всё, что не поднято',
+      cls: 'dark',
+      rows: [['машины','5'],['живых','1'],['в тумане','4'],['порты открыто','0']],
+      phrase: 'Всплыл один остров из пяти — остальные стоят под туманом и ждут, когда их поднимут.'
+    },
+    kali: {
+      name: 'Остров «Kali VM»',
+      status: 'жива · всплыла из тумана',
+      cls: 'ok',
+      rows: [['адрес','192.168.238.128'],['снапшот','pre-pentest-2026-11-04'],['внешний периметр','0/100 портов открыто']],
+      phrase: 'Дышит ровно: наружу не светится ни один порт.'
+    },
+    lighthouse: {
+      name: 'Маяк vm-tunnel',
+      status: 'тьма · туннель не поднят',
+      cls: 'dark',
+      rows: [['огонь','не горит'],['канал','vm-tunnel offline']],
+      phrase: 'Стекло тёмное: поднять vm-tunnel — и огонь пробьёт любой туман.'
+    },
+    juice: {
+      name: 'Кран «Juice Shop»',
+      status: 'спит · не развёрнут',
+      cls: 'dim',
+      rows: [['healthcheck','нет ответа'],['контейнер','не поднят']],
+      phrase: 'Кран спит: контейнер не поднят — проверять нечего.'
+    },
+    dvwa: {
+      name: 'Кран «DVWA»',
+      status: 'спит · не развёрнут',
+      cls: 'dim',
+      rows: [['healthcheck','нет ответа'],['контейнер','не поднят']],
+      phrase: 'Спит: учебная мишень ещё не собрана — туман держит причал.'
+    },
+    n8n: {
+      name: 'Кран «n8n»',
+      status: 'спит · не развёрнут',
+      cls: 'dim',
+      rows: [['healthcheck','нет ответа'],['контейнер','не поднят']],
+      phrase: 'Спит: цепочки автоматизации не заведены — крюк пустой.'
+    },
+    kuma: {
+      name: 'Кран «Kuma»',
+      status: 'спит · не развёрнут',
+      cls: 'dim',
+      rows: [['healthcheck','нет ответа'],['контейнер','не поднят']],
+      phrase: 'Спит: пульс пока не с кого мерить.'
+    },
+    oracle: {
+      name: 'Силуэт «Oracle Cloud»',
+      status: 'в тумане · не поднята',
+      cls: 'dim',
+      rows: [['тип','облачная машина'],['healthcheck','нет ответа']],
+      phrase: 'Туман накрыл: стоит поднять bootstrap — всплывёт.'
+    },
+    do: {
+      name: 'Силуэт «DigitalOcean»',
+      status: 'в тумане · не поднята',
+      cls: 'dim',
+      rows: [['тип','облачная машина'],['healthcheck','нет ответа']],
+      phrase: 'Ни одного ответа из серого — поднимешь, вынырнет.'
+    },
+    vultr: {
+      name: 'Силуэт «Vultr»',
+      status: 'в тумане · не поднята',
+      cls: 'dim',
+      rows: [['тип','облачная машина'],['healthcheck','нет ответа']],
+      phrase: 'Силуэт еле угадывается — всплывёт, когда понадобится.'
+    },
+    n100: {
+      name: 'Полуостров «Локальный N100»',
+      status: 'готовится · под туманом',
+      cls: 'dim',
+      rows: [['роль','Frigate — камеры'],['тип','локальная машина']],
+      phrase: 'Один тёплый огонёк в окне: Frigate готовится выйти из тумана.'
+    },
+    buoy: {
+      name: 'Буй «Сервер дашборда»',
+      status: 'loopback-only',
+      cls: 'dark',
+      rows: [['порт','8765'],['доступ','только 127.0.0.1']],
+      phrase: 'Смотрит в собственную воду: наружу не светит и не отвечает.'
+    },
+    watcher: {
+      name: 'Дальний огонь в тумане',
+      status: 'наблюдает · источник не опознан',
+      cls: 'dark',
+      rows: [['внешний периметр','0/100 портов открыто'],['источник','не опознан']],
+      phrase: 'Пусть смотрит: снаружи не светится ни один порт.'
+    }
+  };
+
+  var panel = document.getElementById('panel');
+
+  function render(id){
+    var d = INFO[id] || INFO.world;
+    var rows = '';
+    for (var i = 0; i < d.rows.length; i++){
+      rows += '<div class="p-row"><span>' + d.rows[i][0] + '</span><b>' + d.rows[i][1] + '</b></div>';
+    }
+    panel.innerHTML =
+      '<div class="p-name">' + d.name + '</div>' +
+      '<div class="p-status ' + d.cls + '">' + d.status + '</div>' +
+      '<div class="p-rows">' + rows + '</div>' +
+      '<div class="p-phrase">«' + d.phrase + '»</div>' +
+      '<div class="p-check">проверено · демо-снимок 09.11.2026</div>';
+  }
+
+  function clearSel(){
+    var s = document.querySelectorAll('.obj.sel');
+    for (var i = 0; i < s.length; i++) s[i].classList.remove('sel');
+  }
+
+  var objs = document.querySelectorAll('.obj');
+  for (var i = 0; i < objs.length; i++){
+    objs[i].addEventListener('click', function(ev){
+      ev.stopPropagation();
+      clearSel();
+      this.classList.add('sel');
+      render(this.getAttribute('data-id'));
+    });
+  }
+
+  document.getElementById('scene').addEventListener('click', function(){
+    clearSel();
+    render('world');
+  });
+
+  render('world');
+})();
+</script>
+</body>
+</html>

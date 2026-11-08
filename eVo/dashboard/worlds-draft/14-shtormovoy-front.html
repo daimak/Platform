@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Штормовой Фронт · Platform</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#070b12}
+body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:#e8e4f0;font-variant-numeric:tabular-nums;overflow-x:hidden}
+.frame{width:1280px;height:720px;margin:0 auto;display:flex;flex-direction:column;background:linear-gradient(160deg,#0d1420 0%,#141c2e 45%,#2a2438 100%);border:1px solid #232e44;border-radius:12px;overflow:hidden}
+
+/* шапка */
+header{display:flex;align-items:center;gap:16px;padding:14px 20px 10px 22px}
+.tb h1{font-size:23px;font-weight:700;letter-spacing:.4px;color:#f2eee2}
+.tb .status{margin-top:3px;font-size:10px;letter-spacing:2.2px;text-transform:uppercase;color:#8f9bb0}
+.chips{margin-left:auto;display:flex;gap:8px}
+.chip{min-width:86px;padding:5px 11px 6px;background:rgba(18,26,40,.75);border:1px solid #2b3750;border-radius:9px;text-align:center}
+.chip-l{display:block;font-size:9.5px;letter-spacing:.6px;color:#8f9bb0}
+.chip-n{display:block;font-size:17px;font-weight:700;line-height:1.15;margin-top:1px}
+.n-red{color:#f56565}.n-amber{color:#f0e68c}.n-copper{color:#d09a55}.n-green{color:#68d391}
+.home{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#e8c98a;font-size:17px;border:1px solid rgba(201,138,61,.55);background:rgba(201,138,61,.12);transition:background .2s}
+.home:hover{background:rgba(201,138,61,.32);color:#f0e68c}
+
+/* тело */
+main{flex:1;display:flex;gap:12px;padding:0 20px;min-height:0}
+.sky-card{position:relative;flex:1;min-width:0;border:1px solid #26324c;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#0d1420 0%,#191b2e 55%,#221e30 100%)}
+.sky-card>svg{width:100%;height:100%;display:block}
+.skyflash{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 32% 26%,rgba(240,230,140,.2),rgba(240,230,140,0) 62%);animation:skyflash 13s linear infinite}
+@keyframes skyflash{0%,88%,95%,100%{opacity:0}90%{opacity:1}93%{opacity:.15}}
+
+.panel{width:392px;flex:none;border:1px solid #26324c;border-radius:12px;background:rgba(13,19,31,.72);padding:14px 18px 16px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.p-kicker{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#c98a3d}
+.panel h2{font-size:18px;font-weight:700;color:#f2eee2;margin:5px 0 6px}
+.row{display:flex;gap:12px;padding:7px 0;border-top:1px solid #1c2637}
+.row:first-child{border-top:none}
+.row-k{width:146px;flex:none;font-size:11.5px;color:#8f9bb0;padding-top:1px}
+.row-v{flex:1;font-size:12.5px;line-height:1.45;color:#dfe3ee}
+.row-v.p1{color:#f56565;font-weight:600}
+.row-v.warn{color:#f0e68c}
+.row-v.ok{color:#68d391}
+.row-v.dont{color:#f2b3b3}
+.holmes-block{margin-top:auto;padding-top:10px;border-top:1px solid #1c2637}
+.holmes-name{font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:#8f9bb0;margin-bottom:5px}
+.holmes-quote{font-size:12.5px;line-height:1.5;color:#e8dfb8;font-style:italic;border-left:3px solid #c98a3d;padding-left:10px}
+
+/* приборная палуба */
+.deck{height:212px;flex:none;display:flex;gap:12px;padding:12px 20px 16px}
+.card{border:1px solid #26324c;border-radius:12px;background:rgba(15,22,35,.65);padding:10px 14px 12px;display:flex;flex-direction:column;min-width:0;transition:border-color .2s}
+.card-map{flex:1.05;background:linear-gradient(180deg,#0a121e,#0d1a26)}
+.card-baro{flex:0 0 206px}
+.card-seis{flex:1.25}
+.card-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.card-head h3{font-size:10.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#93a1b8}
+.head-val{margin-left:auto;font-size:12px;font-weight:700}
+.v-red{color:#f56565}.v-amber{color:#f0e68c}
+.card>svg{width:100%;flex:1;min-height:0}
+.obj-card{cursor:pointer}
+.obj-card:hover{border-color:rgba(240,230,140,.4)}
+.card.on{border-color:rgba(240,230,140,.6)}
+
+/* svg-сцена */
+.obj{cursor:pointer}
+.ring{fill:none;stroke:#f0e68c;stroke-width:1.4;stroke-dasharray:4 5;opacity:0;transition:opacity .2s}
+.obj:hover .ring{opacity:.4}
+.obj.on .ring{opacity:.95}
+.hit{fill:transparent}
+.ctop{fill:#7a4040}.cbase{fill:#5a3a3a}.cunder{fill:#4a2f34}
+.nce{fill:#3a4552;opacity:.92}
+.bolt{fill:#f0e68c;opacity:0}
+#b1{animation:flash 8s linear infinite 2.2s}
+#b2{animation:flash 11s linear infinite 5.6s}
+@keyframes flash{0%,85%,93%,100%{opacity:0}87%{opacity:.95}89.5%{opacity:.12}91%{opacity:.8}}
+.rain line{stroke:#8a5555;stroke-width:1.4;opacity:.4}
+.drift{animation:drift 16s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateX(-9px)}to{transform:translateX(9px)}}
+.isl{fill:#121c2b;stroke:#26334a;stroke-width:1}
+.iname{font-size:11px;fill:#8fa0b8;letter-spacing:.6px}
+.lamp{fill:#c98a3d;opacity:.85}.lamp-g{fill:#68d391;opacity:.8}
+.wind{fill:none;stroke:#5f6d85;stroke-width:2;stroke-dasharray:10 14;opacity:.65;animation:flow 10s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-240}}
+.wind-arrow{fill:#5f6d85;opacity:.8}
+.wind-tag{font-size:10px;fill:#7c8aa0;letter-spacing:1px}
+.tag{font-size:11px;letter-spacing:.4px}
+.t-red{fill:#dcb2b2}
+.t-green{fill:#9fe8bf}
+.stars circle{fill:#cfd8ea;opacity:.28}
+.beam{fill:rgba(104,211,145,.08)}
+.win-glow{fill:url(#winG);animation:winpulse 3.6s ease-in-out infinite alternate}
+.win-core{fill:rgba(104,211,145,.3)}
+@keyframes winpulse{from{opacity:.55}to{opacity:1}}
+.wave{stroke:#1c2940;stroke-width:1;opacity:.8;fill:none}
+
+/* мини-карта */
+.misl{fill:#15212f;stroke:#28374e;stroke-width:1}
+.mname{font-size:9px;fill:#9fb0c8}
+.mc{fill:#7a4040}
+.pulse{fill:none;stroke:#68d391;stroke-width:1.5}
+.pdot{fill:#68d391}
+.route{fill:none;stroke:rgba(104,211,145,.3);stroke-width:1.2;stroke-dasharray:3 4}
+.shipdot{fill:#3f5470}
+
+/* барометр */
+.rz{fill:none;stroke:#f56565;stroke-width:7;stroke-linecap:round;opacity:.9}
+.glass{fill:none;stroke:rgba(255,255,255,.07);stroke-width:2}
+.needle{stroke:#e8a95a;stroke-width:3;stroke-linecap:round}
+.bnum{font-size:27px;font-weight:700;fill:#f0e68c}
+.bsub{font-size:10.5px;fill:#8f9bb0;letter-spacing:.8px}
+
+/* сейсмограф */
+.tape{fill:#0a111c;stroke:#1d2738}
+.grid line{stroke:rgba(120,140,172,.13);stroke-width:1}
+.axis{stroke:rgba(120,140,172,.25);stroke-width:1;stroke-dasharray:2 3}
+.trace{fill:none;stroke:#f0e68c;stroke-width:1.4;filter:drop-shadow(0 0 3px rgba(240,230,140,.45))}
+.trace-move{animation:tapeMove 12s linear infinite}
+@keyframes tapeMove{from{transform:translateX(0)}to{transform:translateX(-150px)}}
+.seis-notes{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.note{font-size:11px;color:#a9b6c8;display:flex;align-items:center;gap:7px}
+.caption{text-align:center;font-size:11px;color:#a9b6c8;margin-top:2px}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.d-red{background:#f56565}.d-copper{background:#c98a3d}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header>
+    <div class="tb">
+      <h1>Штормовой Фронт</h1>
+      <div class="status">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+    </div>
+    <div class="chips">
+      <div class="chip"><span class="chip-l">тучи P1</span><span class="chip-n n-red">2</span></div>
+      <div class="chip"><span class="chip-l">дней до шторма</span><span class="chip-n n-amber">2</span></div>
+      <div class="chip"><span class="chip-l">сейсмо-трясок</span><span class="chip-n n-copper">2</span></div>
+      <div class="chip"><span class="chip-l">зелёных окон</span><span class="chip-n n-green">2</span></div>
+    </div>
+    <a class="home" href="index.html">⌂</a>
+  </header>
+
+  <main>
+    <section class="sky-card">
+      <svg viewBox="0 0 840 446" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0e1826"/>
+            <stop offset="1" stop-color="#070c13"/>
+          </linearGradient>
+          <radialGradient id="winG">
+            <stop offset="0" stop-color="#68d391" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#68d391" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <g class="stars">
+          <circle cx="64" cy="30" r="1"/><circle cx="156" cy="52" r="1.2"/><circle cx="332" cy="24" r="1"/>
+          <circle cx="522" cy="42" r="1.1"/><circle cx="702" cy="26" r="1"/><circle cx="802" cy="58" r="1"/>
+        </g>
+
+        <text class="wind-tag" x="24" y="50">ветер откликов</text>
+        <path class="wind" style="animation-duration:12s" d="M0,66 C210,46 430,88 820,60"/>
+        <path class="wind-arrow" d="M818,52 L834,60 L818,68 Z"/>
+        <path class="wind" style="animation-duration:17s" d="M0,272 C230,250 500,292 820,262"/>
+        <path class="wind-arrow" d="M818,254 L834,262 L818,270 Z"/>
+
+        <rect x="0" y="346" width="840" height="100" fill="url(#seaG)"/>
+        <line x1="0" y1="346" x2="840" y2="346" stroke="#2a3854" stroke-width="1" opacity=".55"/>
+        <path class="wave" d="M60,388 H210"/><path class="wave" d="M300,404 H470"/><path class="wave" d="M600,392 H760"/>
+
+        <path class="isl" d="M96,346 L96,322 Q130,300 168,306 Q204,312 224,330 L232,346 Z"/>
+        <path class="isl" d="M356,346 L362,318 Q392,296 428,304 Q460,310 478,334 L484,346 Z"/>
+        <path class="isl" d="M556,346 L560,324 Q588,306 622,312 Q656,318 676,336 L682,346 Z"/>
+        <path class="isl" d="M716,346 L722,326 Q748,312 778,318 Q806,324 824,340 L828,346 Z"/>
+        <circle class="lamp" cx="600" cy="330" r="1.8"/><circle class="lamp" cx="614" cy="326" r="1.8"/><circle class="lamp" cx="632" cy="332" r="1.8"/>
+        <circle class="lamp-g" cx="750" cy="332" r="1.8"/><circle class="lamp-g" cx="766" cy="336" r="1.8"/>
+        <text class="iname" x="164" y="366" text-anchor="middle">Секреты</text>
+        <text class="iname" x="420" y="366" text-anchor="middle">8765</text>
+        <text class="iname" x="620" y="366" text-anchor="middle">Верфь</text>
+        <text class="iname" x="772" y="366" text-anchor="middle">Kwork-берег</text>
+
+        <g class="nc" transform="translate(80,66) scale(1.15)">
+          <ellipse class="nce" cx="0" cy="-6" rx="40" ry="16"/><ellipse class="nce" cx="-30" cy="6" rx="30" ry="12"/><ellipse class="nce" cx="32" cy="4" rx="32" ry="13"/>
+        </g>
+        <g class="nc" transform="translate(314,208)">
+          <ellipse class="nce" cx="0" cy="-5" rx="30" ry="12"/><ellipse class="nce" cx="-24" cy="4" rx="22" ry="9"/><ellipse class="nce" cx="24" cy="3" rx="24" ry="10"/>
+        </g>
+        <g class="nc" transform="translate(742,96) scale(.85)">
+          <ellipse class="nce" cx="0" cy="-5" rx="30" ry="12"/><ellipse class="nce" cx="-24" cy="4" rx="22" ry="9"/><ellipse class="nce" cx="24" cy="3" rx="24" ry="10"/>
+        </g>
+        <g class="nc" transform="translate(768,236) scale(.6)">
+          <ellipse class="nce" cx="0" cy="-5" rx="30" ry="12"/><ellipse class="nce" cx="-24" cy="4" rx="22" ry="9"/><ellipse class="nce" cx="24" cy="3" rx="24" ry="10"/>
+        </g>
+
+        <g class="obj" data-object="cloud1">
+          <g transform="translate(178,148)">
+            <g class="drift" style="animation-duration:17s">
+              <ellipse class="cunder" cx="0" cy="20" rx="66" ry="13"/>
+              <ellipse class="cbase" cx="-52" cy="8" rx="48" ry="20"/>
+              <ellipse class="cbase" cx="50" cy="10" rx="52" ry="22"/>
+              <ellipse class="ctop" cx="0" cy="-6" rx="58" ry="25"/>
+              <ellipse class="ctop" cx="-24" cy="-20" rx="34" ry="17"/>
+              <ellipse class="ctop" cx="30" cy="-16" rx="32" ry="15"/>
+              <g class="rain">
+                <line x1="-46" y1="26" x2="-52" y2="42"/>
+                <line x1="-18" y1="30" x2="-24" y2="46"/>
+                <line x1="12" y1="30" x2="6" y2="46"/>
+                <line x1="42" y1="26" x2="36" y2="42"/>
+              </g>
+              <path id="b1" class="bolt" d="M4,-8 L-8,10 L0,10 L-8,36 L12,14 L2,14 L12,-8 Z"/>
+            </g>
+            <circle class="ring" r="100" cy="-6"/>
+            <circle class="hit" r="100" cy="-6"/>
+            <text class="tag t-red" y="62" text-anchor="middle">Туча P1 · Секреты</text>
+          </g>
+        </g>
+
+        <g class="obj" data-object="cloud2">
+          <g transform="translate(438,122)">
+            <g class="drift" style="animation-duration:22s">
+              <ellipse class="cunder" cx="0" cy="18" rx="58" ry="12"/>
+              <ellipse class="cbase" cx="-44" cy="6" rx="42" ry="18"/>
+              <ellipse class="cbase" cx="44" cy="8" rx="44" ry="19"/>
+              <ellipse class="ctop" cx="0" cy="-8" rx="50" ry="22"/>
+              <ellipse class="ctop" cx="-22" cy="-20" rx="28" ry="14"/>
+              <ellipse class="ctop" cx="26" cy="-16" rx="26" ry="13"/>
+              <g class="rain">
+                <line x1="-36" y1="24" x2="-42" y2="40"/>
+                <line x1="-8" y1="28" x2="-14" y2="44"/>
+                <line x1="22" y1="28" x2="16" y2="44"/>
+                <line x1="46" y1="24" x2="40" y2="40"/>
+              </g>
+              <path id="b2" class="bolt" d="M-4,-6 L8,12 L0,12 L10,38 L-12,16 L-2,16 L-12,-6 Z"/>
+            </g>
+            <circle class="ring" r="92" cy="-4"/>
+            <circle class="hit" r="92" cy="-4"/>
+            <text class="tag t-red" y="60" text-anchor="middle">Туча P1 · 8765</text>
+          </g>
+        </g>
+
+        <g class="obj" data-object="window1">
+          <g transform="translate(632,148)">
+            <path class="beam" d="M-10,12 L10,12 L36,198 L-14,198 Z"/>
+            <ellipse class="win-glow" cx="0" cy="0" rx="54" ry="20"/>
+            <ellipse class="win-core" cx="0" cy="-2" rx="28" ry="11"/>
+            <circle class="ring" r="56"/>
+            <circle class="hit" r="56"/>
+            <text class="tag t-green" y="-32" text-anchor="middle">Зелёное окно · превью</text>
+          </g>
+        </g>
+      </svg>
+      <div class="skyflash"></div>
+    </section>
+
+    <aside class="panel">
+      <div class="p-kicker" id="p-kicker"></div>
+      <h2 id="p-title"></h2>
+      <div id="p-rows"></div>
+      <div class="holmes-block">
+        <div class="holmes-name">Холмс · смотритель-синоптик</div>
+        <div class="holmes-quote" id="p-holmes"></div>
+      </div>
+    </aside>
+  </main>
+
+  <section class="deck">
+    <div class="card card-map">
+      <div class="card-head"><h3>Архипелаг · карта туч</h3><span class="head-val v-red">2 P1</span></div>
+      <svg viewBox="0 0 340 150" preserveAspectRatio="xMidYMid meet">
+        <path class="route" d="M206,118 C236,106 250,128 278,112"/>
+        <circle class="shipdot" cx="232" cy="114" r="1.6"/><circle class="shipdot" cx="254" cy="120" r="1.6"/>
+        <path class="misl" d="M30,76 Q40,54 78,56 Q110,58 122,74 Q128,86 114,90 L44,92 Q28,88 30,76 Z"/>
+        <path class="misl" d="M146,54 Q156,34 192,36 Q222,38 234,52 Q240,62 226,66 L160,68 Q142,64 146,54 Z"/>
+        <path class="misl" d="M112,120 Q122,102 158,104 Q190,106 202,118 Q208,128 194,132 L126,134 Q108,130 112,120 Z"/>
+        <path class="misl" d="M244,116 Q252,100 282,102 Q308,104 318,114 Q324,122 312,126 L256,128 Q240,126 244,116 Z"/>
+        <text class="mname" x="78" y="77" text-anchor="middle">Секреты</text>
+        <text class="mname" x="190" y="55" text-anchor="middle">8765</text>
+        <text class="mname" x="157" y="123" text-anchor="middle">Верфь</text>
+        <text class="mname" x="281" y="119" text-anchor="middle">Kwork-берег</text>
+        <g class="obj" data-object="cloud1" transform="translate(78,34)">
+          <circle class="mc" cx="-7" cy="2" r="6"/><circle class="mc" cx="7" cy="3" r="7"/><circle class="mc" cx="0" cy="-4" r="8"/>
+          <circle class="ring" r="18"/><circle class="hit" r="18"/>
+        </g>
+        <g class="obj" data-object="cloud2" transform="translate(190,20) scale(.9)">
+          <circle class="mc" cx="-7" cy="2" r="6"/><circle class="mc" cx="7" cy="3" r="7"/><circle class="mc" cx="0" cy="-4" r="8"/>
+          <circle class="ring" r="18"/><circle class="hit" r="18"/>
+        </g>
+        <g class="obj" data-object="window1" transform="translate(157,94)">
+          <circle class="pulse" r="4">
+            <animate attributeName="r" values="3;13" dur="2.8s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".85;0" dur="2.8s" repeatCount="indefinite"/>
+          </circle>
+          <circle class="pdot" r="3"/>
+          <circle class="ring" r="15"/><circle class="hit" r="15"/>
+        </g>
+        <g class="obj" data-object="window2" transform="translate(281,90)">
+          <circle class="pulse" r="4">
+            <animate attributeName="r" values="3;13" dur="2.8s" begin="-1.4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".85;0" dur="2.8s" begin="-1.4s" repeatCount="indefinite"/>
+          </circle>
+          <circle class="pdot" r="3"/>
+          <circle class="ring" r="15"/><circle class="hit" r="15"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="card card-baro obj-card" data-object="baro">
+      <div class="card-head"><h3>Барометр дедлайнов</h3><span class="head-val v-amber">2 дня</span></div>
+      <svg viewBox="0 0 150 150" preserveAspectRatio="xMidYMid meet">
+        <circle cx="75" cy="78" r="70" fill="#0f1724"/>
+        <circle cx="75" cy="78" r="64" fill="none" stroke="#c98a3d" stroke-width="5"/>
+        <path class="rz" d="M126.2,53 A57,57 0 0 1 124.4,106.5"/>
+        <g id="bticks"></g>
+        <path class="glass" d="M30,48 A50,50 0 0 1 75,26"/>
+        <g transform="rotate(51 75 78)">
+          <animateTransform attributeName="transform" type="rotate" values="49 75 78;54 75 78;49 75 78" dur="7s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>
+          <line class="needle" x1="75" y1="86" x2="75" y2="36"/>
+          <circle cx="75" cy="78" r="5" fill="#c98a3d"/>
+          <circle cx="75" cy="78" r="2" fill="#101826"/>
+        </g>
+        <text class="bnum" x="75" y="118" text-anchor="middle">2</text>
+        <text class="bsub" x="75" y="134" text-anchor="middle">дня</text>
+      </svg>
+      <div class="caption">кампания $300–600 · окно 09–10.11</div>
+    </div>
+
+    <div class="card card-seis obj-card" data-object="seismo">
+      <div class="card-head"><h3>Сейсмограф аномалий</h3><span class="head-val v-amber">лёгкая тряска</span></div>
+      <svg viewBox="0 0 300 112" preserveAspectRatio="none">
+        <rect class="tape" x="6" y="12" width="288" height="76"/>
+        <g class="grid">
+          <line x1="54" y1="12" x2="54" y2="88"/>
+          <line x1="102" y1="12" x2="102" y2="88"/>
+          <line x1="150" y1="12" x2="150" y2="88"/>
+          <line x1="198" y1="12" x2="198" y2="88"/>
+          <line x1="246" y1="12" x2="246" y2="88"/>
+        </g>
+        <line class="axis" x1="6" y1="50" x2="294" y2="50"/>
+        <g class="trace-move"><polyline id="trace" class="trace" points=""/></g>
+      </svg>
+      <div class="seis-notes">
+        <div class="note"><i class="dot d-red"></i>untracked-файлы в репо: 164 · норма 69</div>
+        <div class="note"><i class="dot d-copper"></i>флот-превью верфи в море: 13 миров строятся</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  var OBJECTS = {
+    summary: {
+      kicker: 'сводка синоптика',
+      title: 'Штормовой фронт над поместьем',
+      rows: [
+        ['Синоптик', 'Холмс — детектив Platform, смотритель поместья'],
+        ['Сейчас на небе', '2 тучи P1 · 2 толчка · 2 зелёных окна'],
+        ['Прогноз на завтра', 'влажность дедлайнов растёт — ветер откликов дует в плюс'],
+        ['Правило мира', 'прогноз, не автодействие: фронт показывает, за тобой ходишь ты']
+      ],
+      holmes: 'Я не разгоняю тучи. Я показываю, над чем они стоят.'
+    },
+    cloud1: {
+      kicker: 'туча P1 · остров «Секреты»',
+      title: 'Туча «Секреты»',
+      rows: [
+        ['Зона поражения', 'ротация ключей снята с приоритета'],
+        ['Вероятность грозы', 'высокая · P1', 'p1'],
+        ['COVEREIGN делает', 'вернуть ротацию ключей в очередь и назначить день'],
+        ['COVEREIGN не делает', 'тучу не рассеивать молча и не ставить галочку без ротации', 'dont']
+      ],
+      holmes: 'Туча не рассеялась — её отвернули. Перенесли взгляд, не убрали тучу.'
+    },
+    cloud2: {
+      kicker: 'туча P1 · остров «8765»',
+      title: 'Туча «8765»',
+      rows: [
+        ['Зона поражения', 'Command Center: /api/tokens/usage ждёт рестарта сервера'],
+        ['Вероятность грозы', 'высокая · P1', 'p1'],
+        ['COVEREIGN делает', 'один рестарт сервера — и живой отчёт по токенам'],
+        ['COVEREIGN не делает', 'не автодействие: не править код на живом порту наугад', 'dont']
+      ],
+      holmes: 'Дождь застрял в туче. Рестарт — гром, который его прольёт.'
+    },
+    baro: {
+      kicker: 'прибор · давление сроков',
+      title: 'Барометр дедлайнов',
+      rows: [
+        ['Зона поражения', 'денежная кампания $300–600'],
+        ['До шторма', '2 дня · окно 09–10.11', 'warn'],
+        ['Давление', 'низкое, падает — стрелка близко к красной зоне'],
+        ['COVEREIGN делает', 'сегодня — отклики и шаги кампании, до темноты'],
+        ['COVEREIGN не делает', 'не автодействие: фронт сам отклики не отправит', 'dont']
+      ],
+      holmes: 'Давление падает. Это не тревога — это срок.'
+    },
+    seismo: {
+      kicker: 'прибор · толчки',
+      title: 'Сейсмограф аномалий',
+      rows: [
+        ['Зона поражения', 'репо 164: untracked-файлы 69 → 164'],
+        ['Второй толчок', 'флот-превью верфи в море — 13 миров строятся'],
+        ['Сила', 'лёгкая тряска · 2 толчка за смену'],
+        ['COVEREIGN делает', 'разложить untracked по коммитам или в .gitignore'],
+        ['COVEREIGN не делает', 'не автодействие: не сносить файлы пачкой', 'dont']
+      ],
+      holmes: 'Тряска слабая, но земля что-то услышала.'
+    },
+    window1: {
+      kicker: 'зелёное окно · превью',
+      title: 'Окно превью',
+      rows: [
+        ['Зона', 'верфь: спущено 13 превью миров'],
+        ['Инциденты', 'ноль за всю серию'],
+        ['Вероятность грозы', 'нулевая', 'ok'],
+        ['COVEREIGN делает', 'пользуется тишиной: строит и спускает новые превью'],
+        ['COVEREIGN не делает', 'не автодействие: не заполнять тишину лишней тревогой', 'dont']
+      ],
+      holmes: 'Пока окно открыто — проветриваем поместье.'
+    },
+    window2: {
+      kicker: 'зелёное окно · Kwork',
+      title: 'Окно Kwork',
+      rows: [
+        ['Зона', 'Kwork-берег: аккаунт жив'],
+        ['Ветер откликов', 'дует в плюс', 'ok'],
+        ['Вероятность грозы', 'нулевая', 'ok'],
+        ['COVEREIGN делает', 'держит отклики в первом ряду дня'],
+        ['COVEREIGN не делает', 'не автодействие: аккаунт не остаётся без присмотра', 'dont']
+      ],
+      holmes: 'Аккаунт дышит ровно. Пусть так и держится.'
+    }
+  };
+
+  function renderPanel(id){
+    var d = OBJECTS[id];
+    if(!d){ return; }
+    document.getElementById('p-kicker').textContent = d.kicker;
+    document.getElementById('p-title').textContent = d.title;
+    var rows = document.getElementById('p-rows');
+    while(rows.firstChild){ rows.removeChild(rows.firstChild); }
+    d.rows.forEach(function(r){
+      var row = document.createElement('div');
+      row.className = 'row';
+      var k = document.createElement('div');
+      k.className = 'row-k';
+      k.textContent = r[0];
+      var v = document.createElement('div');
+      v.className = 'row-v' + (r[2] ? ' ' + r[2] : '');
+      v.textContent = r[1];
+      row.appendChild(k);
+      row.appendChild(v);
+      rows.appendChild(row);
+    });
+    document.getElementById('p-holmes').textContent = '«' + d.holmes + '»';
+    var cur = document.querySelectorAll('.on[data-object]');
+    for(var i = 0; i < cur.length; i++){ cur[i].classList.remove('on'); }
+    var sel = document.querySelectorAll('[data-object="' + id + '"]');
+    for(var j = 0; j < sel.length; j++){ sel[j].classList.add('on'); }
+  }
+
+  var els = document.querySelectorAll('[data-object]');
+  for(var i = 0; i < els.length; i++){
+    els[i].addEventListener('click', function(){
+      renderPanel(this.getAttribute('data-object'));
+    });
+  }
+  renderPanel('summary');
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var bt = document.getElementById('bticks');
+  for(var t = 0; t <= 8; t++){
+    var ang = (-120 + t * 30) * Math.PI / 180;
+    var s = Math.sin(ang), c = Math.cos(ang);
+    var rIn = (t % 2 === 0) ? 45 : 48.5;
+    var l = document.createElementNS(NS, 'line');
+    l.setAttribute('x1', (75 + 53 * s).toFixed(1));
+    l.setAttribute('y1', (78 - 53 * c).toFixed(1));
+    l.setAttribute('x2', (75 + rIn * s).toFixed(1));
+    l.setAttribute('y2', (78 - rIn * c).toFixed(1));
+    l.setAttribute('stroke', t >= 7 ? '#f56565' : '#5a6880');
+    l.setAttribute('stroke-width', (t % 2 === 0) ? '1.6' : '1');
+    bt.appendChild(l);
+  }
+
+  function spike(p, cc){
+    var d = Math.abs(p - cc);
+    return d > 9 ? 0 : (9 - d) * (9 - d) * 0.3;
+  }
+  var pts = [];
+  for(var x = 0; x <= 456; x += 6){
+    var per = x % 150;
+    var y = 50 + Math.sin(x / 9) * 1.3;
+    if((x / 6) % 7 === 0){ y += 1.7; }
+    if((x / 6) % 11 === 3){ y -= 1.5; }
+    y -= spike(per, 38) + spike(per, 104);
+    pts.push(x + ',' + y.toFixed(1));
+  }
+  document.getElementById('trace').setAttribute('points', pts.join(' '));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ганзейский берег · Platform Evo</title>
+<style>
+  :root{--amber:#f6ad55;--gold:#ecc94b;--fire:#f56565;--paper:#e8dcc4;--sea:#0a1420}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{background:#081220;color:var(--paper);font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+  header{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;padding:10px 20px;border-bottom:1px solid rgba(246,173,85,.18);background:linear-gradient(180deg,#0c1727,#0a1420)}
+  .tblock h1{margin:0;font-size:25px;line-height:1.1;font-weight:600;color:var(--amber);letter-spacing:.01em}
+  .tblock .sub{margin-top:3px;font-size:10.5px;letter-spacing:.14em;color:#8fa3ba;text-transform:uppercase}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+  .chip{display:flex;align-items:baseline;gap:7px;border:1px solid rgba(143,163,186,.28);border-radius:999px;padding:4px 12px 5px;font-size:11px;color:#8fa3ba;white-space:nowrap}
+  .chip b{font-size:13.5px;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
+  .home{margin-left:6px;width:38px;height:38px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid rgba(246,173,85,.45);color:var(--paper);text-decoration:none;font-size:17px;line-height:1;background:rgba(246,173,85,.08);transition:background .15s}
+  .home:hover{background:rgba(246,173,85,.22)}
+  .stage{position:relative;flex:1;min-height:0}
+  .stage svg{position:absolute;inset:0;width:100%;height:100%;display:block;font-family:inherit}
+  .lbl{font-size:12px;fill:#a9bacc;letter-spacing:.05em}
+  .lbl2{font-size:11px;fill:#8fa3ba;letter-spacing:.06em}
+  .obj{cursor:pointer}
+  .obj:hover{filter:brightness(1.3)}
+  .obj.active{filter:brightness(1.35) drop-shadow(0 0 6px rgba(246,173,85,.55))}
+  @keyframes pulseRed{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.75;transform:scale(1.18)}}
+  .glow-red{transform-box:fill-box;transform-origin:center;animation:pulseRed 2.2s ease-in-out infinite}
+  @keyframes pulseSoft{0%,100%{opacity:.35}50%{opacity:.7}}
+  .glow-soft{transform-box:fill-box;transform-origin:center;animation:pulseSoft 3.4s ease-in-out infinite}
+  @keyframes warn{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.85;transform:scale(1.25)}}
+  .glow-warn{transform-box:fill-box;transform-origin:center;animation:warn 1.6s ease-in-out infinite}
+  @keyframes dashflow{to{stroke-dashoffset:-72}}
+  .windline{stroke-dasharray:14 10;animation:dashflow 3s linear infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .bob{animation:bob 3.8s ease-in-out infinite}
+  @keyframes beam{0%,100%{opacity:.55}50%{opacity:1}}
+  .beam{animation:beam 5s ease-in-out infinite}
+  @keyframes shim{0%,100%{opacity:.12}50%{opacity:.4}}
+  .shimmer{animation:shim 3.2s ease-in-out infinite}
+  /* --- слой глубины и живости (v2) --- */
+  .stage{perspective:1500px;perspective-origin:50% 40%;overflow:hidden}
+  .scene{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+  .galleon{position:absolute;left:0;top:0;width:98px;filter:drop-shadow(0 7px 9px rgba(0,0,0,.55));pointer-events:none;will-change:transform}
+  .gshadow{position:absolute;left:0;top:0;width:84px;height:13px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.5),rgba(0,0,0,0));pointer-events:none;will-change:transform}
+  .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,rgba(0,0,0,0) 55%,rgba(3,7,12,.5) 100%)}
+  @keyframes gullfly{from{transform:translateX(-90px)}to{transform:translateX(1370px)}}
+  .gull{animation:gullfly 44s linear infinite}
+  .gull2{animation-duration:63s;animation-delay:-31s}
+  @keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.5)}}
+  .gullw{transform-box:fill-box;transform-origin:center;animation:flap .65s ease-in-out infinite}
+  .gull2 .gullw{animation-duration:.8s}
+  @keyframes sweep{0%,100%{transform:rotate(-2.2deg)}50%{transform:rotate(2.6deg)}}
+  .sweep{transform-box:view-box;transform-origin:55px 444px;animation:sweep 9s ease-in-out infinite}
+  @keyframes cloudDrift{from{transform:translateX(0)}to{transform:translateX(95px)}}
+  .drift-a{transform-box:fill-box;animation:cloudDrift 130s linear infinite alternate}
+  .drift-b{transform-box:fill-box;animation:cloudDrift 95s linear infinite alternate-reverse}
+  @keyframes sunBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+  .sunbreathe{transform-box:fill-box;transform-origin:center;animation:sunBreath 7s ease-in-out infinite}
+  @keyframes puff{0%{opacity:.45;transform:translate(0,0) scale(.55)}100%{opacity:0;transform:translate(-16px,-36px) scale(1.6)}}
+  .puff{transform-box:fill-box;transform-origin:center;animation:puff 4.2s linear infinite}
+  @keyframes nearDrift{from{transform:translateX(0)}to{transform:translateX(-320px)}}
+  .nearwave{animation:nearDrift 26s linear infinite}
+  .nearwave.slow{animation-duration:41s;animation-direction:reverse}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+  .panel{position:absolute;right:16px;bottom:16px;width:324px;max-width:calc(100vw - 32px);background:var(--paper);color:#241c0e;border-radius:10px;padding:14px 16px 13px;box-shadow:0 14px 36px rgba(0,0,0,.55);border:1px solid rgba(236,201,75,.55)}
+  .panel .kind{font-size:10px;letter-spacing:.16em;color:#7a4e20;text-transform:uppercase;font-weight:600}
+  .panel h2{margin:3px 0 2px;font-size:17.5px;line-height:1.2;color:#1e1708}
+  .panel .pstatus{font-size:12px;color:#5d4c30;margin-bottom:8px}
+  .rows .row{display:flex;justify-content:space-between;gap:14px;padding:4px 0;border-bottom:1px dashed rgba(93,76,48,.3);font-size:12.5px}
+  .rows .row span{color:#5d4c30}
+  .rows .row b{font-weight:600;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:#241c0e}
+  .panel .phrase{margin:9px 0 0;padding:2px 0 2px 10px;border-left:3px solid var(--amber);font-size:13px;font-style:italic;color:#3a2c14}
+  .panel.urgent{border-color:rgba(245,101,101,.75)}
+  .panel.urgent .phrase{border-left-color:var(--fire);color:#8f2f2f}
+  .panel.urgent .kind{color:#b23c3c}
+</style>
+</head>
+<body>
+<header>
+  <div class="tblock">
+    <h1>Ганзейский берег</h1>
+    <div class="sub">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+  </div>
+  <div class="chips">
+    <div class="chip"><span>портов</span><b>5</b></div>
+    <div class="chip"><span>живых заказов</span><b>2</b></div>
+    <div class="chip"><span>откликов</span><b>10</b></div>
+    <div class="chip"><span>дедлайн</span><b>2 дня</b></div>
+  </div>
+  <a class="home" href="index.html" title="Каталог вариаций">⌂</a>
+</header>
+
+<div class="stage">
+<div class="scene" id="scene">
+<svg viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-label="Ганзейский берег: порты, флотилия откликов, крейсер вывода денег">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#081019"/><stop offset=".5" stop-color="#142840"/>
+      <stop offset=".78" stop-color="#31435e"/><stop offset=".92" stop-color="#7a523c"/>
+      <stop offset="1" stop-color="#c17a42"/>
+    </linearGradient>
+    <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c3046"/><stop offset=".15" stop-color="#16293e"/>
+      <stop offset="1" stop-color="#0a1523"/>
+    </linearGradient>
+    <linearGradient id="landGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#102035"/><stop offset="1" stop-color="#081220"/>
+    </linearGradient>
+    <radialGradient id="sunHalo"><stop offset="0" stop-color="#f6ad55" stop-opacity=".4"/><stop offset=".6" stop-color="#f6ad55" stop-opacity=".12"/><stop offset="1" stop-color="#f6ad55" stop-opacity="0"/></radialGradient>
+    <radialGradient id="redGlow"><stop offset="0" stop-color="#f56565" stop-opacity=".55"/><stop offset=".6" stop-color="#f56565" stop-opacity=".16"/><stop offset="1" stop-color="#f56565" stop-opacity="0"/></radialGradient>
+    <radialGradient id="softGlow"><stop offset="0" stop-color="#ecc94b" stop-opacity=".45"/><stop offset="1" stop-color="#ecc94b" stop-opacity="0"/></radialGradient>
+    <radialGradient id="amberGlow"><stop offset="0" stop-color="#ecc94b" stop-opacity=".6"/><stop offset="1" stop-color="#ecc94b" stop-opacity="0"/></radialGradient>
+    <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f6ad55" stop-opacity=".16"/><stop offset="1" stop-color="#f6ad55" stop-opacity="0"/>
+    </linearGradient>
+    <g id="ship">
+      <path d="M -20 0 Q 0 9 20 0 L 15 -5 L -15 -5 Z" fill="#0e1b2a" stroke="currentColor" stroke-width=".8"/>
+      <line x1="0" y1="-5" x2="0" y2="-31" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M 1.5 -29 L 19 -8 L 1.5 -8 Z" fill="currentColor"/>
+      <path d="M -1.5 -25 L -13 -8 L -1.5 -8 Z" fill="currentColor" opacity=".75"/>
+      <path d="M 0 -31 L 9 -28.6 L 0 -26.4 Z" fill="currentColor"/>
+    </g>
+  </defs>
+
+  <!-- небо и закат -->
+  <g id="L-sky">
+  <rect x="0" y="0" width="1280" height="295" fill="url(#skyGrad)"/>
+  <ellipse cx="1000" cy="252" rx="200" ry="60" fill="url(#sunHalo)" class="sunbreathe"/>
+  <circle cx="1000" cy="248" r="26" fill="#f0a050"/>
+  <circle cx="1000" cy="248" r="15" fill="#ffd9a0" opacity=".95"/>
+  <ellipse cx="200" cy="120" rx="95" ry="13" fill="#16283e" opacity=".85" class="drift-a"/>
+  <ellipse cx="430" cy="150" rx="115" ry="12" fill="#16283e" opacity=".65" class="drift-b"/>
+  <ellipse cx="700" cy="100" rx="85" ry="10" fill="#16283e" opacity=".55" class="drift-a" style="animation-duration:150s"/>
+  <ellipse cx="920" cy="180" rx="75" ry="9" fill="#5a3c30" opacity=".5"/>
+  <ellipse cx="1120" cy="140" rx="95" ry="11" fill="#4a3428" opacity=".5" class="drift-b" style="animation-duration:110s"/>
+  <ellipse cx="180" cy="222" rx="70" ry="8" fill="#16283e" opacity=".6"/>
+  <path d="M 320 214 q 8 -8 16 0 q 8 -8 16 0" stroke="#3d5a78" stroke-width="1.5" fill="none" opacity=".8"/>
+  <path d="M 372 196 q 7 -7 14 0 q 7 -7 14 0" stroke="#3d5a78" stroke-width="1.5" fill="none" opacity=".8"/>
+
+  <!-- ветер рынка -->
+  <g class="obj" data-id="wind">
+    <rect x="80" y="30" width="820" height="120" fill="transparent"/>
+    <path class="windline" d="M 90 84 C 220 64 340 100 470 84 S 690 66 800 88" stroke="#7fa0bf" stroke-width="1.8" fill="none" opacity=".55"/>
+    <path class="windline" style="animation-delay:-1s" d="M 130 132 C 260 112 390 148 530 130 S 740 114 850 136" stroke="#7fa0bf" stroke-width="1.8" fill="none" opacity=".5"/>
+    <path class="windline" style="animation-delay:-2s" d="M 580 52 C 680 40 780 62 880 50" stroke="#7fa0bf" stroke-width="1.8" fill="none" opacity=".5"/>
+    <polygon points="800,88 784,82 788,94" fill="#7fa0bf" opacity=".55"/>
+    <polygon points="850,136 834,130 838,142" fill="#7fa0bf" opacity=".5"/>
+    <polygon points="880,50 866,44 868,56" fill="#7fa0bf" opacity=".5"/>
+    <text x="445" y="34" text-anchor="middle" class="lbl2">Ветер рынка</text>
+  </g>
+  <!-- чайки в полёте -->
+  <g class="gull"><path class="gullw" d="M 250 236 q 9 -9 18 0 q 9 -9 18 0" stroke="#3d5a78" stroke-width="1.6" fill="none" opacity=".85"/></g>
+  <g class="gull gull2"><path class="gullw" d="M 760 178 q 7 -7 14 0 q 7 -7 14 0" stroke="#3d5a78" stroke-width="1.4" fill="none" opacity=".7"/></g>
+  </g>
+
+  <!-- море -->
+  <g id="L-sea">
+  <rect x="0" y="290" width="1280" height="290" fill="url(#seaGrad)"/>
+  <rect x="0" y="288" width="1280" height="2" fill="#f6ad55" opacity=".2"/>
+  <ellipse cx="1000" cy="298" rx="210" ry="12" fill="#f6ad55" opacity=".14"/>
+  <ellipse cx="1000" cy="312" rx="130" ry="7" fill="#f6ad55" opacity=".1"/>
+  <line x1="940" y1="326" x2="1010" y2="326" stroke="#f6ad55" stroke-width="2" class="shimmer"/>
+  <line x1="975" y1="340" x2="1075" y2="340" stroke="#f6ad55" stroke-width="2" class="shimmer" style="animation-delay:-.8s"/>
+  <line x1="930" y1="356" x2="985" y2="356" stroke="#f6ad55" stroke-width="2" class="shimmer" style="animation-delay:-1.6s"/>
+  <line x1="985" y1="372" x2="1065" y2="372" stroke="#f6ad55" stroke-width="2" class="shimmer" style="animation-delay:-2.4s"/>
+  <line x1="950" y1="390" x2="1010" y2="390" stroke="#f6ad55" stroke-width="2" class="shimmer" style="animation-delay:-1.2s"/>
+  <path d="M 100 352 q 24 -7 48 0 t 48 0 t 48 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 620 346 q 24 -7 48 0 t 48 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 1040 350 q 24 -7 48 0 t 48 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 180 410 q 28 -8 56 0 t 56 0 t 56 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 700 414 q 28 -8 56 0 t 56 0 t 56 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 1080 412 q 28 -8 56 0 t 56 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 120 480 q 30 -9 60 0 t 60 0 t 60 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 640 486 q 30 -9 60 0 t 60 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 300 530 q 26 -8 52 0 t 52 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M 430 500 q 26 -8 52 0 t 52 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+  </g>
+
+  <!-- берег и набережная -->
+  <g id="L-shore">
+
+  <!-- луч маяка -->
+  <g class="sweep">
+    <polygon class="beam" points="66,444 1240,376 1240,434" fill="url(#beamGrad)"/>
+  </g>
+
+  <path d="M 0 556 C 140 548 300 566 460 558 C 620 550 760 566 920 558 C 1060 551 1180 562 1280 556 L 1280 720 L 0 720 Z" fill="url(#landGrad)"/>
+  <path d="M 0 556 C 140 548 300 566 460 558 C 620 550 760 566 920 558 C 1060 551 1180 562 1280 556" stroke="#f6ad55" stroke-width="2" fill="none" opacity=".25"/>
+
+  <!-- пирс с ящиками -->
+  <rect x="852" y="544" width="108" height="8" fill="#1a2c3f" stroke="#2e4a63" stroke-width="1"/>
+  <line x1="862" y1="552" x2="862" y2="582" stroke="#223a52" stroke-width="3"/>
+  <line x1="906" y1="552" x2="906" y2="586" stroke="#223a52" stroke-width="3"/>
+  <line x1="950" y1="552" x2="950" y2="582" stroke="#223a52" stroke-width="3"/>
+  <rect x="880" y="526" width="20" height="18" fill="#1a2c3f" stroke="#2e4a63" stroke-width="1"/>
+  <rect x="902" y="532" width="18" height="12" fill="#1a2c3f" stroke="#2e4a63" stroke-width="1"/>
+
+  <!-- швартовные кнехты и фонари -->
+  <rect x="333" y="562" width="12" height="4" fill="#1c2f44"/><rect x="335" y="564" width="8" height="12" fill="#1c2f44"/>
+  <rect x="628" y="562" width="12" height="4" fill="#1c2f44"/><rect x="630" y="564" width="8" height="12" fill="#1c2f44"/>
+  <rect x="838" y="562" width="12" height="4" fill="#1c2f44"/><rect x="840" y="564" width="8" height="12" fill="#1c2f44"/>
+  <rect x="212" y="556" width="2" height="50" fill="#1c2f44"/><circle cx="213" cy="554" r="4" fill="#f6ad55" opacity=".8"/><circle cx="213" cy="554" r="10" fill="url(#softGlow)" class="glow-soft"/>
+  <rect x="504" y="556" width="2" height="50" fill="#1c2f44"/><circle cx="505" cy="554" r="4" fill="#f6ad55" opacity=".8"/><circle cx="505" cy="554" r="10" fill="url(#softGlow)" class="glow-soft" style="animation-delay:-1.5s"/>
+
+  <!-- шлюпки у набережной -->
+  <path d="M 352 562 q 15 10 30 0 l -5 -7 l -20 0 Z" fill="#1a2c3f" stroke="#2e4a63" stroke-width="1"/>
+  <line x1="367" y1="555" x2="367" y2="548" stroke="#2e4a63" stroke-width="1.5"/><circle cx="367" cy="546" r="2.5" fill="#f6ad55" opacity=".85"/><circle cx="367" cy="546" r="7" fill="url(#softGlow)" class="glow-soft" style="animation-delay:-2s"/>
+  <path d="M 490 560 q 14 9 28 0 l -5 -6 l -18 0 Z" fill="#1a2c3f" stroke="#2e4a63" stroke-width="1"/>
+
+  <!-- маяк кампании -->
+  <g class="obj" data-id="lighthouse">
+    <polygon points="34,672 74,672 68,548 40,548" fill="#15273a" stroke="#2e4a63" stroke-width="1.2"/>
+    <polygon points="40,548 68,548 62,462 46,462" fill="#15273a" stroke="#2e4a63" stroke-width="1.2"/>
+    <rect x="38" y="590" width="32" height="10" fill="#e8dcc4" opacity=".75"/>
+    <rect x="42" y="520" width="24" height="10" fill="#e8dcc4" opacity=".75"/>
+    <rect x="42" y="450" width="26" height="12" fill="#1d3044" stroke="#2e4a63" stroke-width="1"/>
+    <circle cx="55" cy="444" r="16" fill="url(#softGlow)" class="glow-soft"/>
+    <rect x="49" y="438" width="12" height="12" fill="#ffd9a0"/>
+    <polygon points="42,438 55,424 68,438" fill="#16293d" stroke="#2e4a63" stroke-width="1"/>
+    <text x="54" y="688" text-anchor="middle" class="lbl">Маяк кампании</text>
+  </g>
+
+  <!-- порт 1: Причал FL.ru -->
+  <g class="obj" data-id="port-flru">
+    <rect x="90" y="540" width="110" height="140" fill="#101f30" stroke="#2e4a63" stroke-width="1.5"/>
+    <polygon points="90,540 90,520 106,520 106,502 122,502 122,485 168,485 168,502 184,502 184,520 200,520 200,540" fill="#16293d" stroke="#2e4a63" stroke-width="1.2"/>
+    <line x1="145" y1="485" x2="145" y2="458" stroke="#2e4a63" stroke-width="2"/>
+    <polygon points="145,458 163,463 145,468" fill="#ecc94b"/>
+    <rect x="172" y="570" width="13" height="18" fill="#f6ad55" opacity=".15"/>
+    <rect x="108" y="610" width="14" height="16" fill="#f6ad55" opacity=".15"/>
+    <rect x="146" y="610" width="14" height="16" fill="#f6ad55" opacity=".15"/>
+    <rect x="172" y="610" width="13" height="16" fill="#f6ad55" opacity=".15"/>
+    <g class="obj" data-id="window-second">
+      <circle cx="153" cy="579" r="12" fill="url(#softGlow)" class="glow-soft"/>
+      <rect x="146" y="570" width="14" height="18" fill="#ecc94b" opacity=".9"/>
+    </g>
+    <g class="obj" data-id="window-main">
+      <circle cx="119" cy="578" r="34" fill="url(#redGlow)" class="glow-red"/>
+      <rect x="108" y="564" width="22" height="28" fill="#f56565"/>
+      <path d="M 119 564 V 592 M 108 578 H 130" stroke="#c24545" stroke-width="1" fill="none"/>
+    </g>
+    <rect x="136" y="642" width="20" height="38" fill="#0b1522" stroke="#2e4a63" stroke-width="1"/>
+    <rect x="132" y="678" width="28" height="4" fill="#1a2c3f"/>
+    <text x="145" y="694" text-anchor="middle" class="lbl">Причал FL.ru</text>
+  </g>
+
+  <!-- порт 2: Квартал Kwork -->
+  <g class="obj" data-id="port-kwork">
+    <rect x="230" y="565" width="100" height="115" fill="#101f30" stroke="#2e4a63" stroke-width="1.5"/>
+    <polygon points="226,565 280,531 334,565" fill="#16293d" stroke="#2e4a63" stroke-width="1.2"/>
+    <rect x="244" y="580" width="15" height="14" fill="#f6ad55" opacity=".15"/>
+    <rect x="270" y="580" width="15" height="14" fill="#f6ad55" opacity=".15"/>
+    <rect x="296" y="580" width="15" height="14" fill="#f6ad55" opacity=".45"/>
+    <rect x="244" y="608" width="15" height="14" fill="#f6ad55" opacity=".15"/>
+    <rect x="270" y="608" width="15" height="14" fill="#f6ad55" opacity=".15"/>
+    <rect x="296" y="608" width="15" height="14" fill="#f6ad55" opacity=".15"/>
+    <rect x="260" y="628" width="36" height="8" fill="#ecc94b" opacity=".45"/>
+    <rect x="268" y="638" width="20" height="42" fill="#0b1522" stroke="#2e4a63" stroke-width="1"/>
+    <text x="280" y="694" text-anchor="middle" class="lbl">Квартал Kwork</text>
+  </g>
+
+  <!-- порт 3: Склад hh.uz -->
+  <g class="obj" data-id="port-hhuz">
+    <rect x="360" y="580" width="135" height="98" fill="#101f30" stroke="#2e4a63" stroke-width="1.5"/>
+    <path d="M 356 580 L 390 560 L 424 580 L 458 560 L 495 580 Z" fill="#16293d" stroke="#2e4a63" stroke-width="1.2"/>
+    <rect x="372" y="594" width="14" height="11" fill="#f6ad55" opacity=".15"/>
+    <rect x="448" y="594" width="14" height="11" fill="#f6ad55" opacity=".15"/>
+    <rect x="395" y="608" width="44" height="70" fill="#0c1927" stroke="#2e4a63" stroke-width="1"/>
+    <path d="M 395 622 H 439 M 395 636 H 439 M 395 650 H 439 M 395 664 H 439" stroke="#1a2f45" stroke-width="1.2"/>
+    <text x="427" y="692" text-anchor="middle" class="lbl">Склад hh.uz</text>
+  </g>
+
+  <!-- порт 4: Пирс OLX -->
+  <g class="obj" data-id="port-olx">
+    <rect x="521" y="564" width="98" height="10" fill="#16293d" stroke="#2e4a63" stroke-width="1"/>
+    <rect x="525" y="574" width="90" height="108" fill="#101f30" stroke="#2e4a63" stroke-width="1.5"/>
+    <rect x="538" y="588" width="14" height="13" fill="#f6ad55" opacity=".15"/>
+    <rect x="560" y="588" width="14" height="13" fill="#f6ad55" opacity=".4"/>
+    <rect x="582" y="588" width="14" height="13" fill="#f6ad55" opacity=".15"/>
+    <rect x="538" y="612" width="14" height="13" fill="#f6ad55" opacity=".15"/>
+    <rect x="560" y="612" width="14" height="13" fill="#f6ad55" opacity=".15"/>
+    <rect x="582" y="612" width="14" height="13" fill="#f6ad55" opacity=".15"/>
+    <polygon points="550,634 582,634 578,626 554,626" fill="#f6ad55" opacity=".35"/>
+    <rect x="556" y="638" width="20" height="44" fill="#0b1522" stroke="#2e4a63" stroke-width="1"/>
+    <text x="570" y="696" text-anchor="middle" class="lbl">Пирс OLX</text>
+  </g>
+
+  <!-- порт 5: Телеграфная пристань -->
+  <g class="obj" data-id="port-tg">
+    <rect x="641" y="582" width="108" height="10" fill="#16293d" stroke="#2e4a63" stroke-width="1"/>
+    <rect x="645" y="592" width="100" height="88" fill="#101f30" stroke="#2e4a63" stroke-width="1.5"/>
+    <line x1="762" y1="680" x2="762" y2="540" stroke="#2c4258" stroke-width="3"/>
+    <line x1="750" y1="552" x2="774" y2="552" stroke="#2c4258" stroke-width="2"/>
+    <line x1="752" y1="568" x2="772" y2="568" stroke="#2c4258" stroke-width="2"/>
+    <path d="M 750 552 C 716 564 690 570 660 574" stroke="#2c4258" stroke-width="1" fill="none" opacity=".7"/>
+    <path d="M 752 568 C 720 578 694 584 664 588" stroke="#2c4258" stroke-width="1" fill="none" opacity=".7"/>
+    <path d="M 774 552 C 812 562 852 568 892 574" stroke="#2c4258" stroke-width="1" fill="none" opacity=".7"/>
+    <path d="M 774 568 C 814 576 854 582 894 588" stroke="#2c4258" stroke-width="1" fill="none" opacity=".7"/>
+    <rect x="658" y="604" width="15" height="13" fill="#f6ad55" opacity=".15"/>
+    <rect x="682" y="604" width="15" height="13" fill="#f6ad55" opacity=".15"/>
+    <rect x="706" y="604" width="15" height="13" fill="#f6ad55" opacity=".5"/>
+    <rect x="682" y="632" width="20" height="48" fill="#0b1522" stroke="#2e4a63" stroke-width="1"/>
+    <text x="695" y="694" text-anchor="middle" class="lbl">Телеграфная пристань</text>
+  </g>
+
+  <!-- флотилия откликов: 10 кораблей -->
+  <g class="obj" data-id="fleet">
+    <ellipse cx="650" cy="380" rx="150" ry="120" fill="transparent"/>
+    <g transform="translate(560,328) scale(.4)" opacity=".6" color="#ecc94b"><use href="#ship" class="bob"/></g>
+    <g transform="translate(640,324) scale(.4)" opacity=".55" color="#f6ad55"><use href="#ship" class="bob" style="animation-delay:-.6s"/></g>
+    <g transform="translate(720,330) scale(.4)" opacity=".6" color="#ecc94b"><use href="#ship" class="bob" style="animation-delay:-1.4s"/></g>
+    <g transform="translate(520,374) scale(.6)" opacity=".75" color="#f6ad55"><use href="#ship" class="bob" style="animation-delay:-2.1s"/></g>
+    <g transform="translate(600,370) scale(.6)" opacity=".8" color="#ecc94b"><use href="#ship" class="bob" style="animation-delay:-1s"/></g>
+    <g transform="translate(688,376) scale(.6)" opacity=".8" color="#ecc94b"><use href="#ship" class="bob" style="animation-delay:-2.8s"/></g>
+    <g transform="translate(768,372) scale(.6)" opacity=".75" color="#f6ad55"><use href="#ship" class="bob" style="animation-delay:-.3s"/></g>
+    <g transform="translate(560,436) scale(.85)" color="#f6ad55"><use href="#ship" class="bob" style="animation-delay:-1.8s"/></g>
+    <g transform="translate(650,432) scale(.85)" color="#ecc94b"><use href="#ship" class="bob" style="animation-delay:-.9s"/></g>
+    <g transform="translate(742,438) scale(.85)" opacity=".95" color="#f6ad55"><use href="#ship" class="bob" style="animation-delay:-2.4s"/></g>
+    <text x="648" y="300" text-anchor="middle" class="lbl2">Партия откликов · 10</text>
+  </g>
+
+  <!-- крейсер «Вывод денег» -->
+  <g class="obj" data-id="cruiser">
+    <path d="M 794 470 q -20 8 -42 10" stroke="#2a4a66" stroke-width="2" fill="none" opacity=".5"/>
+    <path d="M 798 476 q -16 10 -34 14" stroke="#2a4a66" stroke-width="2" fill="none" opacity=".35"/>
+    <path d="M 780 486 q 24 -8 48 0 t 48 0 t 48 0" stroke="#24405c" stroke-width="2" fill="none" opacity=".55"/>
+    <path d="M 796 452 L 944 452 L 928 478 L 812 478 Z" fill="#101d2c" stroke="#3a5a78" stroke-width="1.5"/>
+    <line x1="798" y1="458" x2="942" y2="458" stroke="#3a5a78" stroke-width="1" opacity=".6"/>
+    <rect x="824" y="428" width="72" height="24" fill="#16293d" stroke="#2e4a63" stroke-width="1"/>
+    <rect x="844" y="412" width="36" height="16" fill="#16293d" stroke="#2e4a63" stroke-width="1"/>
+    <rect x="850" y="416" width="6" height="6" fill="#f6ad55" opacity=".55"/>
+    <rect x="860" y="416" width="6" height="6" fill="#f6ad55" opacity=".55"/>
+    <rect x="870" y="416" width="6" height="6" fill="#f6ad55" opacity=".55"/>
+    <line x1="862" y1="412" x2="862" y2="388" stroke="#2e4a63" stroke-width="2"/>
+    <line x1="854" y1="394" x2="870" y2="394" stroke="#2e4a63" stroke-width="1.5"/>
+    <rect x="856" y="402" width="12" height="10" fill="#1a2c3f" stroke="#2e4a63" stroke-width="1"/>
+    <circle class="puff" cx="862" cy="396" r="4.5" fill="#8fa3ba" opacity=".4"/>
+    <circle class="puff" cx="862" cy="396" r="3.5" fill="#8fa3ba" opacity=".35" style="animation-delay:-2.1s"/>
+    <circle cx="862" cy="384" r="13" fill="url(#amberGlow)" class="glow-warn"/>
+    <circle cx="862" cy="384" r="4.5" fill="#ecc94b"/>
+    <line x1="938" y1="452" x2="938" y2="436" stroke="#2e4a63" stroke-width="1.5"/>
+    <polygon points="938,436 952,440 938,444" fill="#f6ad55" opacity=".8"/>
+    <text x="870" y="502" text-anchor="middle" class="lbl">Крейсер «Вывод денег»</text>
+  </g>
+  </g>
+
+  <!-- передний план: живая вода (самый близкий слой) -->
+  <g opacity=".9">
+    <path class="nearwave" d="M -320 610 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 L 1600 720 L -320 720 Z" fill="#081120" opacity=".85"/>
+    <path class="nearwave slow" d="M -320 648 q 46 -12 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 t 92 0 L 1600 720 L -320 720 Z" fill="#060d18" opacity=".9"/>
+    <path class="nearwave" style="animation-duration:34s" d="M -320 575 q 36 -10 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0 t 72 0" stroke="#1c3348" stroke-width="2.5" fill="none" opacity=".5"/>
+  </g>
+</svg>
+
+<!-- галеон-вестник: тот самый корабль с карты мира -->
+<img class="galleon" id="galleon" src="../assets/harbor-ship-sprite.png" alt="" onerror="this.remove()">
+<div class="gshadow" id="gshadow"></div>
+</div>
+<div class="vignette"></div>
+
+<aside class="panel" id="panel" aria-live="polite">
+  <div class="kind" id="p-kind"></div>
+  <h2 id="p-name"></h2>
+  <div class="pstatus" id="p-status"></div>
+  <div class="rows" id="p-rows"></div>
+  <p class="phrase" id="p-phrase"></p>
+</aside>
+</div>
+
+<script>
+(function(){
+  var DATA = {
+    'window-main': {
+      kind: 'Горящее окно',
+      name: 'FL.ru №5528498',
+      status: 'свежий заказ · окно горит',
+      rows: [['Бюджет','30 000 ₽'],['Стек','n8n + OCR + Sheets'],['Канал','FL.ru'],['Свежесть','сегодня']],
+      phrase: 'Окно горит — ответить до полудня.',
+      urgent: true
+    },
+    'window-second': {
+      kind: 'Тёплое окно',
+      name: 'FL.ru №5528484',
+      status: 'живой заказ · идёт своим ходом',
+      rows: [['Бюджет','7 000 ₽'],['Стек','локальные Qwen на MacBook'],['Канал','FL.ru']],
+      phrase: 'Второе окно тлеет ровно — машина тянет.'
+    },
+    'port-flru': {
+      kind: 'Биржа',
+      name: 'Причал FL.ru',
+      status: 'главный канал заказов',
+      rows: [['Живые окна','2 из 2'],['Бюджеты','30 000 · 7 000 ₽'],['Свежесть','сегодня']],
+      phrase: 'Здесь окна вспыхивают чаще всего.'
+    },
+    'port-kwork': {
+      kind: 'Биржа',
+      name: 'Квартал Kwork',
+      status: 'канал заказов · сегодня тихо',
+      rows: [['Живые окна','0'],['Роль','мелкие заказы, поток']],
+      phrase: 'Тихо на бирже — но дверь открыта.'
+    },
+    'port-hhuz': {
+      kind: 'Склад',
+      name: 'Склад hh.uz',
+      status: 'выгрузка вакансий',
+      rows: [['Позиций','216'],['Выгрузка','05.11']],
+      phrase: '216 мест — берег кормит список.'
+    },
+    'port-olx': {
+      kind: 'Пирс',
+      name: 'Пирс OLX',
+      status: 'канал объявлений',
+      rows: [['Живые окна','0'],['Ритм','косяками, непостоянно']],
+      phrase: 'Шумно на рынке — сунемся с утра.'
+    },
+    'port-tg': {
+      kind: 'Пристань',
+      name: 'Телеграфная пристань',
+      status: 'Telegram-чаты',
+      rows: [['Живые окна','0'],['Когда горит','чаще ночью']],
+      phrase: 'Чаты шуршат — окна вспыхивают в темноте.'
+    },
+    'fleet': {
+      kind: 'Флотилия откликов',
+      name: 'Партия в море',
+      status: 'десять парусов · вышли 08.11',
+      rows: [['Откликов','10'],['Партия','2026-11-08'],['Верификация','URL пройдена'],['Флаги','статусы откликов']],
+      phrase: 'Флаги подняты — ждём ответных сигналов.'
+    },
+    'cruiser': {
+      kind: 'Крейсер · слабое звено',
+      name: '«Вывод денег»',
+      status: 'рельс не проверен — честно',
+      rows: [['Рельс','Trust Wallet → BestChange → HUMO'],['Тест 10–15 USDT','не проверен'],['Курс USDT','~11 900 сум'],['Спред','0,4%']],
+      phrase: 'Без теста не плывём — сперва 10 USDT.'
+    },
+    'lighthouse': {
+      kind: 'Маяк кампании',
+      name: 'Свет на $300–600',
+      status: 'цель горит до 09–10.11',
+      rows: [['Цель','$300–600'],['Дедлайн','2 дня']],
+      phrase: 'Два дня на прицеле — потом темнота.'
+    },
+    'wind': {
+      kind: 'Ветер рынка',
+      name: 'Западный, свежий',
+      status: 'тянет на автоматизацию',
+      rows: [['Тренд','n8n · OCR · Sheets'],['Под ветром','причал FL.ru']],
+      phrase: 'Ветер в паруса — рынок просит автоматизацию.'
+    }
+  };
+
+  var panel = document.getElementById('panel');
+  var kindEl = document.getElementById('p-kind');
+  var nameEl = document.getElementById('p-name');
+  var statusEl = document.getElementById('p-status');
+  var rowsEl = document.getElementById('p-rows');
+  var phraseEl = document.getElementById('p-phrase');
+
+  function show(id){
+    var d = DATA[id];
+    if(!d) return;
+    kindEl.textContent = d.kind;
+    nameEl.textContent = d.name;
+    statusEl.textContent = d.status;
+    var html = '';
+    for(var i = 0; i < d.rows.length; i++){
+      html += '<div class="row"><span>' + d.rows[i][0] + '</span><b>' + d.rows[i][1] + '</b></div>';
+    }
+    rowsEl.innerHTML = html;
+    phraseEl.textContent = d.phrase;
+    panel.classList.toggle('urgent', !!d.urgent);
+    var cur = document.querySelectorAll('.obj.active');
+    for(var j = 0; j < cur.length; j++){ cur[j].classList.remove('active'); }
+    var el = document.querySelector('[data-id="' + id + '"]');
+    if(el){ el.classList.add('active'); }
+  }
+
+  var objs = document.querySelectorAll('.obj');
+  for(var k = 0; k < objs.length; k++){
+    (function(node){
+      node.addEventListener('click', function(e){
+        e.stopPropagation();
+        show(node.getAttribute('data-id'));
+      });
+    })(objs[k]);
+  }
+
+  show('window-main');
+
+  /* --- двигатель глубины: параллакс слоёв + галеон-вестник (v2) --- */
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce){
+    var stage = document.querySelector('.stage');
+    var scene = document.getElementById('scene');
+    var Lsky = document.getElementById('L-sky');
+    var Lsea = document.getElementById('L-sea');
+    var Lshore = document.getElementById('L-shore');
+    var gal = document.getElementById('galleon');
+    var gsh = document.getElementById('gshadow');
+    var tx = 0, ty = 0, cx = 0, cy = 0, gx = -180;
+
+    stage.addEventListener('mousemove', function(e){
+      var r = stage.getBoundingClientRect();
+      tx = (e.clientX - r.left) / r.width - 0.5;
+      ty = (e.clientY - r.top) / r.height - 0.5;
+    });
+    stage.addEventListener('mouseleave', function(){ tx = 0; ty = 0; });
+
+    (function loop(){
+      cx += (tx - cx) * 0.055;
+      cy += (ty - cy) * 0.055;
+      scene.style.transform = 'rotateY(' + (cx * 2.6).toFixed(3) + 'deg) rotateX(' + (-cy * 1.7).toFixed(3) + 'deg) scale(1.07)';
+      if(Lsky) Lsky.setAttribute('transform', 'translate(' + (cx * -7).toFixed(1) + ',' + (cy * -3).toFixed(1) + ')');
+      if(Lsea) Lsea.setAttribute('transform', 'translate(' + (cx * -16).toFixed(1) + ',' + (cy * -7).toFixed(1) + ')');
+      if(Lshore) Lshore.setAttribute('transform', 'translate(' + (cx * -30).toFixed(1) + ',' + (cy * -12).toFixed(1) + ')');
+      if(gal){
+        gx += 0.5;
+        if(gx > 1400) gx = -190;
+        var sway = Math.sin(gx / 210);
+        var gy = 344 + sway * 18;
+        gal.style.transform = 'translate(' + gx.toFixed(1) + 'px,' + gy.toFixed(1) + 'px) rotate(' + (sway * -2.2).toFixed(2) + 'deg) scaleX(-1)';
+        if(gsh) gsh.style.transform = 'translate(' + (gx + 16).toFixed(1) + 'px,' + (gy + 64).toFixed(1) + 'px) scaleX(1)';
+      }
+      requestAnimationFrame(loop);
+    })();
+  }
+})();
+</script>
+</body>
+</html>

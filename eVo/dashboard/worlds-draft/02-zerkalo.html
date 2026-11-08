@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Зеркало — вариация мира Platform</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#040101;overflow-x:hidden}
+body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:#ece2e2;display:flex;justify-content:center}
+.page{width:1280px;max-width:100%;background:#0a0505;border:1px solid rgba(252,92,92,.18)}
+
+/* ---------- шапка ---------- */
+header{display:flex;align-items:center;gap:26px;padding:15px 28px;border-bottom:1px solid rgba(252,92,92,.22);background:linear-gradient(180deg,#130a0a,#0b0505)}
+.ttl h1{margin:0;font-size:32px;letter-spacing:.16em;font-weight:600;color:#f4ecec;text-shadow:0 8px 26px rgba(252,92,92,.3)}
+.status{margin-top:3px;font-size:11.5px;letter-spacing:.15em;color:#a59db2;text-transform:uppercase}
+.chips{display:flex;gap:10px;margin-left:auto}
+.chip{border:1px solid rgba(252,92,92,.28);border-radius:999px;padding:6px 14px;display:flex;align-items:baseline;gap:8px;background:rgba(252,92,92,.06)}
+.chip span{font-size:11.5px;color:#b7acbd;white-space:nowrap}
+.chip b{font-size:15px;color:#fc5c5c;font-variant-numeric:tabular-nums;font-weight:600}
+.home{width:40px;height:40px;border-radius:50%;border:1px solid rgba(252,92,92,.45);display:flex;align-items:center;justify-content:center;color:#fc5c5c;font-size:19px;line-height:1;text-decoration:none;background:rgba(252,92,92,.07);flex:none}
+.home:hover{background:rgba(252,92,92,.16)}
+.home:focus-visible{outline:1px solid #fc5c5c;outline-offset:2px}
+
+/* ---------- сцена ---------- */
+.stage{position:relative;height:632px}
+.stage svg{display:block;width:100%;height:100%}
+.above{pointer-events:none}
+.sil{color:#5e5a72}
+.alabel{font-size:11px;fill:#a49eb4;letter-spacing:.14em;text-anchor:middle}
+.stars circle{fill:#cfc9dd}
+.waves ellipse{fill:#fc5c5c}
+.w1{animation:drift 9s ease-in-out infinite alternate}
+.w2{animation:drift 13s ease-in-out infinite alternate-reverse}
+.w3{animation:drift 8s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateX(-26px)}to{transform:translateX(26px)}}
+
+/* ---------- отражения (кликабельные) ---------- */
+.mir{cursor:pointer;outline:none;pointer-events:all}
+.mir:focus-visible .rip{opacity:.9}
+.mir .hit{fill:#000;opacity:0}
+.mir .refl{color:#8a2a2a;opacity:.88;animation:shim 6s ease-in-out infinite alternate}
+.mir:hover .refl,.mir.on .refl{color:#c33c3c;opacity:1;animation:none}
+.mir:hover,.mir.on{filter:drop-shadow(0 0 10px rgba(252,92,92,.35))}
+@keyframes shim{from{opacity:.7}to{opacity:.95}}
+.crack{fill:none;stroke:#d9a05b;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;opacity:.8}
+.mir.on .crack{stroke-width:2.4;opacity:1}
+.hole{fill:#080303;stroke:#fc5c5c;stroke-width:2}
+.rip{fill:none;stroke:#fc5c5c;stroke-width:1;opacity:.3}
+.mir:hover .rip,.mir.on .rip{opacity:.8}
+.mlabel{font-size:12.5px;fill:#eb9a9a;letter-spacing:.06em;text-anchor:middle}
+.ghost{fill:#fc5c5c;opacity:.055;font-size:94px;font-weight:700;letter-spacing:.2em;text-anchor:middle}
+
+/* ---------- панель ---------- */
+.panel{position:absolute;top:16px;right:16px;width:302px;background:linear-gradient(180deg,rgba(18,7,7,.92),rgba(7,3,3,.94));border:1px solid rgba(252,92,92,.3);border-radius:14px;padding:18px 20px 20px;box-shadow:0 10px 44px rgba(0,0,0,.55)}
+.ptop{display:flex;justify-content:space-between;align-items:baseline}
+.peyebrow{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#d9a05b}
+.pidx{font-size:11px;color:#948c9c;font-variant-numeric:tabular-nums}
+.panel h2{margin:6px 0 2px;font-size:21px;color:#fc5c5c;letter-spacing:.02em;font-weight:600;line-height:1.2}
+.pf{margin-top:13px}
+.pf .k{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#b98d92}
+.pf .v{margin-top:4px;font-size:13.5px;line-height:1.45;color:#efe6e6}
+.pf .v.gate{color:#d9a05b}
+.quote{margin-top:16px;padding-top:12px;border-top:1px solid rgba(252,92,92,.22);font-style:italic;font-size:13.5px;color:#fc8f8f;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="ttl">
+      <h1>ЗЕРКАЛО</h1>
+      <div class="status">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+    </div>
+    <div class="chips">
+      <div class="chip"><span>клонов</span><b>6</b></div>
+      <div class="chip"><span>дыр</span><b>5</b></div>
+      <div class="chip"><span>унесли бы</span><b>1</b></div>
+      <div class="chip"><span>врат</span><b>4</b></div>
+    </div>
+    <a class="home" href="index.html" title="В каталог миров" aria-label="В каталог миров">&#8962;</a>
+  </header>
+
+  <div class="stage">
+    <svg viewBox="0 0 1280 632" role="img" aria-label="Мир Зеркало: над водой силуэты Platform, под водой перевёрнутые красные отражения">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#14131b"/>
+          <stop offset="1" stop-color="#241e2c"/>
+        </linearGradient>
+        <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1c0d0d"/>
+          <stop offset="1" stop-color="#060202"/>
+        </linearGradient>
+        <filter id="blur3" x="-40%" y="-200%" width="180%" height="500%"><feGaussianBlur stdDeviation="3"/></filter>
+
+        <!-- силуэты: цвет через currentColor -->
+        <g id="a-git">
+          <path d="M130 300 V150" fill="none" stroke="currentColor" stroke-width="7"/>
+          <path d="M130 252 C170 252 172 224 210 224 H245" fill="none" stroke="currentColor" stroke-width="4"/>
+          <path d="M130 204 C164 204 166 178 200 178 H235" fill="none" stroke="currentColor" stroke-width="4"/>
+          <circle cx="130" cy="150" r="8" fill="currentColor"/>
+          <circle cx="130" cy="204" r="5" fill="currentColor" opacity=".85"/>
+          <circle cx="245" cy="224" r="7" fill="currentColor" opacity=".85"/>
+          <circle cx="235" cy="178" r="6" fill="currentColor" opacity=".7"/>
+          <circle cx="130" cy="252" r="4" fill="currentColor" opacity=".6"/>
+        </g>
+        <g id="a-pile">
+          <rect x="262" y="272" width="38" height="26" rx="2" transform="rotate(-7 281 285)" fill="currentColor" opacity=".5"/>
+          <rect x="284" y="262" width="40" height="28" rx="2" transform="rotate(5 304 276)" fill="currentColor" opacity=".65"/>
+          <rect x="306" y="270" width="36" height="28" rx="2" transform="rotate(-3 324 284)" fill="currentColor" opacity=".8"/>
+          <rect x="296" y="238" width="34" height="26" rx="2" transform="rotate(12 313 251)" fill="currentColor" opacity=".9"/>
+        </g>
+        <g id="a-arch">
+          <rect x="372" y="168" width="24" height="132" fill="currentColor"/>
+          <rect x="464" y="168" width="24" height="132" fill="currentColor" opacity=".9"/>
+          <rect x="358" y="146" width="144" height="24" rx="3" fill="currentColor" opacity=".95"/>
+        </g>
+        <g id="a-island">
+          <path d="M515 300 Q575 236 622 232 Q690 226 745 300 Z" fill="currentColor" opacity=".8"/>
+          <rect x="606" y="170" width="26" height="66" rx="2" fill="currentColor"/>
+          <path d="M598 170 L640 170 L619 146 Z" fill="currentColor"/>
+          <rect x="614" y="188" width="10" height="12" rx="5" fill="#050203"/>
+        </g>
+        <g id="a-fig">
+          <circle cx="0" cy="-54" r="7" fill="currentColor"/>
+          <path d="M0 -47 V-18 M0 -18 L-9 0 M0 -18 L9 0 M0 -40 L-11 -27 M0 -40 L11 -27" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+        </g>
+        <g id="a-crew">
+          <use href="#a-fig" xlink:href="#a-fig" transform="translate(760 300)"/>
+          <use href="#a-fig" xlink:href="#a-fig" transform="translate(791 300) scale(.95)"/>
+          <use href="#a-fig" xlink:href="#a-fig" transform="translate(822 300)"/>
+          <use href="#a-fig" xlink:href="#a-fig" transform="translate(853 300) scale(1.05)"/>
+          <use href="#a-fig" xlink:href="#a-fig" transform="translate(884 300)"/>
+          <use href="#a-fig" xlink:href="#a-fig" transform="translate(915 300) scale(.92)"/>
+        </g>
+      </defs>
+
+      <!-- мир над водой -->
+      <g class="above">
+        <rect x="0" y="0" width="1280" height="300" fill="url(#sky)"/>
+        <g class="stars">
+          <circle cx="88" cy="46" r="1.3" opacity=".35"/><circle cx="210" cy="92" r="1" opacity=".28"/>
+          <circle cx="342" cy="58" r="1.2" opacity=".3"/><circle cx="470" cy="102" r="1" opacity=".24"/>
+          <circle cx="560" cy="34" r="1.3" opacity=".32"/><circle cx="726" cy="88" r="1" opacity=".26"/>
+          <circle cx="840" cy="52" r="1.2" opacity=".3"/><circle cx="905" cy="130" r="1" opacity=".22"/>
+        </g>
+        <circle cx="640" cy="64" r="44" fill="#cdc7d8" opacity=".08"/>
+        <circle cx="640" cy="64" r="24" fill="#cdc7d8" opacity=".9"/>
+        <use href="#a-git" xlink:href="#a-git" class="sil" style="color:#635f78"/>
+        <use href="#a-pile" xlink:href="#a-pile" class="sil" style="color:#4f4b62"/>
+        <use href="#a-arch" xlink:href="#a-arch" class="sil" style="color:#6b6682"/>
+        <use href="#a-island" xlink:href="#a-island" class="sil" style="color:#59556f"/>
+        <use href="#a-crew" xlink:href="#a-crew" class="sil" style="color:#55516a"/>
+        <text class="alabel" x="130" y="130">репо Platform</text>
+        <text class="alabel" x="300" y="230">untracked 164</text>
+        <text class="alabel" x="430" y="136">врата</text>
+        <text class="alabel" x="630" y="132">остров</text>
+        <text class="alabel" x="838" y="228">рантаймы 6</text>
+      </g>
+
+      <!-- вода -->
+      <rect x="0" y="300" width="1280" height="332" fill="url(#wg)"/>
+      <rect x="0" y="299" width="1280" height="2.5" fill="#fc5c5c" opacity=".4"/>
+      <rect x="0" y="300" width="1280" height="1" fill="#ffd7d7" opacity=".22"/>
+      <g class="waves" filter="url(#blur3)">
+        <ellipse class="w1" cx="320" cy="303" rx="150" ry="3" opacity=".18"/>
+        <ellipse class="w2" cx="720" cy="304" rx="190" ry="3.2" opacity=".14"/>
+        <ellipse class="w3" cx="1010" cy="303" rx="130" ry="2.6" opacity=".16"/>
+      </g>
+      <ellipse cx="640" cy="318" rx="22" ry="5" fill="#fc5c5c" opacity=".12"/>
+      <ellipse cx="640" cy="318" rx="10" ry="2.5" fill="#fc5c5c" opacity=".2"/>
+      <text class="ghost" x="340" y="610" transform="rotate(180 340 585)">ЗЕРКАЛО</text>
+
+      <!-- антимир: отражения -->
+      <g class="mir" data-id="git" tabindex="0" role="button" aria-label="Зеркальный git">
+        <rect class="hit" x="55" y="300" width="200" height="170"/>
+        <ellipse class="rip" cx="140" cy="301" rx="62" ry="3.5"/>
+        <use href="#a-git" xlink:href="#a-git" class="refl" transform="translate(0,600) scale(1,-1)" style="animation-delay:.8s"/>
+        <path class="crack" d="M118 314 l20 26 l-14 22 l24 30 l-10 16"/>
+        <path class="crack" d="M198 342 l-16 20 l12 18" opacity=".55"/>
+        <text class="mlabel" x="140" y="488">зеркальный git</text>
+      </g>
+
+      <g class="mir" data-id="nas" tabindex="0" role="button" aria-label="Стеклянное наследие">
+        <rect class="hit" x="245" y="300" width="118" height="72"/>
+        <ellipse class="rip" cx="300" cy="301" rx="56" ry="3"/>
+        <use href="#a-pile" xlink:href="#a-pile" class="refl" transform="translate(0,600) scale(1,-1)" style="animation-delay:2.4s"/>
+        <path class="crack" d="M268 308 l26 32 M320 306 l-20 36 M298 352 l26 -22"/>
+        <text class="mlabel" x="300" y="392">стеклянное наследие</text>
+      </g>
+
+      <g class="mir" data-id="vrata" tabindex="0" role="button" aria-label="Врата антимира">
+        <rect class="hit" x="350" y="300" width="162" height="162"/>
+        <ellipse class="rip" cx="430" cy="301" rx="66" ry="3.5"/>
+        <use href="#a-arch" xlink:href="#a-arch" class="refl" transform="translate(0,600) scale(1,-1)" style="animation-delay:1.6s"/>
+        <path class="crack" d="M430 318 l-18 30 l22 26 l-16 30"/>
+        <path class="crack" d="M450 344 l20 22" opacity=".55"/>
+        <text class="mlabel" x="430" y="482">врата антимира</text>
+      </g>
+
+      <g class="mir" data-id="holes" tabindex="0" role="button" aria-label="Дыры заранее">
+        <rect class="hit" x="505" y="300" width="250" height="176"/>
+        <ellipse class="rip" cx="630" cy="301" rx="100" ry="3.5"/>
+        <use href="#a-island" xlink:href="#a-island" class="refl" transform="translate(0,600) scale(1,-1)" style="animation-delay:3.2s"/>
+        <circle class="hole" cx="560" cy="336" r="9"/>
+        <circle class="hole" cx="612" cy="372" r="6"/>
+        <circle class="hole" cx="668" cy="332" r="11"/>
+        <circle class="hole" cx="586" cy="414" r="8"/>
+        <circle class="hole" cx="662" cy="424" r="5.5"/>
+        <path class="crack" d="M569 344 l14 12 M604 366 l-10 12 M679 340 l14 10 M594 420 l12 10 M668 428 l12 8"/>
+        <text class="mlabel" x="628" y="494">дыры заранее</text>
+      </g>
+
+      <g class="mir" data-id="clone" tabindex="0" role="button" aria-label="Клоны на дежурстве">
+        <rect class="hit" x="738" y="300" width="200" height="82"/>
+        <ellipse class="rip" cx="838" cy="301" rx="94" ry="3.5"/>
+        <use href="#a-crew" xlink:href="#a-crew" class="refl" transform="translate(0,600) scale(1,-1)" style="animation-delay:4.1s"/>
+        <path class="crack" d="M768 310 l30 18 l-12 14"/>
+        <path class="crack" d="M862 306 l26 16" opacity=".55"/>
+        <text class="mlabel" x="838" y="404">клоны на дежурстве</text>
+      </g>
+    </svg>
+
+    <aside class="panel">
+      <div class="ptop"><span class="peyebrow">зеркальный объект</span><span class="pidx" id="p-idx">01 / 05</span></div>
+      <h2 id="p-name">Зеркальный git</h2>
+      <div class="pf"><div class="k">во что превратился</div><div class="v" id="p-became"></div></div>
+      <div class="pf"><div class="k">что бы унёс</div><div class="v" id="p-stole"></div></div>
+      <div class="pf"><div class="k">какой врата стоит</div><div class="v gate" id="p-gate"></div></div>
+      <div class="quote" id="p-quote"></div>
+    </aside>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var DATA = {
+    git: {
+      idx: "01 / 05",
+      name: "Зеркальный git",
+      became: "Репозиторий без врат: вся история читается насквозь, коммит за коммитом.",
+      stole: "Секрет sk-ant — жил и в git-истории, и в рабочем дереве. P1, поймал secret_scan.",
+      gate: "журналы атак → отчёты E-058/059",
+      quote: "«История не забывает — она показывает»"
+    },
+    clone: {
+      idx: "02 / 05",
+      name: "Клоны на дежурстве",
+      became: "Каждый штатный рантайм получил двойника. Шесть зеркальных агентов заступили на смену.",
+      stole: "Ничего из живого мира: рука клона доходит только до клона.",
+      gate: "зеркальный агент трогает только клон",
+      quote: "«Клон помнит, кем был»"
+    },
+    nas: {
+      idx: "03 / 05",
+      name: "Стеклянное наследие",
+      became: "164 untracked-файла превратились в укрытие: шум — 74% репо (вердикт Холмса).",
+      stole: "Любой из 164 файлов — без следа в истории.",
+      gate: "спавн по санкции Sovereign",
+      quote: "«Хлам здесь — укрытие»"
+    },
+    holes: {
+      idx: "04 / 05",
+      name: "Дыры заранее",
+      became: "Остров вывернулся в решето: routing-drift, коллизия test→test, живой ключ, порты 902 и 912, uTorrent на UDP 6771.",
+      stole: "Трафик через слабые порты и рой с UDP 6771.",
+      gate: "loopback-изоляция",
+      quote: "«Каждая дыра — чья-то дверь»"
+    },
+    vrata: {
+      idx: "05 / 05",
+      name: "Врата антимира",
+      became: "Железный замок стал правилом: четыре запрета вместо засова.",
+      stole: "Ничего. Врата смотрят в обе стороны.",
+      gate: "loopback · только клон · спавн по санкции · E-058/059",
+      quote: "«У зеркала нет замка — есть санкция»"
+    }
+  };
+
+  var F = ["p-name","p-became","p-stole","p-gate","p-quote"];
+  var KEYS = ["name","became","stole","gate","quote"];
+  var groups = document.querySelectorAll(".mir");
+
+  function render(id){
+    var d = DATA[id];
+    if(!d){ return; }
+    document.getElementById("p-idx").textContent = d.idx;
+    for(var i = 0; i < KEYS.length; i++){
+      document.getElementById(F[i]).textContent = d[KEYS[i]];
+    }
+    for(var j = 0; j < groups.length; j++){
+      if(groups[j].getAttribute("data-id") === id){
+        groups[j].classList.add("on");
+      } else {
+        groups[j].classList.remove("on");
+      }
+    }
+  }
+
+  Array.prototype.forEach.call(groups, function(g){
+    g.addEventListener("click", function(){ render(g.getAttribute("data-id")); });
+    g.addEventListener("keydown", function(e){
+      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); render(g.getAttribute("data-id")); }
+    });
+  });
+
+  render("git");
+})();
+</script>
+</body>
+</html>

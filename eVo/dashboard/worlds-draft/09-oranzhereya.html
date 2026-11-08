@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Оранжерея Sovereign — превью-вариация</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:#0a100d;color:#d9e7dd;font-family:system-ui,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  .page{width:100%;max-width:1280px;height:720px;margin:0 auto;padding:14px 20px 16px;display:flex;flex-direction:column;gap:12px}
+  header{display:flex;align-items:center;gap:18px;border-bottom:1px solid #22352b;padding-bottom:12px}
+  .title-block{min-width:0}
+  h1{margin:0;font-size:29px;line-height:1.1;font-weight:650;color:#ecf5ee;letter-spacing:.3px}
+  h1 span{color:#68d391;font-weight:600}
+  .status{margin-top:4px;font-size:10.5px;letter-spacing:1.6px;color:#7d9486;font-variant-numeric:tabular-nums}
+  .chips{margin-left:auto;display:flex;gap:8px;flex:0 0 auto}
+  .chip{display:flex;align-items:baseline;gap:7px;padding:7px 12px;border:1px solid #243830;background:#111d16;border-radius:9px}
+  .cl{font-size:11px;color:#8fa99a;letter-spacing:.4px}
+  .cv{font-size:15px;font-weight:700;color:#f6e05e;font-variant-numeric:tabular-nums}
+  .home{width:40px;height:40px;border-radius:50%;border:1px solid #33473c;background:#14211b;color:#a8d8c8;display:flex;align-items:center;justify-content:center;font-size:19px;text-decoration:none;flex:0 0 auto;transition:background .15s}
+  .home:hover{background:#1d2f25}
+  main{flex:1;display:flex;gap:14px;min-height:0}
+  .stage{flex:1;min-width:0;border:1px solid #22352b;border-radius:14px;background:radial-gradient(120% 90% at 18% 8%, #14231b 0%, #0d1512 55%, #0a100d 100%);overflow:hidden}
+  svg{width:100%;height:100%;display:block}
+  svg text{font-family:system-ui,'Segoe UI',sans-serif}
+  .deco{pointer-events:none}
+  [data-key]{cursor:pointer}
+  [data-key]:hover{filter:brightness(1.14)}
+  .picked{filter:brightness(1.22) drop-shadow(0 0 5px rgba(246,224,94,.4))}
+  .panel{width:342px;flex:0 0 auto;border:1px solid #22352b;border-radius:14px;background:#101b15;display:flex;flex-direction:column;overflow:hidden}
+  #panelBody{padding:20px 20px 12px;flex:1;overflow:hidden}
+  .eyebrow{font-size:10.5px;letter-spacing:1.8px;color:#7fa08c;text-transform:uppercase;margin-bottom:9px}
+  .obj-name{margin:0;font-size:21px;line-height:1.25;color:#eef6ef;font-weight:650}
+  .badge{display:inline-block;vertical-align:2px;margin-left:9px;font-size:10.5px;font-weight:600;letter-spacing:.6px;padding:3px 9px;border-radius:20px;border:1px solid;white-space:nowrap}
+  .badge.seed{color:#f6e05e;border-color:rgba(246,224,94,.45);background:rgba(246,224,94,.08)}
+  .badge.sprout{color:#68d391;border-color:rgba(104,211,145,.45);background:rgba(104,211,145,.08)}
+  .badge.sapling{color:#9ae6b4;border-color:rgba(154,230,180,.45);background:rgba(154,230,180,.08)}
+  .badge.spike{color:#9ae6b4;border-color:rgba(154,230,180,.45);background:rgba(154,230,180,.08)}
+  .badge.moved{color:#c9b87f;border-color:rgba(138,122,85,.6);background:rgba(138,122,85,.14)}
+  .badge.water{color:#a8d8c8;border-color:rgba(168,216,200,.45);background:rgba(168,216,200,.08)}
+  .rows{margin-top:14px}
+  .row{display:flex;gap:12px;padding:8px 0;border-bottom:1px dashed #24382d}
+  .rl{width:108px;flex:0 0 auto;font-size:11.5px;color:#83998b;letter-spacing:.3px;padding-top:1px}
+  .rv{font-size:13.5px;color:#dcebe0;line-height:1.45;font-variant-numeric:tabular-nums}
+  .verdict{margin-top:15px;padding:11px 13px;border-left:3px solid #68d391;background:rgba(104,211,145,.07);border-radius:0 8px 8px 0;font-size:13.5px;color:#cfe6d5;font-style:italic;line-height:1.45}
+  .panel-foot{padding:11px 18px;border-top:1px solid #22352b;font-size:11px;line-height:1.55;color:#7d9486;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="title-block">
+      <h1>Оранжерея <span>Sovereign</span></h1>
+      <div class="status">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+    </div>
+    <div class="chips">
+      <div class="chip"><span class="cl">горшков</span><span class="cv">5</span></div>
+      <div class="chip"><span class="cl">зомби-уроков</span><span class="cv">4</span></div>
+      <div class="chip"><span class="cl">пересадок</span><span class="cv">2</span></div>
+      <div class="chip"><span class="cl">до полива</span><span class="cv">7 дней</span></div>
+    </div>
+    <a class="home" href="index.html" title="Каталог вариаций">⌂</a>
+  </header>
+
+  <main>
+    <section class="stage">
+      <svg viewBox="0 0 900 640" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Стеклянная оранжерея с грядками идей и теплицей зомби-уроков">
+        <defs>
+          <radialGradient id="gBg" cx="22%" cy="8%" r="95%">
+            <stop offset="0" stop-color="#182820"/>
+            <stop offset="0.55" stop-color="#0d1512"/>
+            <stop offset="1" stop-color="#0a100d"/>
+          </radialGradient>
+          <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#a8d8c8" stop-opacity="0.16"/>
+            <stop offset="1" stop-color="#a8d8c8" stop-opacity="0.05"/>
+          </linearGradient>
+          <linearGradient id="gGlass2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#a8d8c8" stop-opacity="0.11"/>
+            <stop offset="1" stop-color="#a8d8c8" stop-opacity="0.04"/>
+          </linearGradient>
+          <radialGradient id="gSun" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#f6e05e" stop-opacity="0.18"/>
+            <stop offset="0.5" stop-color="#f6e05e" stop-opacity="0.06"/>
+            <stop offset="1" stop-color="#f6e05e" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <rect data-key="overview" x="0" y="0" width="900" height="640" fill="url(#gBg)"/>
+
+        <!-- трава снаружи -->
+        <g class="deco">
+          <rect x="0" y="590" width="900" height="50" fill="#0b130e"/>
+          <path d="M60,592 q3,-9 6,0 M70,592 q3,-7 6,0 M180,592 q3,-9 6,0 M300,592 q3,-8 6,0 M430,592 q3,-9 6,0 M560,592 q3,-8 6,0 M640,592 q3,-9 6,0 M760,592 q3,-8 6,0 M856,592 q3,-9 6,0" stroke="#1c3a27" stroke-width="1.5" fill="none" opacity="0.85"/>
+          <rect x="30" y="586" width="850" height="6" fill="#2c3a32"/>
+        </g>
+
+        <!-- стекло основного корпуса -->
+        <g class="deco">
+          <polygon points="30,590 30,250 325,120 620,250 620,590" fill="url(#gGlass)"/>
+          <polygon points="30,590 30,250 325,120 620,250 620,590" fill="url(#gSun)"/>
+          <polygon points="620,590 620,250 880,330 880,590" fill="url(#gGlass2)"/>
+          <path d="M110,232 L280,157 L287,174 L117,249 Z" fill="#ffffff" opacity="0.05"/>
+          <path d="M640,262 L780,305 L776,318 L636,275 Z" fill="#ffffff" opacity="0.04"/>
+        </g>
+
+        <!-- пол внутри -->
+        <g class="deco">
+          <rect x="30" y="556" width="850" height="34" fill="#131f19"/>
+          <line x1="30" y1="556" x2="880" y2="556" stroke="#1c2b22" stroke-width="2"/>
+          <path d="M210,560 L210,586 M400,562 L400,588 M590,560 L590,586 M740,562 L740,588" stroke="#0f1913" stroke-width="2"/>
+        </g>
+
+        <!-- дверь и порог -->
+        <g class="deco">
+          <rect x="46" y="396" width="60" height="160" fill="#24352c" stroke="#3a4a41" stroke-width="3"/>
+          <rect x="54" y="406" width="44" height="62" rx="2" fill="none" stroke="#33443a" stroke-width="1.5"/>
+          <rect x="54" y="478" width="44" height="68" rx="2" fill="none" stroke="#33443a" stroke-width="1.5"/>
+          <circle cx="98" cy="486" r="3.5" fill="#a8d8c8"/>
+          <rect x="42" y="556" width="68" height="8" fill="#2b3a31"/>
+        </g>
+
+        <!-- каркас основного корпуса -->
+        <g class="deco" stroke="#3a4a41" fill="none" stroke-linecap="round">
+          <path d="M30,590 L30,250 L325,120 L620,250 L620,590 Z" stroke-width="6" stroke-linejoin="round"/>
+          <line x1="30" y1="250" x2="620" y2="250" stroke-width="4"/>
+          <line x1="325" y1="120" x2="325" y2="250" stroke-width="3"/>
+          <line x1="177" y1="185" x2="473" y2="185" stroke-width="3"/>
+          <line x1="251" y1="152" x2="399" y2="152" stroke-width="3"/>
+          <line x1="148" y1="250" x2="148" y2="556" stroke-width="3"/>
+          <line x1="266" y1="250" x2="266" y2="556" stroke-width="3"/>
+          <line x1="384" y1="250" x2="384" y2="556" stroke-width="3"/>
+          <line x1="502" y1="250" x2="502" y2="556" stroke-width="3"/>
+        </g>
+
+        <!-- каркас теплицы зомби-уроков -->
+        <g class="deco" stroke="#3a4a41" fill="none" stroke-linecap="round">
+          <path d="M620,590 L620,250 L880,330 L880,590 Z" stroke-width="5" stroke-linejoin="round"/>
+          <line x1="620" y1="262" x2="880" y2="342" stroke-width="3"/>
+          <line x1="673" y1="266" x2="673" y2="556" stroke-width="3"/>
+          <line x1="726" y1="283" x2="726" y2="556" stroke-width="3"/>
+          <line x1="779" y1="299" x2="779" y2="556" stroke-width="3"/>
+          <line x1="832" y1="315" x2="832" y2="556" stroke-width="3"/>
+        </g>
+
+        <!-- грядка «Ростки» -->
+        <g class="deco">
+          <rect x="195" y="505" width="200" height="77" rx="4" fill="#4a3728" stroke="#2c2115" stroke-width="3"/>
+          <rect x="198" y="507" width="194" height="9" rx="3" fill="#5a4430"/>
+          <rect x="191" y="503" width="8" height="10" fill="#3c2c1d" stroke="#2c2115"/>
+          <rect x="391" y="503" width="8" height="10" fill="#3c2c1d" stroke="#2c2115"/>
+          <circle cx="212" cy="548" r="1.4" fill="#33261a"/><circle cx="230" cy="572" r="1.4" fill="#33261a"/>
+          <circle cx="262" cy="530" r="1.4" fill="#33261a"/><circle cx="316" cy="576" r="1.4" fill="#33261a"/>
+          <circle cx="372" cy="550" r="1.4" fill="#33261a"/><circle cx="352" cy="528" r="1.4" fill="#33261a"/>
+        </g>
+        <!-- грядка «Саженцы» -->
+        <g class="deco">
+          <rect x="415" y="505" width="200" height="77" rx="4" fill="#4a3728" stroke="#2c2115" stroke-width="3"/>
+          <rect x="418" y="507" width="194" height="9" rx="3" fill="#5a4430"/>
+          <rect x="411" y="503" width="8" height="10" fill="#3c2c1d" stroke="#2c2115"/>
+          <rect x="611" y="503" width="8" height="10" fill="#3c2c1d" stroke="#2c2115"/>
+          <circle cx="428" cy="548" r="1.4" fill="#33261a"/><circle cx="436" cy="574" r="1.4" fill="#33261a"/>
+          <circle cx="474" cy="576" r="1.4" fill="#33261a"/><circle cx="530" cy="574" r="1.4" fill="#33261a"/>
+          <circle cx="604" cy="548" r="1.4" fill="#33261a"/>
+        </g>
+
+        <text class="deco" x="295" y="445" text-anchor="middle" font-size="10.5" letter-spacing="2.5" fill="#9db8a6" opacity="0.9">ГРЯДКА · РОСТКИ</text>
+        <text class="deco" x="515" y="445" text-anchor="middle" font-size="10.5" letter-spacing="2.5" fill="#9db8a6" opacity="0.9">ГРЯДКА · САЖЕНЦЫ</text>
+
+        <!-- горшок 1: идея жены-художницы -->
+        <g data-key="pot1">
+          <rect x="215" y="448" width="54" height="134" fill="transparent"/>
+          <path d="M242,514 C242,502 242,494 242,483" stroke="#4faf7c" stroke-width="2.5" fill="none"/>
+          <ellipse cx="231" cy="505" rx="9" ry="4" fill="#68d391" transform="rotate(-38 231 505)"/>
+          <ellipse cx="253" cy="505" rx="9" ry="4" fill="#7fdc9f" transform="rotate(38 253 505)"/>
+          <ellipse cx="229" cy="493" rx="8" ry="3.6" fill="#7fdc9f" transform="rotate(-30 229 493)"/>
+          <ellipse cx="255" cy="493" rx="8" ry="3.6" fill="#68d391" transform="rotate(30 255 493)"/>
+          <ellipse cx="234" cy="483" rx="6.5" ry="3" fill="#68d391" transform="rotate(-20 234 483)"/>
+          <ellipse cx="250" cy="483" rx="6.5" ry="3" fill="#7fdc9f" transform="rotate(20 250 483)"/>
+          <circle cx="242" cy="480" r="2.6" fill="#9ae6b4"/>
+          <path d="M219,514 L265,514 L259,560 L225,560 Z" fill="#6e5138" stroke="#463322" stroke-width="1.5"/>
+          <rect x="217" y="509" width="50" height="9" rx="2" fill="#7d5c40" stroke="#463322" stroke-width="1.5"/>
+          <g transform="rotate(-2 242 551)">
+            <path d="M217,567 l-2,8 M267,567 l2,8" stroke="#8a7a55" stroke-width="1.5"/>
+            <rect x="215" y="535" width="54" height="32" rx="3" fill="#e9e2cc" stroke="#b8ab8a"/>
+            <text x="242" y="546" text-anchor="middle" font-size="7.5" fill="#463a26">не поливать</text>
+            <text x="242" y="555" text-anchor="middle" font-size="7.5" fill="#463a26">руками</text>
+            <text x="242" y="563" text-anchor="middle" font-size="7" fill="#8a7a55">08.11</text>
+          </g>
+        </g>
+
+        <!-- горшок 2: концепты Sovereign -->
+        <g data-key="pot2">
+          <rect x="268" y="462" width="54" height="120" fill="transparent"/>
+          <path d="M295,512 L295,502" stroke="#4faf7c" stroke-width="2" fill="none"/>
+          <ellipse cx="289" cy="501" rx="5.5" ry="2.6" fill="#68d391" transform="rotate(-35 289 501)"/>
+          <ellipse cx="301" cy="501" rx="5.5" ry="2.6" fill="#7fdc9f" transform="rotate(35 301 501)"/>
+          <path d="M272,514 L318,514 L312,560 L278,560 Z" fill="#6e5138" stroke="#463322" stroke-width="1.5"/>
+          <rect x="270" y="509" width="50" height="9" rx="2" fill="#7d5c40" stroke="#463322" stroke-width="1.5"/>
+          <g transform="rotate(2 295 551)">
+            <path d="M270,565 l-2,8 M320,565 l2,8" stroke="#8a7a55" stroke-width="1.5"/>
+            <rect x="268" y="537" width="54" height="28" rx="3" fill="#e9e2cc" stroke="#b8ab8a"/>
+            <text x="295" y="548" text-anchor="middle" font-size="7.5" fill="#463a26">слот занят</text>
+            <text x="295" y="557" text-anchor="middle" font-size="7" fill="#8a7a55">09.11</text>
+          </g>
+        </g>
+
+        <!-- горшок 3: мир Higgsfield/UGC -->
+        <g data-key="pot3">
+          <rect x="321" y="464" width="54" height="118" fill="transparent"/>
+          <path d="M348,512 L348,504" stroke="#4faf7c" stroke-width="2" fill="none"/>
+          <ellipse cx="343" cy="503" rx="5" ry="2.4" fill="#7fdc9f" transform="rotate(-32 343 503)"/>
+          <ellipse cx="353" cy="503" rx="5" ry="2.4" fill="#68d391" transform="rotate(32 353 503)"/>
+          <path d="M325,514 L371,514 L365,560 L331,560 Z" fill="#6e5138" stroke="#463322" stroke-width="1.5"/>
+          <rect x="323" y="509" width="50" height="9" rx="2" fill="#7d5c40" stroke="#463322" stroke-width="1.5"/>
+          <g transform="rotate(-2 348 551)">
+            <path d="M323,565 l-2,8 M373,565 l2,8" stroke="#8a7a55" stroke-width="1.5"/>
+            <rect x="321" y="537" width="54" height="28" rx="3" fill="#e9e2cc" stroke="#b8ab8a"/>
+            <text x="348" y="548" text-anchor="middle" font-size="7.5" fill="#463a26">рано</text>
+            <text x="348" y="557" text-anchor="middle" font-size="7" fill="#8a7a55">07.11</text>
+          </g>
+        </g>
+
+        <!-- горшок 4: личный айтишник по подписке -->
+        <g data-key="pot4">
+          <rect x="422" y="440" width="54" height="142" fill="transparent"/>
+          <path d="M449,514 C449,498 449,480 449,462" stroke="#4faf7c" stroke-width="3" fill="none"/>
+          <ellipse cx="436" cy="503" rx="10" ry="4.4" fill="#68d391" transform="rotate(-40 436 503)"/>
+          <ellipse cx="462" cy="503" rx="10" ry="4.4" fill="#7fdc9f" transform="rotate(40 462 503)"/>
+          <ellipse cx="434" cy="489" rx="10" ry="4.4" fill="#7fdc9f" transform="rotate(-33 434 489)"/>
+          <ellipse cx="464" cy="489" rx="10" ry="4.4" fill="#68d391" transform="rotate(33 464 489)"/>
+          <ellipse cx="436" cy="476" rx="9" ry="4" fill="#68d391" transform="rotate(-26 436 476)"/>
+          <ellipse cx="462" cy="476" rx="9" ry="4" fill="#7fdc9f" transform="rotate(26 462 476)"/>
+          <ellipse cx="440" cy="465" rx="7" ry="3.2" fill="#7fdc9f" transform="rotate(-14 440 465)"/>
+          <ellipse cx="458" cy="465" rx="7" ry="3.2" fill="#68d391" transform="rotate(14 458 465)"/>
+          <circle cx="449" cy="455" r="4.2" fill="#f6e05e"/>
+          <circle cx="449" cy="455" r="2" fill="#fdf3ad"/>
+          <path d="M426,514 L472,514 L466,560 L432,560 Z" fill="#6e5138" stroke="#463322" stroke-width="1.5"/>
+          <rect x="424" y="509" width="50" height="9" rx="2" fill="#7d5c40" stroke="#463322" stroke-width="1.5"/>
+          <g transform="rotate(2 449 550)">
+            <path d="M424,567 l-2,8 M474,567 l2,8" stroke="#8a7a55" stroke-width="1.5"/>
+            <rect x="422" y="533" width="54" height="34" rx="3" fill="#e9e2cc" stroke="#b8ab8a"/>
+            <text x="449" y="544" text-anchor="middle" font-size="7.5" fill="#463a26">150–200 тыс</text>
+            <text x="449" y="553" text-anchor="middle" font-size="7.5" fill="#463a26">сум/мес</text>
+            <text x="449" y="562" text-anchor="middle" font-size="7" fill="#8a7a55">09.11</text>
+          </g>
+        </g>
+
+        <!-- горшок 5: продажа отчётов цен конкурентов -->
+        <g data-key="pot5">
+          <rect x="474" y="440" width="54" height="142" fill="transparent"/>
+          <path d="M501,514 C501,498 501,482 501,466" stroke="#4faf7c" stroke-width="3" fill="none"/>
+          <ellipse cx="489" cy="504" rx="9" ry="4" fill="#7fdc9f" transform="rotate(-38 489 504)"/>
+          <ellipse cx="513" cy="504" rx="9" ry="4" fill="#68d391" transform="rotate(38 513 504)"/>
+          <ellipse cx="488" cy="491" rx="9" ry="4" fill="#68d391" transform="rotate(-30 488 491)"/>
+          <ellipse cx="514" cy="491" rx="9" ry="4" fill="#7fdc9f" transform="rotate(30 514 491)"/>
+          <ellipse cx="490" cy="479" rx="8" ry="3.6" fill="#7fdc9f" transform="rotate(-22 490 479)"/>
+          <ellipse cx="512" cy="479" rx="8" ry="3.6" fill="#68d391" transform="rotate(22 512 479)"/>
+          <rect x="493" y="468" width="6" height="6" rx="1" fill="#f6e05e" opacity="0.95" transform="rotate(15 496 471)"/>
+          <rect x="502" y="459" width="6" height="6" rx="1" fill="#f6e05e" opacity="0.95" transform="rotate(-12 505 462)"/>
+          <rect x="494" y="450" width="6" height="6" rx="1" fill="#f6e05e" opacity="0.95" transform="rotate(20 497 453)"/>
+          <path d="M478,514 L524,514 L518,560 L484,560 Z" fill="#6e5138" stroke="#463322" stroke-width="1.5"/>
+          <rect x="476" y="509" width="50" height="9" rx="2" fill="#7d5c40" stroke="#463322" stroke-width="1.5"/>
+          <g transform="rotate(-2 501 550)">
+            <path d="M476,567 l-2,8 M526,567 l2,8" stroke="#8a7a55" stroke-width="1.5"/>
+            <rect x="474" y="533" width="54" height="34" rx="3" fill="#e9e2cc" stroke="#b8ab8a"/>
+            <text x="501" y="544" text-anchor="middle" font-size="7.5" fill="#463a26">21 артефакт</text>
+            <text x="501" y="553" text-anchor="middle" font-size="7.5" fill="#463a26">фабрики</text>
+            <text x="501" y="562" text-anchor="middle" font-size="7" fill="#8a7a55">08.11</text>
+          </g>
+        </g>
+
+        <!-- два пересаженных горшка (ржавь) -->
+        <g data-key="moved">
+          <rect x="527" y="496" width="95" height="86" fill="transparent"/>
+          <g transform="rotate(-9 550 556)">
+            <path d="M533,524 L567,524 L563,556 L537,556 Z" fill="#8a7a55" opacity="0.55" stroke="#6b5e40" stroke-width="1.5"/>
+            <path d="M533,530 L567,530" stroke="#6b5e40" opacity="0.5" stroke-width="1.2"/>
+            <path d="M550,524 C548,514 552,508 556,504" stroke="#6b5e40" stroke-width="1.5" fill="none" opacity="0.7"/>
+          </g>
+          <g transform="rotate(10 597 556)">
+            <path d="M581,526 L613,526 L609,556 L585,556 Z" fill="#8a7a55" opacity="0.45" stroke="#6b5e40" stroke-width="1.5"/>
+          </g>
+          <g transform="rotate(2 569 549)">
+            <rect x="542" y="536" width="54" height="26" rx="3" fill="#e9e2cc" stroke="#b8ab8a"/>
+            <text x="569" y="546" text-anchor="middle" font-size="7.5" fill="#463a26">→ в большой</text>
+            <text x="569" y="556" text-anchor="middle" font-size="7.5" fill="#8a7a55">мир</text>
+          </g>
+        </g>
+
+        <!-- лейка крона у входа -->
+        <g data-key="can">
+          <rect x="104" y="528" width="96" height="60" fill="transparent"/>
+          <path d="M150,566 L124,540 L130,532 L154,552 Z" fill="#74867c" stroke="#3f4f46" stroke-width="1.5"/>
+          <circle cx="127" cy="536" r="4" fill="#55685e"/>
+          <rect x="150" y="548" width="42" height="34" rx="7" fill="#74867c" stroke="#3f4f46" stroke-width="1.5"/>
+          <ellipse cx="171" cy="548" rx="15" ry="4.5" fill="#55685e"/>
+          <path d="M190,552 C202,554 202,574 190,578" stroke="#55685e" stroke-width="4" fill="none"/>
+          <ellipse cx="120" cy="552" rx="2" ry="3" fill="#a8d8c8" opacity="0.85"/>
+          <ellipse cx="114" cy="566" rx="2" ry="3" fill="#a8d8c8" opacity="0.85"/>
+          <ellipse cx="120" cy="578" rx="2" ry="3" fill="#a8d8c8" opacity="0.85"/>
+          <ellipse cx="116" cy="586" rx="11" ry="3" fill="#a8d8c8" opacity="0.14"/>
+        </g>
+
+        <!-- теплица зомби-уроков: стол -->
+        <g class="deco">
+          <rect x="645" y="462" width="225" height="12" fill="#4a3728" stroke="#33261a" stroke-width="2"/>
+          <rect x="652" y="474" width="8" height="82" fill="#3c2c1d"/>
+          <rect x="852" y="474" width="8" height="82" fill="#3c2c1d"/>
+        </g>
+        <g class="deco">
+          <line x1="700" y1="275" x2="700" y2="352" stroke="#5a6b60" stroke-width="1.5"/>
+          <line x1="806" y1="306" x2="806" y2="352" stroke="#5a6b60" stroke-width="1.5"/>
+          <rect x="668" y="352" width="168" height="20" rx="3" fill="#4a3a28" stroke="#6a5538" stroke-width="1.5"/>
+          <text x="752" y="366" text-anchor="middle" font-size="9.5" letter-spacing="1" fill="#e3d4ac">ТЕПЛИЦА ЗОМБИ-УРОКОВ</text>
+        </g>
+
+        <!-- кактус 1: 50M на кораблик -->
+        <g data-key="cac1">
+          <rect x="650" y="390" width="42" height="76" fill="transparent"/>
+          <rect x="661" y="400" width="22" height="50" rx="10" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1.5"/>
+          <path d="M661,412 l-5,-3 M661,424 l-5,3 M661,438 l-5,-3 M683,416 l5,3 M683,428 l5,-3 M683,442 l5,3 M668,401 l-2,-4 M676,401 l2,-4" stroke="#2f3d33" stroke-width="1.4" fill="none"/>
+          <path d="M662,448 L682,448 L679,462 L665,462 Z" fill="#6e5138" stroke="#463322" stroke-width="1.2"/>
+          <rect x="655" y="447" width="34" height="12" rx="2" fill="#e9e2cc" stroke="#b8ab8a"/>
+          <text x="672" y="456" text-anchor="middle" font-size="6.5" fill="#463a26">50M</text>
+        </g>
+
+        <!-- кактус 2: Kali-образ HTTPS -->
+        <g data-key="cac2">
+          <rect x="694" y="402" width="52" height="64" fill="transparent"/>
+          <rect x="699" y="420" width="12" height="18" rx="6" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1.2"/>
+          <rect x="729" y="426" width="12" height="20" rx="6" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1.2"/>
+          <rect x="707" y="432" width="8" height="6" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1"/>
+          <rect x="725" y="438" width="8" height="6" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1"/>
+          <rect x="711" y="412" width="18" height="38" rx="8" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1.5"/>
+          <path d="M711,422 l-4,-3 M711,434 l-4,3 M711,444 l-4,-3 M729,420 l4,3 M729,432 l4,-3 M729,444 l4,3 M717,413 l-2,-4 M725,413 l2,-4 M699,428 l-4,-2 M699,436 l-4,2 M741,432 l4,2 M741,442 l4,-2" stroke="#2f3d33" stroke-width="1.3" fill="none"/>
+          <path d="M710,448 L730,448 L727,462 L713,462 Z" fill="#6e5138" stroke="#463322" stroke-width="1.2"/>
+          <rect x="703" y="447" width="34" height="12" rx="2" fill="#e9e2cc" stroke="#b8ab8a"/>
+          <text x="720" y="456" text-anchor="middle" font-size="6.2" fill="#463a26">HTTPS 4ч</text>
+        </g>
+
+        <!-- кактус 3: зомби-В-1 (расцвёл) -->
+        <g data-key="cac3">
+          <rect x="748" y="394" width="40" height="72" fill="transparent"/>
+          <ellipse cx="768" cy="430" rx="13" ry="17" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1.5"/>
+          <path d="M755,424 l-4,-2 M755,434 l-4,2 M781,420 l4,-2 M781,432 l4,2 M768,414 l0,-4 M762,444 l-3,3 M774,444 l3,3" stroke="#2f3d33" stroke-width="1.3" fill="none"/>
+          <circle cx="768" cy="407" r="2.5" fill="#fdf0a0"/>
+          <circle cx="768" cy="401" r="2.6" fill="#f6e05e"/>
+          <circle cx="763" cy="406" r="2.6" fill="#f6e05e"/>
+          <circle cx="773" cy="406" r="2.6" fill="#f6e05e"/>
+          <circle cx="765" cy="411" r="2.6" fill="#f6e05e"/>
+          <circle cx="771" cy="411" r="2.6" fill="#f6e05e"/>
+          <path d="M758,448 L778,448 L775,462 L761,462 Z" fill="#6e5138" stroke="#463322" stroke-width="1.2"/>
+          <rect x="751" y="447" width="34" height="12" rx="2" fill="#e9e2cc" stroke="#b8ab8a"/>
+          <text x="768" y="456" text-anchor="middle" font-size="6.5" fill="#463a26">В-1</text>
+        </g>
+
+        <!-- кактус 4: параллельный спавн -->
+        <g data-key="cac4">
+          <rect x="800" y="386" width="44" height="80" fill="transparent"/>
+          <g transform="rotate(5 822 450)">
+            <rect x="814" y="394" width="16" height="56" rx="7" fill="#9ae6b4" stroke="#5f9c7e" stroke-width="1.5"/>
+            <path d="M814,406 l-5,-3 M814,420 l-5,3 M814,434 l-5,-3 M830,412 l5,3 M830,426 l5,-3 M830,440 l5,3" stroke="#2f3d33" stroke-width="1.3" fill="none"/>
+          </g>
+          <path d="M812,448 L832,448 L829,462 L815,462 Z" fill="#6e5138" stroke="#463322" stroke-width="1.2"/>
+          <rect x="805" y="447" width="34" height="12" rx="2" fill="#e9e2cc" stroke="#b8ab8a"/>
+          <text x="822" y="456" text-anchor="middle" font-size="6.2" fill="#463a26">СПАВН</text>
+        </g>
+
+        <!-- утренний свет сквозь стекло -->
+        <g class="deco">
+          <circle cx="110" cy="130" r="170" fill="url(#gSun)"/>
+          <polygon points="60,150 128,128 318,542 232,546" fill="#f6e05e" opacity="0.05"/>
+          <polygon points="188,136 248,124 468,540 384,546" fill="#fff8d0" opacity="0.04"/>
+          <polygon points="706,292 758,306 846,542 786,546" fill="#f6e05e" opacity="0.04"/>
+          <ellipse cx="300" cy="570" rx="140" ry="14" fill="#f6e05e" opacity="0.05"/>
+          <ellipse cx="760" cy="572" rx="90" ry="10" fill="#f6e05e" opacity="0.04"/>
+        </g>
+
+        <!-- капли на стекле -->
+        <g class="deco">
+          <g><circle cx="196" cy="178" r="4" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="195" cy="177" r="1" fill="#ffffff" fill-opacity="0.55"/><path d="M196,183 q2,7 0,13" stroke="#e6f2ec" stroke-opacity="0.22" fill="none"/></g>
+          <g><circle cx="287" cy="158" r="3" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="286" cy="157" r="1" fill="#ffffff" fill-opacity="0.55"/></g>
+          <g><circle cx="402" cy="222" r="3.5" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="401" cy="221" r="1" fill="#ffffff" fill-opacity="0.55"/><path d="M402,227 q-2,7 0,12" stroke="#e6f2ec" stroke-opacity="0.22" fill="none"/></g>
+          <g><circle cx="516" cy="296" r="3" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="515" cy="295" r="1" fill="#ffffff" fill-opacity="0.55"/></g>
+          <g><circle cx="118" cy="318" r="3.5" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="117" cy="317" r="1" fill="#ffffff" fill-opacity="0.55"/></g>
+          <g><circle cx="586" cy="208" r="3" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="585" cy="207" r="1" fill="#ffffff" fill-opacity="0.55"/></g>
+          <g><circle cx="700" cy="352" r="3.5" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="699" cy="351" r="1" fill="#ffffff" fill-opacity="0.55"/></g>
+          <g><circle cx="842" cy="398" r="3" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="841" cy="397" r="1" fill="#ffffff" fill-opacity="0.55"/></g>
+          <g><circle cx="340" cy="340" r="2.5" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="339" cy="339" r="0.9" fill="#ffffff" fill-opacity="0.55"/></g>
+          <g><circle cx="460" cy="470" r="3" fill="#e6f2ec" fill-opacity="0.08" stroke="#e6f2ec" stroke-opacity="0.4"/><circle cx="459" cy="469" r="1" fill="#ffffff" fill-opacity="0.55"/></g>
+        </g>
+
+        <!-- гравировка на стекле -->
+        <text class="deco" x="150" y="196" transform="rotate(-24 150 196)" font-size="11" letter-spacing="5" fill="#a8d8c8" fill-opacity="0.28">SOVEREIGN</text>
+      </svg>
+    </section>
+
+    <aside class="panel">
+      <div id="panelBody"></div>
+      <div class="panel-foot">Полив кроном — раз в неделю, отчёт в чат: «дозрела или лежит мёртвым грузом?». До полива — 7 дней.</div>
+    </aside>
+  </main>
+</div>
+
+<script>
+(function(){
+  var DATA = {
+    overview: {
+      kind: 'Оранжерея Sovereign',
+      name: 'Гавань дозревающих идей',
+      rows: [
+        ['Горшков', '5'],
+        ['Зомби-уроков', '4'],
+        ['Пересадок в большой мир', '2'],
+        ['До полива', '7 дней']
+      ],
+      verdict: 'Идеи есть — дозревают отдельно. Тут им тепло и тихо.'
+    },
+    pot1: {
+      kind: 'Горшок · грядка «Ростки»',
+      name: 'Идея жены-художницы',
+      badge: 'росток', bcls: 'sprout',
+      rows: [
+        ['Посажено', '08.11.2026'],
+        ['Источник', 'интервью с женой → остров-зонд → отдельный продукт'],
+        ['Стадия', 'росток — пустил первые листья'],
+        ['Что мешает', 'ждёт разговора с владельцем']
+      ],
+      verdict: 'Табличка запрещает полив руками — ждёт разговора.'
+    },
+    pot2: {
+      kind: 'Горшок · грядка «Ростки»',
+      name: 'Концепты нового мира Sovereign',
+      badge: 'семя', bcls: 'seed',
+      rows: [
+        ['Посажено', '09.11.2026'],
+        ['Источник', 'сам владелец — вчера назвал шаблонными'],
+        ['Стадия', 'семя лежит в земле, всходит неспешно']
+      ],
+      verdict: 'Слот занят: дозревает само, без полива руками.'
+    },
+    pot3: {
+      kind: 'Горшок · грядка «Ростки»',
+      name: 'Мир Higgsfield / UGC',
+      badge: 'семя', bcls: 'seed',
+      rows: [
+        ['Посажено', '07.11.2026'],
+        ['Источник', 'вторая денежная линия'],
+        ['Стадия', 'семя — росток не торопится']
+      ],
+      verdict: 'Рано трогать: пусть сидит в тепле, пока не окрепнет.'
+    },
+    pot4: {
+      kind: 'Горшок · грядка «Саженцы»',
+      name: 'Личный айтишник по подписке',
+      badge: 'саженец', bcls: 'sapling',
+      rows: [
+        ['Посажено', '09.11.2026'],
+        ['Источник', 'модель цены — на 2-ю неделю'],
+        ['Стадия', 'саженец — ствол уже держит'],
+        ['Цена зреет', '150–200 тыс сум/мес']
+      ],
+      verdict: 'Полив по расписанию: цену посчитаем на 2-й неделе.'
+    },
+    pot5: {
+      kind: 'Горшок · грядка «Саженцы»',
+      name: 'Продажа отчётов цен конкурентов',
+      badge: 'саженец', bcls: 'sapling',
+      rows: [
+        ['Посажено', '08.11.2026'],
+        ['Источник', 'фабрика отчётов Platform'],
+        ['Стадия', 'саженец — ствол крепкий'],
+        ['Урожай', '21 артефакт фабрики готов']
+      ],
+      verdict: 'Стебель набрал силу — 21 артефакт уже висит на ветках.'
+    },
+    moved: {
+      kind: 'Пустые места · грядка «Саженцы»',
+      name: 'Два горшка уехали в большой мир',
+      badge: 'пересадка', bcls: 'moved',
+      rows: [
+        ['Посажено', 'ранние посевы Platform'],
+        ['Стадия', 'пересадка в большой мир — финальная'],
+        ['Осталось', 'ржавь на горшках и место под новое семя']
+      ],
+      verdict: 'Горшки уехали делом — ржавь осталась на память.'
+    },
+    cac1: {
+      kind: 'Кактус · теплица зомби-уроков',
+      name: 'Зомби «50M на кораблик»',
+      badge: 'урок', bcls: 'spike',
+      rows: [
+        ['Урок выкопан', '05.11.2026'],
+        ['Что было', '50M на кораблик — убито'],
+        ['Шипы', 'один метод до итераций, 2–3 попытки']
+      ],
+      verdict: 'Не выбросили — выкопали урок. Шипы торчат в память.'
+    },
+    cac2: {
+      kind: 'Кактус · теплица зомби-уроков',
+      name: 'Зомби «Kali-образ HTTPS 4 часа»',
+      badge: 'урок', bcls: 'spike',
+      rows: [
+        ['Урок выкопан', '04.11.2026'],
+        ['Что было', 'Kali-образ, HTTPS за 4 часа'],
+        ['Шипы', 'торрент first']
+      ],
+      verdict: 'Четыре часа в никуда — теперь сначала торрент.'
+    },
+    cac3: {
+      kind: 'Кактус · теплица зомби-уроков',
+      name: 'Зомби-В-1',
+      badge: 'урок', bcls: 'spike',
+      rows: [
+        ['Урок выкопан', '03.11.2026'],
+        ['Что было', 'зомби-В-1 — пнули, тишина'],
+        ['Шипы', 'мертвец может ожить — дождись реакции на пинок']
+      ],
+      verdict: 'На кактусе раскрылся цветок: мертвецы умеют оживать.'
+    },
+    cac4: {
+      kind: 'Кактус · теплица зомби-уроков',
+      name: 'Зомби «Параллельный спавн»',
+      badge: 'урок', bcls: 'spike',
+      rows: [
+        ['Урок выкопан', '06.11.2026'],
+        ['Что было', 'параллельный спавн — unusual activity'],
+        ['Шипы', 'unusual activity — по одному']
+      ],
+      verdict: 'Сажаем по одному — система не любит толпы.'
+    },
+    can: {
+      kind: 'Инвентарь у входа',
+      name: 'Лейка крона',
+      badge: 'полив', bcls: 'water',
+      rows: [
+        ['Режим', 'полив раз в неделю'],
+        ['Отчёт', 'в чат — по каждому горшку'],
+        ['Следующий полив', 'через 7 дней']
+      ],
+      verdict: 'Каждый полив спрашивает: дозрела — или лежит мёртвым грузом?'
+    }
+  };
+
+  var body = document.getElementById('panelBody');
+
+  function render(key){
+    var d = DATA[key];
+    if(!d){ return; }
+    var badge = d.badge ? ' <span class="badge ' + d.bcls + '">' + d.badge + '</span>' : '';
+    var rows = '';
+    for (var i = 0; i < d.rows.length; i++) {
+      rows += '<div class="row"><span class="rl">' + d.rows[i][0] + '</span><span class="rv">' + d.rows[i][1] + '</span></div>';
+    }
+    body.innerHTML =
+      '<div class="eyebrow">' + d.kind + '</div>' +
+      '<h2 class="obj-name">' + d.name + badge + '</h2>' +
+      '<div class="rows">' + rows + '</div>' +
+      '<div class="verdict">' + d.verdict + '</div>';
+    var cur = document.querySelectorAll('.picked');
+    for (var j = 0; j < cur.length; j++) { cur[j].classList.remove('picked'); }
+    if (key !== 'overview') {
+      var el = document.querySelector('[data-key="' + key + '"]');
+      if (el) { el.classList.add('picked'); }
+    }
+  }
+
+  var hits = document.querySelectorAll('[data-key]');
+  for (var k = 0; k < hits.length; k++) {
+    hits[k].addEventListener('click', function(){
+      render(this.getAttribute('data-key'));
+    });
+  }
+
+  render('overview');
+})();
+</script>
+</body>
+</html>

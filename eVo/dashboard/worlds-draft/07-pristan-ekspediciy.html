@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пристань Экспедиций</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(1100px 520px at 50% -140px, #0e1e30, #0a1420);
+    color: #d9c9a8;
+    font-family: system-ui, 'Segoe UI', sans-serif;
+  }
+  header {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 22px 10px;
+    border-bottom: 1px solid #1c3a52;
+  }
+  h1 { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: .4px; color: #ecdfc2; }
+  .sub { font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: #7fa0b8; margin-top: 3px; }
+  .chips { margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    display: flex; align-items: baseline; gap: 7px;
+    border: 1px solid #23405a; background: #0d1a28;
+    border-radius: 6px; padding: 5px 10px;
+  }
+  .chip span { font-size: 10.5px; letter-spacing: .8px; text-transform: uppercase; color: #8fa8bd; }
+  .chip b { font-size: 15px; color: #c98a3d; font-variant-numeric: tabular-nums; }
+  .home {
+    width: 34px; height: 34px; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; border: 1px solid rgba(201,138,61,.45);
+    background: #0d1a28; color: #c98a3d;
+    font-size: 17px; text-decoration: none; line-height: 1;
+  }
+  .home:hover { border-color: #c98a3d; background: rgba(201,138,61,.14); }
+  main {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; gap: 16px;
+    padding: 12px 22px 16px;
+  }
+  .scene { flex: 1; min-width: 0; }
+  .scene svg { width: 100%; height: auto; display: block; }
+  .panel {
+    flex: 0 0 320px; align-self: flex-start;
+    background: #0d1a28; border: 1px solid #23405a;
+    border-radius: 10px; padding: 16px 18px 14px;
+  }
+  .p-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border-bottom: 1px solid #23405a; padding-bottom: 12px; }
+  .p-name { font-size: 15.5px; font-weight: 600; color: #ecdfc2; line-height: 1.3; }
+  .p-kind { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: #8fa8bd; margin-top: 4px; }
+  .p-stamp {
+    flex: 0 0 auto; margin-top: 2px;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 1px; white-space: nowrap;
+    border: 1px solid; border-radius: 20px; padding: 4px 9px;
+  }
+  .p-sec { margin-top: 12px; }
+  .p-h { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: #c98a3d; margin-bottom: 5px; }
+  .p-kv { display: flex; gap: 8px; padding: 2px 0; font-size: 12.5px; line-height: 1.45; }
+  .p-kv span { flex: 0 0 42%; max-width: 42%; color: #9fb6c9; }
+  .p-kv b { font-weight: 500; color: #e6d9ba; font-variant-numeric: tabular-nums; }
+  .p-phrase {
+    margin-top: 14px; padding: 6px 0 6px 10px;
+    border-left: 2px solid #c98a3d;
+    font-style: italic; font-size: 12.5px; color: #d9c9a8;
+  }
+  /* сцена */
+  .obj { cursor: pointer; outline: none; }
+  .obj:hover, .obj:focus-visible { filter: brightness(1.35); }
+  .bob { animation: bob 4.5s ease-in-out infinite alternate; }
+  @keyframes bob { from { transform: translateY(0); } to { transform: translateY(-5px); } }
+  .route { stroke-dasharray: 4 7; animation: flow 16s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -132; } }
+  .scene text, .panel { user-select: text; }
+  @media (max-width: 1000px) {
+    main { flex-direction: column; }
+    .panel { flex: 1 1 auto; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Пристань Экспедиций</h1>
+    <div class="sub">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+  </div>
+  <div class="chips">
+    <div class="chip"><span>экспедиций</span><b>4</b></div>
+    <div class="chip"><span>в море</span><b>1</b></div>
+    <div class="chip"><span>с грузом</span><b>1</b></div>
+    <div class="chip"><span>на стапеле</span><b>2</b></div>
+  </div>
+  <a class="home" href="index.html" title="Каталог вариаций">⌂</a>
+</header>
+
+<main>
+  <section class="scene">
+    <svg viewBox="0 0 1000 600" role="img" aria-label="Пристань экспедиций: стапель, причал, склад, доска статусов">
+      <defs>
+        <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0a1420"/>
+          <stop offset=".55" stop-color="#12283c"/>
+          <stop offset="1" stop-color="#1c3a52"/>
+        </linearGradient>
+        <linearGradient id="gSea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#10273c"/>
+          <stop offset="1" stop-color="#071019"/>
+        </linearGradient>
+        <g id="ship">
+          <path d="M62,-50 L112,-2" stroke="#241a10" stroke-width="1.5"/>
+          <path d="M64,-44 L106,-8 L64,-10 Z" fill="var(--sail,#d9c9a8)" opacity=".75"/>
+          <path d="M60,-52 C92,-44 96,-14 64,-6 Z" fill="var(--sail,#d9c9a8)"/>
+          <rect x="59" y="-54" width="3.5" height="56" fill="#241a10"/>
+          <path d="M62,-54 L80,-49 L62,-45 Z" fill="var(--flag,#c98a3d)"/>
+          <path d="M2,0 L118,0 L106,26 Q61,36 16,26 Z" fill="var(--hull,#3a2a18)" stroke="#120c06" stroke-width="1"/>
+          <line x1="4" y1="6" x2="118" y2="6" stroke="#120c06" opacity=".5"/>
+          <circle cx="30" cy="14" r="2" fill="#c98a3d" opacity=".8"/>
+          <circle cx="50" cy="16" r="2" fill="#c98a3d" opacity=".8"/>
+          <circle cx="70" cy="16" r="2" fill="#c98a3d" opacity=".8"/>
+          <circle cx="90" cy="14" r="2" fill="#c98a3d" opacity=".8"/>
+        </g>
+      </defs>
+
+      <!-- небо и море -->
+      <rect x="0" y="0" width="1000" height="250" fill="url(#gSky)"/>
+      <g fill="#d9c9a8">
+        <circle cx="70" cy="45" r="1.2" opacity=".5"/><circle cx="150" cy="95" r="1" opacity=".35"/>
+        <circle cx="240" cy="55" r="1.4" opacity=".45"/><circle cx="330" cy="120" r="1" opacity=".3"/>
+        <circle cx="520" cy="130" r="1" opacity=".3"/><circle cx="610" cy="50" r="1.3" opacity=".4"/>
+        <circle cx="730" cy="100" r="1" opacity=".3"/><circle cx="850" cy="45" r="1.4" opacity=".5"/>
+        <circle cx="955" cy="115" r="1" opacity=".35"/>
+      </g>
+      <circle cx="420" cy="75" r="20" fill="#d9c9a8" opacity=".1"/>
+      <circle cx="420" cy="75" r="9" fill="#d9c9a8" opacity=".5"/>
+      <rect x="0" y="250" width="1000" height="350" fill="url(#gSea)"/>
+      <line x1="0" y1="250" x2="1000" y2="250" stroke="#2a4a66" opacity=".7"/>
+
+      <!-- компас вахты -->
+      <g transform="translate(938,62)" stroke="#c98a3d" fill="none">
+        <circle r="20" fill="#0a1420" fill-opacity=".55" stroke-opacity=".8"/>
+        <circle r="15" stroke-opacity=".35"/>
+        <path d="M0,-15 V15 M-15,0 H15" stroke-opacity=".5"/>
+        <path d="M0,-15 L4,-3 L0,-6 L-4,-3 Z" fill="#c98a3d" stroke="none"/>
+        <text y="-24" text-anchor="middle" font-size="9" fill="#c98a3d" stroke="none">С</text>
+      </g>
+
+      <!-- волны -->
+      <g fill="none" stroke="#1c3a52" stroke-width="1.5" stroke-linecap="round">
+        <path d="M30,300 q12,-5 24,0 q12,5 24,0"/>
+        <path d="M120,330 q12,-5 24,0 q12,5 24,0"/>
+        <path d="M470,290 q12,-5 24,0"/>
+        <path d="M560,360 q14,-6 28,0 q14,6 28,0"/>
+        <path d="M420,470 q14,-6 28,0 q14,6 28,0"/>
+        <path d="M600,440 q14,-6 28,0"/>
+        <path d="M700,520 q16,-7 32,0 q16,7 32,0"/>
+        <path d="M480,560 q16,-7 32,0"/>
+        <path d="M900,470 q14,-6 28,0 q14,6 28,0"/>
+        <path d="M840,420 q12,-5 24,0"/>
+      </g>
+      <g fill="none" stroke="#d9c9a8" stroke-width="1.5" stroke-linecap="round" opacity=".06">
+        <path d="M200,390 q14,-6 28,0 q14,6 28,0"/>
+        <path d="M760,380 q14,-6 28,0"/>
+      </g>
+
+      <!-- берег слева -->
+      <path d="M0,150 C36,158 58,190 66,235 L70,600 L0,600 Z" fill="#0e1d2f"/>
+      <path d="M0,150 C36,158 58,190 66,235" fill="none" stroke="#1c3a52" stroke-width="1.5"/>
+
+      <!-- курс Dark Watch -->
+      <path class="route" d="M448,486 C462,430 468,370 510,318" fill="none" stroke="#c98a3d" stroke-width="1.5" opacity=".55"/>
+      <circle cx="510" cy="318" r="2" fill="#c98a3d" opacity=".7"/>
+
+      <!-- стапель маршрутов -->
+      <g>
+        <rect x="90" y="504" width="10" height="58" fill="#191106"/>
+        <rect x="210" y="504" width="10" height="58" fill="#191106"/>
+        <rect x="330" y="504" width="10" height="58" fill="#191106"/>
+        <rect x="410" y="504" width="10" height="58" fill="#191106"/>
+        <rect x="60" y="470" width="370" height="34" fill="#2b1f12"/>
+        <rect x="60" y="470" width="370" height="3" fill="#4a3420"/>
+        <path d="M104,470 V504 M141,470 V504 M178,470 V504 M215,470 V504 M252,470 V504 M289,470 V504 M326,470 V504 M363,470 V504 M398,470 V504" stroke="#1a130b"/>
+        <path d="M430,478 L512,532 M430,494 L512,548" stroke="#3a2c1a" stroke-width="3" fill="none"/>
+        <rect x="98" y="458" width="14" height="12" fill="#191106"/>
+        <rect x="148" y="458" width="14" height="12" fill="#191106"/>
+        <rect x="270" y="458" width="14" height="12" fill="#191106"/>
+        <rect x="320" y="458" width="14" height="12" fill="#191106"/>
+      </g>
+
+      <!-- корабль-шаблон используется через <use> -->
+
+      <!-- «Деньги-рейн» на стапеле -->
+      <g class="obj" data-id="mr" tabindex="0" role="button" aria-label="Экспедиция Деньги-рейн, готов к отплытию">
+        <use href="#ship" transform="translate(68,428)" style="--hull:#4a3420"/>
+        <text x="129" y="336" text-anchor="middle" font-size="11" fill="#d9c9a8">Деньги-рейн</text>
+        <g transform="translate(129,352)">
+          <rect x="-25" y="-8" width="50" height="16" rx="8" fill="#4fd1c5" fill-opacity=".14" stroke="#4fd1c5" stroke-opacity=".7"/>
+          <text y="3.5" text-anchor="middle" font-size="9" letter-spacing="1" fill="#4fd1c5">ГОТОВ</text>
+        </g>
+      </g>
+
+      <!-- «Внешние связи» на стапеле -->
+      <g class="obj" data-id="vc" tabindex="0" role="button" aria-label="Экспедиция Внешние связи, готова к отплытию">
+        <use href="#ship" transform="translate(230,428)" style="--hull:#3f3122"/>
+        <text x="291" y="336" text-anchor="middle" font-size="11" fill="#d9c9a8">Внешние связи</text>
+        <g transform="translate(291,352)">
+          <rect x="-25" y="-8" width="50" height="16" rx="8" fill="#4fd1c5" fill-opacity=".14" stroke="#4fd1c5" stroke-opacity=".7"/>
+          <text y="3.5" text-anchor="middle" font-size="9" letter-spacing="1" fill="#4fd1c5">ГОТОВ</text>
+        </g>
+      </g>
+
+      <!-- «Dark Watch» в море -->
+      <g transform="translate(506,288) scale(.6)">
+        <g class="bob">
+          <use href="#ship" style="--hull:#3a2a18"/>
+        </g>
+      </g>
+      <g class="obj" data-id="dw" tabindex="0" role="button" aria-label="Экспедиция Dark Watch, в море">
+        <text x="543" y="332" text-anchor="middle" font-size="11" fill="#d9c9a8">Dark Watch</text>
+        <g transform="translate(543,352)">
+          <rect x="-26" y="-8" width="52" height="16" rx="8" fill="#f6ad55" fill-opacity=".14" stroke="#f6ad55" stroke-opacity=".7"/>
+          <text y="3.5" text-anchor="middle" font-size="9" letter-spacing="1" fill="#f6ad55">В МОРЕ</text>
+        </g>
+      </g>
+
+      <!-- причал -->
+      <g>
+        <rect x="634" y="356" width="12" height="64" fill="#191106"/>
+        <rect x="716" y="356" width="12" height="64" fill="#191106"/>
+        <rect x="798" y="356" width="12" height="64" fill="#191106"/>
+        <rect x="880" y="356" width="12" height="64" fill="#191106"/>
+        <rect x="956" y="356" width="12" height="64" fill="#191106"/>
+        <rect x="620" y="330" width="380" height="26" fill="#241a10"/>
+        <rect x="620" y="330" width="380" height="3" fill="#4a3420"/>
+        <path d="M654,330 V356 M688,330 V356 M722,330 V356 M756,330 V356 M790,330 V356 M824,330 V356 M858,330 V356 M892,330 V356 M926,330 V356 M960,330 V356" stroke="#17100a"/>
+        <rect x="632" y="322" width="9" height="8" rx="2" fill="#1f1509"/>
+        <rect x="700" y="322" width="9" height="8" rx="2" fill="#1f1509"/>
+        <rect x="786" y="322" width="9" height="8" rx="2" fill="#1f1509"/>
+        <rect x="866" y="322" width="9" height="8" rx="2" fill="#1f1509"/>
+      </g>
+
+      <!-- доска статусов -->
+      <g class="obj" data-id="ds" tabindex="0" role="button" aria-label="Доска статусов пристани">
+        <rect x="648" y="312" width="6" height="18" fill="#191106"/>
+        <rect x="724" y="312" width="6" height="18" fill="#191106"/>
+        <rect x="636" y="232" width="106" height="82" rx="4" fill="#0f1c2c" stroke="#3a2c1a" stroke-width="2"/>
+        <text x="689" y="248" text-anchor="middle" font-size="9" letter-spacing="2" fill="#c98a3d">СТАТУСЫ</text>
+        <circle cx="650" cy="263" r="3" fill="#4fd1c5"/>
+        <text x="660" y="267" font-size="10" fill="#d9c9a8">готов — 2</text>
+        <circle cx="650" cy="283" r="3" fill="#f6ad55"/>
+        <text x="660" y="287" font-size="10" fill="#d9c9a8">в море — 1</text>
+        <circle cx="650" cy="303" r="3" fill="#68d391"/>
+        <text x="660" y="307" font-size="10" fill="#d9c9a8">с грузом — 1</text>
+      </g>
+
+      <!-- труба вахты -->
+      <g class="obj" data-id="vb" tabindex="0" role="button" aria-label="Труба вахты, капитан Синдбад">
+        <rect x="806" y="254" width="6" height="76" fill="#241a10"/>
+        <circle cx="809" cy="254" r="3" fill="#c98a3d"/>
+        <rect x="806" y="258" width="34" height="9" rx="2" fill="#b87a32"/>
+        <path d="M840,258 L868,246 L868,280 L840,267 Z" fill="#c98a3d" stroke="#8a5a22"/>
+        <line x1="868" y1="246" x2="868" y2="280" stroke="#8a5a22" stroke-width="2"/>
+        <line x1="812" y1="261" x2="836" y2="261" stroke="#e0a55f" stroke-width="1.5" opacity=".8"/>
+      </g>
+
+      <!-- склад снаряжения -->
+      <g class="obj" data-id="sk" tabindex="0" role="button" aria-label="Склад снаряжения">
+        <polygon points="818,212 908,164 998,212" fill="#d9c9a8" fill-opacity=".9" stroke="#b8a888"/>
+        <line x1="908" y1="164" x2="908" y2="212" stroke="#b8a888" opacity=".6"/>
+        <rect x="830" y="212" width="160" height="118" fill="#14243a" stroke="#1c3a52" stroke-width="1.5"/>
+        <path d="M830,244 H990 M830,276 H990 M830,308 H990" stroke="#0e1a2a"/>
+        <rect x="862" y="224" width="96" height="22" rx="3" fill="#0a1420" stroke="rgba(201,138,61,.55)"/>
+        <text x="910" y="238" text-anchor="middle" font-size="8.5" letter-spacing=".5" fill="#c98a3d">СКЛАД СНАРЯЖЕНИЯ</text>
+        <rect x="890" y="272" width="40" height="58" fill="#2b1f12" stroke="rgba(201,138,61,.35)"/>
+        <path d="M903,272 V330 M917,272 V330" stroke="#1a130b"/>
+        <circle cx="922" cy="300" r="2" fill="#c98a3d"/>
+        <rect x="836" y="296" width="28" height="34" fill="#3a2a18" stroke="#1a130b"/>
+        <path d="M836,296 L864,330 M864,296 L836,330" stroke="#1a130b" opacity=".7"/>
+        <rect x="868" y="304" width="26" height="26" fill="#3a2a18" stroke="#1a130b"/>
+        <path d="M868,304 L894,330 M894,304 L868,330" stroke="#1a130b" opacity=".7"/>
+        <rect x="946" y="292" width="26" height="38" rx="10" fill="#3a2a18" stroke="#1a130b"/>
+        <path d="M946,302 H972 M946,318 H972" stroke="#c98a3d" stroke-width="1.5" opacity=".6"/>
+        <ellipse cx="959" cy="292" rx="13" ry="3" fill="#4a3420"/>
+      </g>
+
+      <!-- «Tor-разведка» у причала -->
+      <g class="obj" data-id="tr" tabindex="0" role="button" aria-label="Экспедиция Tor-разведка, вернулась с грузом">
+        <path d="M652,404 C642,378 638,352 640,331" fill="none" stroke="#c98a3d" stroke-width="1.5" opacity=".5"/>
+        <path d="M760,404 C772,378 782,352 788,331" fill="none" stroke="#c98a3d" stroke-width="1.5" opacity=".5"/>
+        <ellipse cx="707" cy="452" rx="60" ry="5" fill="#05101c" opacity=".5"/>
+        <g transform="translate(646,404)" style="--hull:#3f2f1c">
+          <rect x="26" y="-13" width="18" height="11" fill="#3a2a18" stroke="#1a130b"/>
+          <rect x="48" y="-11" width="15" height="9" fill="#3a2a18" stroke="#1a130b"/>
+          <use href="#ship"/>
+        </g>
+        <text x="707" y="472" text-anchor="middle" font-size="11" fill="#d9c9a8">Tor-разведка</text>
+        <g transform="translate(707,490)">
+          <rect x="-33" y="-8" width="66" height="16" rx="8" fill="#68d391" fill-opacity=".14" stroke="#68d391" stroke-opacity=".7"/>
+          <text y="3.5" text-anchor="middle" font-size="9" letter-spacing="1" fill="#68d391">С ГРУЗОМ</text>
+        </g>
+      </g>
+    </svg>
+  </section>
+
+  <aside class="panel" id="panel"></aside>
+</main>
+
+<script>
+  var DATA = {
+    dw: {
+      name: 'Экспедиция «Dark Watch»', kind: 'экспедиция · в море',
+      stamp: 'В МОРЕ', c: '#f6ad55',
+      secs: [
+        { h: 'Курс', kv: [['направление', 'onion-наблюдение внешнего мира']] },
+        { h: 'Снаряжение', kv: [['стартовый набор', '419 групп']] },
+        { h: 'Трюм', kv: [['обменники', '101 — сняты цифры']] },
+        { h: 'Рапорт', kv: [['добыча', 'в картотеку Workspace/intel']] }
+      ],
+      phrase: 'Груз сдал — в картотеку, не в тайну.'
+    },
+    mr: {
+      name: 'Экспедиция «Деньги-рейн»', kind: 'экспедиция · на стапеле',
+      stamp: 'ГОТОВ К ОТЛЫТИЮ', c: '#4fd1c5',
+      secs: [
+        { h: 'Цель', kv: [['сумма', '$300–600'], ['срок', 'к 09–10.11']] },
+        { h: 'Снаряжение', kv: [
+          ['Trust Wallet', 'не установлен'],
+          ['BestChange-таблица', '101 обменник'],
+          ['резюме hh.uz', 'готово'],
+          ['отклики', '10 отправлено']
+        ] }
+      ],
+      phrase: 'Кошель не установлен — борт не отходит.'
+    },
+    vc: {
+      name: 'Экспедиция «Внешние связи В-1..В-4»', kind: 'экспедиция · на стапеле',
+      stamp: 'ГОТОВ К ОТЛЫТИЮ', c: '#4fd1c5',
+      secs: [
+        { h: 'Груз-план', kv: [
+          ['реестр', 'внешнего мира'],
+          ['станция', 'мониторинга'],
+          ['конвейер', 'клиентский']
+        ] },
+        { h: 'Маршрут', kv: [['стоянки', 'В-1 → В-4'], ['рапорт', 'на каждой стоянке']] }
+      ],
+      phrase: 'Четыре стоянки — четыре рапорта.'
+    },
+    tr: {
+      name: 'Экспедиция «Tor-разведка»', kind: 'экспедиция · у причала',
+      stamp: 'ВЕРНУЛАСЬ С ГРУЗОМ', c: '#68d391',
+      secs: [
+        { h: 'Груз', kv: [
+          ['TB 16.0', 'верифицирован'],
+          ['Tor', 'ходит без мостов'],
+          ['Ahmia onion', 'верифицирован 2 источниками']
+        ] },
+        { h: 'Рапорт', kv: [['сдан', 'в картотеку Workspace/intel']] }
+      ],
+      phrase: 'Груз сдал — в картотеку, не в тайну.'
+    },
+    sk: {
+      name: 'Склад снаряжения', kind: 'склад пристани',
+      stamp: 'СКЛАД', c: '#c98a3d',
+      secs: [
+        { h: 'Ключи', kv: [['хранение', 'в Vault']] },
+        { h: 'Бюджеты', kv: [['выдача', 'по экспедициям'], ['правило', 'бюджет + рапорт']] },
+        { h: 'Врата', kv: [['выход', 'без рапорта экспедиция закрыта']] }
+      ],
+      phrase: 'Без рапорта — ни один борт не уходит.'
+    },
+    vb: {
+      name: 'Труба вахты', kind: 'вахта пристани',
+      stamp: 'ВАХТА', c: '#c98a3d',
+      secs: [
+        { h: 'Капитан', kv: [['имя', 'Синдбад'], ['паспорт', 'Memory/Agents/Sindbad.md']] },
+        { h: 'Рантайм', kv: [['тело', 'нет — пристань и есть его стапель']] },
+        { h: 'Сигнал', kv: [['труба', 'к отплытию и к встрече']] }
+      ],
+      phrase: 'Тела нет — есть бюджет, рапорт и море.'
+    },
+    ds: {
+      name: 'Доска статусов', kind: 'сводка пристани',
+      stamp: 'СВОДКА', c: '#c98a3d',
+      secs: [
+        { h: 'Готов к отплытию — 2', kv: [['Деньги-рейн', 'на стапеле'], ['Внешние связи В-1..В-4', 'на стапеле']] },
+        { h: 'В море — 1', kv: [['Dark Watch', 'onion-наблюдение']] },
+        { h: 'Вернулся с грузом — 1', kv: [['Tor-разведка', 'груз сдан']] }
+      ],
+      phrase: 'Два снаряжаются, один в море, один груз сдал.'
+    }
+  };
+
+  function render(id) {
+    var d = DATA[id];
+    if (!d) return;
+    var html = '<div class="p-head"><div><div class="p-name">' + d.name + '</div>' +
+      '<div class="p-kind">' + d.kind + '</div></div>' +
+      '<span class="p-stamp" style="color:' + d.c + ';border-color:' + d.c + ';background:' + d.c + '1a">' + d.stamp + '</span></div>';
+    for (var i = 0; i < d.secs.length; i++) {
+      var s = d.secs[i];
+      html += '<div class="p-sec"><div class="p-h">' + s.h + '</div>';
+      for (var j = 0; j < s.kv.length; j++) {
+        html += '<div class="p-kv"><span>' + s.kv[j][0] + '</span><b>' + s.kv[j][1] + '</b></div>';
+      }
+      html += '</div>';
+    }
+    html += '<div class="p-phrase">' + d.phrase + '</div>';
+    document.getElementById('panel').innerHTML = html;
+  }
+
+  var objs = document.querySelectorAll('.obj');
+  for (var k = 0; k < objs.length; k++) {
+    (function (el) {
+      var go = function () { render(el.getAttribute('data-id')); };
+      el.addEventListener('click', go);
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+      });
+    })(objs[k]);
+  }
+
+  render('dw');
+</script>
+</body>
+</html>

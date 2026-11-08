@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Счётная Пристань — превью мира Platform</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#060c14}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif;color:#e8dcc4;overflow-x:hidden}
+.stage{position:relative;width:min(1280px,100vw);aspect-ratio:16/9;max-height:100vh;background:#0a1420}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+#scene text{font-family:'Segoe UI',system-ui,sans-serif}
+.num{font-variant-numeric:tabular-nums}
+[data-id]{cursor:pointer}
+[data-id]:hover,[data-id].on{filter:brightness(1.35)}
+.top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:18px;padding:14px 24px 16px;background:linear-gradient(180deg,rgba(5,10,16,.8),rgba(5,10,16,0));z-index:5}
+h1{font-size:28px;font-weight:600;letter-spacing:.5px;white-space:nowrap;color:#e8dcc4}
+.sub{font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;color:#9fb0c0;margin-top:3px}
+.chips{display:flex;gap:10px;margin-left:auto}
+.chip{border:1px solid rgba(201,138,61,.45);border-radius:8px;padding:4px 11px;text-align:right;background:rgba(10,20,32,.55)}
+.chip span{display:block;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#9fb0c0}
+.chip b{font-size:15px;font-weight:600;color:#c98a3d;font-variant-numeric:tabular-nums}
+.home{width:38px;height:38px;border-radius:50%;border:1px solid #c98a3d;color:#e8dcc4;display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;text-decoration:none;background:rgba(10,20,32,.6);flex:0 0 auto}
+.home:hover{background:rgba(201,138,61,.25)}
+.panel{position:absolute;left:22px;bottom:22px;width:342px;z-index:6;background:rgba(8,15,24,.9);border:1px solid rgba(201,138,61,.55);border-radius:10px;padding:14px 16px 12px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.st{display:inline-block;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;margin-bottom:7px}
+.st.green{color:#68d391;border-color:#68d391}
+.st.copper{color:#c98a3d;border-color:#c98a3d}
+.st.rust{color:#d9534f;border-color:#d9534f}
+#pName{font-size:17px;font-weight:600;line-height:1.25;color:#e8dcc4;margin-bottom:8px}
+.row{display:flex;justify-content:space-between;gap:14px;padding:5px 0;border-top:1px dashed rgba(232,220,196,.16);font-size:13px}
+.row span{color:#9fb0c0}
+.row b{color:#e8dcc4;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.quote{margin-top:9px;font-size:12.5px;line-height:1.45;color:#c98a3d;font-style:italic}
+.quote em{display:block;margin-top:3px;font-size:10.5px;font-style:normal;color:#9fb0c0}
+</style>
+</head>
+<body>
+<div class="stage">
+<svg id="scene" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" aria-label="Счётная Пристань">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#0e1c2c"/><stop offset="1" stop-color="#0a1420"/>
+</linearGradient>
+<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#0d1b2b"/><stop offset="1" stop-color="#05090f"/>
+</linearGradient>
+<marker id="mG" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#68d391"/></marker>
+<marker id="mC" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c98a3d"/></marker>
+<marker id="mR" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d9534f"/></marker>
+</defs>
+
+<rect width="1280" height="400" fill="url(#sky)"/>
+<g fill="#cfe0f0">
+<circle cx="500" cy="60" r="1.2" opacity=".6"/><circle cx="585" cy="140" r="1" opacity=".5"/>
+<circle cx="660" cy="90" r="1.4" opacity=".7"/><circle cx="740" cy="50" r="1" opacity=".5"/>
+<circle cx="820" cy="120" r="1.3" opacity=".6"/><circle cx="900" cy="70" r="1" opacity=".5"/>
+<circle cx="960" cy="160" r="1.2" opacity=".55"/><circle cx="1180" cy="40" r="1.4" opacity=".7"/>
+<circle cx="1240" cy="120" r="1" opacity=".5"/><circle cx="720" cy="200" r="1" opacity=".45"/>
+<circle cx="1160" cy="170" r="1.2" opacity=".5"/><circle cx="470" cy="210" r="1" opacity=".4"/>
+</g>
+<g>
+<circle cx="1096" cy="84" r="34" fill="#b8c4d4"/>
+<circle cx="1085" cy="76" r="7" fill="#a3b0c2"/><circle cx="1104" cy="94" r="5" fill="#a3b0c2"/>
+<circle cx="1098" cy="66" r="4" fill="#a3b0c2"/>
+</g>
+
+<rect y="400" width="1280" height="320" fill="url(#sea)"/>
+<line x1="0" y1="400" x2="1280" y2="400" stroke="#243650" stroke-width="1.5"/>
+<ellipse cx="1096" cy="470" rx="26" ry="3" fill="#b8c4d4" opacity=".22"/>
+<ellipse cx="1096" cy="530" rx="20" ry="2.5" fill="#b8c4d4" opacity=".18"/>
+<ellipse cx="1096" cy="600" rx="30" ry="3" fill="#b8c4d4" opacity=".14"/>
+<g stroke="#1c2e44" fill="none" stroke-width="2">
+<path opacity=".8" d="M0 442 Q30 436 60 442 T120 442 T180 442 T240 442 T300 442 T360 442 T420 442 T480 442 T540 442 T600 442 T660 442 T720 442 T780 442 T840 442 T900 442 T960 442 T1020 442 T1080 442 T1140 442 T1200 442 T1260 442"/>
+<path opacity=".55" d="M0 505 Q30 511 60 505 T120 505 T180 505 T240 505 T300 505 T360 505 T420 505 T480 505 T540 505 T600 505 T660 505 T720 505 T780 505 T840 505 T900 505 T960 505 T1020 505 T1080 505 T1140 505 T1200 505 T1260 505"/>
+<path opacity=".45" d="M0 575 Q30 569 60 575 T120 575 T180 575 T240 575 T300 575 T360 575 T420 575 T480 575 T540 575 T600 575 T660 575 T720 575 T780 575 T840 575 T900 575 T960 575 T1020 575 T1080 575 T1140 575 T1200 575 T1260 575"/>
+<path opacity=".35" d="M0 640 Q30 646 60 640 T120 640 T180 640 T240 640 T300 640 T360 640 T420 640 T480 640 T540 640 T600 640 T660 640 T720 640 T780 640 T840 640 T900 640 T960 640 T1020 640 T1080 640 T1140 640 T1200 640 T1260 640"/>
+<path opacity=".3" d="M0 692 Q30 686 60 692 T120 692 T180 692 T240 692 T300 692 T360 692 T420 692 T480 692 T540 692 T600 692 T660 692 T720 692 T780 692 T840 692 T900 692 T960 692 T1020 692 T1080 692 T1140 692 T1200 692 T1260 692"/>
+</g>
+
+<g data-id="otchety">
+<path d="M566 410 C700 402 880 404 1040 418" fill="none" stroke="#c98a3d" stroke-width="2.5" stroke-linecap="round" marker-end="url(#mC)"/>
+<path d="M566 410 C700 402 880 404 1040 418" fill="none" stroke="#c98a3d" stroke-width="20" stroke-opacity="0" pointer-events="stroke"/>
+<line x1="860" y1="409" x2="860" y2="387" stroke="#8a5a2a" stroke-width="2"/>
+<polygon points="860,387 877,392 860,397" fill="#c98a3d"/>
+<text x="860" y="429" text-anchor="middle" font-size="11" fill="#c98a3d">Отчёты цен · 21</text>
+</g>
+<g data-id="devops">
+<path d="M566 432 C700 424 950 428 1200 452" fill="none" stroke="#68d391" stroke-width="3" stroke-linecap="round" marker-end="url(#mG)"/>
+<path d="M566 432 C700 424 950 428 1200 452" fill="none" stroke="#68d391" stroke-width="20" stroke-opacity="0" pointer-events="stroke"/>
+<line x1="880" y1="433" x2="880" y2="411" stroke="#3c6a4c" stroke-width="2"/>
+<polygon points="880,411 897,416 880,421" fill="#68d391"/>
+<text x="880" y="453" text-anchor="middle" font-size="11" fill="#68d391">DevOps-консалт</text>
+</g>
+<g data-id="olx">
+<path d="M566 446 C720 458 900 484 1170 512" fill="none" stroke="#68d391" stroke-width="3" stroke-linecap="round" marker-end="url(#mG)"/>
+<path d="M566 446 C720 458 900 484 1170 512" fill="none" stroke="#68d391" stroke-width="20" stroke-opacity="0" pointer-events="stroke"/>
+<line x1="830" y1="470" x2="830" y2="448" stroke="#3c6a4c" stroke-width="2"/>
+<polygon points="830,448 847,453 830,458" fill="#68d391"/>
+<text x="830" y="490" text-anchor="middle" font-size="11" fill="#68d391">OLX-боты</text>
+</g>
+<g data-id="kwork">
+<path d="M566 458 C660 500 800 570 985 650" fill="none" stroke="#68d391" stroke-width="3" stroke-linecap="round" marker-end="url(#mG)"/>
+<path d="M566 458 C660 500 800 570 985 650" fill="none" stroke="#68d391" stroke-width="20" stroke-opacity="0" pointer-events="stroke"/>
+<line x1="745" y1="545" x2="745" y2="523" stroke="#3c6a4c" stroke-width="2"/>
+<polygon points="745,523 762,528 745,533" fill="#68d391"/>
+<text x="745" y="565" text-anchor="middle" font-size="11" fill="#68d391">Kwork-кворки</text>
+</g>
+<g data-id="higgsfield">
+<path d="M566 470 C610 530 640 600 668 692" fill="none" stroke="#d9534f" stroke-width="2.5" stroke-dasharray="8 7" stroke-linecap="round" marker-end="url(#mR)"/>
+<path d="M566 470 C610 530 640 600 668 692" fill="none" stroke="#d9534f" stroke-width="20" stroke-opacity="0" pointer-events="stroke"/>
+<line x1="625" y1="570" x2="625" y2="548" stroke="#6a3230" stroke-width="2"/>
+<polygon points="625,548 642,553 625,558" fill="#d9534f"/>
+<text x="625" y="590" text-anchor="middle" font-size="11" fill="#d9534f">Higgsfield UGC</text>
+</g>
+
+<g data-id="priliv">
+<rect x="1090" y="400" width="12" height="240" fill="#3c2a1c"/>
+<rect x="1126" y="400" width="12" height="240" fill="#3c2a1c"/>
+<rect x="1078" y="176" width="36" height="464" rx="2" fill="#1d2a38" stroke="#3a4a5c" stroke-width="2"/>
+<path d="M1078 200h16M1078 230h8M1078 260h16M1078 290h8M1078 320h16M1078 350h8M1078 380h16M1078 410h8M1078 440h16M1078 470h8M1078 500h16M1078 530h8M1078 560h16M1078 590h8M1078 620h16" stroke="#5a6e84" stroke-width="2"/>
+<polygon points="1064,286 1078,296 1064,306" fill="#b8c4d4"/>
+<text x="1058" y="300" text-anchor="end" font-size="13" fill="#b8c4d4" class="num">11 900</text>
+<rect x="1052" y="140" width="88" height="26" rx="3" fill="#221609" stroke="#c98a3d" stroke-width="1.5"/>
+<text x="1096" y="157" text-anchor="middle" font-size="10" letter-spacing="1" fill="#e8dcc4">USDT / СУМ</text>
+</g>
+
+<g>
+<rect x="36" y="352" width="524" height="20" fill="#6a4a32"/>
+<path d="M80 352v20M124 352v20M168 352v20M212 352v20M256 352v20M300 352v20M344 352v20M388 352v20M432 352v20M476 352v20M520 352v20" stroke="#523723" stroke-width="2"/>
+<rect x="36" y="372" width="524" height="8" fill="#3c2a1c"/>
+<rect x="64" y="380" width="13" height="80" fill="#3c2a1c"/>
+<rect x="168" y="380" width="13" height="82" fill="#3c2a1c"/>
+<rect x="272" y="380" width="13" height="80" fill="#3c2a1c"/>
+<rect x="376" y="380" width="13" height="82" fill="#3c2a1c"/>
+<rect x="468" y="380" width="13" height="80" fill="#3c2a1c"/>
+<rect x="540" y="380" width="13" height="80" fill="#3c2a1c"/>
+</g>
+
+<g data-id="kontora">
+<rect x="392" y="124" width="14" height="52" fill="#3a2a1e"/>
+<path d="M399 118 q7 -10 0 -18 q-7 -8 0 -16" fill="none" stroke="#2a3a4c" stroke-width="2" opacity=".8"/>
+<polygon points="80,180 260,108 440,180" fill="#4a3222" stroke="#2a1c12" stroke-width="2"/>
+<rect x="90" y="180" width="340" height="172" fill="#6a4a32"/>
+<path d="M90 200h340M90 220h340M90 240h340M90 260h340M90 280h340M90 300h340M90 320h340M90 340h340" stroke="#5a3e29" stroke-width="1.5"/>
+<rect x="190" y="136" width="140" height="28" rx="3" fill="#221609" stroke="#c98a3d" stroke-width="1.5"/>
+<text x="260" y="155" text-anchor="middle" font-size="12" letter-spacing=".5" fill="#e8dcc4">СЧЁТНАЯ ПРИСТАНЬ</text>
+<rect x="264" y="266" width="64" height="6" fill="#c98a3d"/>
+<rect x="270" y="272" width="52" height="80" fill="#332415" stroke="#8a6a4a" stroke-width="1.5"/>
+<circle cx="312" cy="315" r="2.5" fill="#c98a3d"/>
+<rect x="264" y="350" width="64" height="6" fill="#3c2a1c"/>
+
+<g data-id="kassa">
+<rect x="100" y="208" width="82" height="6" fill="#c98a3d"/>
+<rect x="104" y="214" width="74" height="58" fill="#13202e" stroke="#c98a3d" stroke-width="2.5"/>
+<rect x="110" y="220" width="62" height="46" fill="#e8dcc4" opacity=".92"/>
+<line x1="114" y1="231" x2="166" y2="231" stroke="#6a4a32" stroke-width="2"/>
+<line x1="114" y1="242" x2="158" y2="242" stroke="#8a6a4a" stroke-width="2"/>
+<line x1="114" y1="253" x2="164" y2="253" stroke="#6a4a32" stroke-width="2"/>
+<line x1="114" y1="261" x2="150" y2="261" stroke="#8a6a4a" stroke-width="2"/>
+<rect x="104" y="278" width="74" height="15" fill="#221609" stroke="#8a6a4a" stroke-width="1"/>
+<text x="141" y="289" text-anchor="middle" font-size="9" letter-spacing="1" fill="#e8dcc4">КАССА</text>
+</g>
+<g data-id="sklad">
+<rect x="182" y="208" width="82" height="6" fill="#c98a3d"/>
+<rect x="186" y="214" width="74" height="58" fill="#13202e" stroke="#c98a3d" stroke-width="2.5"/>
+<rect x="192" y="220" width="62" height="46" fill="#e8dcc4" opacity=".92"/>
+<text x="223" y="235" text-anchor="middle" font-size="11" font-weight="600" fill="#6a4a32" class="num">260M</text>
+<rect x="198" y="242" width="20" height="22" rx="3" fill="#6a4a32"/>
+<rect x="224" y="246" width="18" height="18" rx="3" fill="#8a6a4a"/>
+<line x1="198" y1="250" x2="218" y2="250" stroke="#e8dcc4" stroke-width="1.5"/>
+<rect x="186" y="278" width="74" height="15" fill="#221609" stroke="#8a6a4a" stroke-width="1"/>
+<text x="223" y="289" text-anchor="middle" font-size="9" letter-spacing="1" fill="#e8dcc4">СКЛАД</text>
+</g>
+<g data-id="priliv">
+<rect x="328" y="208" width="82" height="6" fill="#c98a3d"/>
+<rect x="332" y="214" width="74" height="58" fill="#13202e" stroke="#c98a3d" stroke-width="2.5"/>
+<rect x="338" y="220" width="62" height="46" fill="#e8dcc4" opacity=".92"/>
+<text x="369" y="235" text-anchor="middle" font-size="11" font-weight="600" fill="#33506e" class="num">11 900</text>
+<path d="M342 252 q8 -9 16 0 t16 0 t16 0" fill="none" stroke="#33506e" stroke-width="2.5"/>
+<path d="M342 260 q8 -9 16 0 t16 0" fill="none" stroke="#7a94b0" stroke-width="2"/>
+<rect x="332" y="278" width="74" height="15" fill="#221609" stroke="#8a6a4a" stroke-width="1"/>
+<text x="369" y="289" text-anchor="middle" font-size="9" letter-spacing="1" fill="#e8dcc4">ПРИЛИВ</text>
+</g>
+
+<rect x="262" y="200" width="68" height="36" rx="4" fill="#221609" stroke="#c98a3d" stroke-width="1.5"/>
+<g stroke="#8a5a2a" stroke-width="1.5">
+<line x1="268" y1="210" x2="324" y2="210"/>
+<line x1="268" y1="218" x2="324" y2="218"/>
+<line x1="268" y1="226" x2="324" y2="226"/>
+</g>
+<g fill="#c98a3d">
+<circle cx="274" cy="210" r="3.2"/><circle cx="284" cy="210" r="3.2"/><circle cx="294" cy="210" r="3.2"/><circle cx="304" cy="210" r="3.2"/><circle cx="314" cy="210" r="3.2"/>
+<circle cx="284" cy="218" r="3.2"/><circle cx="294" cy="218" r="3.2"/><circle cx="304" cy="218" r="3.2"/><circle cx="314" cy="218" r="3.2"/>
+<circle cx="274" cy="226" r="3.2"/><circle cx="284" cy="226" r="3.2"/><circle cx="294" cy="226" r="3.2"/><circle cx="304" cy="226" r="3.2"/><circle cx="314" cy="226" r="3.2"/><circle cx="324" cy="226" r="3.2"/>
+</g>
+</g>
+
+<g>
+<path d="M418 196 V302 H446 V368 H556 V344" fill="none" stroke="#c98a3d" stroke-width="4" stroke-linecap="round"/>
+<path d="M412 240h12M412 290h12M440 340h12M466 362v12M516 362v12M550 356h12" stroke="#8a5a2a" stroke-width="2"/>
+<rect x="548" y="328" width="17" height="22" rx="3" fill="#c98a3d" stroke="#8a5a2a" stroke-width="1.5"/>
+</g>
+
+<g data-id="blockers">
+<rect x="452" y="312" width="100" height="8" fill="#5a3e29"/>
+<rect x="456" y="320" width="6" height="32" fill="#3c2a1c"/>
+<rect x="542" y="320" width="6" height="32" fill="#3c2a1c"/>
+<g transform="rotate(-4 483 305)">
+<rect x="470" y="298" width="26" height="15" fill="#e8dcc4"/>
+<line x1="474" y1="304" x2="492" y2="304" stroke="#8a6a4a" stroke-width="1.5"/>
+<line x1="474" y1="308" x2="488" y2="308" stroke="#8a6a4a" stroke-width="1.5"/>
+</g>
+<rect x="508" y="299" width="30" height="14" rx="2" fill="#d9534f" opacity=".9"/>
+<rect x="518" y="296" width="10" height="4" fill="#8a2e2a"/>
+</g>
+</svg>
+
+<header class="top">
+<div class="brand">
+<h1>Счётная Пристань</h1>
+<div class="sub">ПРЕВЬЮ-ВАРИАЦИЯ · демо-снимок 09.11.2026</div>
+</div>
+<div class="chips">
+<div class="chip"><span>путей</span><b>5</b></div>
+<div class="chip"><span>живых</span><b>3</b></div>
+<div class="chip"><span>касса · записей</span><b>1</b></div>
+<div class="chip"><span>топливо</span><b>260M</b></div>
+</div>
+<a class="home" href="index.html" title="Каталог миров">⌂</a>
+</header>
+
+<aside class="panel">
+<span class="st copper" id="pStatus"></span>
+<h2 id="pName"></h2>
+<div id="pRows"></div>
+<p class="quote"><span id="pQuote"></span><em>— Остап Бендер, смотритель</em></p>
+</aside>
+</div>
+
+<script>
+(function(){
+var DATA={
+kontora:{name:'Контора Счётной Пристани',status:'учреждение',cls:'copper',rows:[['смотритель','Остап Бендер'],['окна','касса · склад · прилив'],['приёмка','пройдена'],['первая запись','08.11']],quote:'Касса открыта. Счёт ведём по-деловому.'},
+kassa:{name:'Касса — лиджер внутренних расчётов',status:'работает',cls:'green',rows:[['первая запись','08.11'],['приёмка','пройдена'],['плагин','вне git'],['владелец','Остап Бендер']],quote:'Честность — лучший процент.'},
+sklad:{name:'Топливный склад',status:'учтено',cls:'green',rows:[['остаток','260M токенов'],['срез','08.11'],['пополнение','часть сгорает'],['списания','~40% ниже фактуры']],quote:'Топливо считаем до капли — счёт должен сойтись.'},
+priliv:{name:'Приливная станция',status:'вода идёт',cls:'copper',rows:[['курс USDT','11 900 сум'],['спред BestChange','0,4%'],['обменников','101']],quote:'Прилив поднимет цену, отлив вернёт. Спред знаем заранее.'},
+devops:{name:'Путь: DevOps-консалт за USDT',status:'живой',cls:'green',rows:[['валюта','USDT'],['цель','$300–600'],['горизонт','к 09–10.11']],quote:'Путь жив, пока по нему платят.'},
+olx:{name:'Путь: OLX-боты',status:'живой',cls:'green',rows:[['цена','от 2 млн сум'],['витрина','OLX']],quote:'Каждое объявление — строчка в приходе.'},
+kwork:{name:'Путь: Kwork-кворки',status:'живой',cls:'green',rows:[['аккаунт','daimak'],['витрина','Kwork']],quote:'Кворк ушёл — запись в книге.'},
+otchety:{name:'Отчёты цен конкурентов',status:'готов',cls:'copper',rows:[['артефактов','21'],['товар','на полке']],quote:'Двадцать один лист готовы — продаём по цене дела.'},
+higgsfield:{name:'Higgsfield UGC',status:'готовится',cls:'rust',rows:[['ставка','$50–200 за ролик'],['потолок','$1 за кадр']],quote:'Товар готовится — цену не занижаем.'},
+blockers:{name:'Стол блокеров',status:'два затыка',cls:'rust',rows:[['рельс','тест-сделка не пройдена'],['причина','ждёт первого платежа'],['Payoneer','в столе']],quote:'Не пройдено — не записано.'}
+};
+var cur=null;
+function render(id){
+var d=DATA[id];
+if(!d)return;
+var st=document.getElementById('pStatus');
+st.textContent=d.status;
+st.className='st '+d.cls;
+document.getElementById('pName').textContent=d.name;
+var rows=document.getElementById('pRows');
+rows.innerHTML='';
+d.rows.forEach(function(r){
+var div=document.createElement('div');
+div.className='row';
+var s=document.createElement('span');s.textContent=r[0];
+var b=document.createElement('b');b.textContent=r[1];
+div.appendChild(s);div.appendChild(b);
+rows.appendChild(div);
+});
+document.getElementById('pQuote').textContent=d.quote;
+if(cur){var prev=document.querySelector('[data-id="'+cur+'"]');if(prev)prev.classList.remove('on');}
+cur=id;
+var sel=document.querySelector('[data-id="'+id+'"]');
+if(sel)sel.classList.add('on');
+}
+document.getElementById('scene').addEventListener('click',function(e){
+var t=e.target.closest?e.target.closest('[data-id]'):null;
+if(t)render(t.getAttribute('data-id'));
+});
+render('kontora');
+})();
+</script>
+</body>
+</html>

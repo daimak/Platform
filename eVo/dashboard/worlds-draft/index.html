@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Верфь миров — каталог вариаций четвёртого мира</title>
+<style>
+  :root{color-scheme:dark}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0a1420;color:#d9e2ec;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  header{display:flex;align-items:center;gap:16px;padding:18px 28px;border-bottom:1px solid #1c3a52;background:linear-gradient(180deg,#0d1826,#0a1420)}
+  header h1{font-size:26px;font-weight:600;letter-spacing:.5px}
+  .status{font-size:12px;color:#8fa3b8;letter-spacing:.4px}
+  .chips{margin-left:auto;display:flex;gap:10px}
+  .chip{display:flex;flex-direction:column;align-items:center;padding:6px 14px;border:1px solid #1c3a52;border-radius:8px;background:#0d1826}
+  .chip b{font-size:16px;color:#4fd1c5;font-variant-numeric:tabular-nums;font-weight:600}
+  .chip span{font-size:10px;color:#8fa3b8;letter-spacing:.5px}
+  .home{width:38px;height:38px;border-radius:50%;border:1px solid #1c3a52;background:#0d1826;color:#d9e2ec;font-size:18px;display:flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer}
+  .home:hover{background:#16283a}
+  main{flex:1;padding:24px 28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:16px;align-content:start}
+  a.card{display:flex;flex-direction:column;gap:8px;padding:16px 18px;border:1px solid #1c3a52;border-radius:10px;background:#0d1826;text-decoration:none;color:#d9e2ec;transition:transform .12s,border-color .12s,background .12s}
+  a.card:hover{transform:translateY(-2px);border-color:#4fd1c5;background:#122030}
+  .card .num{font-size:11px;color:#6a8098;letter-spacing:1px}
+  .card .name{font-size:19px;font-weight:600;color:#e8f0f8}
+  .card .essence{font-size:13px;color:#9fb2c6;line-height:1.45}
+  .card .meta{font-size:11px;color:#6a8098;display:flex;gap:12px;margin-top:auto;padding-top:6px}
+  .card .meta b{color:#8fa3b8;font-variant-numeric:tabular-nums;font-weight:600}
+  .tag{display:inline-block;font-size:10px;letter-spacing:.6px;padding:2px 8px;border-radius:6px;border:1px solid}
+  .t-warden{color:#d9534f;border-color:#d9534f}
+  .t-bridge{color:#4fd1c5;border-color:#4fd1c5}
+  .t-money{color:#f6ad55;border-color:#f6ad55}
+  .t-signal{color:#68d391;border-color:#68d391}
+  .t-sovereign{color:#c98a3d;border-color:#c98a3d}
+  .t-gate{color:#8fa3b8;border-color:#8fa3b8}
+  footer{padding:14px 28px;border-top:1px solid #1c3a52;display:flex;gap:24px;font-size:12px;color:#6a8098}
+  footer b{color:#8fa3b8;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Верфь миров — каталог вариаций</h1>
+    <div class="status">ПРЕВЬЮ-ВАРИАЦИИ ЧЕТВЁРТОГО МИРА · спущено на воду 09.11.2026 · Sovereign выбирает: номер, комбинация или свой концепт</div>
+  </div>
+  <div class="chips">
+    <div class="chip"><b>13</b><span>миров</span></div>
+    <div class="chip"><b>0</b><span>инцидентов</span></div>
+    <div class="chip"><b>310</b><span>КБ суммарно</span></div>
+    <div class="chip"><b>2</b><span>вне набора</span></div>
+  </div>
+  <a class="home" href="../index.html" title="Домой">⌂</a>
+</header>
+<main>
+  <a class="card" href="00-tumanny-arhipelag.html">
+    <span class="num">№00</span>
+    <span class="name">Туманный Архипелаг</span>
+    <span class="essence">Острова = реальные машины: Kali жива и светится, облака спят в тумане, маяк vm-tunnel тёмный. Живой ops-глазок.</span>
+    <span class="meta"><b>20,2</b> КБ · машины 5 · живых 1 · <span class="tag t-warden">полигон</span></span>
+  </a>
+  <a class="card" href="01-ganzey-bereg.html?v=2">
+    <span class="num">№01</span>
+    <span class="name">Ганзейский берег</span>
+    <span class="essence">Мир внешнего рынка: порты Kwork/FL.ru/hh/OLX, горящие окна живых заказов, крейсер «Вывод денег» с честным жёлтым огнём.</span>
+    <span class="meta"><b>28,6</b> КБ · портов 5 · заказов 2 · <span class="tag t-money">деньги</span></span>
+  </a>
+  <a class="card" href="02-zerkalo.html">
+    <span class="num">№02</span>
+    <span class="name">Зеркало</span>
+    <span class="essence">Антимир: red team против клонов собственной инфры. Над водой — поместье, под водой — перевёрнутые красные отражения с трещинами.</span>
+    <span class="meta"><b>17,6</b> КБ · клонов 6 · дыр 5 · <span class="tag t-warden">опасный</span></span>
+  </a>
+  <a class="card" href="03-nekropol.html">
+    <span class="num">№03</span>
+    <span class="name">Некрополь</span>
+    <span class="essence">Море мёртвых: затонувшие рейсы, надгробия ветвей и ключей, reflog-призраки. Ритуал «воскресить или похоронить».</span>
+    <span class="meta"><b>24,3</b> КБ · кораблей 3 · надгробий 3 · <span class="tag t-ritual t-bridge">ритуал</span></span>
+  </a>
+  <a class="card" href="04-hronoreka.html">
+    <span class="num">№04</span>
+    <span class="name">Хронорека</span>
+    <span class="essence">Время как ландшафт: дни — долины, инциденты — пороги, коммиты — притоки. Прокручиваешь неделю — видишь, где бился о камни.</span>
+    <span class="meta"><b>18,2</b> КБ · дней 5 · порогов 3 · <span class="tag t-bridge">география времени</span></span>
+  </a>
+  <a class="card" href="05-dikaya-strana.html">
+    <span class="num">№05</span>
+    <span class="name">Дикая Страна</span>
+    <span class="essence">Ничейные земли за краем карт: вылазки с ночным бюджетом, право не вернуться, утренний рапорт сторожа. Клапан дерзости.</span>
+    <span class="meta"><b>24,2</b> КБ · вылазок 4 · выжило 3 · <span class="tag t-warden">опасная</span></span>
+  </a>
+  <a class="card" href="07-pristan-ekspediciy.html">
+    <span class="num">№07</span>
+    <span class="name">Пристань Экспедиций</span>
+    <span class="essence">Мир Синдбада: стапель маршрутов, склад снаряжения, доска «Готов / В море / С грузом». Мост к пакету В и Dark Watch.</span>
+    <span class="meta"><b>22,3</b> КБ · экспедиций 4 · в море 1 · <span class="tag t-bridge">внешние связи</span></span>
+  </a>
+  <a class="card" href="08-verf-mirov.html">
+    <span class="num">№08</span>
+    <span class="name">Верфь Миров</span>
+    <span class="essence">Мета-мир: где строят сами миры. Стапели, ватманы ТЗ, «нет верфи — нет спуска». Каждый следующий мир дешевле.</span>
+    <span class="meta"><b>31,0</b> КБ · стапелей 3 · спущено 16 · <span class="tag t-sovereign">мета-мир</span></span>
+  </a>
+  <a class="card" href="09-oranzhereya.html">
+    <span class="num">№09</span>
+    <span class="name">Оранжерея Sovereign</span>
+    <span class="essence">Дозревающие идеи: горшки со стадиями семя→росток→саженец, теплица зомби-уроков с шипами-выводами, полив кроном.</span>
+    <span class="meta"><b>36,6</b> КБ · горшков 5 · уроков 4 · <span class="tag t-sovereign">идеи</span></span>
+  </a>
+  <a class="card" href="10-schetnaya-pristan.html">
+    <span class="num">№10</span>
+    <span class="name">Счётная Пристань</span>
+    <span class="essence">Мир Рокфеллера: касса, топливный склад токенов, приливная станция курса USDT, торговые пути лейнов.</span>
+    <span class="meta"><b>19,8</b> КБ · путей 5 · живых 3 · <span class="tag t-money">деньги</span></span>
+  </a>
+  <a class="card" href="11-karantin.html">
+    <span class="num">№11</span>
+    <span class="name">Карантинная Гавань</span>
+    <span class="essence">Иммиграция сущностей: 11 паспортов без рантайма на карантинном рейде, прожекторное поле, высадка только по санкции.</span>
+    <span class="meta"><b>25,6</b> КБ · судов 14 · в карантине 11 · <span class="tag t-gate">граница</span></span>
+  </a>
+  <a class="card" href="12-mayachnaya.html">
+    <span class="num">№12</span>
+    <span class="name">Маячная Служба</span>
+    <span class="essence">Цепь маяков всех контуров: горящий = живой сигнал, тёмный = тишина агента. Как дышит поместье — видно за 3 секунды.</span>
+    <span class="meta"><b>16,5</b> КБ · маяков 10 · горит 6 · <span class="tag t-signal">сигналы</span></span>
+  </a>
+  <a class="card" href="14-shtormovoy-front.html">
+    <span class="num">№14</span>
+    <span class="name">Штормовой Фронт</span>
+    <span class="essence">Риски как погода: тучи P1 над островами, барометр дедлайнов, сейсмограф аномалий. Прогноз — не автодействие.</span>
+    <span class="meta"><b>26,8</b> КБ · туч P1 2 · до шторма 2 дня · <span class="tag t-signal">прогноз</span></span>
+  </a>
+</main>
+<footer>
+  <span>Вне набора: <b>№6</b> Мастерская Миражей (рано) · <b>№13</b> Сад Художницы (врата: разговор)</span>
+  <span>Каталог концептов: <b>Memory/Worlds/PROPOSALS-2026-11-08-ZCode.md</b></span>
+  <span>Строили: <b>13 лейнов</b> верфи за ночь 08→09.11</span>
+</footer>
+</body>
+</html>
