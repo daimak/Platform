@@ -49,6 +49,8 @@ Workspace/analytics/
 Workspace/logs/
 # Peer notes — interior chatter between estate agents (visibility rule, Sovereign 31.10)
 Workspace/agents/
+# Dark Watch intel cardfile — interior (visibility rule, Sovereign 31.10)
+Workspace/intel/
 kali/
 tools/pentest/
 tools/hh406-lab/
