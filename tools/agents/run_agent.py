@@ -529,6 +529,41 @@ def deterministic_report(findings: list, statuses: dict, resolved: list, prev_by
     return "\n".join(lines)
 
 
+PEER_NOTE_RE = re.compile(r"ЗАМЕТКА СОСЕДУ:\s*([^:\n]{2,40}):\s*([^\n]{5,160})")
+PEER_NOTES_PATH = ROOT / "Workspace" / "agents" / "peer-notes.jsonl"
+
+
+def extract_peer_note(text: str) -> tuple[str, str] | None:
+    """Заметка соседу — постскриптум в конце отчёта агента (идея «Заметка
+    соседу», слово Sovereign 07.11). Не более одной: берём первое вхождение,
+    переносы строк в тексте схлопываем."""
+    m = PEER_NOTE_RE.search(text)
+    if not m:
+        return None
+    to = " ".join(m.group(1).split()).strip()
+    note = " ".join(m.group(2).split()).strip()
+    if not to or not note:
+        return None
+    return to, note
+
+
+def save_peer_note(from_agent: str, to: str, note: str) -> Path | None:
+    try:
+        PEER_NOTES_PATH.parent.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "ts": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+            "from": from_agent,
+            "to": to,
+            "text": note,
+        }
+        with PEER_NOTES_PATH.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        return PEER_NOTES_PATH
+    except OSError as e:
+        print(f"[agents] Заметка соседу не сохранена ({e})", file=sys.stderr)
+        return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--agent", default="Holmes")
@@ -586,7 +621,11 @@ def main() -> int:
             "**Вывод:** / **Ключевые факты:** / **Варианты:** / **Риски:** / **Рекомендация:** / "
             "**Что нужно от Sovereign:** — и обязательно добавь раздел "
             "**Последствия предыдущего аудита:** о том, что исправлено/остаётся/новое с прошлого прогона "
-            "(данные в блоке followup; если previousFindings пуст — «первый прогон, сравнивать не с чем»)."
+            "(данные в блоке followup; если previousFindings пуст — «первый прогон, сравнивать не с чем»). "
+            "В самом конце можешь добавить ровно одну строку "
+            "«ЗАМЕТКА СОСЕДУ: <имя агента-получателя>: <суть, до 160 знаков>» — короткая реплика "
+            "другому агенту поместья (соседи: Бэрримор, Холмс, Ватсон, Risk scan, Хантер; Sovereign "
+            "соседом не является). Если сообщать соседу нечего — строку не добавляй."
         )
         followup_ctx = {
             "previousReport": data["previousReport"].get("previousReportPath"),
@@ -606,6 +645,11 @@ def main() -> int:
         try:
             result = gateway_chat(registry, env, system_prompt, user_prompt)
             report = result["text"]
+            peer = extract_peer_note(report)
+            if peer:
+                saved = save_peer_note(args.agent, peer[0], peer[1])
+                if saved:
+                    print(f"[agents] Заметка соседу ({args.agent} → {peer[0]}): {saved.relative_to(ROOT)}")
             usage = result["usage"]
             print(f"[agents] Черновик получен (model={result['model']}, tokens={usage.get('total_tokens', 'unknown')})")
             try:

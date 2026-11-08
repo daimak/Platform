@@ -115,6 +115,8 @@ function initBarrymorePlaque() {
   renderPlaqueContent();
   setInterval(renderPlaqueContent, 60000); // приветствие следует за временем суток
   updateBriefLink();
+  updatePeerLink();
+  setInterval(updatePeerLink, 60000); // счётчик переписки живёт вместе с плашкой
 }
 
 /**
@@ -167,6 +169,67 @@ function updateBriefLink() {
   const fresh = !!(brief && brief.generatedAt &&
     localStorage.getItem("evo_brief_seen") !== brief.generatedAt);
   link.hidden = !fresh;
+}
+
+/**
+ * Переписка агентов («Заметка соседу», слово Sovereign 07.11): агенты во время
+ * обычных прогонов могут оставить короткую реплику друг другу; Бэрримор выносит
+ * счётчик непрочитанных на плашку (1–2 слова), щелчок открывает его модалку,
+ * где под брифом список заметок. Открытие модалки = заметки показаны → прочитано.
+ */
+let peerNotesCache = null;
+
+async function updatePeerLink() {
+  const link = document.getElementById("barrymore-peer-link");
+  if (!link) return;
+  try {
+    const res = await fetch("/api/peer-notes", { cache: "no-store" });
+    if (!res.ok) throw new Error(String(res.status));
+    const data = await res.json();
+    peerNotesCache = data;
+    const unread = Number(data.unread) || 0;
+    link.hidden = unread === 0;
+    const countEl = document.getElementById("peer-count");
+    if (countEl) countEl.textContent = String(unread);
+  } catch (e) {
+    link.hidden = true;
+  }
+}
+
+function fmtPeerTs(ts) {
+  const d = new Date(ts);
+  return isNaN(d) ? ts : d.toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+async function renderPeerNotesPanel() {
+  const panel = document.getElementById("peer-notes-panel");
+  if (!panel) return;
+  let data = peerNotesCache;
+  try {
+    const res = await fetch("/api/peer-notes", { cache: "no-store" });
+    if (res.ok) {
+      data = await res.json();
+      peerNotesCache = data;
+    }
+  } catch (e) { /* покажем кэш или заглушку */ }
+  if (!data) {
+    panel.innerHTML = `
+      <div class="panel-label">📨 ПЕРЕПИСКА АГЕНТОВ</div>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 6px 0 0;">Служба переписки недоступна.</p>`;
+    return;
+  }
+  const items = data.items || [];
+  const rows = items.length ? items.map((e) => `
+      <div style="border-top: 1px solid rgba(255,255,255,0.06); padding: 7px 0;">
+        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(fmtPeerTs(e.ts))} · ${escapeHtml(e.from)} → ${escapeHtml(e.to)}</div>
+        <div style="font-size: 0.86rem; color: #cbd5e1; margin-top: 2px;">${escapeHtml(e.text)}</div>
+      </div>`).join("")
+    : `<p style="font-size: 0.82rem; color: var(--text-muted); margin: 6px 0 0;">Пока тихо: агенты ничего не передавали друг другу.</p>`;
+  panel.innerHTML = `<div class="panel-label">📨 ПЕРЕПИСКА АГЕНТОВ («ЗАМЕТКА СОСЕДУ»)</div>${rows}`;
+  if ((Number(data.unread) || 0) > 0) {
+    try { await fetch("/api/peer-notes/read", { method: "POST", cache: "no-store" }); } catch (e) { /* повторится при следующем открытии */ }
+    updatePeerLink();
+  }
 }
 
 /**
@@ -668,6 +731,7 @@ function openIslandModal(islandKey) {
   }
   if (islandKey === "barrymore") {
     initEstateStaff();
+    renderPeerNotesPanel();
   }
   if (islandKey === "tradingQuarter") {
     initTradingQuarterGroups();
@@ -715,6 +779,7 @@ function closeIslandModal() {
 function initAiSandboxTabs() {
   const tabs = Array.from(document.querySelectorAll('[data-ai-sandbox-tab][role="tab"]'));
   if (!tabs.length) return;
+  let pentestLoaded = false;
 
   const selectTab = (selectedTab, focus = false) => {
     tabs.forEach((tab) => {
@@ -726,6 +791,7 @@ function initAiSandboxTabs() {
       if (panel) panel.hidden = !selected;
     });
     if (focus) selectedTab.focus();
+    if (selectedTab.id === "ai-sandbox-pentest-tab") loadPentestJournal();
   };
 
   tabs.forEach((tab, index) => {
@@ -742,6 +808,135 @@ function initAiSandboxTabs() {
       selectTab(tabs[nextIndex], true);
     });
   });
+}
+
+/**
+ * Полигон (П-6): журнал внутренних пентестов — список раундов и понятный разворот.
+ * Данные: GET /api/sandbox/pentest/rounds[/<id>] → %LOCALAPPDATA%/Platform/PentestJournal (вне git).
+ */
+async function loadPentestJournal() {
+  const listEl = document.getElementById("pentest-list");
+  if (!listEl || listEl.dataset.loaded === "1") return;
+  listEl.dataset.loaded = "1";
+  listEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Загружаю журнал…</p>';
+  try {
+    const response = await fetch("/api/sandbox/pentest/rounds");
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || response.status);
+    renderPentestList(listEl, payload.rounds || []);
+  } catch (error) {
+    listEl.dataset.loaded = "";
+    listEl.innerHTML = `<p style="color:#fb7185;font-size:0.85rem;">Не удалось загрузить журнал: ${escapeHtml(String(error))}</p>`;
+  }
+}
+
+function pentestSeverityMeta(severity) {
+  const map = {
+    critical: { label: "🔴 Критично", color: "#fb7185" },
+    high: { label: "🟠 Высоко", color: "#fb923c" },
+    medium: { label: "🟡 Средне", color: "#fbbf24" },
+    low: { label: "🔵 Низко", color: "#60a5fa" },
+  };
+  return map[severity] || map.low;
+}
+
+function renderPentestList(listEl, rounds) {
+  if (!rounds.length) {
+    listEl.innerHTML = '<div class="glass-panel"><p style="color:var(--text-muted);font-size:0.86rem;">Раундов пока нет — журнал наполнится после первого прогона.</p></div>';
+    return;
+  }
+  const cards = rounds.map((round) => {
+    const meta = pentestSeverityMeta(round.max_severity);
+    const winner = round.winner === "red" ? "🔴 победа атаки" : round.winner === "blue" ? "🔵 победа защиты" : "—";
+    return `<button type="button" data-pentest-round="${escapeHtml(round.id)}" class="glass-panel" style="width:100%;text-align:left;cursor:pointer;">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;">
+        <strong style="color:#fff;font-size:0.95rem;">${escapeHtml(round.title)}</strong>
+        <span style="font-size:0.76rem;color:var(--text-muted);">${escapeHtml(round.date)} ${escapeHtml(round.time_range)}</span>
+      </div>
+      <div style="margin-top:6px;font-size:0.8rem;color:var(--text-secondary);">🎯 ${escapeHtml(round.target_name)} · ${winner} · находок: ${Number(round.findings_count) || 0}, макс. ${meta.label}</div>
+      <div style="margin-top:6px;font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">${escapeHtml(round.verdict_short)}</div>
+    </button>`;
+  });
+  listEl.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">${cards.join("")}</div>`;
+  listEl.querySelectorAll("[data-pentest-round]").forEach((card) => {
+    card.addEventListener("click", () => openPentestRound(card.dataset.pentestRound));
+  });
+}
+
+async function openPentestRound(id) {
+  const detailEl = document.getElementById("pentest-detail");
+  if (!detailEl) return;
+  detailEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Открываю раунд…</p>';
+  try {
+    const response = await fetch(`/api/sandbox/pentest/rounds/${encodeURIComponent(id)}`);
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || response.status);
+    renderPentestDetail(detailEl, payload);
+    detailEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (error) {
+    detailEl.innerHTML = `<p style="color:#fb7185;font-size:0.85rem;">Не удалось открыть раунд: ${escapeHtml(String(error))}</p>`;
+  }
+}
+
+function renderPentestDetail(el, round) {
+  const esc = (value) => escapeHtml(value == null ? "" : String(value));
+  const detectedMeta = {
+    yes: { icon: "🟢", text: "защита видела след" },
+    partial: { icon: "🟡", text: "след виден частично" },
+    no: { icon: "⚪", text: "защита не видела" },
+  };
+  const rows = (round.timeline || []).map((step) => {
+    const det = detectedMeta[step.detected] || detectedMeta.partial;
+    return `<tr>
+      <td style="white-space:nowrap;color:var(--text-muted);font-size:0.78rem;padding:4px 8px;vertical-align:top;">${esc(step.time)}</td>
+      <td style="font-size:0.82rem;color:#e2e8f0;padding:4px 8px;vertical-align:top;">${esc(step.action)}</td>
+      <td style="font-size:0.8rem;color:var(--text-secondary);line-height:1.45;padding:4px 8px;vertical-align:top;">${esc(step.meaning)}</td>
+      <td style="white-space:nowrap;font-size:0.78rem;padding:4px 8px;vertical-align:top;" title="${det.text}">${det.icon}</td>
+    </tr>`;
+  }).join("");
+  const findings = (round.findings || []).map((f) => {
+    const meta = pentestSeverityMeta(f.severity);
+    return `<div class="glass-panel" style="border-left:3px solid ${meta.color};">
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <strong style="color:#fff;font-size:0.9rem;">${esc(f.title)}</strong>
+        <span style="font-size:0.76rem;color:${meta.color};">${meta.label}</span>
+      </div>
+      <p style="margin:6px 0 2px;font-size:0.84rem;color:var(--text-secondary);line-height:1.5;"><b style="color:#e2e8f0;">Простыми словами:</b> ${esc(f.plain)}</p>
+      <p style="margin:2px 0;font-size:0.84rem;color:var(--text-secondary);line-height:1.5;"><b style="color:#a7f3d0;">Как чинить:</b> ${esc(f.fix)}</p>
+    </div>`;
+  }).join("");
+  const lessons = (round.lessons || []).map((l) => `<li style="margin-bottom:6px;">${esc(l)}</li>`).join("");
+  const artifacts = Object.entries(round.artifacts || {}).map(([key, path]) =>
+    `<div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--text-muted);">${esc(key)}: ${esc(path)}</div>`).join("");
+  const score = (round.verdict && round.verdict.score) || {};
+  el.innerHTML = `
+    <div class="glass-panel">
+      <div class="panel-label">${esc(round.title)}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);">${esc(round.date)} · ${esc(round.time_range)} · ${(round.target || {}).addr ? "цель: " + esc(round.target.addr) : ""}</div>
+      <p style="color:#e2e8f0;font-size:0.88rem;line-height:1.55;margin:8px 0 4px;">${esc((round.verdict || {}).short || "")}</p>
+      <div style="font-size:0.8rem;color:var(--text-secondary);">🔴 ${esc(score.red || "")} · 🔵 ${esc(score.blue || "")}</div>
+      <p style="color:var(--text-secondary);font-size:0.86rem;line-height:1.55;margin:8px 0 0;">${esc(round.story || "")}</p>
+    </div>
+    <div class="glass-panel">
+      <div class="panel-label">ХРОНОЛОГИЯ БОЯ</div>
+      <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="text-align:left;font-size:0.74rem;color:var(--text-muted);padding:4px 8px;">время</th>
+          <th style="text-align:left;font-size:0.74rem;color:var(--text-muted);padding:4px 8px;">шаг</th>
+          <th style="text-align:left;font-size:0.74rem;color:var(--text-muted);padding:4px 8px;">что это значит</th>
+          <th style="text-align:left;font-size:0.74rem;color:var(--text-muted);padding:4px 8px;">видна?</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin:8px 0 0;">🟢 защита видела след · 🟡 виден частично · ⚪ не видела</p>
+    </div>
+    <div class="glass-panel">
+      <div class="panel-label">ЧТО НАШЛИ И КАК ЧИНИТЬ</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">${findings || "—"}</div>
+    </div>
+    ${lessons ? `<div class="glass-panel"><div class="panel-label">УРОКИ РАУНДА</div><ol style="margin:6px 0 0;padding-left:18px;color:var(--text-secondary);font-size:0.84rem;line-height:1.5;">${lessons}</ol></div>` : ""}
+    ${artifacts ? `<div class="glass-panel"><div class="panel-label">АРТЕФАКТЫ</div>${artifacts}</div>` : ""}
+  `;
 }
 
 /**
@@ -1901,6 +2096,9 @@ function buildIslandContentHTML(islandKey, data, lang) {
       `;
       return `
         ${briefHTML}
+        <div class="glass-panel" id="peer-notes-panel" style="margin-top: 12px;">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Читаю переписку агентов…</span>
+        </div>
         <div class="glass-panel" id="estate-staff-panel">
           <div id="estate-staff-toggle" role="button" tabindex="0" aria-expanded="false" title="Развернуть/свернуть штат"
                style="display: flex; align-items: baseline; gap: 8px; cursor: pointer;">
@@ -1952,6 +2150,9 @@ function buildIslandContentHTML(islandKey, data, lang) {
           </button>
           <button class="ai-sandbox-tab" id="ai-sandbox-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-tools" data-ai-sandbox-tab tabindex="-1">
             ${data.toolsTab || "Инструменты"}
+          </button>
+          <button class="ai-sandbox-tab" id="ai-sandbox-pentest-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-pentest" data-ai-sandbox-tab tabindex="-1">
+            ${data.pentestTab || "Полигон"}
           </button>
           <button class="ai-sandbox-tab" id="ai-sandbox-excursion-tab" type="button" role="tab" aria-selected="false" aria-controls="ai-sandbox-excursion" data-ai-sandbox-tab tabindex="-1">
             ${data.excursionTab || "Экскурсия"}
@@ -2096,6 +2297,16 @@ function buildIslandContentHTML(islandKey, data, lang) {
             </div>
             <div id="sandbox-result-targets" style="margin-top:10px;"></div>
           </div>
+        </section>
+        <section class="ai-sandbox-tab-panel" id="ai-sandbox-pentest" role="tabpanel" aria-labelledby="ai-sandbox-pentest-tab" tabindex="0" hidden>
+          <div class="glass-panel">
+            <div class="panel-label">${data.pentestHeading || "ПОЛИГОН — ЖУРНАЛ ВНУТРЕННИХ ПЕНТЕСТОВ"}</div>
+            <p style="color: var(--text-secondary); font-size: 0.86rem; line-height: 1.5; margin: 8px 0 0;">
+              ${data.pentestDesc || "Каждый тренировочный раунд — человеческим языком: что делали, что нашли, что это значит и как чинить. Журнал живёт вне git (%LOCALAPPDATA%\\Platform\\PentestJournal)."}
+            </p>
+          </div>
+          <div id="pentest-list"></div>
+          <div id="pentest-detail"></div>
         </section>
         <section class="ai-sandbox-tab-panel" id="ai-sandbox-excursion" role="tabpanel" aria-labelledby="ai-sandbox-excursion-tab" tabindex="0" hidden>
           <div id="sandbox-excursion-root"></div>
