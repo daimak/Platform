@@ -51,3 +51,11 @@ YYYY-MM-DD | change | reason | RFC
 2026-11-07 | Platform v1.8.7: planet button and worlds menu on index, world map v2 base (World_map_v2.png + generation prompt), excursion report-first tab with hard numbers, classic window controls in island modals, agents fleet panel (agents.html, dashboard-server +318 lines), kanban entity types (task/change/epic) and creation dates on cards, secret-gate phase 2 (RED on staged), ITIL task types API, evofind search, orders-triage radar | ship accepted night+day work as a version | —
 
 2026-11-07 | cloud polygon kit Workspace/cloud/: bootstrap.sh, cloud-init for DigitalOcean and Yandex Cloud, compose stacks (DVWA, Juice Shop, n8n, Uptime Kuma, WireGuard), k3s installer, probe script, onboarding spec | one-command security/lab polygons on free cloud tiers | —
+
+2026-11-07 | cloud workshop VM: Platform deployed to Yandex Cloud (Ubuntu 24.04, systemd dashboard service, loopback + SSH-tunnel access, read-only deploy key, runbook Docs/CLOUD-VM-RUNBOOK-2026-11-07-ZCode.md) | month-to-income workshop and showcase for the agent estate; dashboard stays private (one-way door) | —
+
+2026-11-07 | templating protocol (Docs/TEMPLATING.md): Jinja2 templates in templates/ as source of truth, private per-host vars in Workspace/private/vars (untracked), renderer tools/render_templates.py with placeholder-safe repo mode, runbook converted to template | infra coordinates out of session memory and out of the public repo | —
+
+2026-11-07 | cloud VM security lab: docker + compose, apt toolkit, practice targets from cloud kit bound to loopback only (fixes: compose 0.0.0.0 bindings and missing empty .env for secretless services) | docker bypasses ufw; lab targets must never face the internet; inventory kept in private zone | —
+
+2026-11-07 | agent peer notes ("Заметка соседу"): agents may append one short note-to-a-neighbor line to routine LLM reports (run_agent.py -> Workspace/agents/peer-notes.jsonl, untracked); Barrymore plaque shows unread counter, digest panel in steward modal, GET/POST /api/peer-notes; Morning Brief gains one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1 | agents occasionally show initiative and cross-talk at near-zero cost; launch stays manual (leash mode) | —

@@ -76,6 +76,55 @@ HOLMES_AGENT = ROOT / "tools" / "agents" / "run_agent.py"
 LOG_DIR = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "Barrymore"
 TASHKENT = timezone(timedelta(hours=5), "Tashkent")
 
+# Переписка агентов («Заметка соседу», слово Sovereign 07.11): run_agent.py
+# пишет Workspace/agents/peer-notes.jsonl (вне git — интерьер), дашборд даёт
+# прочитать и отметить прочитанным. read state — рядом, тот же интерьер.
+PEER_NOTES_LOCK = threading.Lock()
+PEER_NOTES_PATH = ROOT / "Workspace" / "agents" / "peer-notes.jsonl"
+PEER_NOTES_STATE_PATH = ROOT / "Workspace" / "agents" / "peer-notes-state.json"
+PEER_NOTES_MAX_ITEMS = 50
+
+
+def read_peer_notes() -> dict:
+    """Заметки агентов (новейшие первыми, хвост 50) + счётчик непрочитанных
+    относительно peer-notes-state.json {lastReadTs}."""
+    items: list[dict] = []
+    try:
+        for line in PEER_NOTES_PATH.read_text(encoding="utf-8-sig", errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(entry, dict) and entry.get("ts") and entry.get("text"):
+                items.append({
+                    "ts": str(entry.get("ts")),
+                    "from": str(entry.get("from", "")),
+                    "to": str(entry.get("to", "")),
+                    "text": str(entry.get("text", ""))[:300],
+                })
+    except OSError:
+        pass
+    items.sort(key=lambda e: e["ts"], reverse=True)
+    last_read = ""
+    try:
+        state = json.loads(PEER_NOTES_STATE_PATH.read_text(encoding="utf-8-sig"))
+        if isinstance(state, dict):
+            last_read = str(state.get("lastReadTs", ""))
+    except (OSError, json.JSONDecodeError):
+        pass
+    unread = sum(1 for e in items if e["ts"] > last_read) if last_read else len(items)
+    return {"unread": unread, "items": items[:PEER_NOTES_MAX_ITEMS]}
+
+
+def mark_peer_notes_read() -> dict:
+    payload = {"lastReadTs": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")}
+    PEER_NOTES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    PEER_NOTES_STATE_PATH.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    return payload
+
 # Инструменты безопасности (прототипы 01.11, вкладка «Инструменты» AI Sandbox).
 # Поводок: запуск только кнопкой/рукой; отчёты — в LOCALAPPDATA вне git (правило видимости).
 SANDBOX_TOOLS = {
@@ -108,6 +157,49 @@ SANDBOX_RUN: dict = {
 SANDBOX_REPORT_DIR = (
     Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "SecurityReports"
 )
+# Полигон (П-6): журнал внутренних пентестов. Правило видимости AI Sandbox — вне git.
+PENTEST_JOURNAL_DIR = (
+    Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "PentestJournal"
+)
+
+
+def pentest_round_index():
+    """Краткие карточки всех раундов для списка (без тяжёлых полей)."""
+    rounds = []
+    if PENTEST_JOURNAL_DIR.is_dir():
+        for path in sorted(PENTEST_JOURNAL_DIR.glob("*.json"), reverse=True):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                logging.exception("Pentest round read failed: %s", path.name)
+                continue
+            rounds.append({
+                "id": data.get("id", path.stem),
+                "title": data.get("title", path.stem),
+                "date": data.get("date", ""),
+                "time_range": data.get("time_range", ""),
+                "target_name": (data.get("target") or {}).get("name", ""),
+                "winner": (data.get("verdict") or {}).get("winner", ""),
+                "verdict_short": (data.get("verdict") or {}).get("short", ""),
+                "findings_count": len(data.get("findings") or []),
+                "max_severity": max(
+                    (f.get("severity", "low") for f in data.get("findings") or []),
+                    key=["low", "medium", "high", "critical"].index,
+                    default="low",
+                ),
+            })
+    return rounds
+
+
+def pentest_round_detail(round_id: str):
+    """Полный JSON одного раунда по id (имя файла без .json)."""
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", round_id or ""):
+        return None
+    path = PENTEST_JOURNAL_DIR / f"{round_id}.json"
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
 
 # Реестр джобов (Л-3, Docs/DATA-FOUNDATION-PLAN-2026-11-04): API без UI-кнопок.
 JOBS_REGISTRY_PATH = ROOT / "tools" / "ops" / "jobs.json"
@@ -514,6 +606,14 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 logging.exception("Staff read failed")
                 self._send_json(500, {"error": f"Не удалось прочитать штат поместья: {error}"})
             return
+        if request_path == "/api/peer-notes":
+            try:
+                with PEER_NOTES_LOCK:
+                    self._send_json(200, read_peer_notes())
+            except OSError as error:
+                logging.exception("Peer notes read failed")
+                self._send_json(500, {"error": f"Не удалось прочитать переписку агентов: {error}"})
+            return
         if request_path == "/api/hunter/tasks":
             try:
                 with HUNTER_LOCK:
@@ -600,6 +700,23 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self._send_json(500, {"error": f"Не удалось прочитать отчёт: {error}"})
                 return
             self._send_json(200, {"file": report_file.name, "data": data})
+            return
+        if request_path == "/api/sandbox/pentest/rounds":
+            # Полигон (П-6): список раундов внутренних пентестов; read-only, данные вне git.
+            try:
+                self._send_json(200, {"rounds": pentest_round_index()})
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Pentest journal read failed")
+                self._send_json(500, {"error": f"Не удалось прочитать журнал пентестов: {error}"})
+            return
+        if request_path.startswith("/api/sandbox/pentest/rounds/"):
+            # Полный отчёт одного раунда: /api/sandbox/pentest/rounds/<id>.
+            round_id = request_path.rsplit("/", 1)[-1]
+            detail = pentest_round_detail(round_id)
+            if detail is None:
+                self._send_json(404, {"error": f"Раунд «{round_id}» не найден."})
+                return
+            self._send_json(200, detail)
             return
         if request_path == "/api/jobs":
             # Л-3: реестр джобов (enabled по умолчанию, ?all=1 — все) + статус последнего запуска.
@@ -694,6 +811,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         sandbox_run_route = "/api/sandbox/run"
         bodyless_routes = {
             "/api/refresh-brief",
+            "/api/peer-notes/read",
             "/api/ai-usage/ask-barrymore",
             "/api/holmes/run",
             "/api/watson/run",
@@ -976,6 +1094,16 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self._send_json(500, {"error": f"Не удалось сохранить цель: {error}"})
             finally:
                 SECURITY_LOCK.release()
+            return
+
+        if request_path == "/api/peer-notes/read":
+            try:
+                with PEER_NOTES_LOCK:
+                    state = mark_peer_notes_read()
+                self._send_json(200, {"ok": True, **state})
+            except OSError as error:
+                logging.exception("Peer notes mark-read failed")
+                self._send_json(500, {"error": f"Не удалось отметить переписку прочитанной: {error}"})
             return
 
         if request_path == "/api/ai-usage/ask-barrymore":

@@ -38,12 +38,17 @@ tools/_probe_*
 # Personal data (resume etc.) — local only, never commit
 Workspace/private/
 
+# Rendered docs with real (private) coordinates — see Docs/TEMPLATING.md
+Docs/generated/
+
 # Sandbox interior & pentest artifacts — never commit (AI Sandbox visibility rule, Sovereign 31.10)
 Workspace/pentest/
 Workspace/reports/
 Workspace/analytics/
 # Machine events journal & job run states (regenerable, Л-2/Л-3 data foundation)
 Workspace/logs/
+# Peer notes — interior chatter between estate agents (visibility rule, Sovereign 31.10)
+Workspace/agents/
 kali/
 tools/pentest/
 tools/hh406-lab/
