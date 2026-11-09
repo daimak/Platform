@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import socket
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -755,6 +756,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             except (OSError, ValueError, json.JSONDecodeError) as error:
                 logging.exception("Tokens usage read failed")
                 self._send_json(500, {"error": f"Не удалось собрать расход токенов: {error}"})
+            return
+        if request_path == "/api/steward":
+            # Сторож-виджет «Кто сейчас работает»: 6 слоёв самодиагностики
+            # (методика 04.11). Read-only наблюдение, кэш 30 с, слои изолированы.
+            try:
+                self._send_json(200, steward_snapshot())
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Steward snapshot failed")
+                self._send_json(500, {"error": f"Не удалось собрать сторож-сводку: {error}"})
             return
         super().do_GET()
 
@@ -1794,6 +1804,140 @@ def tokens_usage_snapshot(max_files: int = 40) -> dict:
     }
     _TOKEN_CACHE["ts"] = moment
     _TOKEN_CACHE["data"] = data
+    return data
+
+
+_STEWARD_CACHE = {"ts": 0.0, "data": None}
+
+
+def steward_snapshot() -> dict:
+    """Агрегат GET /api/steward — сторож-виджет «Кто сейчас работает».
+
+    6 слоёв самодиагностики (методика 04.11, карточка morning-review-agent-diagnostics):
+    рантаймы усадьбы, журнал сервера, python-процессы, планировщик ОС,
+    ZCode-автоматизации (sqlite read-only), живые ZCode-сессии. Чистое
+    наблюдение: ничего не запускает и не пишет (ADR-003/004). Каждый слой
+    изолирован — ошибка слоя помечается, но не валит снапшот. Кэш 30 с.
+    """
+    moment = time.time()
+    if _STEWARD_CACHE["data"] is not None and moment - _STEWARD_CACHE["ts"] < 30:
+        return _STEWARD_CACHE["data"]
+
+    def _layer(fn):
+        try:
+            return fn()
+        except Exception:  # слой сломался — сторож живёт, панель пометит
+            logging.exception("Steward layer failed")
+            return None
+
+    _NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0
+
+    # 1. Рантаймы усадьбы — состояние прогонов из памяти сервера.
+    def runtimes():
+        rows = []
+        with HOLMES_RUN_LOCK:
+            state = dict(HOLMES_RUN)
+        rows.append({"name": "Холмс", "running": bool(state.get("running")),
+                     "finished_at": state.get("finished_at"), "returncode": state.get("returncode")})
+        with SANDBOX_RUN_LOCK:
+            state = dict(SANDBOX_RUN)
+        rows.append({"name": "AI Sandbox", "running": bool(state.get("running")),
+                     "finished_at": state.get("finished_at"), "returncode": state.get("returncode")})
+        for runtime, spec in AGENT_RUNTIMES.items():
+            with AGENT_RUN_STATE[runtime]["lock"]:
+                state = dict(AGENT_RUN_STATE[runtime]["state"])
+            rows.append({"name": spec["label"], "running": bool(state.get("running")),
+                         "finished_at": state.get("finished_at"), "returncode": state.get("returncode")})
+        return rows
+
+    # 2. Журнал сервера — хвост + свежесть последней записи.
+    def journal():
+        log_file = LOG_DIR / "dashboard-server.log"
+        tail = ""
+        if log_file.exists():
+            with log_file.open("r", encoding="utf-8", errors="replace") as handle:
+                handle.seek(0, 2)
+                size = handle.tell()
+                handle.seek(max(0, size - 4000))
+                tail = handle.read()
+        lines = [line.strip() for line in tail.splitlines() if line.strip()][-4:]
+        return {"size_kb": round(log_file.stat().st_size / 1024) if log_file.exists() else 0,
+                "tail": lines}
+
+    # 3. Python-процессы — есть ли run_agent.py в бою.
+    def processes():
+        result = subprocess.run(
+            ["wmic", "process", "where", "name like 'python%'", "get", "ProcessId,CommandLine", "/format:csv"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=15, check=False, creationflags=_NO_WINDOW,
+        )
+        agents, servers = [], 0
+        for line in result.stdout.splitlines():
+            line = line.strip()
+            if "run_agent.py" in line:
+                match = re.search(r"--agent\s+(\S+)", line)
+                agents.append(match.group(1) if match else "?")
+            elif "dashboard-server.py" in line:
+                servers += 1
+        return {"agent_processes": agents, "dashboard_servers": servers}
+
+    # 4. Планировщик ОС — наша задача автостарта (вывод локализован и в OEM-кодировке,
+    #    на русской Windows — cp866: декодируем байты сами, utf-8 давал бы replace-мусор).
+    def scheduler():
+        result = subprocess.run(
+            ["schtasks", "/query", "/tn", "Barrymore Dashboard Server", "/fo", "LIST"],
+            capture_output=True, timeout=15, check=False, creationflags=_NO_WINDOW,
+        )
+        status = None
+        if result.returncode == 0:
+            text = result.stdout.decode("cp866", errors="replace")
+            for line in text.splitlines():
+                if "остояние:" in line or "Status:" in line:
+                    status = line.split(":", 1)[1].strip()
+                    break
+        return {"task": "Barrymore Dashboard Server", "found": result.returncode == 0, "status": status}
+
+    # 5. ZCode-автоматизации — включённые кроны (read-only, чужая база).
+    def automations():
+        db = Path.home() / ".zcode" / "v2" / "tasks-index.sqlite"
+        conn = sqlite3.connect(f"file:{db.as_posix()}?mode=ro", uri=True)
+        try:
+            rows = conn.execute(
+                "SELECT automation_id, title, running, lifecycle_status, last_run_at"
+                " FROM automations WHERE enabled = 1 ORDER BY updated_at DESC LIMIT 20"
+            ).fetchall()
+        finally:
+            conn.close()
+        return {"enabled_count": len(rows),
+                "enabled": [{"id": row[0], "title": row[1], "running": bool(row[2]),
+                             "lifecycle": row[3], "last_run_at": row[4]} for row in rows[:8]]}
+
+    # 6. Живые ZCode-сессии — свежесть фактуры model-io-*.jsonl.
+    def sessions():
+        alive = idle = 0
+        newest_age = None
+        for path in TOKEN_ROLL_DIR.glob("model-io-*.jsonl"):
+            age = moment - path.stat().st_mtime
+            if newest_age is None or age < newest_age:
+                newest_age = age
+            if age < 300:
+                alive += 1
+            elif age < 1800:
+                idle += 1
+        return {"alive": alive, "idle": idle,
+                "newest_age_min": round(newest_age / 60, 1) if newest_age is not None else None}
+
+    data = {
+        "generated_at": _utc_now_iso(),
+        "runtimes": _layer(runtimes),
+        "journal": _layer(journal),
+        "processes": _layer(processes),
+        "scheduler": _layer(scheduler),
+        "automations": _layer(automations),
+        "sessions": _layer(sessions),
+    }
+    _STEWARD_CACHE["ts"] = moment
+    _STEWARD_CACHE["data"] = data
     return data
 
 

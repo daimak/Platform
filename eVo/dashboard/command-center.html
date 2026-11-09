@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="command-center.css?v=1">
+  <link rel="stylesheet" href="command-center.css?v=2">
 </head>
 <body>
 
@@ -101,6 +101,18 @@
         </div>
       </section>
 
+      <!-- СТОРОЖ: кто сейчас работает (6 слоёв самодиагностики) -->
+      <section class="glass-panel cc-panel" aria-label="Сторож">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">ДИАГНОСТИКА · СТОРОЖ</p>
+            <h2>Сторож</h2>
+          </div>
+          <span class="cc-muted" id="cc-steward-updated">…</span>
+        </div>
+        <ul class="cc-watch" id="cc-watch"></ul>
+      </section>
+
       <!-- АРТЕФАКТЫ: что вернулось с моря -->
       <section class="glass-panel cc-panel" aria-label="Артефакты">
         <div class="cc-panel-head">
@@ -151,6 +163,6 @@
 
   </main>
 
-  <script src="command-center.js?v=2"></script>
+  <script src="command-center.js?v=3"></script>
 </body>
 </html>

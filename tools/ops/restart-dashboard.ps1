@@ -5,7 +5,10 @@
 # «не помню команду рестарта».
 
 $root = "C:\Work\Platform"
-$py = "C:\Users\User\AppData\Local\Programs\Python\Python312\python.exe"
+# Прямой путь к реальному python: лаунчер py/python3.exe держит ребёнка в job-объекте
+# с kill-on-close — убийство лаунчера валит и сервер (инцидент 09.11).
+$py = "C:\Users\temp\AppData\Local\Programs\Python\Python313\python.exe"
+if (-not (Test-Path $py)) { $py = "C:\Users\temp\AppData\Local\Python\pythoncore-3.15-64\python.exe" }
 if (-not (Test-Path $py)) { $py = "py" }
 
 # 1. Убить слушателей 8765 (по PID из соединения, не по имени — точнее).

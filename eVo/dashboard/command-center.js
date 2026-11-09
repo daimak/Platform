@@ -16,12 +16,12 @@
   /* --- Живой список развилок и блокеров (обновляет ZCode, дата обязательна) --- */
   var CC_STATE = {
     decisions: [
-      { date: '06.11', text: 'Allowlist-фикс events.jsonl (test/done только ZCode)', ask: 'вердикт: да/нет — один рестарт 8765 вместе со Штабом' },
+      { date: '09.11', text: 'Рокфеллер нанят (финансовый советник) — паспорт + штат v4 готовы', ask: 'слово на пилот: первый дайджест «положение казны»' },
       { date: '06.11', text: 'Higgsfield живой кадр — аккаунт и ключ готовы, потолок $1', ask: 'слово «запускай» — вернётся оценка пушки $50–200/ролик' },
       { date: '06.11', text: 'Kali-эпик отложен («хвосты прежде мощного эпика»)', ask: 'ждёт «запускай» — замок открыт, SSH готов' },
       { date: '08.11', text: 'Шлюпки-минизадачи в Обсерватории — проба пера', ask: 'понравилось? подключим живой канбан /api/tasks' },
       { date: '08.11', text: 'Расширение мира назревает', ask: 'что за мир — чтобы приготовить место в реестре и меню' },
-      { date: '08.11', text: 'Некоммиченный пакет: Обсерватория + окно Флота + Штаб', ask: 'осмотреть diff и сказать «коммить»' },
+      { date: '09.11', text: '14 драфт-миров ждут выбор №/комбо/концепт (worlds-draft)', ask: 'обзор http://127.0.0.1:8765/worlds-draft/index.html' },
     ],
     blockers: [
       { done: true, text: 'ПИНФЛ оформлен', note: 'самозанятость' },
@@ -303,6 +303,82 @@
     }).join('');
   }
 
+  /* --- Сторож: кто сейчас работает (6 слоёв /api/steward) ----------------------------- */
+
+  function renderSteward(data) {
+    var watchEl = document.getElementById('cc-watch');
+    if (!watchEl) return;
+    var rows = [];
+    function row(cls, name, value) {
+      rows.push('<li class="' + cls + '"><span class="w-dot"></span>'
+        + '<span class="w-name">' + escapeHtml(name) + '</span>'
+        + '<span class="w-val">' + value + '</span></li>');
+    }
+
+    if (!data) {
+      row('err', 'Сторож', 'сводка недоступна — сервер без эндпоинта /api/steward (нужен рестарт)');
+    } else {
+      var runtimes = Array.isArray(data.runtimes) ? data.runtimes : [];
+      runtimes.forEach(function (r) {
+        var code = r.returncode;
+        var state = r.running ? '<b>работает</b>'
+          : code === null || code === undefined ? 'покой'
+          : code === 0 ? 'покой · последний прогон ок'
+          : '<span style="color:#f87171">падение (код ' + escapeHtml(code) + ')</span>';
+        row(r.running ? 'live' : code === 0 || code === null ? '' : 'err', r.name, state);
+      });
+
+      var proc = data.processes;
+      if (proc) {
+        var nAgents = (proc.agent_processes || []).length;
+        var servers = proc.dashboard_servers || 0;
+        row(nAgents ? 'live' : '', 'Процессы',
+          'агентов в процессах: <b>' + nAgents + '</b>' + (nAgents ? ' · ' + escapeHtml(proc.agent_processes.join(', ')) : '')
+          + ' · серверов: ' + servers);
+      } else {
+        row('err', 'Процессы', 'слой не собрался');
+      }
+
+      var sched = data.scheduler;
+      if (sched) {
+        row(sched.status ? 'live' : '', 'Планировщик',
+          sched.found ? escapeHtml(sched.status || 'состояние неизвестно') : 'задача автостарта не найдена');
+      } else {
+        row('err', 'Планировщик', 'слой не собрался');
+      }
+
+      var auto = data.automations;
+      if (auto) {
+        row(auto.enabled_count ? 'live' : '', 'Кроны ZCode',
+          'включено: <b>' + auto.enabled_count + '</b>' + (auto.enabled_count
+            ? ' · ' + (auto.enabled || []).map(function (a) { return escapeHtml(a.title || a.id); }).join('; ')
+            : ''));
+      } else {
+        row('err', 'Кроны ZCode', 'слой не собрался (база занята?)');
+      }
+
+      var sess = data.sessions;
+      if (sess) {
+        var fresh = sess.newest_age_min === null ? '—' : sess.newest_age_min + ' мин назад';
+        row(sess.alive ? 'live' : sess.idle ? 'warm' : '', 'Сессии ZCode',
+          'живых: <b>' + sess.alive + '</b> · остывших: ' + sess.idle + ' · свежайшая: ' + fresh);
+      } else {
+        row('err', 'Сессии ZCode', 'слой не собрался');
+      }
+
+      var journal = data.journal;
+      if (journal) {
+        var last = (journal.tail || []).length ? journal.tail[journal.tail.length - 1] : '';
+        row('warm', 'Журнал сервера', journal.size_kb + ' КБ · ' + escapeHtml(String(last).slice(0, 120) || 'пусто'));
+      } else {
+        row('err', 'Журнал сервера', 'слой не собрался');
+      }
+    }
+    watchEl.innerHTML = rows.join('');
+    document.getElementById('cc-steward-updated').textContent =
+      'сверка: ' + fmtClock(data ? data.generated_at : new Date().toISOString());
+  }
+
   /* --- Обновление ------------------------------------------------------------------------ */
 
   function showError(message) {
@@ -328,7 +404,10 @@
     }).catch(function (error) {
       showError('Живой сервер 127.0.0.1:8765 не отвечает (' + error.message + ').');
     });
-    Promise.all([tokensPromise, fleetPromise]).finally(function () {
+    var stewardPromise = fetchJson('/api/steward')
+      .then(renderSteward)
+      .catch(function () { renderSteward(null); });
+    Promise.all([tokensPromise, fleetPromise, stewardPromise]).finally(function () {
       statusEl.hidden = true;
       updatedEl.textContent = 'обновлено в ' + fmtClock(new Date().toISOString());
       document.getElementById('cc-refresh').disabled = false;
