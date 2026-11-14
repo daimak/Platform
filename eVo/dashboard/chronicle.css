@@ -1,0 +1,128 @@
+/* ==========================================================================
+   ХРОНИКА — лента git-истории проекта. Стиль штаба: тёмный океан, стекло.
+   Данные: chronicle-data.js (снапшот генератора), страница только читает.
+   ========================================================================== */
+
+.ch-page {
+  min-height: 100vh;
+  background: radial-gradient(130% 100% at 50% 0%, #0a1e33 0%, #061423 48%, #030b13 100%);
+  font-family: 'JetBrains Mono', monospace;
+  padding-bottom: 40px;
+}
+
+.ch-hud { position: sticky; top: 0; z-index: 30; }
+
+.ch-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 24px 2px;
+}
+
+.ch-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.25));
+  border-radius: 999px;
+  background: rgba(4, 16, 28, 0.55);
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+  user-select: text;
+}
+
+.ch-cat b { color: #e2e8f0; font-weight: 600; }
+.ch-cat:hover { border-color: rgba(148, 163, 184, 0.55); color: #cbd5e1; }
+.ch-cat.on { color: #e2e8f0; border-color: rgba(125, 211, 252, 0.7); box-shadow: 0 0 10px rgba(56, 189, 248, 0.25); }
+.ch-cat .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+.ch-panel { margin: 14px 24px; padding: 18px 20px; }
+
+/* --- Лента дней -------------------------------------------------------- */
+
+.ch-days-rail {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scroll-behavior: smooth;
+}
+
+.day-col {
+  flex: none;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px 2px 2px;
+  transition: background 0.15s;
+}
+
+.day-col:hover { background: rgba(125, 211, 252, 0.08); }
+.day-col.sel { background: rgba(125, 211, 252, 0.14); outline: 1px solid rgba(125, 211, 252, 0.5); }
+.day-col.weekend .day-label { color: #fbbf24; font-weight: 600; }
+
+.day-bar {
+  width: 16px;
+  border-radius: 4px 4px 2px 2px;
+  min-height: 6px;
+  opacity: 0.82;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.day-col:hover .day-bar, .day-col.sel .day-bar { opacity: 1; box-shadow: 0 0 8px rgba(125, 211, 252, 0.45); }
+
+.day-count { font-size: 0.62rem; color: #cbd5e1; line-height: 1; }
+.day-label { font-size: 0.6rem; color: var(--text-muted, #94a3b8); line-height: 1; white-space: nowrap; }
+
+/* --- Карточки коммитов -------------------------------------------------- */
+
+.ch-commits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ch-commits li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.18));
+  border-radius: 10px;
+  background: rgba(4, 16, 28, 0.45);
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+
+.ch-commits time { color: #64748b; font-size: 0.72rem; flex: none; }
+
+.ch-commits .commit-chip {
+  flex: none;
+  font-size: 0.66rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  user-select: text;
+}
+
+.ch-commits .commit-subject { color: #e2e8f0; overflow-wrap: anywhere; }
+.ch-commits .commit-stats { margin-left: auto; flex: none; color: #64748b; font-size: 0.7rem; white-space: nowrap; }
+.ch-commits .commit-stats b { color: #34d399; font-weight: 500; }
+.ch-commits .commit-stats i { color: #f87171; font-style: normal; }
+
+.ch-empty { color: var(--text-muted, #94a3b8); font-size: 0.8rem; padding: 10px 4px; }
+
+@media (max-width: 760px) {
+  .ch-panel { margin: 10px 12px; }
+  .ch-cats { padding: 10px 12px 2px; }
+}

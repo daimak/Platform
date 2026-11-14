@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ХРОНИКА — как менялся проект</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="chronicle.css?v=1">
+</head>
+<body>
+
+  <main class="ch-page">
+
+    <header class="estate-top-hud ch-hud">
+      <div class="hud-left">
+        <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 14px;">
+          <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+          <div class="hud-title-group">
+            <span class="hud-title">ХРОНИКА</span>
+            <span class="hud-subtitle">как менялся проект — каждый коммит на ленте времени</span>
+          </div>
+        </a>
+      </div>
+      <div class="hud-right">
+        <div class="cc-counters">
+          <span class="cc-counter"><strong id="ch-c-commits">—</strong><em>коммитов</em></span>
+          <span class="cc-counter"><strong id="ch-c-days">—</strong><em>дней работы</em></span>
+          <span class="cc-counter"><strong id="ch-c-weekend">—</strong><em>за выходные</em></span>
+          <span class="cc-counter"><strong id="ch-c-lines">—</strong><em>строк +/-</em></span>
+          <span class="cc-counter cc-counter-time"><em id="ch-generated">…</em></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-left: 18px;">
+          <a class="cc-icon-btn" href="command-center.html" title="Штаб">🎛</a>
+          <a class="cc-icon-btn" href="index.html" title="Estate">🏰</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Потоки: фильтр -->
+    <div class="ch-cats" id="ch-cats" role="tablist" aria-label="Потоки"></div>
+
+    <!-- Лента дней -->
+    <section class="glass-panel ch-panel">
+      <div class="ch-days-rail" id="ch-days-rail"></div>
+    </section>
+
+    <!-- Выбранный день -->
+    <section class="glass-panel ch-panel">
+      <div class="cc-panel-head">
+        <div>
+          <p class="panel-label" id="ch-day-label">ДЕНЬ</p>
+          <h2 id="ch-day-title">—</h2>
+        </div>
+        <span class="cc-muted" id="ch-day-summary">—</span>
+      </div>
+      <ul class="ch-commits" id="ch-commits"></ul>
+    </section>
+
+  </main>
+
+  <script src="chronicle-data.js?v=1"></script>
+  <script src="chronicle.js?v=1"></script>
+</body>
+</html>

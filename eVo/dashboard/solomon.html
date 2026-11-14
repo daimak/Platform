@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>СОЛОМОН — ранжирование лейнов до 04.12</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+  <style>
+    /* СОЛОМОН — доклад С-1. Стиль штаба: тёмный океан, стекло. Текст выделяется. */
+    .sl-page {
+      min-height: 100vh;
+      background: radial-gradient(130% 100% at 50% 0%, #0a1e33 0%, #061423 48%, #030b13 100%);
+      font-family: 'JetBrains Mono', monospace;
+      padding-bottom: 40px;
+    }
+    .sl-hud { position: sticky; top: 0; z-index: 30; }
+
+    .sl-counters {
+      display: flex; align-items: center; gap: 16px;
+      padding: 6px 16px;
+      border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.25));
+      border-radius: 12px;
+      background: rgba(4, 16, 28, 0.55);
+      backdrop-filter: blur(6px);
+    }
+    .sl-counter { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; }
+    .sl-counter strong { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: #e2e8f0; }
+    .sl-counter em {
+      font-style: normal; font-size: 0.6rem; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--text-muted, #94a3b8);
+    }
+    .sl-counter-hot strong { color: #34d399; }
+    .sl-counter-time em { letter-spacing: 0.04em; text-transform: none; font-size: 0.66rem; }
+
+    .sl-icon-btn {
+      width: 34px; height: 34px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1rem; text-decoration: none; color: #cbd5e1;
+      background: rgba(10, 30, 51, 0.6);
+      border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.25));
+      border-radius: 10px; cursor: pointer;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .sl-icon-btn:hover { color: #38bdf8; border-color: rgba(56, 189, 248, 0.55); }
+
+    .sl-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 20px;
+      max-width: 1560px;
+      margin: 0 auto;
+      user-select: text;
+    }
+    .sl-panel { padding: 16px 18px; border-radius: 16px; }
+    .sl-panel-wide { grid-column: span 3; }
+    .sl-panel-budget { grid-column: span 2; }
+    .sl-panel-asks { border-color: rgba(251, 191, 36, 0.3); }
+    .sl-panel-money { border-color: rgba(52, 211, 153, 0.25); }
+
+    .sl-panel-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .sl-panel-head h2 {
+      margin: 2px 0 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.02rem;
+      color: #e2e8f0;
+    }
+    .sl-muted { color: var(--text-muted, #94a3b8); font-size: 0.66rem; }
+
+    /* --- Бюджет: топливо --- */
+    .sl-budget-body { display: flex; align-items: center; gap: 26px; }
+    .sl-gauge { position: relative; width: 148px; height: 148px; flex-shrink: 0; }
+    .sl-gauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .sl-gauge-track { fill: none; stroke: rgba(148, 163, 184, 0.16); stroke-width: 9; }
+    .sl-gauge-fill {
+      fill: none; stroke: #38bdf8; stroke-width: 9; stroke-linecap: round;
+      stroke-dasharray: 326.7; stroke-dashoffset: 326.7;
+      transition: stroke-dashoffset 0.7s ease;
+      filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.55));
+    }
+    .sl-gauge-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .sl-gauge-center strong { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: #7dd3fc; }
+    .sl-gauge-center em {
+      font-style: normal; font-size: 0.6rem; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--text-muted, #94a3b8);
+    }
+
+    /* --- Мир сейчас: живые трубы --- */
+    .sl-world-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    @media (max-width: 860px) { .sl-world-grid { grid-template-columns: 1fr; } }
+    .sl-world-col h3 {
+      margin: 0 0 8px; font-size: 0.62rem; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--text-muted, #94a3b8); font-weight: 600;
+    }
+    .sl-world-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+    .sl-world-col li { display: flex; gap: 9px; align-items: flex-start; min-width: 0; }
+    .sl-world-col li strong { display: block; font-size: 0.8rem; color: #e2e8f0; font-weight: 600; }
+    .sl-live-sub { display: block; font-size: 0.68rem; color: var(--text-muted, #94a3b8); word-break: break-word; }
+    .sl-live-empty { font-size: 0.72rem; color: var(--text-muted, #94a3b8); }
+    .sl-dot { flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; }
+    .sl-dot-writing { background: #35d07f; animation: sl-pulse 1.6s ease-in-out infinite; }
+    .sl-dot-idle { background: #e0b13e; }
+    .sl-dot-harbor { background: #38bdf8; }
+    @keyframes sl-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(53, 208, 127, 0.45); }
+      50% { box-shadow: 0 0 0 6px rgba(53, 208, 127, 0); }
+    }
+    .sl-live-burn { margin: 14px 0 0; font-size: 0.74rem; color: var(--text-muted, #94a3b8); }
+    .sl-live-burn b { color: #e2e8f0; font-weight: 600; }
+    .sl-burn-warn { color: #f87171; font-weight: 700; }
+
+    .sl-budget-numbers { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+    .sl-token-stats { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+    .sl-token-stats span { font-size: 0.72rem; color: var(--text-muted, #94a3b8); }
+    .sl-token-stats strong { color: #e2e8f0; font-weight: 600; }
+    .sl-token-stats span:last-child strong { color: #fbbf24; }
+
+    .sl-echelons { margin-top: 2px; }
+    .sl-echelons-bar {
+      display: flex; height: 14px; border-radius: 7px; overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .sl-echelons-bar i { display: block; height: 100%; }
+    .sl-echelons-labels { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 5px; }
+    .sl-echelons-labels span { font-size: 0.62rem; color: var(--text-muted, #94a3b8); display: inline-flex; align-items: center; gap: 5px; }
+    .sl-echelons-labels .swatch { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+    .sl-echelons-labels b { color: #cbd5e1; font-weight: 600; }
+
+    /* --- Ждёт слова --- */
+    .sl-asks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; counter-reset: ask; }
+    .sl-asks li {
+      counter-increment: ask;
+      padding: 7px 10px 7px 34px;
+      font-size: 0.7rem;
+      position: relative;
+      background: rgba(41, 30, 4, 0.5);
+      border: 1px solid rgba(251, 191, 36, 0.24);
+      border-radius: 9px;
+      color: #e2e8f0;
+    }
+    .sl-asks li::before {
+      content: counter(ask);
+      position: absolute; left: 10px; top: 7px;
+      color: #fbbf24; font-weight: 700;
+    }
+
+    /* --- Ранжирование лейнов --- */
+    .sl-lanes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .sl-lanes li {
+      display: flex; align-items: center; gap: 12px;
+      padding: 9px 12px;
+      background: rgba(4, 16, 28, 0.45);
+      border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.18));
+      border-radius: 10px;
+    }
+    .sl-lanes li.v-go { border-left: 3px solid rgba(52, 211, 153, 0.75); }
+    .sl-lanes li.v-pause { border-left: 3px solid rgba(251, 191, 36, 0.55); }
+    .sl-lanes li.v-close { border-left: 3px solid rgba(148, 163, 184, 0.45); opacity: 0.78; }
+    .sl-rank {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.92rem; color: #7dd3fc;
+      min-width: 30px; text-align: center; flex-shrink: 0;
+    }
+    .sl-lane-main { flex: 1; min-width: 0; }
+    .sl-lane-name { font-size: 0.78rem; color: #e2e8f0; font-weight: 600; overflow-wrap: anywhere; }
+    .sl-lane-why { margin-top: 3px; font-size: 0.64rem; color: var(--text-muted, #94a3b8); overflow-wrap: anywhere; }
+    .sl-lane-side { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .sl-lane-resource { font-size: 0.62rem; color: var(--text-muted, #94a3b8); white-space: nowrap; }
+    .sl-verdict {
+      font-size: 0.6rem; padding: 2px 8px; border-radius: 6px;
+      font-weight: 600; letter-spacing: 0.06em;
+    }
+    .sl-verdict.go { background: rgba(52, 211, 153, 0.14); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.35); }
+    .sl-verdict.pause { background: rgba(251, 191, 36, 0.14); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+    .sl-verdict.close { background: rgba(148, 163, 184, 0.12); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+    /* --- Таймлайн --- */
+    .sl-timeline { width: 100%; display: block; }
+    .sl-timeline text { font-family: 'JetBrains Mono', monospace; }
+
+    /* --- Таблица вердиктов --- */
+    .sl-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+    .sl-table th {
+      text-align: left; padding: 6px 10px;
+      font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted, #94a3b8);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    .sl-table td {
+      padding: 8px 10px; vertical-align: top;
+      color: #cbd5e1;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    .sl-table td.sl-date { color: #7dd3fc; white-space: nowrap; }
+    .sl-table td.sl-run { color: #e2e8f0; font-weight: 600; white-space: nowrap; }
+    .sl-table td.sl-empty { color: #475569; }
+    .sl-table td.sl-verdict-cell { color: #e2e8f0; }
+
+    /* --- Узкие экраны --- */
+    @media (max-width: 1180px) {
+      .sl-grid { grid-template-columns: 1fr 1fr; }
+      .sl-panel-budget { grid-column: span 2; }
+      .sl-panel-wide { grid-column: span 2; }
+    }
+    @media (max-width: 760px) {
+      .sl-grid { grid-template-columns: 1fr; padding: 12px; }
+      .sl-panel-budget, .sl-panel-wide { grid-column: span 1; }
+      .sl-budget-body { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="sl-page">
+
+    <header class="estate-top-hud sl-hud">
+      <div class="hud-left">
+        <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 14px;">
+          <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+          <div class="hud-title-group">
+            <span class="hud-title">СОЛОМОН</span>
+            <span class="hud-subtitle">советник по ценности · ранжирование лейнов до 04.12.2026 · С-1 пилот</span>
+          </div>
+        </a>
+      </div>
+      <div class="hud-right">
+        <div class="sl-counters" id="sl-counters"></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-left: 18px;">
+          <a class="sl-icon-btn" href="command-center.html" title="Штаб">🎛</a>
+          <a class="sl-icon-btn" href="index.html" title="Estate">🏰</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="sl-grid">
+
+      <!-- БЮДЖЕТ: топливо операции -->
+      <section class="glass-panel sl-panel sl-panel-budget sl-panel-money" aria-label="Бюджет">
+        <div class="sl-panel-head">
+          <div>
+            <p class="panel-label">ТОПЛИВО · БЮДЖЕТ ОПЕРАЦИИ</p>
+            <h2>Токены</h2>
+          </div>
+          <span class="sl-muted" id="sl-budget-note">…</span>
+        </div>
+        <div class="sl-budget-body">
+          <div class="sl-gauge">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="sl-gauge-track" cx="60" cy="60" r="52"/>
+              <circle class="sl-gauge-fill" id="sl-gauge-fill" cx="60" cy="60" r="52"/>
+            </svg>
+            <div class="sl-gauge-center">
+              <strong id="sl-gauge-value">—</strong>
+              <em>остаток</em>
+            </div>
+          </div>
+          <div class="sl-budget-numbers">
+            <div class="sl-token-stats">
+              <span>бюджет: <strong id="sl-b-total">—</strong></span>
+              <span>потрачено 14.11: <strong id="sl-b-spent">—</strong></span>
+              <span>остаток: <strong id="sl-b-left">—</strong></span>
+              <span>окно: <strong id="sl-b-window">—</strong></span>
+              <span>цель: <strong id="sl-b-goal">—</strong></span>
+            </div>
+            <div class="sl-echelons">
+              <div class="sl-echelons-bar" id="sl-echelons-bar"></div>
+              <div class="sl-echelons-labels" id="sl-echelons-labels"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- МИР СЕЙЧАС: живые трубы (опрос 45 с) -->
+      <section class="glass-panel sl-panel sl-panel-wide" aria-label="Мир сейчас">
+        <div class="sl-panel-head">
+          <div>
+            <p class="panel-label">ЖИВЫЕ ТРУБЫ · ОПРОС 45 С</p>
+            <h2>Мир сейчас</h2>
+          </div>
+          <span class="sl-muted" id="sl-world-meta">…</span>
+        </div>
+        <div class="sl-world-grid">
+          <div class="sl-world-col">
+            <h3>В море</h3>
+            <ul id="sl-world-sea"><li class="sl-live-empty">…</li></ul>
+          </div>
+          <div class="sl-world-col">
+            <h3>Под ковром</h3>
+            <ul id="sl-world-ops"><li class="sl-live-empty">…</li></ul>
+          </div>
+          <div class="sl-world-col">
+            <h3>Причалы</h3>
+            <ul id="sl-world-harbor"><li class="sl-live-empty">…</li></ul>
+          </div>
+        </div>
+        <p class="sl-live-burn" id="sl-live-burn">…</p>
+      </section>
+
+      <!-- ЖДЁТ СЛОВА: запросы Соломона -->
+      <section class="glass-panel sl-panel sl-panel-asks" aria-label="Ждёт слова">
+        <div class="sl-panel-head">
+          <div>
+            <p class="panel-label">ЖДЁТ СЛОВА · DECISIONS</p>
+            <h2>Ждёт слова</h2>
+          </div>
+          <span class="sl-muted" id="sl-asks-count">…</span>
+        </div>
+        <ol class="sl-asks" id="sl-asks"></ol>
+      </section>
+
+      <!-- РАНЖИРОВАНИЕ ЛЕЙНОВ -->
+      <section class="glass-panel sl-panel sl-panel-wide" aria-label="Ранжирование лейнов">
+        <div class="sl-panel-head">
+          <div>
+            <p class="panel-label">ЛЕЙНЫ ДО 04.12 · РЕЙТИНГ</p>
+            <h2>Ранжирование</h2>
+          </div>
+          <span class="sl-muted" id="sl-lanes-count">…</span>
+        </div>
+        <ul class="sl-lanes" id="sl-lanes"></ul>
+      </section>
+
+      <!-- ТАЙМЛАЙН ДО ДЕДЛАЙНА -->
+      <section class="glass-panel sl-panel sl-panel-wide" aria-label="Таймлайн до 04.12">
+        <div class="sl-panel-head">
+          <div>
+            <p class="panel-label">МАРШРУТ · 14.11 → 04.12</p>
+            <h2>Таймлайн</h2>
+          </div>
+          <span class="sl-muted" id="sl-tl-meta">…</span>
+        </div>
+        <svg class="sl-timeline" id="sl-timeline" viewBox="0 0 1040 190" role="img" aria-label="Таймлайн вех до 04.12"></svg>
+      </section>
+
+      <!-- ЖУРНАЛ ВЕРДИКТОВ: калибровка -->
+      <section class="glass-panel sl-panel sl-panel-wide" aria-label="Журнал вердиктов">
+        <div class="sl-panel-head">
+          <div>
+            <p class="panel-label">КАЛИБРОВКА · ЖУРНАЛ</p>
+            <h2>Вердикты и исходы</h2>
+          </div>
+          <span class="sl-muted">решение и исход заполняются по факту — точность прогноза</span>
+        </div>
+        <table class="sl-table" id="sl-journal">
+          <thead>
+            <tr><th>Дата</th><th>Прогон</th><th>Задача</th><th>Вердикт Соломона</th><th>Решение Sovereign</th><th>Исход</th></tr>
+          </thead>
+          <tbody id="sl-journal-body"></tbody>
+        </table>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="solomon-data.js?v=1"></script>
+  <script src="solomon-live.js?v=1"></script>
+  <script>
+  /* СОЛОМОН — рендер доклада С-1. Данные: window.SOLOMON (solomon-data.js). */
+  (function () {
+    'use strict';
+
+    var data = window.SOLOMON;
+    var KIND_COLORS = { start: '#7dd3fc', go: '#34d399', warn: '#fbbf24', info: '#a78bfa', deadline: '#f87171' };
+    var ECHELON_COLORS = ['#38bdf8', '#a78bfa', '#34d399'];
+
+    function el(id) { return document.getElementById(id); }
+    function fmtM(n) { return (Math.round(n * 100) / 100).toFixed(2).replace(/\.?0+$/, '') + 'M'; }
+    function escapeHtml(v) {
+      return String(v === null || v === undefined ? '' : v)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    /* --- Шапка: счётчики миссии --- */
+    function renderCounters() {
+      var m = data.mission;
+      el('sl-counters').innerHTML =
+        '<span class="sl-counter sl-counter-hot"><strong>$' + m.goal_usd + '</strong><em>цель · ' + escapeHtml(m.goal_sum) + '</em></span>' +
+        '<span class="sl-counter"><strong>' + m.days_total + '</strong><em>дней до 04.12</em></span>' +
+        '<span class="sl-counter"><strong>' + m.token_budget_m + 'M</strong><em>бюджет токенов</em></span>' +
+        '<span class="sl-counter"><strong>' + fmtM(data.budget.remaining_m) + '</strong><em>остаток</em></span>' +
+        '<span class="sl-counter sl-counter-time"><em>С-1 · ' + data.generated_at.slice(0, 16).replace('T', ' ') + '</em></span>';
+    }
+
+    /* --- Бюджет: кольцо + эшелоны --- */
+    function renderBudget() {
+      var b = data.budget;
+      var ratio = b.total_m > 0 ? Math.max(0, Math.min(1, b.remaining_m / b.total_m)) : 0;
+      var C = 2 * Math.PI * 52;
+      var fill = el('sl-gauge-fill');
+      fill.style.strokeDashoffset = String(C * (1 - ratio));
+      el('sl-gauge-value').textContent = fmtM(b.remaining_m);
+      el('sl-budget-note').textContent = b.note;
+      el('sl-b-total').textContent = b.total_m + 'M';
+      el('sl-b-spent').textContent = fmtM(b.spent_today_m);
+      el('sl-b-left').textContent = fmtM(b.remaining_m);
+      el('sl-b-window').textContent = '~' + data.mission.window_hours + ' ч с 14.11';
+      el('sl-b-goal').textContent = '$' + data.mission.goal_usd + ' · ' + escapeHtml(data.mission.goal_sum);
+
+      var sum = b.echelons.reduce(function (s, e) { return s + e.m; }, 0) || 1;
+      el('sl-echelons-bar').innerHTML = b.echelons.map(function (e, i) {
+        return '<i style="width:' + (e.m / sum * 100).toFixed(1) + '%;background:' + ECHELON_COLORS[i % ECHELON_COLORS.length] + '"></i>';
+      }).join('');
+      el('sl-echelons-labels').innerHTML = b.echelons.map(function (e, i) {
+        return '<span><i class="swatch" style="background:' + ECHELON_COLORS[i % ECHELON_COLORS.length] + '"></i>'
+          + escapeHtml(e.label) + ' <b>' + e.m + 'M</b></span>';
+      }).join('') + '<span>потрачено операцией С-1</span>';
+    }
+
+    /* --- Ждёт слова --- */
+    function renderAsks() {
+      el('sl-asks-count').textContent = data.asks.length + ' запроса';
+      el('sl-asks').innerHTML = data.asks.map(function (a) {
+        return '<li>' + escapeHtml(a) + '</li>';
+      }).join('');
+    }
+
+    /* --- Ранжирование лейнов --- */
+    function renderLanes() {
+      var counts = { go: 0, pause: 0, close: 0 };
+      data.lanes.forEach(function (l) { counts[l.verdict]++; });
+      el('sl-lanes-count').textContent = counts.go + ' · в работу / ' + counts.pause + ' · пауза / ' + counts.close + ' · закрыто';
+      el('sl-lanes').innerHTML = data.lanes.map(function (l) {
+        return '<li class="v-' + l.verdict + '">'
+          + '<span class="sl-rank">' + l.rank + '</span>'
+          + '<span class="sl-lane-main">'
+          + '<span class="sl-lane-name">' + escapeHtml(l.name) + '</span>'
+          + '<span class="sl-lane-why">' + escapeHtml(l.why) + '</span>'
+          + '</span>'
+          + '<span class="sl-lane-side">'
+          + '<span class="sl-lane-resource">' + escapeHtml(l.resource) + '</span>'
+          + '<span class="sl-verdict ' + l.verdict + '">' + escapeHtml(l.verdict_label) + '</span>'
+          + '</span>'
+          + '</li>';
+      }).join('');
+    }
+
+    /* --- Таймлайн: SVG-маршрут 14.11 → 04.12 --- */
+    function renderTimeline() {
+      var tl = data.timeline;
+      var W = 1040, H = 190, padL = 40, padR = 40, axisY = 120;
+      var span = W - padL - padR;
+      function X(day) { return padL + (day / tl.days_total) * span; }
+
+      var s = '';
+      // линия маршрута: пройдено от старта до сегодня + весь путь
+      s += '<line x1="' + padL + '" y1="' + axisY + '" x2="' + (W - padR) + '" y2="' + axisY
+        + '" stroke="rgba(148,163,184,0.3)" stroke-width="2"/>';
+      var nowX = X(Math.min(tl.day_now, tl.days_total));
+      if (tl.day_now > 0) {
+        s += '<line x1="' + padL + '" y1="' + axisY + '" x2="' + nowX + '" y2="' + axisY
+          + '" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>';
+      }
+      // отметка «сегодня»
+      s += '<line x1="' + nowX + '" y1="30" x2="' + nowX + '" y2="' + (axisY + 18)
+        + '" stroke="#7dd3fc" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.8"/>';
+
+      // дневные засечки каждые 2 дня
+      for (var d = 0; d <= tl.days_total; d += 2) {
+        var tx = X(d);
+        var dt = new Date(2026, 10, 14);
+        dt.setDate(dt.getDate() + d);
+        var lbl = ('0' + dt.getDate()).slice(-2) + '.' + ('0' + (dt.getMonth() + 1)).slice(-2);
+        s += '<line x1="' + tx + '" y1="' + (axisY - 4) + '" x2="' + tx + '" y2="' + (axisY + 4)
+          + '" stroke="rgba(148,163,184,0.4)" stroke-width="1"/>';
+        s += '<text x="' + tx + '" y="' + (axisY + 20) + '" text-anchor="middle" font-size="10" fill="#64748b">' + lbl + '</text>';
+      }
+
+      // вехи: стебли попеременно в два уровня, точки цветом типа
+      tl.milestones.forEach(function (ms, i) {
+        var x = X(ms.day);
+        var color = KIND_COLORS[ms.kind] || '#94a3b8';
+        var level0 = i % 2 === 0;
+        var stemTop = level0 ? 88 : 56;
+        var labelY = stemTop - 8;
+        var anchor = ms.day <= 1 ? 'start' : (ms.day >= tl.days_total - 1 ? 'end' : 'middle');
+        var lx = ms.day <= 1 ? x + 6 : (ms.day >= tl.days_total - 1 ? x - 6 : x);
+        s += '<line x1="' + x + '" y1="' + axisY + '" x2="' + x + '" y2="' + stemTop + '"'
+          + (ms.unconfirmed ? ' stroke-dasharray="3 3"' : '')
+          + ' stroke="' + color + '" stroke-width="1.5" opacity="0.85"/>';
+        s += '<circle cx="' + x + '" cy="' + axisY + '" r="5" fill="' + color
+          + (ms.unconfirmed ? '" fill-opacity="0.55"' : '"') + '/>';
+        s += '<text x="' + lx + '" y="' + labelY + '" text-anchor="' + anchor
+          + '" font-size="10.5" fill="#e2e8f0" font-weight="600">' + escapeHtml(ms.date) + '</text>';
+        s += '<text x="' + lx + '" y="' + (labelY + 13) + '" text-anchor="' + anchor
+          + '" font-size="10" fill="#94a3b8">' + escapeHtml(ms.label) + '</text>';
+      });
+
+      el('sl-timeline').innerHTML = s;
+      el('sl-tl-meta').textContent = '20 дней · день ' + tl.day_now + ' из ' + tl.days_total
+        + ' · вех: ' + tl.milestones.length;
+    }
+
+    /* --- Журнал вердиктов: калибровка --- */
+    function renderJournal() {
+      el('sl-journal-body').innerHTML = data.journal.map(function (j) {
+        return '<tr>'
+          + '<td class="sl-date">' + escapeHtml(j.date) + '</td>'
+          + '<td class="sl-run">' + escapeHtml(j.run) + '</td>'
+          + '<td>' + escapeHtml(j.task) + '</td>'
+          + '<td class="sl-verdict-cell">' + escapeHtml(j.verdict) + '</td>'
+          + '<td' + (j.decision ? '' : ' class="sl-empty"') + '>' + (j.decision ? escapeHtml(j.decision) : '—') + '</td>'
+          + '<td' + (j.outcome ? '' : ' class="sl-empty"') + '>' + (j.outcome ? escapeHtml(j.outcome) : '—') + '</td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    /* --- Старт --- */
+    if (!data || !data.lanes) return;
+    renderCounters();
+    renderBudget();
+    renderAsks();
+    renderLanes();
+    renderTimeline();
+    renderJournal();
+  })();
+  </script>
+</body>
+</html>

@@ -162,6 +162,11 @@ SANDBOX_REPORT_DIR = (
 PENTEST_JOURNAL_DIR = (
     Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "PentestJournal"
 )
+# Диспетчерская суб-агентов: живая фактура ZCode (metadata.json + output.txt
+# каждого агента). Вне git — источник для /api/agents/ops.
+AGENTS_FACT_DIR = Path.home() / ".zcode" / "cli" / "agents"
+# Реестр кораблей: объявление рейса (task/owner) по sessionId. Пишет ZCode.
+SHIPS_REGISTRY_PATH = ROOT / "Workspace" / "logs" / "ships-registry.json"
 
 
 def pentest_round_index():
@@ -765,6 +770,27 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             except (OSError, ValueError, json.JSONDecodeError) as error:
                 logging.exception("Steward snapshot failed")
                 self._send_json(500, {"error": f"Не удалось собрать сторож-сводку: {error}"})
+            return
+        if request_path == "/api/agents/ops":
+            # Диспетчерская суб-агентов: живая фактура ~/.zcode/cli/agents
+            # (metadata.json + output.txt), не журнал — видно даже рейсы,
+            # не попавшие в events.jsonl. Read-only, хвост доклада ≤700 знаков.
+            try:
+                self._send_json(200, agents_ops_snapshot())
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Agents ops read failed")
+                self._send_json(500, {"error": f"Не удалось собрать диспетчерскую: {error}"})
+            return
+        if request_path == "/api/darkwatch":
+            # «Тёмный радар» (штаб): безличные счётчики и топы из суточных
+            # срезов darkwatch (Workspace/intel, вне git). Watchlist-совпадения
+            # и персональные выборки не отдаётся — только цифры; сервер —
+            # единственный, кто знает путь к файлам.
+            try:
+                self._send_json(200, darkwatch_snapshot())
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Darkwatch snapshot failed")
+                self._send_json(500, {"error": f"Не удалось собрать тёмный радар: {error}"})
             return
         super().do_GET()
 
@@ -1518,6 +1544,7 @@ def start_job(job_id: str) -> tuple:
 AGENTS_LOG_PATH = ROOT / "Workspace" / "logs" / "events.jsonl"
 AGENTS_KINDS = ("agent.started", "agent.lane", "agent.pulse", "agent.storm", "agent.finished")
 AGENTS_SILENCE_STORM_MIN = 30  # тишина дольше 30 минут = шторм (метрики пульса ТЗ)
+AGENTS_LIVE_RECENT_MIN = 30  # запись фактуры свежее 30 мин = сессия в море (ТЗ 09.11)
 AGENTS_TAIL_LINES = 5000  # читаем только хвост журнала, чтобы не душить IO на больших файлах
 AGENTS_RECENT_LIMIT = 5  # events_recent в карточке корабля
 
@@ -1717,6 +1744,111 @@ def _agent_live_entry(ship: str, voyage: list, moment: datetime) -> dict:
     }
 
 
+def _model_io_sessions() -> list:
+    """Живые сессии ZCode по фактуре model-io-sess_*.jsonl (mtime = пульс).
+
+    Телеметрия встроена в работу модели: каждый ход пишет строку в фактуру,
+    «забыть» нельзя (ТЗ 09.11: чаты пульсируют в events.jsonl мимо протокола,
+    из-за этого живые корабли висели у причалов). Читаются только имя и mtime —
+    содержимое не трогаем (приватность чужих сессий). Свежее
+    AGENTS_LIVE_RECENT_MIN минут — в море, тише — у причала.
+    """
+    entries = []
+    try:
+        paths = list(TOKEN_ROLL_DIR.glob("model-io-sess_*.jsonl"))
+    except OSError:
+        return entries
+    for path in paths:
+        try:
+            age_min = max(0.0, (time.time() - path.stat().st_mtime) / 60.0)
+        except OSError:
+            continue
+        if age_min > AGENTS_LIVE_RECENT_MIN:
+            continue
+        stem = path.name[len("model-io-"):-len(".jsonl")]
+        if stem.startswith("sess_subagent_"):
+            tail = stem[len("sess_subagent_"):]
+            if tail.startswith("agent_"):
+                tail = tail[len("agent_"):]
+            ship = "Шлюпка " + tail[:8]
+        elif stem.startswith("sess_"):
+            ship = "Корабль " + stem[len("sess_"):][:8]
+        else:
+            ship = stem[:24]
+        entries.append({"id": stem, "ship": ship, "age_min": round(age_min, 1)})
+    return entries
+
+
+def _ships_registry() -> dict:
+    """Реестр кораблей: sessionId -> {ship, task, owner}.
+
+    Объявление рейса — обязанность ZCode при старте сессии/спавне шлюпки.
+    Реестр не заменяет events.jsonl (там ход рейса), он объявляет корабли:
+    кто молчит в реестре — в Штабе честно висит «задача не объявлена».
+    """
+    try:
+        data = json.loads(SHIPS_REGISTRY_PATH.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _crew_for_session(session_id: str) -> list:
+    """Описания шлюпок родителя: metadata.json суб-агентов с parentSessionId.
+
+    Легальный источник задачи (описание объявлено при спавне) — содержимое
+    фактуры model-io не читается (приватность чужих сессий).
+    """
+    crew = []
+    try:
+        for meta_path in AGENTS_FACT_DIR.glob("sess_*/agent_*/metadata.json"):
+            try:
+                meta = json.loads(meta_path.read_text(encoding="utf-8-sig", errors="replace"))
+            except (OSError, ValueError):
+                continue
+            parent = meta.get("parentSessionId") or ""
+            if session_id in parent and meta.get("description"):
+                crew.append(str(meta["description"]))
+    except OSError:
+        return crew
+    return crew
+
+
+def _model_io_live_entry(session: dict, registry: dict | None = None) -> dict:
+    """Карточка живой сессии из фактуры — форма как у _agent_live_entry.
+
+    Содержимое фактуры не читаем (приватность); смысл берём из объявлений:
+    реестр кораблей (task/owner) и metadata суб-агентов (шлюпки родителя).
+    Нет объявлений — честное «задача не объявлена» с виновным. Пульс = возраст
+    последней записи model-io.
+    """
+    age_min = session["age_min"]
+    reg = (registry or {}).get(session["id"]) or {}
+    crew = _crew_for_session(session["id"])
+    if reg.get("task"):
+        task = str(reg["task"])
+    elif crew:
+        task = "ведёт шлюпки: " + "; ".join(crew[:3])
+    else:
+        task = "задача не объявлена — реестр кораблей молчит (ответственный: ZCode)"
+    return {
+        "by": reg.get("ship") or session["ship"],
+        "task": task,
+        "owner": reg.get("owner") or "ZCode (журнал не вёл)",
+        "status": "море",
+        "pulse_status": "идёт" if age_min < 5 else "тихо",
+        "lanes": {"done": None, "total": None},
+        "pulse_min": age_min,
+        "storms": 0,
+        "started_at": None,
+        "eta_min": None,
+        "elapsed_min": None,
+        "events_recent": [],
+        "source": "model-io",
+        "session_id": session["id"],
+    }
+
+
 TOKEN_ROLL_DIR = Path.home() / ".zcode" / "cli" / "rollout"
 _TOKEN_CACHE = {"ts": 0.0, "data": None}
 
@@ -1804,6 +1936,105 @@ def tokens_usage_snapshot(max_files: int = 40) -> dict:
     }
     _TOKEN_CACHE["ts"] = moment
     _TOKEN_CACHE["data"] = data
+    return data
+
+
+# --- Тёмный радар: GET /api/darkwatch (штаб, панель COMMAND CENTER) ---
+
+DARKWATCH_DIR = ROOT / "Workspace" / "intel" / "digests" / "scripts" / "out" / "darkwatch"
+_DARKWATCH_CACHE = {"ts": 0.0, "data": None}
+# Только суточные срезы фида и реестра групп. Снапшоты (-groups-snapshot.json)
+# и персональные выборки (hudsonrock-*.json, имя файла содержит адрес) не читаем:
+# в ответ идут безличные счётчики и топы, watchlist-совпадения не проходят.
+_DARKWATCH_FILE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(ransomware|groups)\.json$")
+
+
+def _darkwatch_int(value) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return 0
+    return int(value)
+
+
+def _darkwatch_int_or_none(value):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return int(value)
+
+
+def darkwatch_snapshot() -> dict:
+    """Агрегат GET /api/darkwatch — панель «Тёмный радар» COMMAND CENTER.
+
+    Источник: суточные срезы Workspace/intel/digests/scripts/out/darkwatch/
+    (вне git, панель только читает; кэш 60 с — файлы дневные). Публикуемая
+    часть — только безличная агрегация: счётчики (last24, feed_size, total,
+    live_dls) и топы групп/стран из фида. Поля watchlist-совпадений
+    (watchlist_hits и подобные) в ответ не копируются вовсе — эндпоинт —
+    единственное место, где пути Workspace известны, фронтенд их не видит.
+    """
+    moment = time.time()
+    if _DARKWATCH_CACHE["data"] is not None and moment - _DARKWATCH_CACHE["ts"] < 60:
+        return _DARKWATCH_CACHE["data"]
+    try:
+        candidates = sorted(DARKWATCH_DIR.glob("*.json"))
+    except OSError:
+        candidates = []
+    picked: dict = {}
+    for path in candidates:
+        match = _DARKWATCH_FILE_RE.match(path.name)
+        if not match:
+            continue
+        day, kind = match.groups()
+        if kind not in picked or day > picked[kind][0]:
+            picked[kind] = (day, path)
+    feed = None
+    groups = None
+    if "ransomware" in picked:
+        try:
+            raw = json.loads(picked["ransomware"][1].read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raw = {}
+
+        def _pairs(key: str, limit: int = 5) -> list:
+            rows = raw.get(key)
+            out = []
+            if isinstance(rows, list):
+                for row in rows:
+                    if isinstance(row, list) and len(row) >= 2 and isinstance(row[0], str):
+                        out.append([row[0], _darkwatch_int(row[1])])
+            out.sort(key=lambda pair: pair[1], reverse=True)
+            return out[:limit]
+
+        if isinstance(raw, dict):
+            feed = {
+                "live": bool(raw.get("live")),
+                "http": _darkwatch_int_or_none(raw.get("http")),
+                "feed_size": _darkwatch_int(raw.get("feed_size")),
+                "last24": _darkwatch_int(raw.get("last24")),
+                "top_groups": _pairs("top_group"),
+                "top_countries": _pairs("top_country"),
+                "oldest_in_feed": str(raw["oldest_in_feed"]) if raw.get("oldest_in_feed") else None,
+            }
+    if "groups" in picked:
+        try:
+            raw = json.loads(picked["groups"][1].read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raw = {}
+        if isinstance(raw, dict):
+            groups = {
+                "live": bool(raw.get("live")),
+                "http": _darkwatch_int_or_none(raw.get("http")),
+                "total": _darkwatch_int(raw.get("total")),
+                "live_dls": _darkwatch_int(raw.get("live_dls")),
+            }
+    days = [item[0] for item in picked.values()]
+    data = {
+        "date": max(days) if days else None,
+        "feed": feed,
+        "groups": groups,
+        "generated_at": _utc_now_iso(),
+    }
+    _DARKWATCH_CACHE["ts"] = moment
+    _DARKWATCH_CACHE["data"] = data
     return data
 
 
@@ -1941,6 +2172,58 @@ def steward_snapshot() -> dict:
     return data
 
 
+def agents_ops_snapshot(now=None) -> dict:
+    """Агрегат GET /api/agents/ops: живая фактура суб-агентов ZCode.
+
+    Источник — фактура ~/.zcode/cli/agents (metadata.json + output.txt),
+    а не журнал: видно даже рейсы, не попавшие в events.jsonl. Статус —
+    по давности записи output.txt: writing (<3 мин), idle (>=3 мин).
+    Read-only: наружу — имя задачи, возраст, размер и хвост доклада;
+    внутренние пути не отдаём (правило видимости интерьера).
+    """
+    moment = now or datetime.now(timezone.utc)
+    flights = []
+    for meta_path in sorted(AGENTS_FACT_DIR.glob("sess_*/agent_*/metadata.json")):
+        try:
+            meta = json.loads(meta_path.read_text(encoding="utf-8-sig", errors="replace"))
+        except (OSError, ValueError):
+            continue
+        output_file = meta.get("outputFile")
+        if not output_file:
+            continue
+        output = Path(output_file)
+        try:
+            stat = output.stat()
+        except OSError:
+            continue
+        updated_dt = datetime.fromtimestamp(stat.st_mtime, timezone.utc)
+        age_min = max(0.0, (moment - updated_dt).total_seconds() / 60.0)
+        try:
+            text = output.read_text(encoding="utf-8-sig", errors="replace").strip()
+        except OSError:
+            text = ""
+        tail = text[-700:] if len(text) > 700 else text
+        artifact = None
+        artifact_match = re.search(
+            r"(?:Артефакт|artifact)[:\s`\"']*([A-Za-z]:[^\r\n`\"']+?\.(?:md|html|json))",
+            tail, re.IGNORECASE)
+        if artifact_match:
+            artifact = artifact_match.group(1).strip()
+        flights.append({
+            "id": meta.get("agentId") or meta_path.parent.name,
+            "task": meta.get("description") or "без описания",
+            "started_at": meta.get("createdAt"),
+            "updated_at": updated_dt.isoformat(),
+            "age_min": round(age_min, 1),
+            "bytes": stat.st_size,
+            "state": "writing" if age_min <= 3 else "idle",
+            "tail": tail,
+            "artifact": artifact,
+        })
+    flights.sort(key=lambda flight: flight["updated_at"], reverse=True)
+    return {"flights": flights[:40], "generated_at": _utc_now_iso()}
+
+
 def agents_live_snapshot(log_path=None, now=None) -> dict:
     """Агрегат GET /api/agents/live: активные рейсы по кораблям из events.jsonl.
 
@@ -1964,6 +2247,15 @@ def agents_live_snapshot(log_path=None, now=None) -> dict:
         if (current[-1].get("payload") or {}).get("kind") == "agent.finished":
             continue  # корабль у причала: GET /api/agents/history
         live.append(_agent_live_entry(ship, current, moment))
+    # Фаза 2: живые сессии по фактуре model-io — телеметрия, не зависящая от
+    # дисциплины журнала (ТЗ 09.11). Сессия, уже отчитавшаяся в журнал под
+    # тем же именем корабля, не дублируется.
+    journal_ships = {entry["by"] for entry in live}
+    registry = _ships_registry()
+    for session in _model_io_sessions():
+        if session["id"] in journal_ships:
+            continue
+        live.append(_model_io_live_entry(session, registry))
     live.sort(key=lambda entry: (entry["started_at"] or "", entry["by"]))
     return {"ships": live, "generated_at": _utc_now_iso()}
 

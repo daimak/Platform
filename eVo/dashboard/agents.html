@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="agents.css?v=1">
+  <link rel="stylesheet" href="agents-ops.css?v=1">
   <script>
     // Встраивание (всплывающее окно Эстейта): ?embed=1 прячет шапку и футер страницы —
     // их роль играет шапка окна. Полная страница открывается без параметра.
@@ -58,6 +59,17 @@
 
     <p id="fleet-status" class="fleet-status" hidden role="alert"></p>
 
+    <section class="glass-panel fleet-panel" aria-label="Диспетчерская суб-агентов">
+      <div class="fleet-panel-heading">
+        <div>
+          <p class="panel-label">ДИСПЕТЧЕРСКАЯ · ЖИВАЯ ФАКТУРА</p>
+          <h2>Под ковром</h2>
+        </div>
+        <span id="ops-updated" class="fleet-muted fleet-updated">данные ещё не загружены</span>
+      </div>
+      <div id="ops-flights" class="ops-flights"></div>
+    </section>
+
     <section class="glass-panel fleet-panel" aria-label="Корабли в море">
       <div class="fleet-panel-heading">
         <div>
@@ -89,5 +101,6 @@
   </main>
 
   <script src="agents.js?v=1"></script>
+  <script src="agents-ops.js?v=1"></script>
 </body>
 </html>

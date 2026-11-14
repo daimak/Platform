@@ -1,0 +1,62 @@
+/* Диспетчерская суб-агентов («Под ковром») — живая фактура /api/agents/ops.
+   Читает style.css/agents.css (glass-panel, fleet-*), здесь только своё. */
+
+.ops-flights { display: grid; gap: 10px; }
+
+.ops-flight {
+  display: flex; gap: 12px; align-items: stretch;
+  padding: 10px 12px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ops-dot {
+  flex: 0 0 10px; width: 10px; height: 10px; margin-top: 6px;
+  border-radius: 50%;
+}
+
+.ops-writing .ops-dot {
+  background: #35d07f;
+  animation: ops-pulse 1.6s ease-in-out infinite;
+}
+
+.ops-idle .ops-dot { background: #e0b13e; }
+
+@keyframes ops-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(53, 208, 127, 0.45); }
+  50% { box-shadow: 0 0 0 7px rgba(53, 208, 127, 0); }
+}
+
+.ops-main { flex: 1; min-width: 0; }
+
+.ops-main header {
+  display: flex; justify-content: space-between; gap: 10px;
+  align-items: baseline; margin-bottom: 6px;
+}
+
+.ops-main header strong { font-size: 14px; }
+
+.ops-ago {
+  flex: none; font-family: "JetBrains Mono", monospace;
+  font-size: 11px; opacity: 0.75; white-space: nowrap;
+}
+
+.ops-tail {
+  margin: 0 0 6px; padding: 8px; border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  font-family: "JetBrains Mono", monospace; font-size: 11px; line-height: 1.45;
+  white-space: pre-wrap; word-break: break-word;
+  user-select: text;
+}
+
+.ops-main footer {
+  display: flex; gap: 12px; align-items: baseline;
+  font-size: 11px; opacity: 0.85; flex-wrap: wrap;
+}
+
+.ops-artifact { color: inherit; text-decoration: underline; user-select: text; }
+.ops-artifact:hover { opacity: 0.8; }
+
+.ops-bytes { font-family: "JetBrains Mono", monospace; opacity: 0.7; }
+
+.ops-empty { margin: 0; opacity: 0.7; font-size: 13px; }

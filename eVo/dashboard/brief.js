@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-11-09 04:11",
+  "generatedAt": "2026-11-14 15:32",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -11,14 +11,14 @@ window.EVO_BRIEF = {
     "nextAction": "Актуализировать контекст Barrymore:\n- сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md;\n- устранить устаревшие указания на создание Morning Brief;\n- проверить качество доклада после обновления контекста;\n- отдельно разобраться с неотслеживаемым tools/barrymore/logger.py.\n\nНе выполнять merge, commit или удаление файлов без отдельного решения Sovereign."
   },
   "state": {
-    "nextStep": "По указанию пользователя: слияние веток по D-002 (после проверки) либо продуктовые шаги (R4 — Morning Brief read-only MVP)."
+    "nextStep": "По санкциям Sovereign: пилот Рокфеллера и/или выбор мира из drafts; при следующей смене — зафиксировать сессию 08–09.11 записью в `LOG.md`. Текущий пул работ — task-лиджер `Memory/Engineering/Tasks/Active/` (27 карточек)."
   },
   "changes": [
-    "2026-11-07 | cloud polygon kit Workspace/cloud/: bootstrap.sh, cloud-init for DigitalOcean and Yandex Cloud, compose stacks (DVWA, Juice Shop, n8n, Uptime Kuma, WireGuard), k3s installer, probe script, onboarding spec | one-command security/lab polygons on free cloud tiers | —",
     "2026-11-07 | cloud workshop VM: Platform deployed to Yandex Cloud (Ubuntu 24.04, systemd dashboard service, loopback + SSH-tunnel access, read-only deploy key, runbook Docs/CLOUD-VM-RUNBOOK-2026-11-07-ZCode.md) | month-to-income workshop and showcase for the agent estate; dashboard stays private (one-way door) | —",
     "2026-11-07 | templating protocol (Docs/TEMPLATING.md): Jinja2 templates in templates/ as source of truth, private per-host vars in Workspace/private/vars (untracked), renderer tools/render_templates.py with placeholder-safe repo mode, runbook converted to template | infra coordinates out of session memory and out of the public repo | —",
     "2026-11-07 | cloud VM security lab: docker + compose, apt toolkit, practice targets from cloud kit bound to loopback only (fixes: compose 0.0.0.0 bindings and missing empty .env for secretless services) | docker bypasses ufw; lab targets must never face the internet; inventory kept in private zone | —",
-    "2026-11-07 | agent peer notes (\"Заметка соседу\"): agents may append one short note-to-a-neighbor line to routine LLM reports (run_agent.py -> Workspace/agents/peer-notes.jsonl, untracked); Barrymore plaque shows unread counter, digest panel in steward modal, GET/POST /api/peer-notes; Morning Brief gains one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1 | agents occasionally show initiative and cross-talk at near-zero cost; launch stays manual (leash mode) | —"
+    "2026-11-07 | agent peer notes (\"Заметка соседу\"): agents may append one short note-to-a-neighbor line to routine LLM reports (run_agent.py -> Workspace/agents/peer-notes.jsonl, untracked); Barrymore plaque shows unread counter, digest panel in steward modal, GET/POST /api/peer-notes; Morning Brief gains one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1 | agents occasionally show initiative and cross-talk at near-zero cost; launch stays manual (leash mode) | —",
+    "2026-11-09 | release 1.8.8: COMMAND CENTER штаб (топливо/конвейер/артефакты/ждёт-слова/деньги/сигналы + /api/tokens/usage), обсерватория Maelstorm (воронка/корабли/шлюпки), 14 драфт-миров + 13 превью (worlds-draft, выбор за Sovereign), принцип P12 нейтральность инструмента, план Dark Watch, intel-картотека выведена из git (visibility rule) | consolidation of 08-09.11 sessions | —"
   ],
   "tasks": {
     "urgent": [
@@ -1984,53 +1984,48 @@ window.EVO_BRIEF = {
     ]
   },
   "hunter": {
-    "generatedAt": "2026-11-06T00:17:08+05:00",
-    "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-06); находок с вилкой: 19; OLX-находки: 253 (2026-10-31); очередь поручений: 0.",
+    "generatedAt": "2026-11-09T05:24:04+05:00",
+    "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-09); находок с вилкой: 0; OLX-находки: 253 (2026-10-31); очередь поручений: 0.",
     "top": [
+      {
+        "title": "Cloud Engineer Automation",
+        "url": "https://remoteOK.com/remote-jobs/remote-cloud-engineer-automation-smile-digital-health-1137600",
+        "source": "RemoteOK",
+        "date": "2026-10-29",
+        "category": "DevOps/инфраструктура",
+        "status": "perspective"
+      },
+      {
+        "title": "Senior Back-end Developer",
+        "url": "https://remotive.com/remote-jobs/software-development/senior-back-end-developer-2091135",
+        "source": "Remotive",
+        "date": "2026-10-27",
+        "category": "",
+        "status": "main"
+      },
       {
         "title": "💻 Front‑End AI‑инженер 🏢 Accenture • 🌍 Remote 💰 $54K - $205K/год 🛠 Стек: JavaScript, TypeS",
         "url": "https://t.me/remote_jobs_ru/444",
         "source": "Telegram @remote_jobs_ru",
         "date": "2026-10-26",
         "category": "сайты/вёрстка",
-        "status": "perspective",
-        "salary": "$4500–17083/мес"
+        "status": "perspective"
       },
       {
-        "title": "Ask HN: Who is hiring? (October 2026)",
-        "url": "https://news.ycombinator.com/item?id=50059584",
-        "source": "HN (Ask HN: Who is hiring? (October 2026))",
-        "date": "2026-10-12",
-        "category": "AI/LLM",
-        "status": "perspective",
-        "salary": "$1160–1600/мес"
+        "title": "Senior Software Engineer LATAM",
+        "url": "https://remoteOK.com/remote-jobs/remote-senior-software-engineer-latam-wagmo-1137572",
+        "source": "RemoteOK",
+        "date": "2026-10-26",
+        "category": "сайты/вёрстка",
+        "status": "perspective"
       },
       {
-        "title": "Ask HN: Who is hiring? (October 2026)",
-        "url": "https://news.ycombinator.com/item?id=49940381",
-        "source": "HN (Ask HN: Who is hiring? (October 2026))",
-        "date": "2026-10-03",
-        "category": "",
-        "status": "main",
-        "salary": "$11667–22000/мес"
-      },
-      {
-        "title": "Ask HN: Who is hiring? (October 2026)",
-        "url": "https://news.ycombinator.com/item?id=49934530",
-        "source": "HN (Ask HN: Who is hiring? (October 2026))",
-        "date": "2026-10-02",
-        "category": "AI/LLM",
-        "status": "perspective",
-        "salary": "$12500–21667/мес"
-      },
-      {
-        "title": "Ask HN: Who is hiring? (October 2026)",
-        "url": "https://news.ycombinator.com/item?id=49929553",
-        "source": "HN (Ask HN: Who is hiring? (October 2026))",
-        "date": "2026-10-02",
-        "category": "",
-        "status": "main",
-        "salary": "$9417–16417/мес"
+        "title": "Solutions Engineer",
+        "url": "https://remoteOK.com/remote-jobs/remote-solutions-engineer-onebrief-1137568",
+        "source": "RemoteOK",
+        "date": "2026-10-24",
+        "category": "DevOps/инфраструктура",
+        "status": "perspective"
       }
     ],
     "full": "Workspace/analytics/hunter/digest.json"
@@ -2039,14 +2034,12 @@ window.EVO_BRIEF = {
     "last24h": 0
   },
   "git": {
-    "branch": "release/1.8.7",
-    "lastCommit": "8783415 Merge origin/main (cloud VM lab E-052..E-059) into release/1.8.7",
-    "dirtyFiles": 50
+    "branch": "main",
+    "lastCommit": "a960875 Штат v4: Рокфеллер — финансовый советник (паспорт, кандидат, пилот-дайджест ждёт слова)",
+    "dirtyFiles": 68
   },
   "agent": {
-    "model": "dots-studio/dots-3-note-preview:free",
-    "summary": "Утренний доклад (снимок 2026-11-09 04:11): дата в CURRENT.md устарела — 2026-08-05 при фактической генерации 09.11. Следующее действие из CURRENT.md: сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md, устранить устаревшие указания на создание Morning Brief, проверить качество доклада после обновления контекста, отдельно разобраться с неотслеживаемым tools/barrymore/logger.py. Merge, commit или удаление файлов — только по отдельному решению Sovereign. STATE.md: слияние веток по D-002 (после проверки) или продуктивные шаги R4 — Morning Brief read-only MVP. CHANGELOG: 7.11 добавлены cloud polygon kit, cloud VM в Yandex Cloud, templating protocol, cloud VM security lab и agent peer notes («Заметка соседу») — agents могут добавлять одну строку в routine LLM reports, в дашборде и модалке стюарда появится дigest panel, Morning Brief обретёт one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1. Git: branch release/1.8.7, последний коммит Merge origin/main (cloud VM lab E-052..E-059), 50 грязных файлов. Хантер: 125 перспективных + 32 основных (снимок 06.11), находок с вилкой 19, OLX-находки 253 (31.10), очередь поручений 0. Переписка: 0 заметок за сутки.",
-    "nextStep": "Актуализировать контекст Barrymore: сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md, устранить устаревшие указания на создание Morning Brief, проверить качество доклада после обновления контекста, отдельно разобраться с неотслеживаемым tools/barrymore/logger.py."
+    "error": "LLM gateway HTTP 502 {\"error\":{\"message\":\"All 2 routed attempt(s) failed with upstream provider errors (timeout ×1, rate_limited ×1) (stopped early: retry time budget 45s exceeded — one failover hop is always allowed, and"
   },
-  "_sourceFingerprint": "50fcf00faef0d0b60396de23455ae454fd362730605577a79ecf47ce8748fbc9"
+  "_sourceFingerprint": "cd913b97624a4983f467c0d5789064956158c019db0758ddb7eb1d23e207309f"
 };

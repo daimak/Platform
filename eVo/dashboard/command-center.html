@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="command-center.css?v=2">
+  <link rel="stylesheet" href="command-center.css?v=11">
 </head>
 <body>
 
@@ -34,12 +34,27 @@
           <span class="cc-counter"><strong id="cc-count-dock">—</strong><em>причалы</em></span>
           <span class="cc-counter cc-counter-time"><em id="cc-updated">…</em></span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px; margin-left: 18px;">
-          <button class="cc-icon-btn" id="cc-refresh" type="button" title="Обновить сейчас">↻</button>
-          <a class="cc-icon-btn" href="agents.html" title="Флот в море — оперативная таблица">⛵</a>
-          <a class="cc-icon-btn" href="maelstorm-observatory.html" title="Обсерватория Маэльшторма — живая картина">🌀</a>
-          <a class="cc-icon-btn" href="world-map.html?v=12" title="Карта мира">🗺</a>
-          <a class="cc-icon-btn" href="index.html" title="Estate">🏰</a>
+        <div style="position: relative; margin-left: 18px;">
+          <button class="cc-icon-btn" id="cc-nav-btn" type="button" title="Навигация и действия">🧭</button>
+          <div class="cc-menu" id="cc-nav-menu" hidden>
+            <button class="cc-menu-item" id="cc-menu-theme" type="button">
+              <span class="cc-menu-ico">🎨</span><span>Тема: <b id="cc-menu-theme-name">Рассвет</b></span>
+            </button>
+            <button class="cc-menu-item" id="cc-menu-refresh" type="button">
+              <span class="cc-menu-ico">↻</span><span>Обновить данные</span>
+            </button>
+            <div class="cc-menu-sep"></div>
+            <div class="cc-menu-label">✨ Оживление</div>
+            <button class="cc-menu-item cc-menu-toggle" data-anim="fireflies" type="button"><span class="cc-menu-ico">✨</span><span>Светлячки</span><span class="cc-toggle-dot"></span></button>
+            <button class="cc-menu-item cc-menu-toggle" data-anim="breath" type="button"><span class="cc-menu-ico">🌫</span><span>Дыхание фона</span><span class="cc-toggle-dot"></span></button>
+            <button class="cc-menu-item cc-menu-toggle" data-anim="shimmer" type="button"><span class="cc-menu-ico">💫</span><span>Блеск заголовка</span><span class="cc-toggle-dot"></span></button>
+            <button class="cc-menu-item cc-menu-toggle" data-anim="lift" type="button"><span class="cc-menu-ico">🪄</span><span>Подъём панелей</span><span class="cc-toggle-dot"></span></button>
+            <div class="cc-menu-sep"></div>
+            <a class="cc-menu-item" href="agents.html"><span class="cc-menu-ico">⛵</span><span>Флот в море</span></a>
+            <a class="cc-menu-item" href="maelstorm-observatory.html"><span class="cc-menu-ico">🌀</span><span>Обсерватория</span></a>
+            <a class="cc-menu-item" href="world-map.html?v=12"><span class="cc-menu-ico">🗺</span><span>Карта мира</span></a>
+            <a class="cc-menu-item" href="index.html"><span class="cc-menu-ico">🏰</span><span>Estate</span></a>
+          </div>
         </div>
       </div>
     </header>
@@ -58,22 +73,17 @@
           <span class="cc-muted" id="cc-tokens-generated">…</span>
         </div>
         <div class="cc-tokens-body">
-          <div class="cc-gauge">
+          <div class="cc-gauge" id="cc-gauge">
             <svg viewBox="0 0 120 120" aria-hidden="true">
               <circle class="cc-gauge-track" cx="60" cy="60" r="52"/>
               <circle class="cc-gauge-fill" id="cc-gauge-fill" cx="60" cy="60" r="52"/>
             </svg>
             <div class="cc-gauge-center">
               <strong id="cc-gauge-value">—</strong>
-              <em>остаток</em>
+              <em id="cc-gauge-label">запас хода</em>
             </div>
           </div>
           <div class="cc-tokens-numbers">
-            <div class="cc-balance-row">
-              <label for="cc-balance-input" class="cc-muted">Остаток по счётчику, M:</label>
-              <input id="cc-balance-input" type="number" min="0" step="1" placeholder="напр. 260">
-              <span class="cc-muted" id="cc-balance-saved"></span>
-            </div>
             <div class="cc-token-stats">
               <span>сегодня: <strong id="cc-today">—</strong></span>
               <span>за 7 дней: <strong id="cc-week">—</strong></span>
@@ -81,8 +91,22 @@
               <span>сессий: <strong id="cc-sessions">—</strong></span>
               <span>при текущей скорости сгорит через: <strong id="cc-burnout">—</strong></span>
             </div>
-            <canvas id="cc-sparkline" height="72" aria-label="Расход по часам"></canvas>
-            <div class="cc-muted cc-spark-caption">расход по часам (наблюдаемый период)</div>
+            <p class="cc-muted" id="cc-burn-line" style="margin:8px 0 0;font-size:0.72rem;">…</p>
+            <div class="cc-budget">
+              <div class="cc-budget-bar" role="img" aria-label="Бюджет токенов: в наличии против израсходованного за 7 дней">
+                <span class="cc-budget-have" id="cc-budget-have"></span>
+                <span class="cc-budget-spent" id="cc-budget-spent"></span>
+              </div>
+              <div class="cc-budget-legend">
+                <span><i class="cc-dot cc-dot-have"></i>в наличии: <strong id="cc-budget-have-num">—</strong></span>
+                <span><i class="cc-dot cc-dot-spent"></i>израсходовано за 7 дней: <strong id="cc-budget-spent-num">—</strong></span>
+              </div>
+            </div>
+            <div class="cc-balance-row">
+              <label for="cc-balance-input" class="cc-muted">Остаток по счётчику, M:</label>
+              <input id="cc-balance-input" type="number" min="0" step="1" placeholder="напр. 260">
+              <span class="cc-muted" id="cc-balance-saved"></span>
+            </div>
           </div>
         </div>
       </section>
@@ -148,6 +172,24 @@
         <ul class="cc-blockers" id="cc-blockers"></ul>
       </section>
 
+      <!-- ТЁМНЫЙ РАДАР: суточные цифры (только счётчики и топы) -->
+      <section class="glass-panel cc-panel cc-panel-darkwatch" aria-label="Тёмный радар">
+        <div class="cc-panel-head">
+          <div>
+            <p class="panel-label">ТЁМНЫЙ РАДАР · DARKWATCH</p>
+            <h2>Тёмный радар</h2>
+          </div>
+          <span class="cc-muted" id="cc-darkwatch-date">…</span>
+        </div>
+        <div class="cc-dw-counters">
+          <span class="cc-dw-counter dw-hot"><strong id="cc-dw-victims">—</strong><em>жертв за 24 ч</em></span>
+          <span class="cc-dw-counter"><strong id="cc-dw-top">—</strong><em>топ-группа</em></span>
+          <span class="cc-dw-counter"><strong id="cc-dw-dls">—</strong><em>живых DLS</em></span>
+          <span class="cc-dw-counter"><strong id="cc-dw-groups">—</strong><em>групп</em></span>
+        </div>
+        <ul class="cc-dw-top" id="cc-dw-top-list"></ul>
+      </section>
+
       <!-- СИГНАЛЫ: лента журнала -->
       <section class="glass-panel cc-panel cc-panel-tape" aria-label="Сигналы">
         <div class="cc-panel-head">
@@ -163,6 +205,6 @@
 
   </main>
 
-  <script src="command-center.js?v=3"></script>
+  <script src="command-center.js?v=11"></script>
 </body>
 </html>

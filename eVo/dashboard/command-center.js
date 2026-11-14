@@ -2,6 +2,7 @@
    COMMAND CENTER — штаб поместья.
    Топливо:  GET /api/tokens/usage (фактура model-io, кэш 60 с на сервере)
    Конвейер: GET /api/agents/live + /api/agents/history («Флот в море»)
+   Радар:    GET /api/darkwatch (суточные счётчики и топы, безличные данные)
    Решения и блокеры: живой список CC_STATE ниже — обновляет ZCode при каждом
    новом развороте (панель только читает, как весь дашборд).
    Остаток счётчика вводится вручную (Sovereign), хранится в localStorage.
@@ -35,9 +36,9 @@
     ],
   };
 
+  var BALANCE_SEED_M = 440; // остаток по слову Дмитрия 14.11 («в запасе 440M»); правится полем в панели
   var balanceInput = document.getElementById('cc-balance-input');
   var balanceSaved = document.getElementById('cc-balance-saved');
-  var sparkline = document.getElementById('cc-sparkline');
   var statusEl = document.getElementById('cc-status');
   var updatedEl = document.getElementById('cc-updated');
 
@@ -109,76 +110,62 @@
     document.getElementById('cc-peak').textContent = fmtNum(peak);
     document.getElementById('cc-sessions').textContent = String((usage.sessions || []).length);
 
-    // запас хода: остаток (в млн) / средний расход в день (фактура в токенах → млн)
+    // запас хода: остаток (в млн; до ввода — оценка BALANCE_SEED_M) / средний расход в день
     var balance = loadBalance();
-    var activeDays = days.length;
-    var burnout = '—';
+    var isEstimate = !(balance && balance.balance > 0);
+    var balM = isEstimate ? BALANCE_SEED_M : balance.balance;
     var daysLeft = null;
-    if (balance && balance.balance > 0 && activeDays > 0 && week > 0) {
-      var perDayM = week / activeDays / 1000000; // млн токенов в день
-      daysLeft = balance.balance / perDayM;
-      burnout = daysLeft >= 2 ? '~' + Math.round(daysLeft) + ' дн' : '~' + Math.max(1, Math.round(daysLeft * 24)) + ' ч';
+    if (week > 0) {
+      daysLeft = balM / (week / 7 / 1000000); // темп = расход за календарную неделю (смотри «за 7 дней»)
     }
+    var burnout = daysLeft === null ? '—'
+      : daysLeft >= 2 ? '~' + Math.round(daysLeft) + ' дн'
+      : '~' + Math.max(1, Math.round(daysLeft * 24)) + ' ч';
     document.getElementById('cc-burnout').textContent = burnout;
 
-    // кольцо: запас хода, полное = 30 дней
-    var fill = document.getElementById('cc-gauge-fill');
-    var gaugeValue = document.getElementById('cc-gauge-value');
+    // бюджет-полоса: «в наличии» против «израсходовано за 7 дней»
+    var haveEl = document.getElementById('cc-budget-have');
+    var spentEl = document.getElementById('cc-budget-spent');
+    var haveNum = document.getElementById('cc-budget-have-num');
+    var spentNum = document.getElementById('cc-budget-spent-num');
+    var weekM = week / 1000000;
+    spentNum.textContent = fmtNum(week) + ' · 7 дней';
+    haveNum.textContent = (isEstimate ? '≈' : '') + balM + 'M';
+    var havePct = (balM + weekM) > 0 ? (balM / (balM + weekM)) * 100 : 100;
+    haveEl.style.width = havePct.toFixed(1) + '%';
+    spentEl.style.width = (100 - havePct).toFixed(1) + '%';
+
+    // кольцо: запас хода в днях, полное = 30 дн
+    var gaugeFill = document.getElementById('cc-gauge-fill');
+    var gaugeEl = document.getElementById('cc-gauge');
     var C = 2 * Math.PI * 52;
-    if (balance && balance.balance > 0) {
-      gaugeValue.textContent = fmtNum(balance.balance);
-      var ratio = daysLeft === null ? 0 : Math.max(0, Math.min(1, daysLeft / 30));
-      fill.style.strokeDashoffset = String(C * (1 - ratio));
-      if (daysLeft !== null && daysLeft < 3) fill.style.stroke = '#f87171';
-      else if (daysLeft !== null && daysLeft < 7) fill.style.stroke = '#fbbf24';
-      else fill.style.stroke = '#38bdf8';
-      balanceSaved.textContent = balance.saved_at
-        ? 'введено ' + fmtDayClock(balance.saved_at)
-        : '';
-    } else {
-      gaugeValue.textContent = '—';
-      fill.style.strokeDashoffset = String(C);
-      balanceSaved.textContent = 'введи остаток — посчитаю запас хода';
-    }
+    var ratio = daysLeft === null ? 0 : Math.max(0.02, Math.min(1, daysLeft / 30));
+    gaugeFill.style.strokeDashoffset = String(C * (1 - ratio));
+    document.getElementById('cc-gauge-value').textContent =
+      daysLeft === null ? '—' : '~' + Math.max(1, Math.round(daysLeft)) + ' дн';
+    document.getElementById('cc-gauge-label').textContent = 'запас';
+    gaugeEl.classList.toggle('storm', daysLeft !== null && daysLeft < 3);
+    gaugeEl.classList.toggle('warn', daysLeft !== null && daysLeft >= 3 && daysLeft < 7);
 
-    drawSparkline(hours.slice(-48));
-  }
-
-  function drawSparkline(hours) {
-    if (!sparkline || !sparkline.getContext) return;
-    var dpr = window.devicePixelRatio || 1;
-    var w = sparkline.clientWidth || sparkline.offsetWidth || 600;
-    var h = 72;
-    sparkline.width = Math.round(w * dpr);
-    sparkline.height = Math.round(h * dpr);
-    var ctx = sparkline.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    if (!hours.length) {
-      ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
-      ctx.font = '11px "JetBrains Mono", monospace';
-      ctx.fillText('фактуры пока нет', 6, h / 2);
-      return;
+    // огонь бюджета — та же цифра и формат, что в solomon.html («Мир сейчас»),
+    // одна формула: последний час / день / остаток / хватит на N ч. При введённом
+    // точном балансе считает от него, иначе от сида BALANCE_SEED_M.
+    var burnLine = document.getElementById('cc-burn-line');
+    if (burnLine) {
+      var lastHour = hours.length ? hours[hours.length - 1].tokens : 0;
+      var prevHour = hours.length > 1 ? hours[hours.length - 2].tokens : 0;
+      var leftT = Math.max(0, balM * 1000000 - today);
+      var hoursLeft = lastHour > 0 ? leftT / lastHour : null;
+      var fmtM = function (t) { return (t / 1000000).toFixed(1); };
+      burnLine.innerHTML = 'огонь за час: <b>' + fmtM(lastHour) + 'M</b>'
+        + (prevHour ? ' (пред. ' + fmtM(prevHour) + 'M)' : '')
+        + ' · за день: <b>' + fmtM(today) + 'M</b>'
+        + ' · остаток: <b>' + (isEstimate ? '≈' : '') + fmtM(leftT) + 'M</b>'
+        + (hoursLeft !== null ? ' ≈ <b>' + (hoursLeft < 48 ? '<span style="color:#f87171">' + Math.round(hoursLeft) + ' ч</span>' : Math.round(hoursLeft / 24) + ' дн') + '</b> при текущей скорости' : '');
     }
-    var max = 1;
-    var i;
-    for (i = 0; i < hours.length; i++) if (hours[i].tokens > max) max = hours[i].tokens;
-    var gap = 2;
-    var barW = Math.max(2, w / hours.length - gap);
-    var grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, 'rgba(56, 189, 248, 0.95)');
-    grad.addColorStop(1, 'rgba(56, 189, 248, 0.12)');
-    for (i = 0; i < hours.length; i++) {
-      var barH = Math.max(2, (hours[i].tokens / max) * (h - 14));
-      var x = i * (w / hours.length);
-      ctx.fillStyle = grad;
-      ctx.fillRect(x, h - barH, barW, barH);
-      if (hours[i].tokens === max) {
-        ctx.fillStyle = 'rgba(125, 211, 252, 0.9)';
-        ctx.font = '10px "JetBrains Mono", monospace';
-        ctx.fillText(fmtNum(max), Math.min(x, w - 46), h - barH - 3);
-      }
-    }
+    balanceSaved.textContent = isEstimate
+      ? 'оценка ' + BALANCE_SEED_M + 'M от 14.11 — введи точный остаток'
+      : 'введено ' + fmtDayClock(balance.saved_at);
   }
 
   balanceInput.addEventListener('change', function () {
@@ -223,7 +210,7 @@
       shipsEl.innerHTML = ships.slice(0, 6).map(function (s) {
         return '<li><span class="ship-pulse ' + pulseClass(s) + '"></span>'
           + '<span class="ship-name">' + escapeHtml(s.by || 'корабль') + '</span>'
-          + '<span class="ship-task">' + escapeHtml(s.task || '') + '</span>'
+          + '<span class="ship-task">' + escapeHtml(s.task || '') + (s.owner ? ' · отв: ' + escapeHtml(s.owner) : '') + '</span>'
           + '<span class="cc-muted">' + fmtMinutes(s.elapsed_min) + '</span></li>';
       }).join('');
     }
@@ -379,6 +366,40 @@
       'сверка: ' + fmtClock(data ? data.generated_at : new Date().toISOString());
   }
 
+  /* --- Тёмный радар: суточные счётчики (/api/darkwatch) ----------------------------- */
+
+  function renderDarkwatch(data) {
+    var feed = data && data.feed ? data.feed : null;
+    var groups = data && data.groups ? data.groups : null;
+    var dateEl = document.getElementById('cc-darkwatch-date');
+    dateEl.textContent = data && data.date ? 'срез ' + data.date.split('-').reverse().join('.') : 'среза нет';
+
+    var victims = document.getElementById('cc-dw-victims');
+    var topEl = document.getElementById('cc-dw-top');
+    var dls = document.getElementById('cc-dw-dls');
+    var groupsEl = document.getElementById('cc-dw-groups');
+    var topGroups = feed && Array.isArray(feed.top_groups) ? feed.top_groups : [];
+    victims.textContent = feed ? fmtNum(feed.last24) : '—';
+    topEl.textContent = topGroups.length ? topGroups[0][0] : '—';
+    dls.textContent = groups ? fmtNum(groups.live_dls) : '—';
+    groupsEl.textContent = groups ? fmtNum(groups.total) : '—';
+
+    var listEl = document.getElementById('cc-dw-top-list');
+    if (!feed || !topGroups.length) {
+      listEl.innerHTML = '<li><span class="cc-muted">срез ещё не собран — цифры появятся после суточного прогона</span></li>';
+      return;
+    }
+    var maxCount = topGroups[0][1] || 1;
+    listEl.innerHTML = topGroups.map(function (pair, index) {
+      var share = Math.max(4, Math.round((pair[1] / maxCount) * 100));
+      return '<li>'
+        + '<span class="dw-rank">' + (index + 1) + '</span>'
+        + '<span class="dw-name">' + escapeHtml(pair[0]) + '</span>'
+        + '<span class="dw-bar"><i style="width:' + share + '%"></i></span>'
+        + '<span class="dw-count">' + fmtNum(pair[1]) + '</span></li>';
+    }).join('');
+  }
+
   /* --- Обновление ------------------------------------------------------------------------ */
 
   function showError(message) {
@@ -387,7 +408,7 @@
   }
 
   function refresh() {
-    document.getElementById('cc-refresh').disabled = true;
+    document.getElementById('cc-menu-refresh').disabled = true;
     var tokensPromise = fetchJson('/api/tokens/usage').then(function (u) {
       lastUsage = u;
       renderTokens(u);
@@ -407,18 +428,142 @@
     var stewardPromise = fetchJson('/api/steward')
       .then(renderSteward)
       .catch(function () { renderSteward(null); });
-    Promise.all([tokensPromise, fleetPromise, stewardPromise]).finally(function () {
+    var radarPromise = fetchJson('/api/darkwatch')
+      .then(renderDarkwatch)
+      .catch(function (error) {
+        document.getElementById('cc-darkwatch-date').textContent =
+          'панель поднимется после рестарта сервера (' + error.message + ')';
+        document.getElementById('cc-dw-top-list').innerHTML =
+          '<li><span class="cc-muted">сводка недоступна</span></li>';
+      });
+    Promise.all([tokensPromise, fleetPromise, stewardPromise, radarPromise]).finally(function () {
       statusEl.hidden = true;
       updatedEl.textContent = 'обновлено в ' + fmtClock(new Date().toISOString());
-      document.getElementById('cc-refresh').disabled = false;
+      document.getElementById('cc-menu-refresh').disabled = false;
       if (isStatic && window.requestAnimationFrame) { /* один кадр уже отрисован */ }
     });
   }
 
-  document.getElementById('cc-refresh').addEventListener('click', refresh);
-  window.addEventListener('resize', function () {
-    if (lastUsage) drawSparkline((lastUsage.per_hour || []).slice(-48));
+  /* --- Меню 🧭 (навигация/тема/обновление) и темы (localStorage cc_theme_v1) --- */
+  var THEME_ORDER = ['dawn', 'orchid', 'alliance', 'bunker'];
+  var THEME_TITLE = { dawn: 'Рассвет', orchid: 'Орхидея', alliance: 'Альянс', bunker: 'Бункер' };
+  function currentTheme() {
+    try {
+      var t = localStorage.getItem('cc_theme_v1');
+      return THEME_ORDER.indexOf(t) >= 0 ? t : 'dawn';
+    } catch (e) { return 'dawn'; }
+  }
+  function applyTheme(t) {
+    document.querySelector('.cc-page').setAttribute('data-theme', t);
+    var nameEl = document.getElementById('cc-menu-theme-name');
+    if (nameEl) nameEl.textContent = THEME_TITLE[t];
+    if (typeof ffReadColor === 'function') ffReadColor();
+  }
+  applyTheme(currentTheme());
+
+  var navBtn = document.getElementById('cc-nav-btn');
+  var navMenu = document.getElementById('cc-nav-menu');
+  function closeMenu() { if (navMenu) navMenu.hidden = true; }
+  if (navBtn && navMenu) {
+    navBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      navMenu.hidden = !navMenu.hidden;
+    });
+    document.addEventListener('click', function (e) {
+      if (!navMenu.hidden && !navMenu.contains(e.target)) closeMenu();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+  }
+  document.getElementById('cc-menu-refresh').addEventListener('click', function () {
+    closeMenu();
+    refresh();
   });
+  document.getElementById('cc-menu-theme').addEventListener('click', function () {
+    var next = THEME_ORDER[(THEME_ORDER.indexOf(currentTheme()) + 1) % THEME_ORDER.length];
+    try { localStorage.setItem('cc_theme_v1', next); } catch (e) {}
+    applyTheme(next);
+  });
+
+  /* --- Оживление: светлячки/дыхание/блеск/подъём (localStorage cc_anim_v1) --- */
+  var ANIM_KEYS = ['fireflies', 'breath', 'shimmer', 'lift'];
+  var animState = null;
+  try { animState = JSON.parse(localStorage.getItem('cc_anim_v1')); } catch (e) { animState = null; }
+  animState = Object.assign({ fireflies: true, breath: true, shimmer: true, lift: true }, animState || {});
+  function saveAnims() { try { localStorage.setItem('cc_anim_v1', JSON.stringify(animState)); } catch (e) {} }
+
+  var ffCanvas = null, ffRaf = 0, ffParts = [], ffColor = '#d4b24c';
+  function ffReadColor() {
+    try {
+      var c = getComputedStyle(document.querySelector('.cc-page')).getPropertyValue('--cc-accent').trim();
+      if (c) ffColor = c;
+    } catch (e) {}
+  }
+  window.addEventListener('resize', function () {
+    if (ffCanvas) { ffCanvas.width = window.innerWidth; ffCanvas.height = window.innerHeight; }
+  });
+  function startFireflies() {
+    if (ffCanvas) return;
+    ffCanvas = document.createElement('canvas');
+    ffCanvas.id = 'cc-fireflies';
+    document.querySelector('.cc-page').appendChild(ffCanvas);
+    ffCanvas.width = window.innerWidth;
+    ffCanvas.height = window.innerHeight;
+    ffReadColor();
+    var ctx = ffCanvas.getContext('2d');
+    var i;
+    for (i = 0; i < 26; i++) ffParts.push({
+      x: Math.random() * ffCanvas.width, y: Math.random() * ffCanvas.height,
+      vy: -(0.15 + Math.random() * 0.35), sway: Math.random() * Math.PI * 2,
+      sr: 0.003 + Math.random() * 0.006, r: 1 + Math.random() * 1.8, a: 0.15 + Math.random() * 0.5
+    });
+    var hidden = false;
+    document.addEventListener('visibilitychange', function () { hidden = document.hidden; });
+    function tick(t) {
+      ffRaf = requestAnimationFrame(tick);
+      if (hidden) return;
+      ctx.clearRect(0, 0, ffCanvas.width, ffCanvas.height);
+      for (var j = 0; j < ffParts.length; j++) {
+        var p = ffParts[j];
+        p.y += p.vy; p.sway += p.sr; p.x += Math.sin(p.sway) * 0.3;
+        if (p.y < -10) { p.y = ffCanvas.height + 10; p.x = Math.random() * ffCanvas.width; }
+        ctx.beginPath();
+        ctx.fillStyle = ffColor;
+        ctx.globalAlpha = p.a * (0.55 + 0.45 * Math.sin(t / 700 + j));
+        ctx.shadowColor = ffColor; ctx.shadowBlur = 8;
+        ctx.arc(p.x, p.y, p.r, 0, 6.283);
+        ctx.fill();
+        ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      }
+    }
+    ffRaf = requestAnimationFrame(tick);
+  }
+  function stopFireflies() {
+    if (ffRaf) cancelAnimationFrame(ffRaf);
+    ffRaf = 0;
+    if (ffCanvas) { ffCanvas.remove(); ffCanvas = null; ffParts = []; }
+  }
+  function applyAnims() {
+    var page = document.querySelector('.cc-page');
+    ANIM_KEYS.forEach(function (k) { page.classList.toggle('anim-' + k, !!animState[k]); });
+    var toggles = document.querySelectorAll('.cc-menu-toggle');
+    for (var i = 0; i < toggles.length; i++) {
+      var k = toggles[i].getAttribute('data-anim');
+      toggles[i].classList.toggle('on', !!animState[k]);
+    }
+    if (animState.fireflies) startFireflies(); else stopFireflies();
+  }
+  var toggleBtns = document.querySelectorAll('.cc-menu-toggle');
+  for (var ti = 0; ti < toggleBtns.length; ti++) {
+    toggleBtns[ti].addEventListener('click', function () {
+      var k = this.getAttribute('data-anim');
+      animState[k] = !animState[k];
+      saveAnims();
+      applyAnims();
+    });
+  }
+  applyAnims();
 
   renderState();
   var stored = loadBalance();
