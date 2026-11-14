@@ -36,7 +36,7 @@ staged_count=$(printf '%s\n' "$staged" | grep -c .)
 # контуры (Dark Watch: план, intel-картотека, darkwatch-инструменты) в блоклисте.
 # Снятие пути из блоклиста — только осознанная правка этого файла.
 PUBLISH_BLOCKLIST='^Workspace/private/|^Workspace/intel/|^tools/intel/|^Docs/.*DARK-WATCH'
-blocked=$(printf '%s\n' "$staged" | grep -E "$PUBLISH_BLOCKLIST")
+blocked=$(printf '%s\n' "$staged" | grep -iE "$PUBLISH_BLOCKLIST")
 if [ -n "$blocked" ]; then
     say "RED: в staged внутренний контур, запрещённый к публикации (слово Дмитрия 09.11) — коммит отклонён:"
     printf '%s\n' "$blocked" | sed 's/^/    /'

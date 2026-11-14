@@ -14,6 +14,7 @@
   python tools/job_search.py                # все источники
   python tools/job_search.py --source tg,hh # только выбранные
   python tools/job_search.py --q devops     # своя строка поиска (hh + olx)
+  python tools/job_search.py --salary-only  # только записи с указанной зарплатой
 
 Результат: дайджест в консоль + tools/job_search_results.json
 """
@@ -99,6 +100,9 @@ def fetch_hh(host, query):
             "company": (it.get("employer") or {}).get("name") or "",
             "location": (it.get("area") or {}).get("name") or "",
             "salary": sal,
+            "salary_from": salary.get("from") if salary else None,
+            "salary_to": salary.get("to") if salary else None,
+            "salary_currency": salary.get("currency") or "" if salary else "",
             "date": it.get("published_at") or "",
             "url": it.get("alternate_url") or "",
             "snippet": re.sub(r"<[^>]+>", " ", text).strip()[:MAX_SNIPPET],
@@ -137,6 +141,70 @@ def fetch_hh_html(host, query):
     return out
 
 
+def fetch_hh_rss(host, query):
+    """Резерв HH через RSS-ленту выдачи (/search/vacancy/rss).
+
+    Зачем: API отдаёт 403 с датацентровых IP, а в HTML-выдаче (проверено
+    2026-11-09) зарплата из разметки SERP исчезла - старые data-qa-селекторы
+    compensation пусты. В RSS строка "Предполагаемый уровень месячного
+    дохода" по-прежнему приходит в описании каждого item.
+    """
+    r = requests.get(f"https://{host}/search/vacancy/rss?text={quote(query)}",
+                     headers=UA, timeout=20)
+    r.raise_for_status()
+    out = []
+    for it in re.findall(r"<item>(.*?)</item>", r.text, re.S):
+        def tag(t, _it=it):
+            m = re.search(rf"<{t}>(.*?)</{t}>", _it, re.S)
+            return html.unescape(m.group(1)).strip() if m else ""
+        desc = re.sub(r"^\s*<!\[CDATA\[|\]\]>\s*$", "", tag("description"))
+
+        def field(label, _desc=desc):
+            m = re.search(label + r":\s*(.*?)(?:</p>|\s*$)", _desc, re.S)
+            return re.sub(r"<[^>]+>", " ", m.group(1)).strip() if m else ""
+
+        sal = re.sub(r"\s+", " ", field("Предполагаемый уровень месячного дохода"))
+        if "не указан" in sal.lower():
+            sal = ""
+        lo, hi, cur = _parse_salary_text(sal)
+        out.append({
+            "source": f"hh ({host}, rss)",
+            "title": tag("title"),
+            "company": field("Вакансия компании"),
+            "location": field("Регион"),
+            "salary": sal,
+            "salary_from": lo,
+            "salary_to": hi,
+            "salary_currency": cur,
+            "date": tag("pubDate"),
+            "url": tag("link"),
+            "snippet": "",
+        })
+    return out
+
+
+def _parse_salary_text(text):
+    """'от 5 000 до 6 000 $' -> (5000, 6000, 'USD'); 'до 318 300 ₽' -> (None, 318300, 'RUR')."""
+    if not text:
+        return None, None, ""
+    cur = ""
+    for token, code in (("₽", "RUR"), ("$", "USD"), ("€", "EUR"), ("₸", "KZT"),
+                        ("usd", "USD"), ("rur", "RUR"), ("сум", "UZS")):
+        if token in text.lower():
+            cur = code
+            break
+    nums = [int(re.sub(r"\D", "", n)) for n in re.findall(r"\d(?:[\d\s\u00a0]*\d)?", text)]
+    lo = hi = None
+    if nums:
+        if re.match(r"\s*до\b", text):   # "до X" - указана только верхняя граница
+            hi = nums[0]
+            lo = nums[1] if len(nums) > 1 else None
+        else:
+            lo = nums[0]
+            hi = nums[1] if len(nums) > 1 else None
+    return lo, hi, cur
+
+
 def fetch_remoteok():
     """Публичное API remoteok.com. Первый элемент массива - легальная плашка, пропускаем."""
     r = requests.get("https://remoteok.com/api", headers=UA, timeout=15)
@@ -154,6 +222,9 @@ def fetch_remoteok():
             "company": job.get("company") or "",
             "location": job.get("location") or "remote",
             "salary": _salary_range(job.get("salary_min"), job.get("salary_max"), "USD"),
+            "salary_from": job.get("salary_min"),
+            "salary_to": job.get("salary_max"),
+            "salary_currency": "USD" if job.get("salary_min") or job.get("salary_max") else "",
             "date": job.get("date") or "",
             "url": job.get("url") or "",
             "snippet": "tags: " + ", ".join((job.get("tags") or [])[:8]),
@@ -350,6 +421,8 @@ def main():
     ap.add_argument("--source", default="hh,remoteok,remotive,hn,tg,olx,flru",
                     help="источники через запятую: hh,remoteok,remotive,hn,tg,olx")
     ap.add_argument("--q", default=None, help="своё ключевое слово вместо QUERIES (hh + olx)")
+    ap.add_argument("--salary-only", action="store_true",
+                    help="оставить только записи с указанной зарплатой")
     ap.add_argument("--json", default="job_search_results.json", help="путь к выгрузке")
     ap.add_argument("--js", default=None, help="куда записать vacancies.js для дашборда eVo")
     args = ap.parse_args()
@@ -364,7 +437,10 @@ def main():
             for q in queries:
                 got = safe(f"hh {host} '{q}'", lambda h=host, qq=q: fetch_hh(h, qq))
                 if not got:
-                    # API заблокирован (403 с датацентрового IP) - берём HTML-выдачу
+                    # API заблокирован (403 с датацентрового IP), а в HTML-выдаче
+                    # зарплаты с 2026-11 больше нет - берём RSS, где доход ещё виден
+                    got = safe(f"hh-rss {html_host} '{q}'", lambda h=html_host, qq=q: fetch_hh_rss(h, qq))
+                if not got:
                     got = safe(f"hh-html {html_host} '{q}'", lambda h=html_host, qq=q: fetch_hh_html(h, qq))
                 results += got
     if "remoteok" in enabled:
@@ -383,12 +459,20 @@ def main():
     if "flru" in enabled:
         results += safe("fl.ru", fetch_flru)
 
-    # дедуп по URL
+    # дедуп по URL; вакансии hh склеиваем по числовому id - одна и та же
+    # вакансия отдаётся и на hh.uz, и на hh.ru с разными ссылками
     seen, unique = set(), []
     for job in sorted(results, key=lambda j: parse_date(j["date"]), reverse=True):
-        if job["url"] and job["url"] not in seen:
-            seen.add(job["url"])
+        m = re.search(r"/vacancy/(\d+)", job["url"])
+        key = f"hh-vac-{m.group(1)}" if m else job["url"]
+        if job["url"] and key not in seen:
+            seen.add(key)
             unique.append(job)
+
+    if args.salary_only:
+        before = len(unique)
+        unique = [j for j in unique if (j.get("salary") or "").strip()]
+        print(f"[salary-only] оставлено {len(unique)} из {before} записей с непустой зарплатой")
 
     with open(args.json, "w", encoding="utf-8") as f:
         json.dump(unique, f, ensure_ascii=False, indent=2)
@@ -414,7 +498,8 @@ def main():
     by_source = {}
     for job in unique:
         by_source.setdefault(job["source"].split(" (")[0], []).append(job)
-    print(f"\n=== Дайджест: {len(unique)} позиций (полный список в {args.json}) ===")
+    with_sal = sum(1 for j in unique if (j.get("salary") or "").strip())
+    print(f"\n=== Дайджест: {len(unique)} позиций, с зарплатой: {with_sal} (полный список в {args.json}) ===")
     for src, jobs in by_source.items():
         print(f"\n--- {src}: {len(jobs)} ---")
         for job in jobs[:MAX_PER_SOURCE_IN_DIGEST]:

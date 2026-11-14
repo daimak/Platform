@@ -224,7 +224,7 @@ def main():
             L += [f"- {t}" for t in c["latest"][:5]]
         elif not c.get("live"):
             L.append(f"{label}: не собран ({c.get('error')})")
-    L += ["", "Δ к 08.11: база нет — первый прогон feeds_radar"]
+    L += ["", "Δ к вчера: первый прогон feeds_radar (базы сравнения нет — появится со следующего прогона)"]
     (FRAGMENTS / f"feeds-{stamp}.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     print(f"фрагмент: {FRAGMENTS / f'feeds-{stamp}.md'}")
 
