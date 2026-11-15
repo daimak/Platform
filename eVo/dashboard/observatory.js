@@ -173,13 +173,16 @@
   }
 
   function dockPose(index, total) {
-    // гавань: два ряда под воронкой, равномерный шаг — подписи не слипаются
-    var row = index % 2;
-    var perRow = Math.ceil(total / 2);
-    var posInRow = Math.floor(index / 2);
-    var stepX = Math.min(300, (state.w * 0.52) / Math.max(1, perRow));
-    var x = state.cx + (posInRow - (perRow - 1) / 2) * stepX;
-    var y = state.cy + state.rMax * 0.74 + row * 34;
+    // гавань: сетка под воронкой — шаг по X и Y больше лейбла,
+    // поэтому ряды физически не могут лечь друг на друга (15.11)
+    var cellW = 216, cellH = 66;
+    var availW = Math.min(state.w * 0.82, 1040);
+    var cols = Math.max(1, Math.floor(availW / cellW));
+    var rows = Math.ceil(total / cols);
+    var row = Math.floor(index / cols);
+    var posInRow = index % cols;
+    var x = state.cx + (posInRow - (cols - 1) / 2) * cellW;
+    var y = state.cy + state.rMax * 0.8 + row * cellH + (rows > 3 ? -cellH * (rows - 3) * 0.5 : 0);
     return { x: x, y: y };
   }
 
@@ -261,7 +264,8 @@
   }
 
   function drawShipGlyph(x, y, angle, storm, calm, alpha) {
-    var color = storm ? '248, 113, 113' : calm ? '148, 163, 184' : '56, 189, 248';
+    // канбан-цвета (Дмитрий 15.11): красный = шторм-проблемы, жёлтый = в процессе, серый = тихо
+    var color = storm ? '248, 113, 113' : calm ? '148, 163, 184' : '251, 191, 36';
     var tilt = storm ? Math.sin(Date.now() / 180) * 0.16 : 0;
     ctx.save();
     ctx.translate(x, y);
@@ -312,7 +316,7 @@
   function drawTrail(key, storm, calm, alpha) {
     var list = trails[key];
     if (!list || list.length < 2) return;
-    var color = storm ? '248, 113, 113' : calm ? '148, 163, 184' : '56, 189, 248';
+    var color = storm ? '248, 113, 113' : calm ? '148, 163, 184' : '251, 191, 36';
     for (var i = 1; i < list.length; i++) {
       var a = (i / list.length) * 0.34 * alpha;
       ctx.beginPath();
@@ -356,27 +360,6 @@
     }
   }
 
-  function drawDocks() {
-    var voyages = state.voyages;
-    for (var i = 0; i < voyages.length; i++) {
-      var pose = dockPose(i, voyages.length);
-      var verdict = String(voyages[i].verdict || '');
-      var accepted = verdict.toLowerCase().indexOf('принято') >= 0;
-      var rework = verdict.toLowerCase().indexOf('доработ') >= 0;
-      var color = accepted ? '52, 211, 153' : rework ? '251, 191, 36' : '148, 163, 184';
-      // огонёк причала
-      var glow = ctx.createRadialGradient(pose.x, pose.y, 1, pose.x, pose.y, 16);
-      glow.addColorStop(0, 'rgba(' + color + ', 0.4)');
-      glow.addColorStop(1, 'rgba(' + color + ', 0)');
-      ctx.fillStyle = glow;
-      ctx.fillRect(pose.x - 16, pose.y - 16, 32, 32);
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(' + color + ', 0.9)';
-      ctx.arc(pose.x, pose.y, 3.2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
   function drawTaskGlyph(x, y, alpha) {
     // шлюпка: маленький корпус с бортиком, без паруса — ждёт корабля
     var color = '251, 191, 36';
@@ -400,6 +383,61 @@
     ctx.strokeStyle = 'rgba(253, 230, 138, ' + (0.9 * alpha).toFixed(3) + ')';
     ctx.lineWidth = 1.4;
     ctx.stroke();
+  }
+
+  /* --- Диспетчер лейблов: пересечения запрещены (15.11) -----------------------
+     Раньше каждый слой ставил лейблы по «якорю» и они толкались локтями.
+     Теперь: причалы и шлюпки укладываются в staticRects (приоритет у статики),
+     подвижные корабельные лейблы ищут свободное место вокруг своего якоря.
+     Никаких лейблов мимо диспетчера. */
+  var PLACED = [];      // прямоугольники текущего кадра
+  var staticRects = []; // уложенные статики (причалы, шлюпки)
+
+  function placeLabel(node, x, y, rects, pad) {
+    pad = pad || 6;
+    var w = node._w || node.offsetWidth || 160;
+    var h = node._h || node.offsetHeight || 40;
+    var halfW = w / 2, halfH = h / 2;
+    var candidates = [[0, 0]];
+    for (var k = 1; k <= 5; k++) {
+      candidates.push([0, k * (h + pad)]);
+      candidates.push([0, -k * (h + pad)]);
+      candidates.push([k * (halfW + pad + 16), 0]);
+      candidates.push([-k * (halfW + pad + 16), 0]);
+    }
+    var best = candidates[0];
+    for (var i = 0; i < candidates.length; i++) {
+      var tx = Math.max(halfW + 4, Math.min(state.w - halfW - 4, x + candidates[i][0]));
+      var ty = Math.max(halfH + 4, Math.min(state.h - halfH - 4, y + candidates[i][1]));
+      var ok = true;
+      for (var p = 0; p < rects.length; p++) {
+        var r = rects[p];
+        if (Math.abs(tx - r.x) < (w + r.w) / 2 + pad && Math.abs(ty - r.y) < (h + r.h) / 2 + pad) { ok = false; break; }
+      }
+      if (ok) { best = [tx, ty]; break; }
+      if (i === candidates.length - 1) best = [tx, ty]; // даже если всё занято — за экран не лезем
+    }
+    rects.push({ x: best[0], y: best[1], w: w, h: h });
+    node.style.left = best[0] + 'px';
+    node.style.top = best[1] + 'px';
+  }
+
+  function layoutStatic() {
+    staticRects = [];
+    var docks = dockEl.children;
+    for (var i = 0; i < docks.length; i++) {
+      docks[i]._w = docks[i].offsetWidth;
+      docks[i]._h = docks[i].offsetHeight;
+      var pose = dockPose(i, docks.length);
+      placeLabel(docks[i], pose.x, pose.y, staticRects, 6);
+    }
+    var tasks = taskEl.children;
+    for (var j = 0; j < tasks.length; j++) {
+      tasks[j]._w = tasks[j].offsetWidth;
+      tasks[j]._h = tasks[j].offsetHeight;
+      var tpose = taskPose(state.tasks[j], j, staticClock);
+      placeLabel(tasks[j], tpose.x, tpose.y + 18, staticRects, 8);
+    }
   }
 
   /* --- HTML-слои: подписи ---------------------------------------------------- */
@@ -438,8 +476,9 @@
       var ship = item.ship;
       var pulseClass = ship.pulse_status === 'шторм' || ship.status === 'шторм' ? 'pulse-storm'
         : ship.pulse_status === 'тихо' ? 'pulse-calm' : '';
-      node.classList.remove('pulse-calm', 'pulse-storm');
+      node.classList.remove('pulse-calm', 'pulse-storm', 'state-process');
       if (pulseClass) node.classList.add(pulseClass);
+      else node.classList.add('state-process'); // жёлтая рамка: задача в процессе
       node.querySelector('.obs-ship-name').textContent = ship.by || 'корабль';
       node.querySelector('.obs-ship-task').textContent = ship.task || '';
       node.querySelector('.obs-ship-task').hidden = !(ship.task && ship.task !== 'задача не объявлена');
@@ -449,6 +488,8 @@
       var width = total ? Math.max(0, Math.min(100, Math.round((done / total) * 100))) : (done > 0 ? 100 : 0);
       node.querySelector('.obs-lanes-fill').style.width = width + '%';
       node.querySelector('.obs-lanes-text').textContent = total !== null ? done + '/' + total : String(done);
+      node._w = node.offsetWidth;   // кэш размеров для диспетчера лейблов
+      node._h = node.offsetHeight;
       node._index = item.index;
     }
     positionShipLabels();
@@ -456,13 +497,13 @@
 
   function positionShipLabels() {
     var t = staticClock;
+    PLACED = staticRects.slice(); // статика (причалы, шлюпки) — занято; корабли ищут место
     Array.prototype.forEach.call(labelsEl.children, function (node) {
       var index = node._index;
       var ship = state.ships[index];
       if (!ship) return;
       var pose = shipPose(ship, index, t);
-      node.style.left = pose.x + 'px';
-      node.style.top = (pose.y + 30) + 'px';
+      placeLabel(node, pose.x, pose.y + 34, PLACED, 4);
     });
   }
 
@@ -481,7 +522,6 @@
     for (var j = 0; j < voyages.length; j++) {
       var voyage = voyages[j];
       var key = dockKey(voyage);
-      var pose = dockPose(j, voyages.length);
       var node = dockEl.querySelector('[data-key="' + CSS.escape(key) + '"]');
       if (!node) {
         node = document.createElement('div');
@@ -499,13 +539,12 @@
       node._voyageIndex = j;
       var verdict = String(voyage.verdict || '');
       node.classList.remove('verdict-accepted', 'verdict-rework');
-      if (verdict.toLowerCase().indexOf('принято') >= 0) node.classList.add('verdict-accepted');
+      if (verdict.toLowerCase().indexOf('принято') >= 0 || verdict.indexOf('всё норм') >= 0) node.classList.add('verdict-accepted');
       else if (verdict.toLowerCase().indexOf('доработ') >= 0) node.classList.add('verdict-rework');
       node.querySelector('.obs-dock-name').textContent = '⚓ ' + (voyage.by || '');
       node.querySelector('.obs-dock-verdict').textContent = verdict || fmtDayClock(voyage.finished_at);
-      node.style.left = pose.x + 'px';
-      node.style.top = (pose.y + 14) + 'px';
     }
+    layoutStatic(); // причалы переукладываются по сетке после смены данных
   }
 
   /* --- Шлюпки: подписи мини-задач -------------------------------------------- */
@@ -529,18 +568,6 @@
         openTaskCard(this._taskIndex);
       });
       taskEl.appendChild(node);
-    }
-    positionTaskLabels();
-  }
-
-  function positionTaskLabels() {
-    var nodes = document.querySelectorAll('.obs-task-label');
-    for (var i = 0; i < nodes.length; i++) {
-      var task = state.tasks[i];
-      if (!task) continue;
-      var pose = taskPose(task, i, staticClock);
-      nodes[i].style.left = pose.x + 'px';
-      nodes[i].style.top = (pose.y + 20) + 'px';
     }
   }
 
@@ -621,6 +648,8 @@
       list.appendChild(empty);
     }
     tape.appendChild(list);
+    var shipActions = document.getElementById('obs-card-actions');
+    if (shipActions) shipActions.innerHTML = '';
     cardEl.hidden = false;
   }
 
@@ -646,7 +675,29 @@
     if (Array.isArray(voyage.files) && voyage.files.length) metric('файлы: ' + voyage.files.length);
     if (voyage.tests !== null && voyage.tests !== undefined) metric('тесты: ' + String(voyage.tests).slice(0, 40));
     if (storms > 0) metric('штормы: ⛈ ' + storms, 'storm');
-    if (voyage.verdict) metric('вердикт: ' + voyage.verdict);
+    if (voyage.verdict) metric('вердикт: ' + voyage.verdict + (voyage.verdict_source === 'principal' ? ' (руководитель проекта)' : ''));
+
+    // канбан-приёмка: слово руководителя проекта по завершённому рейсу (15.11)
+    var actions = document.getElementById('obs-card-actions');
+    actions.innerHTML = '';
+    if (voyage.verdict_source === 'principal') {
+      var doneMsg = document.createElement('span');
+      doneMsg.className = 'obs-verdict-note';
+      doneMsg.textContent = 'приёмка записана ✓';
+      actions.appendChild(doneMsg);
+    } else {
+      ['всё норм', 'доработка'].forEach(function (word) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'obs-verdict-btn ' + (word === 'всё норм' ? 'ok' : 'rework');
+        btn.textContent = word === 'всё норм' ? '✓ Всё норм' : '↻ На доработку';
+        btn.addEventListener('click', function (event) {
+          event.stopPropagation();
+          sendVoyageVerdict(voyage, word);
+        });
+        actions.appendChild(btn);
+      });
+    }
 
     var lanes = voyage.lanes || {};
     var done = Number(lanes.done) || 0;
@@ -680,6 +731,62 @@
   document.getElementById('obs-card-close').addEventListener('click', function () {
     cardEl.hidden = true;
   });
+
+  function sendVoyageVerdict(voyage, verdict) {
+    fetch('/api/voyages/verdict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ by: voyage.by || '', finished_at: voyage.finished_at || '', verdict: verdict }),
+    }).then(function (response) {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.json();
+    }).then(function () {
+      var actions = document.getElementById('obs-card-actions');
+      if (actions) {
+        actions.innerHTML = '';
+        var note = document.createElement('span');
+        note.className = 'obs-verdict-note';
+        note.textContent = 'приёмка записана ✓ ' + verdict;
+        actions.appendChild(note);
+      }
+      refresh(); // перекрасит причалы и лейблы
+    }).catch(function (error) {
+      var actions = document.getElementById('obs-card-actions');
+      if (actions) {
+        actions.innerHTML = '';
+        var note = document.createElement('span');
+        note.className = 'obs-verdict-note err';
+        note.textContent = 'не записалось: ' + error.message;
+        actions.appendChild(note);
+      }
+    });
+  }
+
+  /* Соломон: экскурсовод карты — поясняет сущности одним щелчком (15.11) */
+  function openSolomonCard() {
+    document.getElementById('obs-card-badge').textContent = 'СОЛОМОН · ЭКСКУРСИЯ ПО КАРТЕ';
+    document.getElementById('obs-card-title').textContent = 'Кто здесь плывёт';
+    document.getElementById('obs-card-task').textContent =
+      'Это наш канбан в морском стиле. '
+      + '⛵ Корабли жёлтые — агенты выполняют задачи прямо сейчас. '
+      + '⛈ Красные — штормят: у агента проблемы, загляни в его лейбл. '
+      + '⚓ Причалы внизу — задачи завершены и ждут твоей приёмки: щёлкни причал, '
+      + 'и я предложу кнопки «всё норм» или «на доработку». Зелёная рамка — завершено, '
+      + 'жёлтая — отправлено на доработку. '
+      + '🚣 Шлюпки с жёлтым бортом — маленькие задачи в бухте, ждут свободного корабля. '
+      + 'Клик по любому лейблу открывает карточку с деталями.';
+    document.getElementById('obs-card-metrics').innerHTML = '';
+    document.getElementById('obs-card-lanes').innerHTML = '';
+    document.getElementById('obs-card-tape').innerHTML = '';
+    var actions = document.getElementById('obs-card-actions');
+    if (actions) actions.innerHTML = '';
+    cardEl.hidden = false;
+  }
+  document.getElementById('obs-solomon').addEventListener('click', function (event) {
+    event.stopPropagation();
+    openSolomonCard();
+  });
+
   canvas.addEventListener('click', function () {
     cardEl.hidden = true;
   });
@@ -710,6 +817,8 @@
     metric('источник: проба пера (не из канбана)');
     document.getElementById('obs-card-lanes').innerHTML = '';
     document.getElementById('obs-card-tape').innerHTML = '';
+    var taskActions = document.getElementById('obs-card-actions');
+    if (taskActions) taskActions.innerHTML = '';
     cardEl.hidden = false;
   }
 
@@ -825,6 +934,7 @@
       syncShipLabels();
       syncDockLabels();
       syncTaskLabels();
+      layoutStatic(); // шлюпки переукладываются после смены данных
       document.getElementById('obs-count-tasks').textContent = String(state.tasks.length);
       syncTape();
       if (isStatic) renderFrame(performance.now());
@@ -847,7 +957,6 @@
     drawBackdrop();
     drawParticles(t);
     drawWhirl(t);
-    drawDocks();
     for (var tk = 0; tk < state.tasks.length; tk++) {
       var tpose = taskPose(state.tasks[tk], tk, t);
       drawTaskGlyph(tpose.x, tpose.y, 0.85);
@@ -869,7 +978,6 @@
     drawFoam(nowMs / 1000);
     drawRipples(nowMs / 1000);
     positionShipLabels();
-    positionTaskLabels();
   }
 
   function loop(nowMs) {
@@ -882,6 +990,7 @@
   window.addEventListener('resize', function () {
     resize();
     seedParticles();
+    layoutStatic();
     if (isStatic) renderFrame(performance.now());
   });
 
@@ -894,4 +1003,105 @@
   } else {
     requestAnimationFrame(loop);
   }
+
+  /* --- Тихая карта (Дмитрий 16.11: «надписи по минимуму, в идеале при щелчке
+     по сущности»; три слоя текста одновременно читались как телефонный
+     справочник Бангладеша) ---------------------------------------------- */
+
+  var labelsPage = document.querySelector('.obs-page');
+  var labelsToggle = document.getElementById('obs-labels-toggle');
+
+  function currentLabelsMode() {
+    try { return localStorage.getItem('obs_labels_v1') === 'all' ? 'all' : 'quiet'; } catch (e) { return 'quiet'; }
+  }
+  function hideShownLabels() {
+    Array.prototype.forEach.call(document.querySelectorAll('.obs-layer > div.obs-shown'), function (node) {
+      node.classList.remove('obs-shown');
+    });
+  }
+  function showNode(node, pose, dy) {
+    hideShownLabels();
+    if (!node) return;
+    placeLabel(node, pose.x, pose.y + (dy || 34), staticRects, 6);
+    node.classList.add('obs-shown');
+  }
+  // ближайшая сущность к точке канваса: корабль → причал → шлюпка
+  function entityAt(cx, cy) {
+    var best = null;
+    var bestD = 34;
+    var i, dx, dy, d;
+    for (i = 0; i < state.ships.length; i++) {
+      var pose = shipPose(state.ships[i], i, staticClock);
+      dx = cx - pose.x; dy = cy - pose.y; d = Math.sqrt(dx * dx + dy * dy);
+      if (d < bestD) {
+        bestD = d;
+        best = { kind: 'ship', key: shipKey(state.ships[i], i), index: i, node: labelsEl.querySelector('[data-key="' + CSS.escape(shipKey(state.ships[i], i)) + '"]'), pose: pose, dy: 34 };
+      }
+    }
+    var docks = dockEl.children;
+    for (i = 0; i < docks.length; i++) {
+      var dpose = dockPose(i, docks.length);
+      dx = cx - dpose.x; dy = cy - dpose.y; d = Math.sqrt(dx * dx + dy * dy);
+      if (d < bestD + 8) {
+        bestD = d;
+        best = { kind: 'dock', index: i, node: docks[i], pose: dpose, dy: 24 };
+      }
+    }
+    for (i = 0; i < state.tasks.length; i++) {
+      var tpose = taskPose(state.tasks[i], i, staticClock);
+      dx = cx - tpose.x; dy = cy - tpose.y; d = Math.sqrt(dx * dx + dy * dy);
+      if (d < bestD + 4) {
+        bestD = d;
+        best = { kind: 'task', index: i, node: taskEl.children[i], pose: tpose, dy: 22 };
+      }
+    }
+    return best;
+  }
+  function canvasPoint(event) {
+    var rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+  canvas.addEventListener('click', function (event) {
+    var point = canvasPoint(event);
+    var hit = entityAt(point.x, point.y);
+    if (!hit) { hideShownLabels(); return; }
+    var all = currentLabelsMode() === 'all';
+    if (hit.kind === 'dock') {
+      // причалы без постоянных ярлыков: щелчок = ярлык в тихом, карточка в полном
+      if (all) { hideShownLabels(); openVoyageCard(hit.index); }
+      else showNode(hit.node, hit.pose, hit.dy);
+      return;
+    }
+    if (all) {
+      // корабли/шлюпки в полном виде подписаны — щелчок открывает карточку сразу
+      hideShownLabels();
+      if (hit.kind === 'ship') openShipCard(hit.key);
+      else openTaskCard(hit.index);
+      return;
+    }
+    showNode(hit.node, hit.pose, hit.dy);
+  });
+  canvas.addEventListener('mousemove', function (event) {
+    if (currentLabelsMode() === 'all') { canvas.classList.remove('cursor-entity'); return; }
+    var point = canvasPoint(event);
+    canvas.classList.toggle('cursor-entity', !!entityAt(point.x, point.y));
+  });
+  function applyLabelsMode() {
+    var mode = currentLabelsMode();
+    labelsPage.classList.toggle('obs-quiet', mode === 'quiet');
+    labelsPage.classList.toggle('obs-showall', mode === 'all');
+    if (labelsToggle) {
+      labelsToggle.textContent = mode === 'all' ? '🏷' : '🗺';
+      labelsToggle.title = mode === 'all'
+        ? 'Подписи: все — щелчок по фону вернёт тихий режим'
+        : 'Подписи: по щелчку на сущность карты';
+    }
+    hideShownLabels();
+  }
+  if (labelsToggle) labelsToggle.addEventListener('click', function () {
+    var next = currentLabelsMode() === 'all' ? 'quiet' : 'all';
+    try { localStorage.setItem('obs_labels_v1', next); } catch (e) {}
+    applyLabelsMode();
+  });
+  applyLabelsMode();
 })();

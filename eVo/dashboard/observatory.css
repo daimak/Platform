@@ -406,3 +406,48 @@
   #obs-canvas { display: none; }
   .obs-page { background: radial-gradient(120% 120% at 50% 42%, #0a2135 0%, #061525 46%, #02090f 100%); }
 }
+
+/* --- Канбан-приёмка + Соломон (15.11, слово Дмитрия) ------------------------ */
+/* Цветовой код: зелёный = завершена, жёлтый = в процессе/доработка, красный = шторм */
+
+.obs-ship-label.state-process { border-color: rgba(251, 191, 36, 0.55); }
+.obs-ship-label.state-process:hover { border-color: rgba(253, 230, 138, 0.9); }
+
+.obs-dock-label { border-color: rgba(52, 211, 153, 0.5); }
+.obs-dock-label:hover { border-color: rgba(52, 211, 153, 0.85); }
+
+.obs-solomon {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 30;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: radial-gradient(circle at 30% 30%, rgba(56, 189, 248, 0.25), rgba(4, 18, 31, 0.85));
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.obs-solomon:hover {
+  transform: scale(1.1);
+  border-color: rgba(125, 211, 252, 0.9);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+}
+
+.obs-verdict-btns { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.obs-verdict-btn {
+  font: 600 0.72rem 'JetBrains Mono', Consolas, monospace;
+  padding: 7px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+  background: rgba(4, 18, 31, 0.6);
+  transition: background 0.15s ease;
+}
+.obs-verdict-btn.ok { color: #34d399; border: 1px solid rgba(52, 211, 153, 0.55); }
+.obs-verdict-btn.ok:hover { background: rgba(52, 211, 153, 0.14); }
+.obs-verdict-btn.rework { color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.55); }
+.obs-verdict-btn.rework:hover { background: rgba(251, 191, 36, 0.14); }
+.obs-verdict-note { font-size: 0.7rem; color: #34d399; }
+.obs-verdict-note.err { color: #f87171; }

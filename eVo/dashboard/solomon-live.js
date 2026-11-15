@@ -4,7 +4,11 @@
 (function () {
   'use strict';
 
-  const BUDGET_SEED = 440e6;       // сид счётчика (вечер 14.11, из памяти Sovereign)
+  const BUDGET_FULL = 500e6;       // полный бюджет после пополнения 14.11 (500M)
+  function loadBalance() {
+    // точный остаток вводится руководителем проекта в Штабе (cc_counter_v1)
+    try { return JSON.parse(localStorage.getItem('cc_counter_v1') || 'null'); } catch (e) { return null; }
+  }
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const el = (id) => document.getElementById(id);
@@ -65,14 +69,33 @@
     const speed = last ? last.tokens : 0;
     const prevSpeed = prev ? prev.tokens : 0;
     const day = (usage.per_day || []).reduce(function (a, d) { return a + (d.tokens || 0); }, 0);
-    const left = Math.max(0, BUDGET_SEED - day);
+    /* Остаток: приоритет у введённого в Штабе баланса; иначе сид − расход за день (≈).
+       Кольцо = СЖИГАНИЕ: дуга = потрачено от полного бюджета, пустое кольцо = свежий счётчик. */
+    const bal = loadBalance();
+    const hasBalance = !!(bal && bal.balance > 0);
+    const left = hasBalance ? bal.balance * 1e6 : Math.max(0, BUDGET_FULL - day);
+    const spent = Math.max(0, BUDGET_FULL - left);
+    const spentPct = Math.max(0, Math.min(100, spent / BUDGET_FULL * 100));
+    const leftPct = 100 - spentPct;
     const hoursLeft = speed > 0 ? (left / speed) : null;
     const fmt = (t) => (t / 1e6).toFixed(1);
+
+    const fill = el('sl-gauge-fill');
+    if (fill) fill.style.strokeDashoffset = String(326.7 * (spentPct / 100));
+    const gv = el('sl-gauge-value');
+    if (gv) gv.textContent = (hasBalance ? '' : '≈') + Math.round(leftPct) + '%';
+    const bTotal = el('sl-b-total');
+    if (bTotal) bTotal.textContent = (BUDGET_FULL / 1e6) + 'M';
+    const bSpent = el('sl-b-spent');
+    if (bSpent) bSpent.textContent = fmt(spent) + 'M (' + Math.round(spentPct) + '%)';
+    const bLeft = el('sl-b-left');
+    if (bLeft) bLeft.textContent = fmt(left) + 'M (' + Math.round(leftPct) + '%)';
+
     if (burnEl) {
       let msg = 'огонь за час: <b>' + fmt(speed) + 'M</b>'
         + (prevSpeed ? ' (пред. час ' + fmt(prevSpeed) + 'M)' : '')
         + ' · за день: <b>' + fmt(day) + 'M</b>'
-        + ' · запас от сида 440M: <b>' + fmt(left) + 'M</b>';
+        + ' · сожжено: <b>' + Math.round(spentPct) + '%</b> · остаток: <b>' + fmt(left) + 'M (' + Math.round(leftPct) + '% от 500M)</b>';
       if (hoursLeft != null) msg += ' ≈ <b>' + (hoursLeft < 48 ? '<span class="sl-burn-warn">' + Math.round(hoursLeft) + ' ч</span>' : Math.round(hoursLeft / 24) + ' дн') + '</b> при текущей скорости';
       burnEl.innerHTML = msg;
     }

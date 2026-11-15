@@ -470,6 +470,19 @@
 .cc-blockers .bk-todo { color: var(--cc-danger); }
 .cc-blockers .bk-note { margin-left: auto; color: var(--cc-muted); font-size: 0.6rem; text-align: right; }
 
+/* Дверь из панели в интерьер (карта денег): ряд в стиле блокеров */
+.cc-door {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 10px; padding: 8px 10px;
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--cc-accent2); text-decoration: none;
+  background: var(--cc-row-bg);
+  border: 1px solid var(--cc-line);
+  border-radius: 9px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.cc-door:hover { border-color: color-mix(in srgb, var(--cc-accent2) 55%, transparent); color: var(--cc-head-text); }
+
 /* --- Сигналы ------------------------------------------------------------------------- */
 
 .cc-tape { list-style: none; margin: 0; padding: 0; columns: 3; column-gap: 22px; }
@@ -540,6 +553,9 @@
   transition: width 0.6s ease;
 }
 .cc-dw-top .dw-count { color: var(--cc-row-text); font-weight: 600; flex-shrink: 0; }
+
+.dw-extra { margin-top: 10px; font-size: 0.64rem; color: var(--cc-muted); line-height: 1.5; }
+.dw-extra b { color: var(--cc-head-text); font-weight: 600; }
 
 /* --- Сторож: кто сейчас работает (/api/steward, 6 слоёв) --- */
 

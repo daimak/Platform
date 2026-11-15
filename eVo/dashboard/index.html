@@ -131,15 +131,8 @@
           </a>
         </div>
 
-        <!-- 2b. Ярлычок флота — гавань Немо, корабли в море. 08.11 (заказ Sovereign):
-             открывает всплывающее окно на этой странице, новую вкладку не создаёт.
-             Ярлычок канбана снят 06.11: дублировал кнопку «Канбан» в HUD (минимализм Sovereign) -->
-        <button class="kanban-shortcut" id="fleet-shortcut" type="button"
-                aria-label="Флот агентов — корабли в море" title="Флот агентов — корабли в море">
-          <span class="kanban-shortcut-icon" aria-hidden="true">🚢</span>
-          <span class="kanban-shortcut-text">Флот в море</span>
-          <span class="kanban-shortcut-arrow" aria-hidden="true">→</span>
-        </button>
+        <!-- 2b. Ярлычок флота УБРАН 16.11 (слово Дмитрия: «непонятный, спрячь в иконку») —
+             флот теперь за дверью ⛵ в шлюзе поместья (nav-dock.js) -->
 
         <!-- 3. Мастерская eVo (eVo Workshop) — строго над трубами мастерской -->
         <div class="island-hotspot beacon-amber" style="top: 28.5%; left: 72.4%;" data-island="workshop">
@@ -279,6 +272,28 @@
       <!-- Содержимое окна (динамически подставляется в зависимости от острова) -->
       <div class="modal-body" id="modal-island-content">
         <!-- Генерируется из app.js -->
+      </div>
+
+      <!-- Двери поместья: из любой модалки острова — в приборы (15.11, слово Дмитрия:
+           «центр, а толку нет — никуда попасть») -->
+      <style>
+        .modal-doorstrip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+          padding: 10px 14px 4px; }
+        .modal-doorstrip .mdoor { width: 42px; height: 42px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center; font-size: 19px;
+          text-decoration: none; border: 1px solid rgba(148, 163, 184, 0.45);
+          background: rgba(13, 18, 22, 0.65); transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+        .modal-doorstrip .mdoor:hover { transform: scale(1.12); border-color: rgba(76, 194, 255, 0.85);
+          box-shadow: 0 0 14px rgba(76, 194, 255, 0.3); }
+      </style>
+      <div class="modal-doorstrip">
+        <a class="mdoor" href="command-center.html" title="Штаб — Бэрримор">🎛</a>
+        <a class="mdoor" href="money-map.html" title="Карта денег — путь к аренде">🗺</a>
+        <a class="mdoor" href="maelstorm-observatory.html" title="Обсерватория — канбан приёмки">🌀</a>
+        <a class="mdoor" href="solomon.html" title="Соломон — советник по ценности">🧙</a>
+        <a class="mdoor" href="agents.html" title="Флот в море">⛵</a>
+        <a class="mdoor" href="kanban.html" title="Канбан задач">📋</a>
+        <a class="mdoor" href="chronicle.html?v=1" title="Хроника">📜</a>
       </div>
 
       <!-- Нижняя панель окна -->
@@ -555,5 +570,6 @@
   <script src="excursion-data.js?v=2"></script>
   <script src="app.js?v=18"></script>
   <script src="harbor-ship.js?v=10"></script>
+  <script src="nav-dock.js?v=6"></script>
 </body>
 </html>

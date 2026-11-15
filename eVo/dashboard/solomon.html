@@ -396,15 +396,17 @@
     /* --- Бюджет: кольцо + эшелоны --- */
     function renderBudget() {
       var b = data.budget;
-      var ratio = b.total_m > 0 ? Math.max(0, Math.min(1, b.remaining_m / b.total_m)) : 0;
+      /* Кольцо = СЖИГАНИЕ: дуга = потрачено, пустое кольцо = свежий счётчик.
+         Так «сожжено 19%» виден глазом — одна пятая дуги. */
+      var spentPct = b.total_m > 0 ? Math.max(0, Math.min(100, b.spent_today_m / b.total_m * 100)) : 0;
       var C = 2 * Math.PI * 52;
       var fill = el('sl-gauge-fill');
-      fill.style.strokeDashoffset = String(C * (1 - ratio));
-      el('sl-gauge-value').textContent = fmtM(b.remaining_m);
+      fill.style.strokeDashoffset = String(C * (spentPct / 100));
+      el('sl-gauge-value').textContent = Math.round(100 - spentPct) + '%';
       el('sl-budget-note').textContent = b.note;
       el('sl-b-total').textContent = b.total_m + 'M';
-      el('sl-b-spent').textContent = fmtM(b.spent_today_m);
-      el('sl-b-left').textContent = fmtM(b.remaining_m);
+      el('sl-b-spent').textContent = fmtM(b.spent_today_m) + 'M (' + Math.round(spentPct) + '%)';
+      el('sl-b-left').textContent = fmtM(b.remaining_m) + 'M (' + Math.round(100 - spentPct) + '%)';
       el('sl-b-window').textContent = '~' + data.mission.window_hours + ' ч с 14.11';
       el('sl-b-goal').textContent = '$' + data.mission.goal_usd + ' · ' + escapeHtml(data.mission.goal_sum);
 
@@ -526,5 +528,6 @@
     renderJournal();
   })();
   </script>
+  <script src="nav-dock.js?v=6"></script>
 </body>
 </html>

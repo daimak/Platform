@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Парсеры и автоматизация под ключ — 24–48 часов</title>
+<meta name="description" content="Скраперы, мониторинг цен, Telegram-боты и DevOps-автоматизация под ключ. Демо до оплаты, фиксированная смета.">
+<style>
+  :root{--bg:#0f1419;--card:#1a2129;--line:#2a333d;--tx:#e6edf3;--mut:#8b98a5;--acc:#2dd4a7;--acc2:#4cc2ff}
+  *{margin:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--tx);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  header{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+  h1{font-size:clamp(26px,5vw,40px);line-height:1.15}
+  h1 em{color:var(--acc);font-style:normal}
+  .sub{color:var(--mut);margin-top:14px;font-size:18px;max-width:640px}
+  .badges{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+  .badge{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-size:14px;color:var(--mut)}
+  .badge b{color:var(--acc)}
+  h2{font-size:22px;margin:48px 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h3{font-size:17px;margin-bottom:8px}
+  .card p{color:var(--mut);font-size:14.5px}
+  .price{margin-top:12px;color:var(--acc2);font-weight:600;font-size:15px}
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600;background:#161d24}
+  tr:last-child td{border-bottom:none}
+  td a{color:var(--acc2);text-decoration:none;font-size:12.5px;word-break:break-all}
+  .steps{counter-reset:s}
+  .step{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .step:last-child{border-bottom:none}
+  .step::before{counter-increment:s;content:counter(s);flex:0 0 30px;height:30px;border-radius:50%;background:var(--acc);color:#06251c;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .note{color:var(--mut);font-size:13.5px;margin-top:12px}
+  footer{margin:56px 0 32px;padding-top:22px;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
+  .contact{background:linear-gradient(135deg,#123528,#0f2033);border:1px solid var(--acc);border-radius:12px;padding:22px;margin-top:16px}
+  .contact b{font-size:18px}
+  .contact code{background:#0b131b;border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Парсеры, скраперы и автоматизация<br><em>под ключ за 24–48 часов</em></h1>
+  <p class="sub">Собираю данные с сайтов, маркетплейсов и объявлений в удобный вид: Excel, Google-таблицы, API, Telegram-бот. Работаю с публичными источниками. Демо — до оплаты.</p>
+  <div class="badges">
+    <span class="badge">⚡ старт <b>в день заявки</b></span>
+    <span class="badge">🧾 фиксированная смета после 30-мин разбора</span>
+    <span class="badge">🛡 только публичные данные</span>
+    <span class="badge">🔁 поддержка после сдачи</span>
+    <a class="badge" href="/uslugi.html"><b>Услуги и цены →</b></a>
+  </div>
+</header>
+
+<h2>Что делаю</h2>
+<div class="grid">
+  <div class="card">
+    <h3>📊 Мониторинг цен и конкурентов</h3>
+    <p>Ежедневный сбор цен конкурентов с маркетплейсов и досок объявлений в таблицу. Видно, кто и сколько продаёт, динамика по дням.</p>
+    <div class="price">от $50 · 1–2 дня</div>
+  </div>
+  <div class="card">
+    <h3>🔧 Скрапер под ключ</h3>
+    <p>Сайт → структурированные данные (Excel/CSV/API/БД). Обход пагинации, категорий, авторизация на публичных порталах, ретраи и прокси при необходимости.</p>
+    <div class="price">от $120 · 2–3 дня</div>
+  </div>
+  <div class="card">
+    <h3>🤖 Боты и автоматизация</h3>
+    <p>Telegram-боты, автопостинг, уведомления о новых объявлениях, связки сервисов по API (CRM, таблицы, мессенджеры).</p>
+    <div class="price">от $80 · 1–3 дня</div>
+  </div>
+  <div class="card">
+    <h3>🖥 DevOps-мелочи</h3>
+    <p>Установка и настройка серверов, Docker, резервные копии, перенос сайтов. Разово. Есть и абонентка: круглосуточный мониторинг вашего сайта (аптайм, бэкапы, алерты в Telegram) — чиню раньше, чем вы заметите.</p>
+    <div class="price">от $40 · разово &nbsp;|&nbsp; мониторинг 24/7 — от $30/мес</div>
+  </div>
+</div>
+
+<h2>Живое демо: сбор данных с доски объявлений OLX</h2>
+<table id="demo">
+  <thead><tr><th style="width:34%">Объявление (как спарсено)</th><th>Фрагмент описания</th><th style="width:12%">Ссылка</th></tr></thead>
+  <tbody><tr><td colspan="3">Загрузка демо…</td></tr></tbody>
+</table>
+<p class="note">Данные собраны автоматическим парсером из открытых объявлений OLX.uz — это реальный вывод инструмента, а не макет. Такой же конвейер делается под ваш сайт/нишу за 1–2 дня. Ниже — примеры готовых отчётов и живой дашборд: <a href="/board/" style="color:var(--acc2)">🖥 /board/</a>.</p>
+
+<h2>Примеры отчётов (Excel, скачиваются)</h2>
+<div class="grid">
+  <div class="card"><h3>📱 Цены на iPhone</h3><p>Срез рынка: у кого какая модель и почём. Формат, в котором видно разницу цен за минуту.</p><p style="margin-top:8px"><a href="/demo/demo-prices-iphone.xlsx" style="color:var(--acc2)">Скачать Excel ↗</a></p></div>
+  <div class="card"><h3>🎮 Цены на PS5</h3><p>Консоли и комплекты у разных продавцов — по ссылкам на каждое объявление.</p><p style="margin-top:8px"><a href="/demo/demo-prices-ps5.xlsx" style="color:var(--acc2)">Скачать Excel ↗</a></p></div>
+  <div class="card"><h3>🧺 Стиральные машины</h3><p>Крупная техника: бренды, цены, продавцы. Основной формат «радара цен конкурентов».</p><p style="margin-top:8px"><a href="/demo/demo-prices-stiralka.xlsx" style="color:var(--acc2)">Скачать Excel ↗</a></p></div>
+</div>
+
+<h2>Кому это нужно</h2>
+<div class="grid">
+  <div class="card"><h3>🏪 Онлайн-магазинам</h3><p>Еженедельный срез цен конкурентов по вашим позициям: где вы дороже, где отдаёте наценку, на что реагировать.</p></div>
+  <div class="card"><h3>📦 Дилерам и перекупщикам</h3><p>Новые объявления с досок вам в Telegram раньше, чем их увидят другие, — с ценой и контактом.</p></div>
+  <div class="card"><h3>🧾 Тем, кто «в таблицах руками»</h3><p>Любая рутина «перенеси с сайта в Excel»: каталоги, прайсы, объявления, заявки. Настроил один раз — дальше само.</p></div>
+</div>
+
+<h2>Как проходит работа</h2>
+<div class="steps">
+  <div class="step"><b>Заявка.</b> Пишете, какие данные и откуда нужны (сайт, поля, периодичность).</div>
+  <div class="step"><b>Смета за 30 минут.</b> Фиксирую цену и срок. Смета не меняется в процессе.</div>
+  <div class="step"><b>Демо до оплаты.</b> Показываю работающий результат на вашей задаче.</div>
+  <div class="step"><b>Сдача и поддержка.</b> Передаю таблицу/бота/скрипт + инструкция. Неделя правок бесплатно.</div>
+</div>
+
+<h2>Частые вопросы</h2>
+<div class="grid">
+  <div class="card"><h3>Это вообще легально?</h3><p>Работаю только с публично доступными данными и официальными API — то же, что видите вы в браузере, только руками скрипта, а не человека. Никакого взлома и обхода авторизации.</p></div>
+  <div class="card"><h3>А если сайт с защитой/капчей?</h3><p>Скажу честно до денег: что реально, что нет, сколько стоит. Если сайт не поддаётся — не возьмусь и подскажу альтернативу.</p></div>
+  <div class="card"><h3>Как платим?</h3><p>Для Узбекистана — сумы, работаю официально (SolIQ, чек). Для внешних клиентов — USDT. Оплата после того, как увидели демо на своей задаче.</p></div>
+  <div class="card"><h3>А если результат не устроит?</h3><p>Платите только за то, что видели в демо. Смета фиксируется до старта и не растёт «в процессе». Неделя правок после сдачи бесплатно.</p></div>
+</div>
+
+<div class="contact">
+  <b>Связаться</b><br>
+  Telegram: <code>@TODO_username</code> &nbsp; Email: <code>TODO@example.com</code><br>
+  <span style="color:var(--mut);font-size:14px">Опишите задачу в двух предложениях — пришлю смету и оценку срока.</span>
+</div>
+
+<footer>
+  Работаю только с публично доступными данными и официальными API. Не занимаюсь взломом, обходом защиты и массовыми рассылками.
+</footer>
+
+</div>
+<script>
+fetch("demo.json").then(r=>r.json()).then(rows=>{
+  const tb=document.querySelector("#demo tbody");
+  tb.innerHTML = rows.map(r=>
+    `<tr><td><b>${r.title}</b></td><td style="color:#8b98a5">${r.description}</td>`+
+    `<td><a href="${r.url}" target="_blank" rel="noopener">открыть ↗</a></td></tr>`
+  ).join("");
+}).catch(()=>{document.querySelector("#demo tbody").innerHTML="<tr><td colspan=3>Демо недоступно</td></tr>"});
+</script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVo Estate — World & Command Center</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="harbor-ship.css?v=10">
+  <style>
+    /* Trading Quarter: аккордеоны бирж (вкладка «Заказы») */
+    details.tq-acc { border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 10px; background: rgba(0,0,0,0.25); }
+    details.tq-acc summary { cursor: pointer; padding: 12px 16px; display: flex; align-items: center; gap: 12px; list-style: none; border-radius: 10px; }
+    details.tq-acc summary::-webkit-details-marker { display: none; }
+    details.tq-acc summary:hover { background: rgba(255,255,255,0.04); }
+    details.tq-acc[open] summary { border-bottom: 1px solid rgba(255,255,255,0.08); border-radius: 10px 10px 0 0; }
+    .tq-name { font-family: var(--font-display); color: #fff; font-size: 0.98rem; }
+    .tq-badge { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 1px; padding: 3px 8px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); white-space: nowrap; }
+    .tq-count { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-emerald); white-space: nowrap; }
+    .tq-body { padding: 12px 16px 16px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.55; }
+    .tq-body a { color: #5eead4; text-decoration: none; }
+    .tq-line { margin: 4px 0 0; }
+    .tq-line b { color: var(--accent-amber); font-weight: 600; }
+    .tq-live-head { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 1px; color: var(--text-muted); margin: 14px 0 6px; }
+  </style>
+</head>
+<body>
+
+  <!-- Полноэкранный интерактивный мир Estate (Уровень 1) -->
+  <div class="estate-viewport" id="estate-viewport">
+
+    <!-- Верхняя стеклянная панель управления (HUD) -->
+    <header class="estate-top-hud">
+      <div class="hud-left">
+        <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+        <div class="hud-title-group">
+          <span class="hud-title" id="hud-brand-title">PLATFORM ESTATE</span>
+          <span class="hud-subtitle" id="hud-brand-subtitle">Персональная операционная система eVo</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div style="display: flex; align-items: center; gap: 14px; margin-right: 20px;">
+          <button id="planet-btn" class="planet-btn" type="button" aria-label="Миры поместья — выбор архипелага" title="Миры поместья">
+            <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+              <defs>
+                <radialGradient id="planet-g" cx="35%" cy="30%" r="80%">
+                  <stop offset="0%" stop-color="#a5f3fc"/>
+                  <stop offset="45%" stop-color="#0ea5e9"/>
+                  <stop offset="100%" stop-color="#0c4a6e"/>
+                </radialGradient>
+              </defs>
+              <circle cx="16" cy="16" r="10.5" fill="url(#planet-g)"/>
+              <ellipse cx="16" cy="16" rx="15" ry="4.6" fill="none" stroke="rgba(186,230,253,0.6)" stroke-width="1.3" transform="rotate(-16 16 16)"/>
+              <circle cx="12.5" cy="13.5" r="1.5" fill="#86efac"/>
+              <circle cx="19.5" cy="18.5" r="1.3" fill="#fb7185"/>
+              <circle cx="17" cy="11.8" r="1.1" fill="#fbbf24"/>
+            </svg>
+          </button>
+          <a href="kanban.html" class="kanban-btn" aria-label="Канбан" title="Канбан">📋</a>
+          <a href="command-center.html" class="kanban-btn" aria-label="Штаб — Command Center" title="Штаб — вся система как на ладони">🎛</a>
+          <a href="chronicle.html?v=1" class="kanban-btn" aria-label="Хроника — как менялся проект" title="Хроника — как менялся проект">📜</a>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn" id="lang-ru">RU</button>
+          <button class="lang-btn" id="lang-en">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Центрированный контейнер с точным сохранением пропорций 1672x941 -->
+    <div class="estate-map-container" id="estate-map-container">
+      <div class="estate-map-frame" id="estate-map-frame">
+        <img src="assets/estate_bg.png" alt="Platform Estate World" class="estate-canvas-img" id="estate-img">
+        <!-- (Остальная часть карты с иконками островов) -->
+
+        <!-- ================= ИКОНКИ СУЩНОСТЕЙ ОСТРОВОВ ================= -->
+        <!-- Каждая иконка расположена строго по центру над своим островом на высоте ~0.5-1 см -->
+
+        <!-- 1. Главная Усадьба (Main Estate) — строго по центру над шпилем замка -->
+        <div class="island-hotspot beacon-gold tooltip-down" style="top: 26.5%; left: 50.0%;" data-island="mainEstate">
+          <div class="beacon-core">
+            <span class="beacon-icon">🏰</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">CORE NEXUS</div>
+            <div class="hover-title">MAIN ESTATE</div>
+            <div class="hover-subtitle">Главная усадьба • Управление и принятие решений</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть консоль ядра</div>
+          </div>
+        </div>
+
+        <!-- 1.1 Кабинет Шерлок Холмса (Holmes Study) — левее и ниже главного замка Estate -->
+        <div class="island-hotspot beacon-rose tooltip-down" style="top: 35.0%; left: 41.5%;" data-island="holmesStudy">
+          <div class="beacon-core">
+            <span class="beacon-icon">🔍</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">SECURITY & AUDIT</div>
+            <div class="hover-title">HOLMES STUDY</div>
+            <div class="hover-subtitle">Кабинет Шерлока Холмса • Расследования и аудит безопасности</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть протокол расследования</div>
+          </div>
+        </div>
+
+        <!-- 2. Стюард Бэрримор — HTML-плашка поверх чистого арта (фон Clear_main,
+             нарисованная плашка с текстом ушла в историю). Портрет — отдельный
+             слой assets/barrymore.png (круглый, с прозрачностью): готов к анимации.
+             Под плашкой — ссылка Review на новый (непрочитанный) Morning Brief. -->
+        <div class="plaque-zone" id="barrymore-plaque" role="button" aria-label="Стюард Бэрримор — Morning Brief" tabindex="0">
+          <img class="plaque-portrait" src="assets/barrymore.png" alt="" aria-hidden="true">
+          <div class="plaque-content" aria-hidden="true">
+            <div class="plaque-greeting" id="plaque-greeting"></div>
+            <div class="plaque-info" id="plaque-info"></div>
+          </div>
+          <div class="plaque-brief-link" id="barrymore-brief-link" hidden>
+            <span class="plaque-brief-dot"></span>
+            <span>Review</span><span class="plaque-brief-arrow">→</span>
+          </div>
+          <div class="plaque-brief-link" id="barrymore-peer-link" hidden title="Заметки агентов друг другу">
+            <span class="plaque-brief-dot"></span>
+            <span>Переписка: <span id="peer-count">0</span></span><span class="plaque-brief-arrow">→</span>
+          </div>
+          <!-- Дверь в Штаб через стюарда (08.11, Sovereign: «доступ через Бэрримора как минимум») -->
+          <a class="plaque-cc-link" id="barrymore-cc-link" href="command-center.html"
+             title="Штаб — вся система: топливо, конвейер, решения">
+            <span>🎛 Штаб</span><span class="plaque-brief-arrow">→</span>
+          </a>
+        </div>
+
+        <!-- 2b. Ярлычок флота — гавань Немо, корабли в море. 08.11 (заказ Sovereign):
+             открывает всплывающее окно на этой странице, новую вкладку не создаёт.
+             Ярлычок канбана снят 06.11: дублировал кнопку «Канбан» в HUD (минимализм Sovereign) -->
+        <button class="kanban-shortcut" id="fleet-shortcut" type="button"
+                aria-label="Флот агентов — корабли в море" title="Флот агентов — корабли в море">
+          <span class="kanban-shortcut-icon" aria-hidden="true">🚢</span>
+          <span class="kanban-shortcut-text">Флот в море</span>
+          <span class="kanban-shortcut-arrow" aria-hidden="true">→</span>
+        </button>
+
+        <!-- 3. Мастерская eVo (eVo Workshop) — строго над трубами мастерской -->
+        <div class="island-hotspot beacon-amber" style="top: 28.5%; left: 72.4%;" data-island="workshop">
+          <div class="beacon-core">
+            <span class="beacon-icon">⚙️</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">NODE 01: GIT & INFRA</div>
+            <div class="hover-title">eVo WORKSHOP</div>
+            <div class="hover-subtitle">Эксперименты, Git-состояние и инструменты сборки</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть Git-состояние</div>
+          </div>
+        </div>
+
+        <!-- 4. Обсерватория Навигатора (Navigator Observatory) — строго над куполом телескопа -->
+        <div class="island-hotspot beacon-cyan" style="top: 38.5%; left: 17.9%;" data-island="navigator">
+          <div class="beacon-core">
+            <span class="beacon-icon">🔭</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">VISION & ROADMAP</div>
+            <div class="hover-title">NAVIGATOR OBSERVATORY</div>
+            <div class="hover-subtitle">Исследования, разведка и дорожная карта мира</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть дорожную карту</div>
+          </div>
+        </div>
+
+        <!-- 5. Песочница ИИ (AI Sandbox) — строго над башней со шпилем -->
+        <div class="island-hotspot beacon-emerald" style="top: 37.5%; left: 83.1%;" data-island="aiSandbox">
+          <div class="beacon-core">
+            <span class="beacon-icon">🔮</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">NODE 02: AGENTS</div>
+            <div class="hover-title">AI SANDBOX</div>
+            <div class="hover-subtitle">Безопасная среда агентов и точка внимания</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть консоль агентов</div>
+          </div>
+        </div>
+
+        <!-- 6. Библиотека Памяти (Memory Library) — строго над золотым куполом дворца -->
+        <div class="island-hotspot beacon-purple" style="top: 53.5%; left: 12.8%;" data-island="memoryLibrary">
+          <div class="beacon-core">
+            <span class="beacon-icon">📚</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">NODE 04: MEMORY</div>
+            <div class="hover-title">MEMORY LIBRARY</div>
+            <div class="hover-subtitle">Память, хроника решений (ADR) и история эволюции</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть хронику системы</div>
+          </div>
+        </div>
+
+        <!-- 7. Архив Знаний (Knowledge Archive) — строго над дворцом с круглым садом -->
+        <div class="island-hotspot beacon-purple" style="top: 56.5%; left: 75.6%;" data-island="knowledgeArchive">
+          <div class="beacon-core">
+            <span class="beacon-icon">🏛️</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">KNOWLEDGE VAULT</div>
+            <div class="hover-title">KNOWLEDGE ARCHIVE</div>
+            <div class="hover-subtitle">Документация, концепты и принципы королевства</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть базу знаний</div>
+          </div>
+        </div>
+
+        <!-- 8. Гавань (The Harbor) — строго над постройками и мачтами порта -->
+        <div class="island-hotspot beacon-cyan" style="top: 67.0%; left: 33.2%;" data-island="harbor">
+          <div class="beacon-core">
+            <span class="beacon-icon">⚓</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">CONNECTIONS</div>
+            <div class="hover-title">THE HARBOR</div>
+            <div class="hover-subtitle">Интеграции, внешние API и корабли связи</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть статус связей</div>
+          </div>
+        </div>
+
+        <!-- Торговый квартал — остров ниже и правее Гавани; функции пока не определены -->
+        <div class="island-hotspot beacon-amber" style="top: 70.1%; left: calc(54.3% + 100px);" data-island="tradingQuarter">
+          <div class="beacon-core">
+            <span class="beacon-icon">🏺</span>
+          </div>
+          <div class="island-hover-card">
+            <div class="hover-badge">TRADE DISTRICT</div>
+            <div class="hover-title">TRADING QUARTER</div>
+            <div class="hover-subtitle">Торговый квартал • Назначение определено, функции — ещё нет</div>
+            <div class="hover-action-hint">👆 Нажмите, чтобы открыть карточку квартала</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= ПОЛУПРОЗРАЧНЫЕ ОКНА КОНСОЛЕЙ ОСТРОВОВ ================= -->
+  <div class="island-modal-backdrop" id="island-modal-backdrop">
+    <div class="island-modal-window" id="island-modal-window">
+      <!-- Заголовок окна -->
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge" id="modal-island-icon">🏰</div>
+          <div class="modal-title-group">
+            <span class="panel-label" id="modal-island-badge">CORE NEXUS</span>
+            <h3 id="modal-island-title">MAIN ESTATE</h3>
+            <p id="modal-island-subtitle">Главная усадьба • Управление и принятие решений</p>
+          </div>
+        </div>
+        <div class="modal-toolbar">
+          <span class="modal-toolbar-status" id="barrymore-refresh-status" role="status" aria-live="polite" hidden></span>
+          <button class="modal-refresh-btn" id="btn-refresh-barrymore" type="button" aria-label="Обновить утренний доклад" title="Обновить утренний доклад" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 7v5h-5M4.93 9A8 8 0 0 1 19.07 7L20 12M4 17v-5h5m10.07 3A8 8 0 0 1 4.93 17L4 12"></path>
+            </svg>
+          </button>
+          <div class="modal-window-controls">
+            <button class="modal-icon-btn" id="btn-island-fullscreen" type="button"
+              aria-label="Во весь экран" title="Во весь экран">
+              <svg class="ico-expand" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              <svg class="ico-collapse" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m0 0h3a2 2 0 0 1 2 2v3"/></svg>
+            </button>
+            <button class="modal-icon-btn modal-icon-close" id="btn-close-island-modal" type="button"
+              aria-label="Закрыть" title="Закрыть">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Содержимое окна (динамически подставляется в зависимости от острова) -->
+      <div class="modal-body" id="modal-island-content">
+        <!-- Генерируется из app.js -->
+      </div>
+
+      <!-- Нижняя панель окна -->
+      <div class="modal-footer" id="modal-island-footer">
+        <button class="modal-close-btn" id="btn-back-to-map">← Вернуться к карте островов</button>
+        <div id="modal-island-actions">
+          <!-- Специфические кнопки действий -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= УРОВЕНЬ 3: МОДАЛЬНЫЙ РАБОЧИЙ КАБИНЕТ ================= -->
+  <div class="island-modal-backdrop" id="workspace-modal-backdrop" style="z-index: 150;">
+    <div class="workspace-cockpit-window">
+      <div class="modal-header">
+        <div>
+          <h3 id="workspace-title-text" style="color: #fffbeb;">Рабочий кабинет: eVo Core Workspace</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted);" id="workspace-sub-text">
+            Уровень 3 — Непосредственное выполнение задач и редактирование контекста
+          </p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-workspace">← Вернуться в Command Center</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="glass-panel">
+          <div class="panel-label" id="active-task-section-label">Активная задача</div>
+          <h4 id="active-task-name">Архитектурная сборка Command Center v0.2</h4>
+          <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 16px;" id="active-task-desc">
+            Объединение пространственной метафоры Estate, стюарда Бэрримора и интерактивных островов.
+          </p>
+
+          <div class="panel-label" id="checklist-title-label">Контрольный список:</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-1-text">Полноэкранная стартовая картина мира Estate с островами</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-2-text">Всплывающие карточки с краткой инфой при наведении на острова</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #e2e8f0;">
+              <input type="checkbox" checked disabled>
+              <span id="check-3-text">Полупрозрачные консоли с конкретной инфой при клике на остров</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);" id="status-select-label">Статус:</span>
+          <select class="status-select" id="task-status-dropdown" style="background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 6px;">
+            <option value="building" id="opt-building">В разработке</option>
+            <option value="operational" selected id="opt-operational">Завершена / Готова</option>
+          </select>
+        </div>
+        <button class="btn-action-primary" id="btn-save-workspace">Сохранить и вернуться</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Планета миров: кнопка + меню-четверть сферы (ZCode 07.11, заказ Sovereign:
+       одна кнопка вместо трёх мировых, архипелаги на дуге, клик = переход) -->
+  <nav id="planet-menu" class="planet-menu" aria-label="Миры поместья">
+    <a class="planet-node" href="world-map.html?v=12"><span class="pn-icon">🗺</span><span class="pn-label">Карта мира</span></a>
+    <a class="planet-node" href="maelstorm.html"><span class="pn-icon">🌀</span><span class="pn-label">Маэльшторм</span></a>
+    <a class="planet-node" href="engine-core.html"><span class="pn-icon">⚙️</span><span class="pn-label">Engine Core</span></a>
+    <button id="pm-gear" class="pm-gear" type="button" title="Настройки меню" aria-label="Настройки меню">⚙</button>
+  </nav>
+  <div id="planet-settings" class="planet-settings" hidden>
+    <div class="ps-row"><span>Размер</span><input type="range" id="ps-size" min="120" max="300" step="10" value="200"></div>
+    <div class="ps-row"><span>Прозрачность</span><input type="range" id="ps-op" min="30" max="100" step="5" value="92"></div>
+    <div class="ps-row"><span>Цвет</span><span class="ps-swatches">
+      <button class="ps-swatch" data-rgb="56,189,248" style="background:rgb(56,189,248)" title="Лазурь"></button>
+      <button class="ps-swatch" data-rgb="94,234,212" style="background:rgb(94,234,212)" title="Морская"></button>
+      <button class="ps-swatch" data-rgb="230,200,119" style="background:rgb(230,200,119)" title="Золото"></button>
+      <button class="ps-swatch" data-rgb="251,113,133" style="background:rgb(251,113,133)" title="Роза"></button>
+      <button class="ps-swatch" data-rgb="167,139,250" style="background:rgb(167,139,250)" title="Аметист"></button>
+    </span></div>
+    <div class="ps-row"><span>Анимация</span><span class="ps-anims">
+      <button class="ps-anim" data-anim="">Пружина</button>
+      <button class="ps-anim" data-anim="pm-anim-smooth">Плавно</button>
+      <button class="ps-anim" data-anim="pm-anim-quick">Быстро</button>
+    </span></div>
+    <div class="ps-row"><span>Градиент</span><input type="checkbox" id="ps-grad" checked></div>
+  </div>
+  <style>
+    .planet-btn,.kanban-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(10,18,36,.72);border:1px solid rgba(94,234,212,.35);box-shadow:0 0 14px rgba(56,189,248,.25);transition:box-shadow .2s ease,transform .2s ease;padding:0}
+    .planet-btn:hover,.kanban-btn:hover{box-shadow:0 0 22px rgba(94,234,212,.5);transform:translateY(-1px)}
+    .kanban-btn{text-decoration:none;font-size:16px;line-height:1}
+    /* Дверь «🎛 Штаб» у плашки Бэрримора: справа-снизу, рядом с Review/Перепиской */
+    .plaque-cc-link{position:absolute;right:-10px;bottom:-24px;display:inline-flex;align-items:center;gap:7px;padding:5px 12px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;color:#7dd3fc;background:rgba(8,20,38,.9);border:1px solid rgba(56,189,248,.5);border-radius:8px;white-space:nowrap;text-decoration:none;cursor:pointer;z-index:5;transition:background .15s ease,border-color .15s ease}
+    .plaque-cc-link:hover{background:rgba(56,189,248,.18);border-color:rgba(125,211,252,.85)}
+    .planet-menu{position:fixed;width:var(--pm-size,200px);height:var(--pm-size,200px);border-radius:14px 0 14px 100%;z-index:70;transform-origin:100% 0;transform:scale(.25);opacity:0;pointer-events:none;transition:transform .26s cubic-bezier(.34,1.4,.64,1),opacity .16s ease}
+    .planet-menu.pm-anim-smooth{transition:transform .35s cubic-bezier(.22,.61,.36,1),opacity .22s ease}
+    .planet-menu.pm-anim-quick{transition:transform .14s cubic-bezier(.2,.7,.4,1),opacity .1s ease}
+    .planet-menu::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 100% 0,rgba(var(--pm-accent,56,189,248),.2),rgba(10,18,36,.92) 60%);box-shadow:0 12px 34px rgba(0,0,0,.4);opacity:var(--pm-op,.92);transition:opacity .15s ease;-webkit-mask-image:radial-gradient(circle at 100% 0,#000 52%,transparent 97%);mask-image:radial-gradient(circle at 100% 0,#000 52%,transparent 97%)}
+    .planet-menu.pm-flat::before{background:rgba(10,18,36,.9)}
+    .planet-menu.open{transform:scale(1);opacity:1;pointer-events:auto}
+    .planet-node{position:absolute;transform:translate(50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;opacity:0;transition:opacity .2s ease}
+    .planet-menu.open .planet-node{opacity:1}
+    .planet-node:nth-of-type(2){transition-delay:.05s}
+    .planet-node:nth-of-type(3){transition-delay:.1s}
+    .pn-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;background:rgba(10,18,36,.9);border:1.5px solid rgba(148,163,184,.4);transition:transform .15s ease,box-shadow .15s ease}
+    .planet-node:hover .pn-icon{transform:scale(1.12)}
+    .pn-label{font-size:.6rem;color:#e2e8f0;letter-spacing:.2px;text-shadow:0 1px 3px rgba(0,0,0,.85);white-space:nowrap}
+    /* узлы на ВНЕШНЕЙ дуге окна (центр дуги — планета в углу); проценты масштабируются с размером */
+    .planet-node:nth-of-type(1){right:80%;top:20%}
+    .planet-node:nth-of-type(2){right:58%;top:58%}
+    .planet-node:nth-of-type(3){right:20%;top:80%}
+    .planet-node:nth-of-type(1) .pn-icon{border-color:rgba(230,200,119,.55)}
+    .planet-node:nth-of-type(2) .pn-icon{border-color:rgba(251,113,133,.55)}
+    .planet-node:nth-of-type(3) .pn-icon{border-color:rgba(251,191,36,.55)}
+    .planet-node:nth-of-type(1):hover .pn-icon{box-shadow:0 0 18px rgba(230,200,119,.45)}
+    .planet-node:nth-of-type(2):hover .pn-icon{box-shadow:0 0 18px rgba(251,113,133,.45)}
+    .planet-node:nth-of-type(3):hover .pn-icon{box-shadow:0 0 18px rgba(251,191,36,.45)}
+    .pm-gear{position:absolute;right:12px;top:12px;width:20px;height:20px;border-radius:50%;border:1px solid rgba(148,163,184,.35);background:rgba(10,18,36,.85);color:#94a3b8;font-size:.62rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:color .15s ease,border-color .15s ease}
+    .pm-gear:hover{color:#e2e8f0;border-color:rgba(94,234,212,.55)}
+    .planet-settings{position:fixed;z-index:71;width:190px;padding:10px 12px;border-radius:12px;background:rgba(10,18,36,.94);border:1px solid rgba(94,234,212,.28);box-shadow:0 14px 40px rgba(0,0,0,.5);backdrop-filter:blur(8px);font-size:.62rem;color:#cbd5e1}
+    .planet-settings[hidden]{display:none}
+    .ps-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0}
+    .ps-row>span:first-child{letter-spacing:.2px}
+    .ps-row input[type=range]{width:96px;accent-color:#5eead4;height:12px}
+    .ps-row input[type=checkbox]{accent-color:#5eead4}
+    .ps-swatches{display:flex;gap:6px}
+    .ps-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);cursor:pointer;padding:0}
+    .ps-swatch.sel{border-color:#fff}
+    .ps-anims{display:flex;gap:4px}
+    .ps-anim{font-size:.58rem;padding:2px 6px;border-radius:8px;border:1px solid rgba(148,163,184,.35);background:rgba(10,18,36,.8);color:#cbd5e1;cursor:pointer}
+    .ps-anim.sel{border-color:rgba(94,234,212,.6);color:#e2e8f0}
+  </style>
+  <script>
+  (function(){
+    var btn=document.getElementById('planet-btn'),menu=document.getElementById('planet-menu');
+    var gear=document.getElementById('pm-gear'),panel=document.getElementById('planet-settings');
+    if(!btn||!menu)return;
+    var LS='evo_planet_menu_v1';
+    function apply(s){
+      menu.style.setProperty('--pm-size',s.size+'px');
+      menu.style.setProperty('--pm-op',s.op/100);
+      menu.style.setProperty('--pm-accent',s.rgb);
+      menu.classList.toggle('pm-flat',!s.grad);
+      menu.classList.remove('pm-anim-smooth','pm-anim-quick');
+      if(s.anim)menu.classList.add(s.anim);
+      if(panel){
+        document.getElementById('ps-size').value=s.size;
+        document.getElementById('ps-op').value=s.op;
+        document.getElementById('ps-grad').checked=s.grad;
+        var sw=panel.querySelectorAll('.ps-swatch');
+        for(var i=0;i<sw.length;i++)sw[i].classList.toggle('sel',sw[i].getAttribute('data-rgb')===s.rgb);
+        var an=panel.querySelectorAll('.ps-anim');
+        for(var j=0;j<an.length;j++)an[j].classList.toggle('sel',(an[j].getAttribute('data-anim')||'')===s.anim);
+      }
+    }
+    var st={size:200,op:92,rgb:'56,189,248',anim:'',grad:true};
+    try{var raw=localStorage.getItem(LS);if(raw){var p=JSON.parse(raw);for(var k in st)if(p[k]!==undefined)st[k]=p[k];}}catch(e){}
+    apply(st);
+    function save(){try{localStorage.setItem(LS,JSON.stringify(st));}catch(e){}}
+    function place(){
+      var r=btn.getBoundingClientRect();
+      menu.style.top=(r.bottom-6)+'px';menu.style.right=(window.innerWidth-r.right)+'px';
+      if(panel){var sz=parseInt(getComputedStyle(menu).width)||200;panel.style.top=(r.bottom-6+sz+8)+'px';panel.style.right=(window.innerWidth-r.right)+'px';}
+    }
+    function close(){menu.classList.remove('open');if(panel)panel.hidden=true;}
+    btn.addEventListener('click',function(e){e.stopPropagation();if(!menu.classList.contains('open')){place();if(panel)panel.hidden=true;}menu.classList.toggle('open');});
+    if(gear)gear.addEventListener('click',function(e){e.stopPropagation();var willShow=panel.hidden;panel.hidden=!willShow;place();});
+    document.addEventListener('click',function(e){if(menu.classList.contains('open')&&!menu.contains(e.target)&&!btn.contains(e.target)&&!(panel&&!panel.hidden&&panel.contains(e.target)))close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    window.addEventListener('resize',close);
+    if(panel){
+      document.getElementById('ps-size').addEventListener('input',function(){st.size=+this.value;apply(st);save();place();});
+      document.getElementById('ps-op').addEventListener('input',function(){st.op=+this.value;apply(st);save();});
+      document.getElementById('ps-grad').addEventListener('change',function(){st.grad=this.checked;apply(st);save();});
+      var sw=panel.querySelectorAll('.ps-swatch');
+      for(var i=0;i<sw.length;i++)sw[i].addEventListener('click',function(){st.rgb=this.getAttribute('data-rgb');apply(st);save();});
+      var an=panel.querySelectorAll('.ps-anim');
+      for(var j=0;j<an.length;j++)an[j].addEventListener('click',function(){st.anim=this.getAttribute('data-anim')||'';apply(st);save();});
+    }
+  })();
+  </script>
+  <style>
+    #fleet-shortcut { font: inherit; cursor: pointer; }
+    #fleet-modal-backdrop { z-index: 120; }
+    #fleet-modal-window { width: min(1100px, 92vw); max-width: min(1100px, 92vw); height: min(820px, 86vh); }
+    #fleet-modal-window.is-fullscreen { width: 100%; max-width: none; height: 100%; }
+    #fleet-modal-window .modal-body { flex: 1; padding: 0; overflow: hidden; }
+    #fleet-frame { width: 100%; height: 100%; border: 0; display: block; background: #0b1220; }
+    #fleet-modal-window.is-fullscreen #fleet-modal-full .ico-expand { display: none; }
+    #fleet-modal-window.is-fullscreen #fleet-modal-full .ico-collapse { display: inline; }
+    #fleet-modal-full .ico-collapse { display: none; }
+  </style>
+
+  <!-- ================= ВСПЛЫВАЮЩЕЕ ОКНО «ФЛОТ В МОРЕ» ================= -->
+  <div class="island-modal-backdrop" id="fleet-modal-backdrop">
+    <div class="island-modal-window" id="fleet-modal-window" role="dialog" aria-label="Флот в море">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">🚢</div>
+          <div class="modal-title-group">
+            <span class="panel-label">ФЛОТ АГЕНТОВ · ЖУРНАЛ РЕЙСОВ</span>
+            <h3>Флот в море</h3>
+            <p id="modal-island-subtitle-fleet">Корабли в море, штормы и причалы — живой журнал событий</p>
+          </div>
+        </div>
+        <div class="modal-toolbar">
+          <div class="modal-window-controls">
+            <a class="modal-icon-btn" href="agents.html" target="_blank" rel="noopener noreferrer"
+               aria-label="Открыть полной страницей" title="Открыть полной страницей">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6m4-3h6v6m0-6L10 14"/></svg>
+            </a>
+            <button class="modal-icon-btn" id="fleet-modal-full" type="button"
+              aria-label="Во весь экран" title="Во весь экран">
+              <svg class="ico-expand" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              <svg class="ico-collapse" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m0 0h3a2 2 0 0 1 2 2v3"/></svg>
+            </button>
+            <button class="modal-icon-btn modal-icon-close" id="fleet-modal-close" type="button"
+              aria-label="Закрыть" title="Закрыть">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe id="fleet-frame" title="Панель «Флот в море»" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+  <script>
+  /* Всплывающее окно «Флот в море» (08.11, заказ Sovereign: без новой вкладки).
+     Переиспользует классы окон Estate (island-modal-*), iframe с agents.html —
+     панель живёт своей жизнью (автообновление 15 с), при закрытии выгружается.
+     Скрипт стоит ПОСЛЕ разметки: элементы должны существовать к моменту подвески. */
+  (function () {
+    var btn = document.getElementById('fleet-shortcut');
+    var bd = document.getElementById('fleet-modal-backdrop');
+    var win = document.getElementById('fleet-modal-window');
+    var frame = document.getElementById('fleet-frame');
+    if (!btn || !bd || !win || !frame) return;
+    function open() { bd.classList.add('open'); frame.src = 'agents.html?embed=1'; }
+    function close() {
+      bd.classList.remove('open');
+      win.classList.remove('is-fullscreen');
+      frame.src = 'about:blank'; // не гоняем автообновление флота в фоне
+    }
+    btn.addEventListener('click', open);
+    // дверь Бэрримора → Штаб: не пускаем клик в модалку стюарда
+    var ccLink = document.getElementById('barrymore-cc-link');
+    if (ccLink) ccLink.addEventListener('click', function (e) { e.stopPropagation(); });
+    document.getElementById('fleet-modal-close').addEventListener('click', close);
+    document.getElementById('fleet-modal-full').addEventListener('click', function () {
+      win.classList.toggle('is-fullscreen');
+    });
+    bd.addEventListener('click', function (e) { if (e.target === bd) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && bd.classList.contains('open')) close();
+    });
+  })();
+  </script>
+  <script src="languages.js?v=3"></script>
+  <script src="brief.js"></script>
+  <script src="vacancies.js"></script>
+  <script src="orders-triage.js"></script>
+  <script src="hunter-report.js?v=1"></script>
+  <script src="tasks.js"></script>
+  <script src="excursion-data.js?v=2"></script>
+  <script src="app.js?v=18"></script>
+  <script src="harbor-ship.js?v=10"></script>
+</body>
+</html>

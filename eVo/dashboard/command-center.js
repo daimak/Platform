@@ -36,7 +36,8 @@
     ],
   };
 
-  var BALANCE_SEED_M = 440; // остаток по слову Дмитрия 14.11 («в запасе 440M»); правится полем в панели
+  var BUDGET_FULL_M = 500;  // полный бюджет после пополнения 14.11 (500M); правится полем в панели
+  var BALANCE_SEED_M = 500; // оценка остатка до ввода точного баланса (сид − расход за день)
   var balanceInput = document.getElementById('cc-balance-input');
   var balanceSaved = document.getElementById('cc-balance-saved');
   var statusEl = document.getElementById('cc-status');
@@ -90,7 +91,7 @@
     try { return JSON.parse(localStorage.getItem('cc_counter_v1') || 'null'); } catch (e) { return null; }
   }
 
-  function renderTokens(usage) {
+  function renderTokens(usage, budgetData) {
     var dayBucket = new Date().toISOString().slice(0, 13).slice(0, 10);
     var today = 0, week = 0, peak = 0, i;
     var days = usage.per_day || [];
@@ -110,42 +111,59 @@
     document.getElementById('cc-peak').textContent = fmtNum(peak);
     document.getElementById('cc-sessions').textContent = String((usage.sessions || []).length);
 
-    // запас хода: остаток (в млн; до ввода — оценка BALANCE_SEED_M) / средний расход в день
+    // Источник остатка: СТОР бюджета (сервер, выживает ротацию фактуры) →
+    // localStorage (офлайн-фолбэк) → сид. Фактура отвечает только за темп
+    // (инцидент 16.11: ротация съела историю и дашборд стал врать про остаток).
+    var budget = budgetData || {};
+    var budgetOk = typeof budget.balance_m === 'number' && budget.balance_m > 0;
     var balance = loadBalance();
-    var isEstimate = !(balance && balance.balance > 0);
-    var balM = isEstimate ? BALANCE_SEED_M : balance.balance;
+    var isEstimate = !budgetOk && !(balance && balance.balance > 0);
+    var balM = budgetOk ? budget.balance_m : (balance && balance.balance > 0 ? balance.balance : BALANCE_SEED_M);
+    var capM = budgetOk && budget.cap_m > 0 ? budget.cap_m : BUDGET_FULL_M;
+
+    // темп сжигания: свои показания (≥2, разнос ≥6 ч) → фактура недели → «—»
     var daysLeft = null;
-    if (week > 0) {
-      daysLeft = balM / (week / 7 / 1000000); // темп = расход за календарную неделю (смотри «за 7 дней»)
+    var paceM = null;
+    var readings = budgetOk && Array.isArray(budget.readings) ? budget.readings : [];
+    if (readings.length >= 2) {
+      var firstR = readings[0], lastR = readings[readings.length - 1];
+      var spanH = (new Date(lastR.at) - new Date(firstR.at)) / 3600000;
+      if (spanH >= 6 && lastR.balance_m < firstR.balance_m) {
+        paceM = (firstR.balance_m - lastR.balance_m) / (spanH / 24);
+      }
     }
+    if (paceM === null && week > 0) paceM = week / 7 / 1000000;
+    if (paceM !== null && paceM > 0) daysLeft = balM / paceM;
     var burnout = daysLeft === null ? '—'
       : daysLeft >= 2 ? '~' + Math.round(daysLeft) + ' дн'
       : '~' + Math.max(1, Math.round(daysLeft * 24)) + ' ч';
     document.getElementById('cc-burnout').textContent = burnout;
 
-    // бюджет-полоса: «в наличии» против «израсходовано за 7 дней»
+    // бюджет-полоса: против полного бюджета (как на счётчике: 372M из 500M)
     var haveEl = document.getElementById('cc-budget-have');
     var spentEl = document.getElementById('cc-budget-spent');
     var haveNum = document.getElementById('cc-budget-have-num');
     var spentNum = document.getElementById('cc-budget-spent-num');
-    var weekM = week / 1000000;
-    spentNum.textContent = fmtNum(week) + ' · 7 дней';
-    haveNum.textContent = (isEstimate ? '≈' : '') + balM + 'M';
-    var havePct = (balM + weekM) > 0 ? (balM / (balM + weekM)) * 100 : 100;
+    var havePct = capM > 0 ? Math.max(0, Math.min(100, balM / capM * 100)) : 100;
     haveEl.style.width = havePct.toFixed(1) + '%';
     spentEl.style.width = (100 - havePct).toFixed(1) + '%';
+    haveNum.textContent = (isEstimate ? '≈' : '') + Math.round(balM) + 'M / ' + Math.round(capM) + 'M';
+    spentNum.textContent = fmtNum((capM - balM) * 1000000) + ' · с пополнения';
 
-    // кольцо: запас хода в днях, полное = 30 дн
+    // кольцо: СЖИГАНИЕ от полного бюджета — дуга = потрачено, пустое = свежий счётчик.
+    // Источник — стор бюджета: ротация фактуры не влияет (инцидент 16.11).
+    var leftNowM = isEstimate ? Math.max(0, balM - today / 1000000) : balM;
+    var spentPct = capM > 0 ? Math.max(0, Math.min(100, (capM - leftNowM) / capM * 100)) : null;
     var gaugeFill = document.getElementById('cc-gauge-fill');
     var gaugeEl = document.getElementById('cc-gauge');
     var C = 2 * Math.PI * 52;
-    var ratio = daysLeft === null ? 0 : Math.max(0.02, Math.min(1, daysLeft / 30));
+    var ratio = spentPct === null ? 0 : Math.max(0.02, Math.min(1, spentPct / 100));
     gaugeFill.style.strokeDashoffset = String(C * (1 - ratio));
     document.getElementById('cc-gauge-value').textContent =
-      daysLeft === null ? '—' : '~' + Math.max(1, Math.round(daysLeft)) + ' дн';
-    document.getElementById('cc-gauge-label').textContent = 'запас';
-    gaugeEl.classList.toggle('storm', daysLeft !== null && daysLeft < 3);
-    gaugeEl.classList.toggle('warn', daysLeft !== null && daysLeft >= 3 && daysLeft < 7);
+      spentPct === null ? '—' : (isEstimate ? '≈' : '') + Math.round(spentPct) + '%';
+    document.getElementById('cc-gauge-label').textContent = 'сожжено';
+    gaugeEl.classList.toggle('storm', spentPct !== null && (spentPct >= 85 || (daysLeft !== null && daysLeft < 3)));
+    gaugeEl.classList.toggle('warn', spentPct !== null && spentPct >= 70 && spentPct < 85);
 
     // огонь бюджета — та же цифра и формат, что в solomon.html («Мир сейчас»),
     // одна формула: последний час / день / остаток / хватит на N ч. При введённом
@@ -154,18 +172,21 @@
     if (burnLine) {
       var lastHour = hours.length ? hours[hours.length - 1].tokens : 0;
       var prevHour = hours.length > 1 ? hours[hours.length - 2].tokens : 0;
-      var leftT = Math.max(0, balM * 1000000 - today);
+      var leftT = leftNowM * 1000000;
+      var leftPct = leftNowM / capM * 100;
       var hoursLeft = lastHour > 0 ? leftT / lastHour : null;
       var fmtM = function (t) { return (t / 1000000).toFixed(1); };
       burnLine.innerHTML = 'огонь за час: <b>' + fmtM(lastHour) + 'M</b>'
         + (prevHour ? ' (пред. ' + fmtM(prevHour) + 'M)' : '')
         + ' · за день: <b>' + fmtM(today) + 'M</b>'
-        + ' · остаток: <b>' + (isEstimate ? '≈' : '') + fmtM(leftT) + 'M</b>'
+        + ' · сожжено: <b>' + Math.round(100 - leftPct) + '%</b> · остаток: <b>' + (isEstimate ? '≈' : '') + fmtM(leftT) + 'M (' + Math.round(leftPct) + '% от ' + Math.round(capM) + 'M)</b>'
         + (hoursLeft !== null ? ' ≈ <b>' + (hoursLeft < 48 ? '<span style="color:#f87171">' + Math.round(hoursLeft) + ' ч</span>' : Math.round(hoursLeft / 24) + ' дн') + '</b> при текущей скорости' : '');
     }
-    balanceSaved.textContent = isEstimate
-      ? 'оценка ' + BALANCE_SEED_M + 'M от 14.11 — введи точный остаток'
-      : 'введено ' + fmtDayClock(balance.saved_at);
+    balanceSaved.textContent = budgetOk
+      ? 'в сторе · точное, введено ' + fmtDayClock(budget.updated_at)
+      : (isEstimate
+        ? 'оценка ' + BALANCE_SEED_M + 'M — введи точный остаток (уйдёт в стор на сервере)'
+        : 'введено ' + fmtDayClock(balance.saved_at) + ' · только локально, введи ещё раз — уйдёт в стор');
   }
 
   balanceInput.addEventListener('change', function () {
@@ -177,12 +198,25 @@
       if (record) localStorage.setItem('cc_counter_v1', JSON.stringify(record));
       else localStorage.removeItem('cc_counter_v1');
     } catch (e) { /* приватный режим — просто не запоминаем */ }
-    renderTokens(lastUsage || { per_day: [], per_hour: [] });
+    if (record) {
+      fetch('/api/tokens/budget', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ balance_m: value, cap_m: 500 })
+      }).then(function (r) { return r.ok ? r.json() : null; }).then(function (b) {
+        if (b && typeof b.balance_m === 'number') {
+          lastBudget = b;
+          renderTokens(lastUsage || { per_day: [], per_hour: [] }, b);
+        }
+      }).catch(function () { /* офлайн — localStorage держит до следующего ввода */ });
+    }
+    renderTokens(lastUsage || { per_day: [], per_hour: [] }, lastBudget || {});
   });
 
   /* --- Конвейер + артефакты ------------------------------------------------------ */
 
   var lastUsage = null;
+  var lastBudget = null;
 
   function pulseClass(ship) {
     if (ship.pulse_status === 'шторм' || ship.status === 'шторм') return 'storm';
@@ -398,6 +432,22 @@
         + '<span class="dw-bar"><i style="width:' + share + '%"></i></span>'
         + '<span class="dw-count">' + fmtNum(pair[1]) + '</span></li>';
     }).join('');
+
+    // подробности прямо в панели: страны + старейшая запись в корме
+    var extraEl = document.getElementById('cc-dw-extra');
+    if (extraEl) {
+      var countries = Array.isArray(feed.top_countries) ? feed.top_countries.slice(0, 4) : [];
+      var bits = [];
+      if (countries.length) {
+        bits.push('страны: ' + countries.map(function (pair) {
+          return '<b>' + escapeHtml(pair[0]) + '</b> ' + fmtNum(pair[1]);
+        }).join(' · '));
+      }
+      if (feed.oldest_in_feed) {
+        bits.push('старейшая запись в корме: ' + escapeHtml(feed.oldest_in_feed));
+      }
+      extraEl.innerHTML = bits.length ? bits.join('<br>') : '';
+    }
   }
 
   /* --- Обновление ------------------------------------------------------------------------ */
@@ -409,9 +459,13 @@
 
   function refresh() {
     document.getElementById('cc-menu-refresh').disabled = true;
-    var tokensPromise = fetchJson('/api/tokens/usage').then(function (u) {
-      lastUsage = u;
-      renderTokens(u);
+    var tokensPromise = Promise.all([
+      fetchJson('/api/tokens/usage').catch(function () { return { per_day: [], per_hour: [] }; }),
+      fetchJson('/api/tokens/budget').catch(function () { return {}; }),
+    ]).then(function (results) {
+      lastUsage = results[0];
+      lastBudget = results[1];
+      renderTokens(results[0], results[1]);
     }).catch(function (error) {
       document.getElementById('cc-tokens-generated').textContent =
         'панель топлива поднимется после рестарта сервера (' + error.message + ')';

@@ -63,6 +63,7 @@ REFRESH_LOCK = threading.Lock()
 TASK_LOCK = threading.Lock()
 HUNTER_LOCK = threading.Lock()
 USAGE_LOCK = threading.Lock()
+VERDICTS_LOCK = threading.Lock()  # приёмка рейсов Дмитрия (voyage-verdicts.jsonl)
 SECURITY_LOCK = threading.Lock()
 REPORTS_LOCK = threading.Lock()
 HOLMES_RUN_LOCK = threading.Lock()
@@ -762,6 +763,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 logging.exception("Tokens usage read failed")
                 self._send_json(500, {"error": f"Не удалось собрать расход токенов: {error}"})
             return
+        if request_path == "/api/tokens/budget":
+            # Память бюджета: показания Дмитрия в файле — источник остатка
+            # (фактура ротируется и врать не должна).
+            self._send_json(200, tokens_budget_snapshot())
+            return
+        if request_path == "/api/darkwatch/details":
+            # Подробности Тёмного радара для darkwatch.html (loopback, интерьер).
+            self._send_json(200, darkwatch_details())
+            return
         if request_path == "/api/steward":
             # Сторож-виджет «Кто сейчас работает»: 6 слоёв самодиагностики
             # (методика 04.11). Read-only наблюдение, кэш 30 с, слои изолированы.
@@ -852,7 +862,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         security_route = "/api/security/check"
         security_targets_route = "/api/security/targets"
         holmes_implement_route = "/api/holmes/implement"
-        body_routes = {"/api/ai-usage/snapshots", "/api/ai-usage/settings"}
+        body_routes = {"/api/ai-usage/snapshots", "/api/ai-usage/settings", "/api/tokens/budget", "/api/voyages/verdict"}
         sandbox_run_route = "/api/sandbox/run"
         bodyless_routes = {
             "/api/refresh-brief",
@@ -894,6 +904,32 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self._send_json(status, payload)
             return
 
+        if request_path == "/api/voyages/verdict":
+            # Канбан-приёмка обсерватории: слово Дмитрия по завершённому рейсу.
+            try:
+                payload = self._read_json_body()
+            except (ValueError, json.JSONDecodeError):
+                self._send_json(400, {"error": "Некорректное JSON-тело."})
+                return
+            by = str(payload.get("by") or "").strip()
+            finished_at = str(payload.get("finished_at") or "").strip()
+            verdict = str(payload.get("verdict") or "").strip()
+            if not by or not finished_at:
+                self._send_json(400, {"error": "Нужны поля by и finished_at."})
+                return
+            try:
+                with VERDICTS_LOCK:
+                    result = voyage_verdict_append(by, finished_at, verdict)
+            except ValueError as error:
+                self._send_json(400, {"error": str(error)})
+                return
+            except OSError as error:
+                logging.exception("Voyage verdict write failed")
+                self._send_json(500, {"error": "Не удалось записать вердикт: " + str(error)})
+                return
+            self._send_json(200, result)
+            return
+
         if request_path in bodyless_routes and self.headers.get("Content-Length", "0") != "0":
             self._send_json(400, {"error": "Endpoint не принимает тело запроса."})
             return
@@ -901,6 +937,18 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         if request_path in body_routes:
             try:
                 payload = self._read_json_body()
+                if request_path == "/api/tokens/budget":
+                    balance_raw = payload.get("balance_m")
+                    cap_raw = payload.get("cap_m")
+                    if not isinstance(balance_raw, (int, float)) or isinstance(balance_raw, bool) or balance_raw <= 0:
+                        self._send_json(400, {"error": "balance_m должен быть положительным числом (млн токенов)."})
+                        return
+                    cap_m = cap_raw if isinstance(cap_raw, (int, float)) and not isinstance(cap_raw, bool) and cap_raw > 0 else 500.0
+                    if balance_raw > cap_m:
+                        self._send_json(400, {"error": "balance_m больше cap_m — проверь показание счётчика."})
+                        return
+                    self._send_json(200, tokens_budget_update(float(balance_raw), float(cap_m)))
+                    return
                 with USAGE_LOCK:
                     if request_path == "/api/ai-usage/snapshots":
                         snapshot = add_snapshot(payload)
@@ -1850,6 +1898,53 @@ def _model_io_live_entry(session: dict, registry: dict | None = None) -> dict:
 
 
 TOKEN_ROLL_DIR = Path.home() / ".zcode" / "cli" / "rollout"
+
+# Память бюджета токенов: показания счётчика Дмитрия живут в файле. Фактура
+# model-io ротируется (старые дни исчезают из окна /api/tokens/usage), поэтому
+# дашборд не имеет права брать остаток из фактуры — только из этого стора
+# (инцидент 16.11: дашборд показал выдуманный остаток, глаза и память Дмитрия
+# оказались единственным источником правды).
+TOKEN_BUDGET_PATH = Path(__file__).resolve().parents[2] / "Workspace" / "analytics" / "token-spend" / "token-budget.json"
+
+
+def tokens_budget_snapshot() -> dict:
+    """Текущий стор бюджета: {} если показаний ещё не вводили."""
+    try:
+        with TOKEN_BUDGET_PATH.open("r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        if isinstance(data, dict) and isinstance(data.get("balance_m"), (int, float)):
+            return data
+    except (OSError, json.JSONDecodeError):
+        pass
+    return {}
+
+
+def tokens_budget_update(balance_m: float, cap_m: float) -> dict:
+    """Ввод показания счётчика: монотонное «сожжено» + журнал последних 20 показаний.
+
+    Пополнение (новый остаток >= старого) burned_total_m не уменьшает; трата
+    (старое − новое) накапливается. Так дашборд знает реальное «сожжено», даже
+    когда ротация фактуры съела историю.
+    """
+    data = tokens_budget_snapshot()
+    now = datetime.now(timezone.utc).isoformat()
+    prev = data.get("balance_m") if isinstance(data.get("balance_m"), (int, float)) else None
+    burned_total = data.get("burned_total_m") if isinstance(data.get("burned_total_m"), (int, float)) else 0
+    if prev is not None and balance_m < prev:
+        burned_total = round(burned_total + (prev - balance_m), 3)
+    readings = data.get("readings") if isinstance(data.get("readings"), list) else []
+    readings.append({"at": now, "balance_m": round(balance_m, 3)})
+    readings = readings[-20:]
+    payload = {
+        "balance_m": round(balance_m, 3),
+        "cap_m": round(cap_m, 3),
+        "burned_total_m": round(burned_total, 3),
+        "anchor_at": data.get("anchor_at") or now,
+        "updated_at": now,
+        "readings": readings,
+    }
+    _atomic_write_json(TOKEN_BUDGET_PATH, payload)
+    return payload
 _TOKEN_CACHE = {"ts": 0.0, "data": None}
 
 
@@ -2036,6 +2131,76 @@ def darkwatch_snapshot() -> dict:
     _DARKWATCH_CACHE["ts"] = moment
     _DARKWATCH_CACHE["data"] = data
     return data
+
+
+def darkwatch_details() -> dict:
+    """Полный разбор последних срезов для страницы подробностей darkwatch.html
+    (loopback 8765, интерьер): топы групп/стран целиком, старейшая жертва,
+    реестр имён групп для поиска. Watchlist-совпадения не проходят
+    (visibility rule — как и в darkwatch_snapshot)."""
+    try:
+        candidates = sorted(DARKWATCH_DIR.glob("*.json"))
+    except OSError:
+        candidates = []
+    picked: dict = {}
+    for path in candidates:
+        match = _DARKWATCH_FILE_RE.match(path.name)
+        if not match:
+            continue
+        day, kind = match.groups()
+        if kind not in picked or day > picked[kind][0]:
+            picked[kind] = (day, path)
+    feed = None
+    groups = None
+    if "ransomware" in picked:
+        try:
+            raw = json.loads(picked["ransomware"][1].read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raw = {}
+
+        def _pairs(key: str, limit: int) -> list:
+            rows = raw.get(key)
+            out = []
+            if isinstance(rows, list):
+                for row in rows:
+                    if isinstance(row, list) and len(row) >= 2 and isinstance(row[0], str):
+                        out.append([row[0], _darkwatch_int(row[1])])
+            out.sort(key=lambda pair: pair[1], reverse=True)
+            return out[:limit]
+
+        if isinstance(raw, dict):
+            feed = {
+                "live": bool(raw.get("live")),
+                "http": _darkwatch_int_or_none(raw.get("http")),
+                "feed_size": _darkwatch_int(raw.get("feed_size")),
+                "last24": _darkwatch_int(raw.get("last24")),
+                "no_date": _darkwatch_int(raw.get("no_date")),
+                "filtered_left": _darkwatch_int(raw.get("filtered_left")),
+                "oldest_in_feed": str(raw["oldest_in_feed"]) if raw.get("oldest_in_feed") else None,
+                "top_groups": _pairs("top_group", 12),
+                "top_countries": _pairs("top_country", 10),
+            }
+    if "groups" in picked:
+        try:
+            raw = json.loads(picked["groups"][1].read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raw = {}
+        if isinstance(raw, dict):
+            names = raw.get("names") if isinstance(raw.get("names"), list) else []
+            groups = {
+                "live": bool(raw.get("live")),
+                "http": _darkwatch_int_or_none(raw.get("http")),
+                "total": _darkwatch_int(raw.get("total")),
+                "live_dls": _darkwatch_int(raw.get("live_dls")),
+                "names": [str(name) for name in names if isinstance(name, str) and name],
+            }
+    days = [item[0] for item in picked.values()]
+    return {
+        "date": max(days) if days else None,
+        "feed": feed,
+        "groups": groups,
+        "generated_at": _utc_now_iso(),
+    }
 
 
 _STEWARD_CACHE = {"ts": 0.0, "data": None}
@@ -2260,6 +2425,43 @@ def agents_live_snapshot(log_path=None, now=None) -> dict:
     return {"ships": live, "generated_at": _utc_now_iso()}
 
 
+def voyage_verdicts_map(log_path=None) -> dict:
+    """Слово Дмитрия по завершённым рейсам: 'by|finished_at' -> verdict.
+
+    Файл вне git (LOCALAPPDATA/Platform/Barrymore) — как и вся фактура панелей;
+    последняя строка по ключу выигрывает (можно перевердиктовать).
+    """
+    path = Path(log_path) if log_path else (LOG_DIR / "voyage-verdicts.jsonl")
+    if not path.exists():
+        return {}
+    result = {}
+    with path.open("r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            verdict = row.get("verdict")
+            if isinstance(verdict, str) and verdict:
+                result[str(row.get("by", "")) + "|" + str(row.get("finished_at", ""))] = verdict
+    return result
+
+
+def voyage_verdict_append(by: str, finished_at: str, verdict: str) -> dict:
+    """Приёмка рейса: только два слова — 'всё норм' или 'доработка'."""
+    if verdict not in ("всё норм", "доработка"):
+        raise ValueError("verdict должен быть 'всё норм' или 'доработка'")
+    path = LOG_DIR / "voyage-verdicts.jsonl"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    row = {"ts": _utc_now_iso(), "by": by, "finished_at": finished_at, "verdict": verdict}
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+    return {"ok": True, "by": by, "finished_at": finished_at, "verdict": verdict}
+
+
 def agents_history_snapshot(limit: int = 20, log_path=None) -> dict:
     """Агрегат GET /api/agents/history: завершённые рейсы, новые сверху.
 
@@ -2278,9 +2480,12 @@ def agents_history_snapshot(limit: int = 20, log_path=None) -> dict:
                 finished_voyages.append((ship, voyage))
     finished_voyages.sort(key=lambda pair: _agent_sort_key(pair[1][-1]), reverse=True)
     history = []
+    principal_verdicts = voyage_verdicts_map()
     for ship, voyage in finished_voyages[:limit]:
         final = voyage[-1]
         final_payload = final.get("payload") or {}
+        finished_key = ship + "|" + (final.get("ts") or final.get("produced_at") or "")
+        payload_verdict = final_payload.get("verdict") if isinstance(final_payload.get("verdict"), str) else None
         started_ts = _agent_started_at(voyage)
         started_dt = _parse_agent_ts(started_ts)
         finished_dt = _parse_agent_ts(final.get("ts") or final.get("produced_at"))
@@ -2314,7 +2519,8 @@ def agents_history_snapshot(limit: int = 20, log_path=None) -> dict:
             "task": _agent_voyage_task(voyage),
             "started_at": started_ts,
             "finished_at": final.get("ts") or final.get("produced_at"),
-            "verdict": final_payload.get("verdict") if isinstance(final_payload.get("verdict"), str) else None,
+            "verdict": principal_verdicts.get(finished_key, payload_verdict),
+            "verdict_source": "principal" if finished_key in principal_verdicts else ("payload" if payload_verdict else None),
             "files": files,
             "tests": tests,
             "tokens": tokens,

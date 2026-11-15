@@ -28,6 +28,13 @@
   .demo{margin-top:6px;font-size:13.5px}
   .demo a{color:var(--acc2);text-decoration:none}
   .demo a:hover{text-decoration:underline}
+  .steps{counter-reset:s;margin-top:6px}
+  .step{display:flex;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+  .step:last-child{border-bottom:none}
+  .step::before{counter-increment:s;content:counter(s);flex:0 0 28px;height:28px;border-radius:50%;background:var(--acc);color:#06251c;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .contact{background:linear-gradient(135deg,#123528,#0f2033);border:1px solid var(--acc);border-radius:12px;padding:22px;margin-top:16px}
+  .contact b{font-size:18px}
+  .contact code{background:#0b131b;border:1px solid var(--line);border-radius:6px;padding:2px 8px}
   .cta{margin:44px 0 8px;text-align:center}
   .btn{display:inline-block;background:var(--acc);color:#0f1419;font-weight:700;font-size:17px;padding:14px 34px;border-radius:12px;text-decoration:none}
   .btn:hover{filter:brightness(1.1)}
@@ -67,9 +74,30 @@
     </div>
   </div>
 
+  <h2>Как начать</h2>
+  <div class="steps">
+    <div class="step"><span><b>Пишете задачу.</b> Двух предложений хватает: что нужно и откуда.</span></div>
+    <div class="step"><span><b>30 минут разбора.</b> Называю фиксированную цену и срок — смета дальше не растёт.</span></div>
+    <div class="step"><span><b>Демо до оплаты.</b> Сначала видите работающий результат на своей задаче, потом платите.</span></div>
+    <div class="step"><span><b>Сдача и неделя правок бесплатно.</b> Передаю с инструкцией, чтобы вы не зависели от меня.</span></div>
+  </div>
+
+  <h2>Гарантии</h2>
+  <div class="grid">
+    <div class="card"><h3>🧾 Официально</h3><p>Самозанятость SolIQ, чек на каждую оплату. Работаю с публичными данными и официальными API.</p></div>
+    <div class="card"><h3>📌 Смета не плавает</h3><p>Цена названа до старта и не меняется «по ходу». Сюрпризы в счёте — не мой жанр.</p></div>
+    <div class="card"><h3>🔁 Не бросаю после сдачи</h3><p>Неделя правок бесплатно, инструкции по-человечески. Если задача не моя — скажу честно и подскажу, куда копать.</p></div>
+  </div>
+
   <div class="cta">
     <a class="btn" href="https://t.me/TODO_username">Написать в Telegram</a>
     <p class="note">Отвечаю лично, без ботов-меню. Задача не моя — скажу честно и подскажу, куда копать.</p>
+  </div>
+
+  <div class="contact">
+    <b>Связаться</b><br>
+    Telegram: <code>@TODO_username</code> &nbsp; Email: <code>TODO@example.com</code><br>
+    <span style="color:var(--mut);font-size:14px">Опишите задачу в двух предложениях — пришлю смету и оценку срока.</span>
   </div>
 
   <footer>Ташкент · работа по всей Узбекистане удалённо · <a href="/" style="color:var(--acc2);text-decoration:none">главная страница</a></footer>

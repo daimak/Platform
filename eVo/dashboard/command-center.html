@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="command-center.css?v=11">
+  <link rel="stylesheet" href="command-center.css?v=12">
 </head>
 <body>
 
@@ -86,7 +86,7 @@
           <div class="cc-tokens-numbers">
             <div class="cc-token-stats">
               <span>сегодня: <strong id="cc-today">—</strong></span>
-              <span>за 7 дней: <strong id="cc-week">—</strong></span>
+              <span>за период наблюдения: <strong id="cc-week">—</strong></span>
               <span>пик за час: <strong id="cc-peak">—</strong></span>
               <span>сессий: <strong id="cc-sessions">—</strong></span>
               <span>при текущей скорости сгорит через: <strong id="cc-burnout">—</strong></span>
@@ -170,6 +170,7 @@
           <span class="cc-muted">$300–600 к 09–10.11</span>
         </div>
         <ul class="cc-blockers" id="cc-blockers"></ul>
+        <a class="cc-door" href="money-map.html">🗺 Карта денег</a>
       </section>
 
       <!-- ТЁМНЫЙ РАДАР: суточные цифры (только счётчики и топы) -->
@@ -188,6 +189,8 @@
           <span class="cc-dw-counter"><strong id="cc-dw-groups">—</strong><em>групп</em></span>
         </div>
         <ul class="cc-dw-top" id="cc-dw-top-list"></ul>
+        <div class="dw-extra" id="cc-dw-extra"></div>
+        <a class="cc-door" href="darkwatch.html">Перейти к Dark Watch →</a>
       </section>
 
       <!-- СИГНАЛЫ: лента журнала -->
@@ -205,6 +208,7 @@
 
   </main>
 
-  <script src="command-center.js?v=11"></script>
+  <script src="command-center.js?v=13"></script>
+  <script src="nav-dock.js?v=6"></script>
 </body>
 </html>

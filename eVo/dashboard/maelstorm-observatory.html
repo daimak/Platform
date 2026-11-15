@@ -9,7 +9,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="observatory.css?v=3">
+  <link rel="stylesheet" href="observatory.css?v=4">
+  <style>
+    /* Тихая карта (Дмитрий 16.11: «надписи по минимуму, в идеале при щелчке») */
+    .obs-page.obs-quiet .obs-layer > div { visibility: hidden; }
+    .obs-page.obs-quiet .obs-layer > div.obs-shown { visibility: visible; z-index: 6; }
+    .obs-page.obs-showall .obs-layer > div { visibility: visible; }
+    /* полный вид: ярлыки причалов не стоят на карте (низ забивался) —
+       причал = глиф, щелчок по нему показывает ярлык/карточку */
+    .obs-page.obs-showall #obs-dock-labels > div { visibility: hidden; }
+    .obs-page.obs-showall #obs-dock-labels > div.obs-shown { visibility: visible; z-index: 6; }
+    #obs-canvas.cursor-entity { cursor: pointer; }
+  </style>
 </head>
 <body>
 
@@ -48,6 +59,7 @@
           <span class="obs-counter obs-counter-time"><em id="obs-updated">…</em></span>
         </div>
         <div style="display: flex; align-items: center; gap: 10px; margin-left: 18px;">
+          <button class="obs-icon-btn" id="obs-labels-toggle" type="button" title="Подписи: по щелчку на сущность">🗺</button>
           <button class="obs-icon-btn" id="obs-refresh" type="button" title="Обновить сейчас">↻</button>
           <a class="obs-icon-btn" href="agents.html" title="Флот в море — оперативная таблица">⛵</a>
           <a class="obs-icon-btn" href="world-map.html?v=12" title="Карта мира">🗺</a>
@@ -70,6 +82,7 @@
       <p id="obs-card-task" class="obs-card-task"></p>
       <div id="obs-card-metrics" class="obs-card-metrics"></div>
       <div id="obs-card-lanes" class="obs-card-lanes"></div>
+      <div id="obs-card-actions" class="obs-verdict-btns"></div>
       <div id="obs-card-tape" class="obs-card-tape"></div>
     </aside>
 
@@ -79,8 +92,12 @@
       <ul id="obs-tape-list"></ul>
     </section>
 
+    <!-- Соломон: экскурсовод карты — щёлкни и получишь пояснение сущностей -->
+    <button id="obs-solomon" class="obs-solomon" type="button" title="Соломон — пояснить, что за сущности на карте">🧙</button>
+
   </main>
 
-  <script src="observatory.js?v=2"></script>
+  <script src="observatory.js?v=6"></script>
+  <script src="nav-dock.js?v=6"></script>
 </body>
 </html>
