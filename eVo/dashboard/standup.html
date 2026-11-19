@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Зал заседаний · Штаб Эво</title>
+<link rel="icon" href="assets/logo-core.png">
+<style>
+:root{
+  --bg:#0b0f1a; --panel:rgba(255,255,255,.045); --panel2:rgba(255,255,255,.07);
+  --line:rgba(255,255,255,.09); --txt:#e8ecf4; --dim:#8b93a7;
+  --cyan:#22d3ee; --violet:#a78bfa; --mint:#34d399; --amber:#fbbf24; --red:#f87171;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:"Segoe UI",system-ui,sans-serif;
+  overflow-x:hidden; min-height:100vh;
+}
+/* живой фон: два медленных полярных пятна + тонкая сетка */
+.bg{position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(60vw 40vh at 15% -5%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(50vw 35vh at 90% 8%, rgba(167,139,250,.09), transparent 60%),
+    linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size:auto,auto,44px 44px,44px 44px;
+  animation:drift 26s ease-in-out infinite alternate;
+}
+@keyframes drift{from{background-position:0 0,0 0,0 0,0 0}to{background-position:40px 18px,-30px 24px,0 0,0 0}}
+main{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:20px 22px 60px}
+
+/* ── шапка ── */
+header{display:flex; align-items:center; gap:14px; padding:6px 0 18px}
+.core{width:44px; height:44px; border-radius:50%; object-fit:cover;
+  box-shadow:0 0 18px rgba(34,211,238,.45), 0 0 42px rgba(167,139,250,.2);
+  animation:corepulse 3.2s ease-in-out infinite}
+@keyframes corepulse{0%,100%{box-shadow:0 0 14px rgba(34,211,238,.35)}50%{box-shadow:0 0 26px rgba(34,211,238,.6),0 0 60px rgba(167,139,250,.35)}}
+h1{font-size:20px; letter-spacing:.14em; text-transform:uppercase; font-weight:600}
+h1 b{color:var(--cyan); font-weight:600}
+.sub{font-size:12px; color:var(--dim); margin-top:2px}
+.phase{margin-left:auto; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  padding:7px 14px; border-radius:999px; border:1px solid var(--line); color:var(--dim)}
+.phase.live{color:var(--mint); border-color:rgba(52,211,153,.4); animation:chipPulse 2s infinite}
+.phase.done{color:var(--cyan); border-color:rgba(34,211,238,.4)}
+@keyframes chipPulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* ── прогресс ── */
+.pbar{height:3px; border-radius:3px; background:rgba(255,255,255,.06); overflow:hidden; margin-bottom:18px}
+.pbar i{display:block; height:100%; width:0; border-radius:3px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet),var(--mint));
+  background-size:200% 100%; animation:flow 2.4s linear infinite; transition:width .8s cubic-bezier(.2,.8,.2,1)}
+@keyframes flow{from{background-position:0 0}to{background-position:200% 0}}
+.plabel{font-size:11px; color:var(--dim); margin:-12px 0 14px 2px}
+
+/* ── Бэрримор ── */
+.chair{display:flex; gap:14px; align-items:flex-start; background:var(--panel);
+  border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:22px;
+  backdrop-filter:blur(8px); position:relative; overflow:hidden}
+.chair::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:linear-gradient(var(--violet),var(--cyan)); opacity:.8}
+.chair .av{font-size:30px; filter:drop-shadow(0 0 10px rgba(167,139,250,.5));
+  animation:bow 4.5s ease-in-out infinite; transform-origin:bottom center}
+@keyframes bow{0%,100%{transform:rotate(0)}6%{transform:rotate(9deg)}12%{transform:rotate(0)}}
+.chair .who{font-size:12px; color:var(--violet); letter-spacing:.12em; text-transform:uppercase; margin-bottom:4px}
+.chair .speech{font-size:14.5px; line-height:1.55; user-select:text; transition:opacity .4s}
+.speech.fade{opacity:0}
+
+/* ── зал ── */
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:14px}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:15px 16px;
+  backdrop-filter:blur(8px); position:relative; overflow:hidden; user-select:text;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .35s}
+.card:hover{transform:translateY(-2px); border-color:rgba(34,211,238,.35); box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.card.speaking{border-color:rgba(34,211,238,.55); animation:speakRing 1.6s ease-in-out infinite}
+@keyframes speakRing{0%,100%{box-shadow:0 0 0 0 rgba(34,211,238,.28)}50%{box-shadow:0 0 0 7px rgba(34,211,238,0)}}
+.card.done{border-color:rgba(52,211,153,.28)}
+.card.blocked{border-color:rgba(251,191,36,.4)}
+.card .top{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+.card .emo{font-size:26px}
+.card.speaking .emo{animation:emoShake 1.2s ease-in-out infinite}
+@keyframes emoShake{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.card .nm{font-weight:600; font-size:15px}
+.card .rl{font-size:11px; color:var(--dim); margin-top:1px}
+.st{margin-left:auto; font-size:10px; letter-spacing:.1em; text-transform:uppercase; padding:5px 10px; border-radius:999px; border:1px solid var(--line); color:var(--dim)}
+.st.speaking{color:var(--cyan); border-color:rgba(34,211,238,.5)}
+.st.done{color:var(--mint); border-color:rgba(52,211,153,.45)}
+.st.blocked{color:var(--amber); border-color:rgba(251,191,36,.45)}
+/* скелетон ожидания */
+.skel{border-radius:6px; background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.11) 50%,rgba(255,255,255,.05) 75%);
+  background-size:200% 100%; animation:shim 1.6s linear infinite; height:12px; margin-top:8px}
+@keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
+.card .rep{font-size:13.5px; line-height:1.6; color:#cfd6e4; white-space:pre-wrap;
+  animation:arrive .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes arrive{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+.nums{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+.num{font-size:11px; padding:4px 9px; border-radius:8px; background:var(--panel2); border:1px solid var(--line); color:#aab3c7}
+.num b{color:var(--cyan); font-weight:600}
+.nxt{margin-top:11px; font-size:12px; color:var(--dim); border-top:1px dashed var(--line); padding-top:9px}
+.nxt b{color:var(--mint); font-weight:600; letter-spacing:.06em}
+
+footer{margin-top:26px; text-align:center; font-size:11px; color:var(--dim)}
+a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<main>
+  <header>
+    <img class="core" src="assets/logo-core.png" alt="">
+    <div>
+      <h1>Зал <b>заседаний</b></h1>
+      <div class="sub" id="sub">Стоячий стендап штата Эво · регламент: 2 минуты на доклад</div>
+    </div>
+    <div class="phase live" id="phase">СЕАНС ИДЁТ</div>
+  </header>
+
+  <div class="pbar"><i id="pfill"></i></div>
+  <div class="plabel" id="plabel">зал готовится…</div>
+
+  <div class="chair">
+    <div class="av">🎩</div>
+    <div>
+      <div class="who">Бэрримор · за стулом заседаний</div>
+      <div class="speech" id="speech"></div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <footer>Штаб Эво · <a href="command-center.html">← в штаб</a></footer>
+</main>
+
+<script>
+const LBL = {waiting:"ГОТОВИТСЯ", speaking:"ДОКЛАДЫВАЕТ", done:"ДОЛОЖИЛ", blocked:"БЛОКЕР"};
+const STATUS_CHIP = {waiting:"", speaking:"speaking", done:"done", blocked:"blocked"};
+let prev = null;
+
+function cardHTML(a){
+  const st = a.state;
+  let body;
+  if (st === "waiting") {
+    body = '<div class="skel" style="width:86%"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:78%"></div>';
+  } else {
+    const nums = (a.numbers||[]).map(n=>`<span class="num">${n.label}: <b>${n.value}</b></span>`).join("");
+    body = `<div class="rep">${a.report}</div>`
+      + (nums?`<div class="nums">${nums}</div>`:"")
+      + (a.next?`<div class="nxt"><b>Дальше:</b> ${a.next}</div>`:"");
+  }
+  return `<div class="top">
+      <div class="emo">${a.emoji}</div>
+      <div><div class="nm">${a.name}</div><div class="rl">${a.role}</div></div>
+      <span class="st ${st==="waiting"?"":st}">${LBL[st]||st}</span>
+    </div>${body}`;
+}
+
+function render(d){
+  // шапка фазы
+  const ph = document.getElementById("phase");
+  if (d.meta.phase === "closed") { ph.textContent = "СЕАНС ЗАКРЫТ"; ph.className = "phase done"; }
+  else { ph.textContent = "СЕАНС ИДЁТ"; ph.className = "phase live"; }
+
+  // реплика Бэрримора (fade при смене)
+  const sp = document.getElementById("speech");
+  const cur = d.meta.phase === "closed" ? d.chair_speech.close
+            : (d.chair_speech.current || d.chair_speech.open);
+  if (sp.textContent !== cur) { sp.classList.add("fade"); setTimeout(()=>{ sp.textContent = cur; sp.classList.remove("fade"); }, 380); }
+
+  // зал с диффом — не трогаем карточки, которые не изменились (выделение текста живёт)
+  const grid = document.getElementById("grid");
+  const cards = d.agents;
+  // выравниваем количество
+  while (grid.children.length > cards.length) grid.lastChild.remove();
+  cards.forEach((a,i)=>{
+    let el = grid.children[i];
+    const html = cardHTML(a);
+    if (!el) { el = document.createElement("div"); el.className = "card"; grid.appendChild(el); }
+    const sig = a.state + "|" + a.report + "|" + JSON.stringify(a.numbers) + "|" + a.next;
+    if (el.dataset.sig !== sig) {
+      el.dataset.sig = sig;
+      el.className = "card " + (STATUS_CHIP[a.state]||"");
+      el.innerHTML = html;
+    }
+  });
+
+  // прогресс
+  const done = cards.filter(a=>a.state==="done"||a.state==="blocked").length;
+  document.getElementById("pfill").style.width = (100*done/cards.length) + "%";
+  document.getElementById("plabel").textContent =
+    d.meta.phase === "closed" ? `заседание закрыто · доложили ${done} из ${cards.length}`
+    : done === 0 ? "зал готовится, докладчики за досье…"
+    : `доложили ${done} из ${cards.length}`;
+}
+
+async function tick(){
+  try{
+    const r = await fetch("standup-data.json?v=" + Date.now());
+    const d = await r.json();
+    if (JSON.stringify(d) !== prev) { prev = JSON.stringify(d); render(d); }
+  }catch(e){}
+}
+tick();
+setInterval(tick, 4000);
+</script>
+</body>
+</html>

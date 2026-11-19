@@ -13,6 +13,7 @@
   var DOORS = [
     ['🏰', 'Estate — карта островов', 'index.html'],
     ['🎛', 'Штаб — Бэрримор', 'command-center.html'],
+    ['🏛', 'Правление — совет управляющих', 'council.html'],
     ['🗺', 'Карта денег — путь к аренде', 'money-map.html'],
     ['🌀', 'Обсерватория — канбан приёмки', 'maelstorm-observatory.html'],
     ['🧙', 'Соломон — советник по ценности', 'solomon.html'],

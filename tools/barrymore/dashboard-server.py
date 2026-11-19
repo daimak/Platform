@@ -26,6 +26,14 @@ ROOT = Path(__file__).resolve().parents[2]
 DASHBOARD = ROOT / "eVo" / "dashboard"
 AGENT = ROOT / "tools" / "barrymore" / "morning-brief-agent.py"
 PORT = 8765
+# Зал правления (council.html): состав и протоколы собраний — в git,
+# Memory/Council. Пишут и кнопки CEO-0 из зала, и диспетчер диспута.
+COUNCIL_DIR = ROOT / "Memory" / "Council"
+COUNCIL_MEETINGS_DIR = COUNCIL_DIR / "meetings"
+COUNCIL_PHASES = ("созвано", "доклады", "возражения", "сводка", "вердикты", "закрыто")
+COUNCIL_VERDICTS = ("принято", "доработка", "отклонено", "на моё решение")
+# Рука Бэрримова: диспут правления через шлюз :31415 (tools/agents/council_dispatch.py).
+COUNCIL_DISPATCH = ROOT / "tools" / "agents" / "council_dispatch.py"
 
 
 def _load_internal_plugin():
@@ -64,6 +72,15 @@ TASK_LOCK = threading.Lock()
 HUNTER_LOCK = threading.Lock()
 USAGE_LOCK = threading.Lock()
 VERDICTS_LOCK = threading.Lock()  # приёмка рейсов Дмитрия (voyage-verdicts.jsonl)
+COUNCIL_LOCK = threading.Lock()  # протоколы правления (Memory/Council/meetings/)
+COUNCIL_RUN_LOCK = threading.Lock()  # статус прогона диспута (один за раз)
+COUNCIL_RUN_STATE = {
+    "running": False,
+    "started_at": None,
+    "finished_at": None,
+    "meeting_id": None,
+    "returncode": None,
+}
 SECURITY_LOCK = threading.Lock()
 REPORTS_LOCK = threading.Lock()
 HOLMES_RUN_LOCK = threading.Lock()
@@ -802,6 +819,25 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 logging.exception("Darkwatch snapshot failed")
                 self._send_json(500, {"error": f"Не удалось собрать тёмный радар: {error}"})
             return
+        if request_path == "/api/council":
+            # Зал правления: состав + сводка собраний (council.html).
+            try:
+                self._send_json(200, council_board())
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                logging.exception("Council board read failed")
+                self._send_json(500, {"error": f"Не удалось собрать правление: {error}"})
+            return
+        council_route = re.fullmatch(r"/api/council/([0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{1,3})", request_path)
+        if council_route:
+            # Полный протокол одного собрания.
+            try:
+                self._send_json(200, council_meeting(council_route.group(1)))
+            except ValueError as error:
+                self._send_json(404, {"error": str(error)})
+            except (OSError, json.JSONDecodeError) as error:
+                logging.exception("Council meeting read failed")
+                self._send_json(500, {"error": f"Не удалось прочитать протокол: {error}"})
+            return
         super().do_GET()
 
     def _read_json_body(self) -> dict:
@@ -862,7 +898,19 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         security_route = "/api/security/check"
         security_targets_route = "/api/security/targets"
         holmes_implement_route = "/api/holmes/implement"
-        body_routes = {"/api/ai-usage/snapshots", "/api/ai-usage/settings", "/api/tokens/budget", "/api/voyages/verdict"}
+        body_routes = {
+            "/api/ai-usage/snapshots",
+            "/api/ai-usage/settings",
+            "/api/tokens/budget",
+            "/api/voyages/verdict",
+            "/api/council/convene",
+            "/api/council/report",
+            "/api/council/summary",
+            "/api/council/edit",
+            "/api/council/verdict",
+            "/api/council/status",
+            "/api/council/run",
+        }
         sandbox_run_route = "/api/sandbox/run"
         bodyless_routes = {
             "/api/refresh-brief",
@@ -926,6 +974,46 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             except OSError as error:
                 logging.exception("Voyage verdict write failed")
                 self._send_json(500, {"error": "Не удалось записать вердикт: " + str(error)})
+                return
+            self._send_json(200, result)
+            return
+
+        if request_path.startswith("/api/council/"):
+            # Зал правления: кнопки CEO-0 (council.html). Диспетчер диспута
+            # пишет доклады/возражения/сводки теми же роутами.
+            try:
+                payload = self._read_json_body()
+            except (ValueError, json.JSONDecodeError):
+                self._send_json(400, {"error": "Некорректное JSON-тело."})
+                return
+            action = request_path[len("/api/council/"):]
+            try:
+                # Локи берут сами council_* (threading.Lock не реентерабельный —
+                # внешний захват с внутренним даёт дедлок, проверено боем 15.11).
+                if action == "convene":
+                    result = council_convene(payload.get("topic") or "", payload.get("agenda") or [], payload.get("attendees") or [])
+                elif action == "report":
+                    result = council_report(str(payload.get("id") or ""), str(payload.get("agent") or ""), payload.get("point"), str(payload.get("text") or ""), payload.get("round"))
+                elif action == "summary":
+                    result = council_summary(str(payload.get("id") or ""), str(payload.get("agent") or ""), str(payload.get("text") or ""))
+                elif action == "edit":
+                    result = council_edit(str(payload.get("id") or ""), payload.get("point"), str(payload.get("text") or ""))
+                elif action == "verdict":
+                    result = council_verdict(str(payload.get("id") or ""), payload.get("point"), str(payload.get("verdict") or ""), str(payload.get("note") or ""))
+                elif action == "status":
+                    result = council_status(str(payload.get("id") or ""), str(payload.get("phase") or ""))
+                elif action == "run":
+                    # Рука Бэрримова: диспут через шлюз :31415 в фоновом потоке.
+                    result = council_run_start(payload.get("id"))
+                else:
+                    self._send_json(404, {"error": "Неизвестное действие правления."})
+                    return
+            except ValueError as error:
+                self._send_json(400, {"error": str(error)})
+                return
+            except (OSError, json.JSONDecodeError) as error:
+                logging.exception("Council write failed")
+                self._send_json(500, {"error": "Не удалось записать протокол: " + str(error)})
                 return
             self._send_json(200, result)
             return
@@ -2460,6 +2548,237 @@ def voyage_verdict_append(by: str, finished_at: str, verdict: str) -> dict:
     with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(row, ensure_ascii=False) + "\n")
     return {"ok": True, "by": by, "finished_at": finished_at, "verdict": verdict}
+
+
+def _council_meeting_path(meeting_id: str) -> Path:
+    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{1,3}", meeting_id):
+        raise ValueError("Некорректный идентификатор собрания.")
+    return COUNCIL_MEETINGS_DIR / f"{meeting_id}.json"
+
+
+def _council_read(meeting_id: str) -> dict:
+    path = _council_meeting_path(meeting_id)
+    if not path.is_file():
+        raise ValueError("Собрание не найдено: " + meeting_id)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("Протокол собрания повреждён.")
+    return data
+
+
+def _council_write(meeting: dict) -> None:
+    path = _council_meeting_path(str(meeting.get("id", "")))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(meeting, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _council_point(point, agenda: list) -> int:
+    try:
+        point = int(point)
+    except (TypeError, ValueError):
+        raise ValueError("point должен быть номером пункта повестки.")
+    if not (0 <= point < len(agenda)):
+        raise ValueError("Пункт повестки вне диапазона.")
+    return point
+
+
+def council_board() -> dict:
+    """Агрегат GET /api/council: состав правления + сводка собраний (новые сверху)."""
+    board_path = COUNCIL_DIR / "board.json"
+    board = json.loads(board_path.read_text(encoding="utf-8")) if board_path.is_file() else {"members": []}
+    meetings = []
+    if COUNCIL_MEETINGS_DIR.is_dir():
+        for path in sorted(COUNCIL_MEETINGS_DIR.glob("*.json"), reverse=True):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            agenda = data.get("agenda", [])
+            meetings.append({
+                "id": data.get("id", path.stem),
+                "topic": data.get("topic", ""),
+                "phase": data.get("phase", ""),
+                "created": data.get("created", ""),
+                "points": len(agenda),
+                "verdicts": sum(1 for point in agenda if point.get("verdict")),
+                "attendees": data.get("attendees", []),
+            })
+    return {"board": board, "meetings": meetings, "dispatch": dict(COUNCIL_RUN_STATE)}
+
+
+def council_meeting(meeting_id: str) -> dict:
+    """GET /api/council/<id>: полный протокол одного собрания."""
+    return _council_read(meeting_id)
+
+
+def council_convene(topic: str, agenda_titles, attendees) -> dict:
+    """Созыв собрания правления (кнопка CEO-0 в зале council.html)."""
+    topic = str(topic).strip()
+    titles = [str(item).strip() for item in agenda_titles if str(item).strip()]
+    if not topic or len(topic) > 200:
+        raise ValueError("Нужна тема собрания (1–200 знаков).")
+    if not titles:
+        raise ValueError("Повестка пуста — нужны пункты.")
+    attendees = list(dict.fromkeys(str(item).strip() for item in attendees if str(item).strip()))
+    if not attendees:
+        raise ValueError("Нужен хотя бы один участник.")
+    board_path = COUNCIL_DIR / "board.json"
+    board = json.loads(board_path.read_text(encoding="utf-8")) if board_path.is_file() else {"members": []}
+    # Модератор и протоколист присутствуют всегда — без них нет диспута и протокола.
+    if board.get("moderator") and board["moderator"] not in attendees:
+        attendees.append(board["moderator"])
+    if board.get("secretary") and board["secretary"] not in attendees:
+        attendees.append(board["secretary"])
+    known = {member.get("id") for member in board.get("members", [])}
+    unknown = [item for item in attendees if item not in known]
+    if unknown:
+        raise ValueError("Неизвестные участники: " + ", ".join(unknown))
+    stamp = datetime.now().strftime("%Y-%m-%d")
+    index = 1
+    while (COUNCIL_MEETINGS_DIR / f"{stamp}-{index}.json").is_file():
+        index += 1
+    meeting = {
+        "id": f"{stamp}-{index}",
+        "created": _utc_now_iso(),
+        "topic": topic,
+        "phase": "созвано",
+        "phases": list(COUNCIL_PHASES),
+        "attendees": attendees,
+        "moderator": board.get("moderator", "solomon"),
+        "secretary": board.get("secretary", "barrymore"),
+        "agenda": [
+            {"title": title, "reports": [], "objections": [], "ceo_edit": None, "verdict": None}
+            for title in titles
+        ],
+        "summary": [],
+        "log": [{"ts": _utc_now_iso(), "event": "Собрание созвано CEO-0. Диспут не начат."}],
+    }
+    _council_write(meeting)
+    return {"ok": True, "id": meeting["id"]}
+
+
+def council_report(meeting_id: str, agent: str, point, text: str, round_no) -> dict:
+    """Выступление участника по пункту: раунд 1 — доклад, раунд 2 — возражение."""
+    text = str(text).strip()
+    if not text or len(text) > 4000:
+        raise ValueError("Нужен текст выступления (1–4000 знаков).")
+    with COUNCIL_LOCK:
+        meeting = _council_read(meeting_id)
+        if agent not in meeting.get("attendees", []):
+            raise ValueError("Персона не в составе собрания: " + agent)
+        agenda = meeting.get("agenda", [])
+        point = _council_point(point, agenda)
+        if round_no == 1:
+            agenda[point].setdefault("reports", []).append({"agent": agent, "text": text, "ts": _utc_now_iso()})
+            event = f"Доклад ({agent}, пункт {point + 1})."
+        elif round_no == 2:
+            agenda[point].setdefault("objections", []).append({"agent": agent, "text": text, "ts": _utc_now_iso()})
+            event = f"Возражение ({agent}, пункт {point + 1})."
+        else:
+            raise ValueError("round должен быть 1 (доклад) или 2 (возражение).")
+        meeting.setdefault("log", []).append({"ts": _utc_now_iso(), "event": event})
+        _council_write(meeting)
+    return {"ok": True}
+
+
+def council_summary(meeting_id: str, agent: str, text: str) -> dict:
+    """Сводка модератора: совместные выводы, спорное — на решение CEO-0."""
+    text = str(text).strip()
+    if not text or len(text) > 6000:
+        raise ValueError("Нужен текст сводки (1–6000 знаков).")
+    with COUNCIL_LOCK:
+        meeting = _council_read(meeting_id)
+        if agent != meeting.get("moderator"):
+            raise ValueError("Сводку пишет только модератор собрания.")
+        meeting.setdefault("summary", []).append({"agent": agent, "text": text, "ts": _utc_now_iso()})
+        meeting.setdefault("log", []).append({"ts": _utc_now_iso(), "event": f"Сводка модератора ({agent})."})
+        _council_write(meeting)
+    return {"ok": True}
+
+
+def council_edit(meeting_id: str, point, text: str) -> dict:
+    """Правка CEO-0 к пункту повестки (вносится между раундами)."""
+    text = str(text).strip()
+    if not text or len(text) > 4000:
+        raise ValueError("Нужен текст правки (1–4000 знаков).")
+    with COUNCIL_LOCK:
+        meeting = _council_read(meeting_id)
+        agenda = meeting.get("agenda", [])
+        point = _council_point(point, agenda)
+        agenda[point]["ceo_edit"] = {"text": text, "ts": _utc_now_iso()}
+        meeting.setdefault("log", []).append({"ts": _utc_now_iso(), "event": f"Правка CEO-0 к пункту {point + 1}."})
+        _council_write(meeting)
+    return {"ok": True}
+
+
+def council_verdict(meeting_id: str, point, verdict: str, note: str) -> dict:
+    """Вердикт CEO-0 по пункту: принято / доработка / отклонено / на моё решение."""
+    verdict = str(verdict).strip()
+    if verdict not in COUNCIL_VERDICTS:
+        raise ValueError("verdict должен быть одним из: " + ", ".join(COUNCIL_VERDICTS))
+    note = str(note).strip()[:1000]
+    with COUNCIL_LOCK:
+        meeting = _council_read(meeting_id)
+        agenda = meeting.get("agenda", [])
+        point = _council_point(point, agenda)
+        agenda[point]["verdict"] = {"verdict": verdict, "note": note, "ts": _utc_now_iso()}
+        meeting.setdefault("log", []).append({"ts": _utc_now_iso(), "event": f"Вердикт CEO-0 по пункту {point + 1}: {verdict}."})
+        _council_write(meeting)
+    return {"ok": True}
+
+
+def council_status(meeting_id: str, phase: str) -> dict:
+    """Смена фазы собрания (ведёт модератор или диспетчер)."""
+    if phase not in COUNCIL_PHASES:
+        raise ValueError("phase должен быть одним из: " + ", ".join(COUNCIL_PHASES))
+    with COUNCIL_LOCK:
+        meeting = _council_read(meeting_id)
+        meeting["phase"] = phase
+        meeting.setdefault("log", []).append({"ts": _utc_now_iso(), "event": f"Фаза собрания: {phase}."})
+        _council_write(meeting)
+    return {"ok": True}
+
+
+def council_run_start(meeting_id=None) -> dict:
+    """Рука Бэрримова: запуск диспута правления в фоне (council_dispatch.py).
+
+    Мотор — шлюз :31415 (план-токены CEO не тратятся). Один прогон за раз;
+    прогресс — GET /api/council → dispatch, лог — LOG_DIR/council-dispatch.log.
+    """
+    with COUNCIL_RUN_LOCK:
+        if COUNCIL_RUN_STATE["running"]:
+            raise ValueError("Бэрримов уже ведёт диспут — дождитесь завершения.")
+        if not meeting_id:
+            fresh = [m for m in council_board()["meetings"] if m.get("phase") in ("созвано", "доклады")]
+            if not fresh:
+                raise ValueError("Свежих собраний нет — сначала «Собрать собрание» в зале.")
+            meeting_id = fresh[0]["id"]
+        meeting = _council_read(meeting_id)
+        if meeting.get("phase") not in ("созвано", "доклады"):
+            raise ValueError("Диспут уже шёл — перезапуск только для свежего собрания.")
+        log_handle = (LOG_DIR / "council-dispatch.log").open("a", encoding="utf-8")
+        try:
+            proc = subprocess.Popen(
+                [sys.executable, "-I", str(COUNCIL_DISPATCH), "--id", meeting_id],
+                cwd=str(ROOT),
+                stdout=log_handle,
+                stderr=subprocess.STDOUT,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
+            )
+        except OSError:
+            log_handle.close()
+            raise
+        COUNCIL_RUN_STATE.update({"running": True, "started_at": _utc_now_iso(), "finished_at": None, "meeting_id": meeting_id, "returncode": None})
+
+        def watcher() -> None:
+            code = proc.wait()
+            log_handle.close()
+            with COUNCIL_RUN_LOCK:
+                COUNCIL_RUN_STATE.update({"running": False, "finished_at": _utc_now_iso(), "returncode": code})
+            logging.info("Council dispatch finished id=%s returncode=%s", meeting_id, code)
+
+        threading.Thread(target=watcher, daemon=True).start()
+        return {"ok": True, "id": meeting_id}
 
 
 def agents_history_snapshot(limit: int = 20, log_path=None) -> dict:

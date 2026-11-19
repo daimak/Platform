@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>eVo · Штаб Эво</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&family=Audiowide&family=Michroma&family=Exo+2:wght@700&family=Rajdhani:wght@700&family=Play:wght@700&family=Russo+One&family=Unica+One&family=Oswald:wght@600&family=Bebas+Neue&family=Monoton&family=Righteous&family=Pacifico&family=Lobster&family=Cinzel:wght@700&family=Cinzel+Decorative&family=Cormorant+Garamond:wght@600&family=Playfair+Display:wght@700&family=Abril+Fatface&family=Alfa+Slab+One&family=Bungee&family=Syncopate:wght@700&family=Major+Mono+Display&family=Rubik+Mono+One&family=Jura:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo-core.png">
+<style>
+:root{
+  --bg:#0b0f1a; --panel:rgba(255,255,255,.045); --panel2:rgba(255,255,255,.07);
+  --line:rgba(255,255,255,.09); --txt:#e8ecf4; --dim:#8b93a7;
+  --cyan:#22d3ee; --violet:#a78bfa; --mint:#34d399; --amber:#fbbf24; --red:#f87171; --slate:#64748b;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--txt); font-family:"Segoe UI",system-ui,sans-serif; min-height:100vh}
+.bg{position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(60vw 40vh at 15% -5%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(50vw 35vh at 90% 8%, rgba(167,139,250,.09), transparent 60%)}
+/* ─── живой фон: цифровая карта мира с потоками ─── */
+.world{position:absolute; inset:0; width:100%; height:100%}
+.cont{fill:rgba(148,163,184,.05); stroke:rgba(148,163,184,.19); stroke-width:1.2; stroke-linejoin:round}
+.flow{fill:none; stroke-width:1.6; stroke-linecap:round; stroke-dasharray:5 14;
+  animation:dash 11s linear infinite; opacity:.5}
+.flow.f1{stroke:#22d3ee; animation-duration:10s}
+.flow.f2{stroke:#a78bfa; animation-duration:14s; animation-direction:reverse}
+.flow.f3{stroke:#34d399; animation-duration:13s}
+.flow.f4{stroke:#fbbf24; animation-duration:16s; animation-direction:reverse}
+.flow.f5{stroke:#22d3ee; animation-duration:12s; opacity:.4}
+@keyframes dash{to{stroke-dashoffset:-190}}
+.hub{fill:#8b93a7; opacity:.55}
+.hub.tash{fill:#fbbf24; opacity:.9; animation:hubpulse 2.8s ease-in-out infinite}
+@keyframes hubpulse{0%,100%{opacity:.9}50%{opacity:.4}}
+.wind{fill:none; stroke:rgba(148,163,184,.15); stroke-width:1.2; stroke-linecap:round;
+  stroke-dasharray:32 88; animation:dash 26s linear infinite}
+.vortex{fill:none; stroke:#22d3ee; stroke-width:1.4; stroke-linecap:round; opacity:.3;
+  stroke-dasharray:60 18; animation:dash 20s linear infinite}
+/* ─── картография XV века ─── */
+.sea{fill:none; stroke:rgba(148,163,184,.24); stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round}
+.incog{fill:none; stroke:rgba(167,139,250,.32); stroke-width:1.1; stroke-dasharray:4 5; stroke-linejoin:round}
+.current{fill:none; stroke-width:1; stroke-dasharray:2 9; stroke-linecap:round; animation:dash 48s linear infinite; opacity:.7}
+.current.c1{stroke:#22d3ee}
+.current.c2{stroke:#a78bfa; animation-duration:64s; animation-direction:reverse}
+.current.c3{stroke:#34d399; animation-duration:52s}
+.current.c4{stroke:#22d3ee; animation-duration:56s; animation-direction:reverse}
+.sealabel{font-family:Georgia,'Times New Roman',serif; font-style:italic; letter-spacing:.28em;
+  fill:rgba(148,163,184,.32); font-size:11px}
+.rose{fill:none; stroke:rgba(148,163,184,.28); stroke-width:1}
+.rose-fill{fill:rgba(34,211,238,.08); stroke:rgba(148,163,184,.35); stroke-width:1; stroke-linejoin:round}
+main{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:20px 22px 60px; user-select:text}
+header{display:flex; align-items:center; gap:14px; padding:6px 0 18px; position:relative;
+  left:max(-10%, calc((100% - 100vw)/2 + 36px))}
+.core{width:44px; height:44px; border-radius:50%; object-fit:cover;
+  box-shadow:0 0 18px rgba(34,211,238,.45); animation:corepulse 3.2s ease-in-out infinite}
+@keyframes corepulse{0%,100%{box-shadow:0 0 14px rgba(34,211,238,.35)}50%{box-shadow:0 0 26px rgba(34,211,238,.6)}}
+h1{font-size:20px; letter-spacing:.14em; text-transform:uppercase; font-weight:600}
+h1 b{color:var(--cyan); font-weight:600}
+/* ─── брендовый знак «eVo» ─── */
+.brand{display:flex; flex-direction:column; line-height:1; user-select:text}
+.b-main{font-family:"Orbitron", "Segoe UI", system-ui, sans-serif; font-size:33px; font-weight:800; letter-spacing:.08em;
+  background:linear-gradient(100deg, #7dd3fc 0%, #22d3ee 28%, #a78bfa 62%, #f0abfc 85%, #22d3ee 100%);
+  background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:brandslide 7s linear infinite, brandglow 4.5s ease-in-out infinite}
+@keyframes brandslide{to{background-position:200% 0}}
+@keyframes brandglow{0%,100%{filter:drop-shadow(0 0 6px rgba(34,211,238,.25))}50%{filter:drop-shadow(0 0 14px rgba(167,139,250,.45))}}
+/* ─── шрифтовой загашник ─── */
+.brand{cursor:pointer}
+.brand:hover .b-main{filter:drop-shadow(0 0 12px rgba(34,211,238,.5))}
+.fpanel{position:fixed; top:72px; right:20px; width:320px; max-height:64vh; overflow:auto; z-index:50;
+  background:rgba(13,18,29,.94); border:1px solid var(--line); border-radius:14px; padding:10px;
+  backdrop-filter:blur(12px); box-shadow:0 24px 60px rgba(0,0,0,.55); animation:arrive .3s cubic-bezier(.2,.8,.2,1)}
+.fp-title{font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); padding:4px 8px 9px}
+.fitem{display:block; width:100%; text-align:left; background:none; border:1px solid transparent; border-radius:10px;
+  padding:8px 12px; color:var(--txt); cursor:pointer; font-size:21px; line-height:1.25;
+  transition:border-color .15s, background .15s}
+.fitem:hover{border-color:rgba(34,211,238,.4); background:rgba(34,211,238,.05)}
+.fitem.on{border-color:rgba(34,211,238,.75); background:rgba(34,211,238,.08)}
+.fitem .fsub{display:block; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--dim); font-family:"Segoe UI",system-ui,sans-serif; margin-top:1px}
+.sub{font-size:12px; color:var(--dim); margin-top:2px}
+.stamp{margin-left:auto; font-size:11px; color:var(--dim); border:1px solid var(--line); padding:6px 12px; border-radius:999px}
+
+/* ─────────── живая оргсхема ─────────── */
+.chartwrap{overflow-x:auto; padding-bottom:6px}
+.chart{position:relative; min-width:1060px; padding:6px 4px 2px}
+#edges{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+#edges path{fill:none; stroke:rgba(148,163,184,.4); stroke-width:1.6;
+  stroke-dasharray:5 7; animation:flowline 1.4s linear infinite; transition:stroke .3s, filter .3s}
+@keyframes flowline{to{stroke-dashoffset:-12}}
+#edges path.hot{stroke:var(--cyan); stroke-width:2.2; filter:drop-shadow(0 0 6px rgba(34,211,238,.6))}
+.crow{display:flex; justify-content:center; align-items:stretch; gap:22px; position:relative; z-index:1}
+.crow+.crow{margin-top:34px}
+#rowA{align-items:center}
+/* живой разброс: верх и низ разведены от центральной оси Дмитрия */
+#grp-adv{transform:translate(-80px,0)}
+#grp-auto{transform:translate(80px,0)}
+#grp-hq{transform:translate(-70px,-38px)}
+#grp-worlds{transform:translateY(-12px)}
+#grp-l5{transform:translate(60px,-80px)}
+.node{position:relative; background:rgba(13,18,29,.8); border:1px solid var(--line); border-radius:14px;
+  padding:10px 14px; text-align:center; cursor:pointer; backdrop-filter:blur(8px);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .25s;
+  opacity:0; transform:translateY(10px)}
+.node.on,.grp.on{opacity:1; transform:none}
+.node:hover{transform:translateY(-3px) !important; border-color:rgba(34,211,238,.6); box-shadow:0 10px 26px rgba(0,0,0,.4), 0 0 18px rgba(34,211,238,.15); z-index:3}
+.node .emo{font-size:24px; line-height:1}
+.node .nm{font-weight:600; font-size:13.5px; margin-top:4px}
+.node .rg{font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-top:2px}
+.node .dot{position:absolute; top:8px; right:8px; width:8px; height:8px; border-radius:50%}
+.dot.st-active{background:var(--mint); box-shadow:0 0 8px var(--mint); animation:blip 2s infinite}
+.dot.st-wait{background:var(--amber); box-shadow:0 0 8px var(--amber); animation:blip 1.2s infinite}
+.dot.st-sleep{background:var(--slate); box-shadow:0 0 6px rgba(100,116,139,.7)}
+.dot.st-pause{background:var(--amber); box-shadow:0 0 6px var(--amber)}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.45}}
+.node.ceo{border-color:rgba(34,211,238,.55); box-shadow:0 0 22px rgba(34,211,238,.18); padding:14px 26px}
+.node.ceo .emo{font-size:32px}
+.node.ceo .nm{font-size:16px}
+/* ─── атом CEO: ядро + ломаные орбиты с медленными сателлитами ─── */
+.atom{width:58px;height:58px;margin:0 auto;position:relative}
+.atom svg{position:absolute;inset:0;width:100%;height:100%}
+.atom .tr{fill:none;stroke:rgba(148,163,184,.5);stroke-width:1;stroke-linejoin:round}
+.atom i{position:absolute;display:block}
+.atom .nucleus{left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #a5f3fc, #22d3ee 45%, #7c3aed 100%);
+  box-shadow:0 0 12px rgba(34,211,238,.85), 0 0 28px rgba(124,58,237,.5);
+  animation:corepulse 2.6s ease-in-out infinite}
+.atom .sp{width:7px;height:7px;border-radius:50%;offset-rotate:0deg}
+.atom .sp1{background:#22d3ee;box-shadow:0 0 8px #22d3ee;
+  offset-path:path('M29,3 L44,10 Q54,17 52,27 L46,41 Q40,51 30,54 L13,47 Q4,41 4,29 L11,10 Z');
+  animation:travel 64s linear infinite}
+.atom .sp2{background:#a78bfa;box-shadow:0 0 8px #a78bfa;
+  offset-path:path('M29,7 L43,15 Q50,24 47,33 L37,46 Q27,52 17,45 L8,33 Q6,22 14,12 Z');
+  animation:travel 92s linear infinite reverse}
+.atom .sp3{background:#34d399;box-shadow:0 0 8px #34d399;
+  offset-path:path('M10,13 L30,4 Q42,6 52,15 L54,32 Q50,46 36,52 L15,47 Q4,38 5,25 Z');
+  animation:travel 118s linear infinite}
+@keyframes travel{from{offset-distance:0%}to{offset-distance:100%}}
+.grp{background:rgba(13,18,29,.72); border:1px solid var(--line); border-radius:14px;
+  padding:10px 12px 12px; min-width:190px; opacity:0; transform:translateY(10px);
+  backdrop-filter:blur(10px);
+  transition:transform .25s, border-color .25s; cursor:default}
+.grp.hot{border-color:rgba(34,211,238,.55); box-shadow:0 0 16px rgba(34,211,238,.12)}
+.grp .gl{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); text-align:center; margin-bottom:8px}
+.minis{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+.minis.one{grid-template-columns:1fr}
+.mini{background:rgba(13,18,29,.8); border:1px solid var(--line); border-radius:10px; padding:7px 9px;
+  display:flex; align-items:center; gap:8px; cursor:pointer; user-select:text;
+  transition:border-color .2s, background .2s, transform .2s; position:relative; opacity:0; transform:translateY(8px)}
+.mini.on{opacity:1; transform:none}
+.mini:hover{border-color:rgba(34,211,238,.6); background:rgba(34,211,238,.06); transform:translateX(2px); z-index:2}
+.mini .emo{font-size:17px}
+.mini .nm{font-size:12px; font-weight:600; white-space:nowrap}
+.mini .rr{font-size:9.5px; color:var(--dim); letter-spacing:.04em; margin-top:1px}
+.mini .dot{width:6px; height:6px; border-radius:50%; margin-left:auto; flex-shrink:0}
+/* панель деталей */
+.det{margin-top:16px; background:rgba(13,18,29,.72); border:1px solid var(--line); border-radius:14px;
+  padding:14px 18px; min-height:64px; opacity:0; transform:translateY(6px); transition:opacity .3s, transform .3s; user-select:text}
+.det.on{opacity:1; transform:none}
+.det .who{font-weight:600; font-size:15px}
+.det .chip{display:inline-block; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  border:1px solid var(--line); border-radius:999px; padding:3px 10px; margin-left:10px; color:var(--dim)}
+.det .busy{font-size:13px; color:#cfd6e4; margin-top:6px; line-height:1.5}
+.det .jump{margin-top:10px; display:inline-block; font-size:12px; color:var(--cyan); cursor:pointer; text-decoration:none}
+.det .jump:hover{text-decoration:underline}
+
+/* ─────────── тематическое меню ─────────── */
+@keyframes arrive{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+.mwrap{display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:10px}
+.mitem{display:flex; align-items:center; gap:11px; background:rgba(13,18,29,.72); border:1px solid var(--line);
+  border-radius:12px; padding:12px 14px; cursor:pointer; color:var(--txt); font-family:inherit; text-align:left; width:100%;
+  transition:transform .2s, border-color .2s, background .2s; backdrop-filter:blur(10px)}
+.mitem:hover{transform:translateY(-2px); border-color:rgba(34,211,238,.45)}
+.mitem.on{border-color:rgba(34,211,238,.7); background:rgba(34,211,238,.07); box-shadow:0 0 16px rgba(34,211,238,.1)}
+.mitem .mi{font-size:22px; line-height:1}
+.mitem .mt{font-size:13.5px; font-weight:600; line-height:1.25}
+.mitem .ms{font-size:10.5px; color:var(--dim); margin-top:2px}
+.mitem .cnt{margin-left:auto; font-size:11px; color:var(--cyan); border:1px solid rgba(34,211,238,.35); border-radius:999px; padding:2px 8px}
+.topic{margin-top:14px; background:rgba(13,18,29,.72); border:1px solid var(--line); border-radius:14px; padding:16px 18px;
+  backdrop-filter:blur(10px); animation:arrive .45s cubic-bezier(.2,.8,.2,1); user-select:text}
+.topic .th{display:flex; align-items:baseline; gap:10px; margin-bottom:12px; flex-wrap:wrap}
+.topic .th b{font-size:15px}
+.topic .th span{font-size:11px; color:var(--dim)}
+.tgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px}
+.tcard{background:rgba(255,255,255,.035); border:1px solid var(--line); border-radius:12px; padding:11px 13px;
+  transition:border-color .2s, transform .2s}
+.tcard:hover{border-color:rgba(34,211,238,.4); transform:translateY(-2px)}
+.tcard .tc-top{display:flex; align-items:center; gap:9px}
+.tcard .tc-emo{font-size:19px; line-height:1}
+.tcard .tc-nm{font-weight:600; font-size:13.5px}
+.tcard .tc-chip{margin-left:auto; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px;
+  border-radius:999px; border:1px solid var(--line); color:var(--dim); white-space:nowrap}
+.tcard .tc-reg{font-size:11px; color:var(--violet); margin:6px 0 4px}
+.tcard .tc-busy{font-size:12.5px; line-height:1.5; color:#cfd6e4}
+.bitem{display:flex; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line)}
+.bitem:last-child{border-bottom:none}
+.bitem .bn{flex-shrink:0; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:rgba(34,211,238,.12); color:var(--cyan); font-size:12px; font-weight:700; border:1px solid rgba(34,211,238,.3)}
+.bitem .bt{font-size:12.5px; line-height:1.55; color:#cfd6e4}
+.bitem .bt b{color:var(--txt)}
+.tnote{margin-top:10px; font-size:11px; color:var(--dim)}
+footer{margin-top:26px; text-align:center; font-size:11px; color:var(--dim)}
+a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="bg">
+  <svg class="world" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <!-- континенты (гладкие силуэты) -->
+    <path class="cont" d="M85,240 C110,190 170,163 240,155 C310,147 362,166 382,200 C396,228 370,250 385,270 C395,286 380,300 360,305 L371,330 C374,346 360,352 349,341 L334,321 C318,331 299,336 284,351 C264,371 250,401 241,431 C236,446 222,446 220,430 C218,400 205,371 185,351 C159,326 119,301 104,275 C94,262 82,254 85,240 Z"/>
+    <path class="cont" d="M470,85 C500,70 546,72 561,95 C573,116 561,141 535,151 C509,161 479,151 464,131 C454,116 457,95 470,85 Z"/>
+    <path class="cont" d="M355,430 C395,410 446,416 471,450 C491,480 486,521 466,561 C446,601 420,651 395,681 C380,699 364,691 361,671 C354,621 339,561 334,511 C331,476 340,445 355,430 Z"/>
+    <path class="cont" d="M760,300 C801,275 861,270 906,290 C941,306 961,331 956,361 C951,386 926,401 916,426 C906,456 896,501 876,541 C861,571 836,601 811,611 C791,618 778,601 775,576 C770,531 755,481 748,436 C742,396 738,340 760,300 Z"/>
+    <path class="cont" d="M690,235 C700,185 761,151 831,138 C901,125 1001,105 1101,101 C1201,97 1301,111 1376,141 C1441,166 1476,201 1463,236 C1451,266 1401,271 1361,286 C1321,301 1291,316 1251,319 C1201,323 1151,313 1101,319 C1051,325 1001,316 951,309 C901,301 851,296 801,281 C756,268 682,262 690,235 Z"/>
+    <path class="cont" d="M950,330 C981,320 1011,331 1016,356 C1021,381 1001,406 976,411 C956,413 946,396 943,376 C941,356 941,338 950,330 Z"/>
+    <path class="cont" d="M1080,330 C1106,322 1129,333 1131,356 C1133,383 1116,413 1099,429 C1086,439 1072,431 1068,411 C1064,386 1068,350 1080,330 Z"/>
+    <path class="cont" d="M1150,331 C1166,326 1179,336 1176,356 C1173,379 1161,401 1149,409 C1139,414 1133,401 1135,383 C1137,363 1141,341 1150,331 Z"/>
+    <path class="cont" d="M1396,206 C1413,191 1433,193 1441,211 C1448,229 1436,253 1419,263 C1406,269 1397,256 1396,239 C1395,226 1391,214 1396,206 Z"/>
+    <path class="cont" d="M742,175 C756,163 771,169 773,184 C775,199 763,211 751,207 C741,203 736,186 742,175 Z"/>
+    <path class="cont" d="M1160,471 C1181,463 1206,469 1211,483 C1214,495 1199,503 1181,499 C1166,495 1152,483 1160,471 Z"/>
+    <path class="cont" d="M1236,489 C1256,481 1279,487 1283,501 C1286,513 1269,521 1251,515 C1239,509 1229,497 1236,489 Z"/>
+    <path class="cont" d="M1331,591 C1361,569 1416,561 1461,576 C1501,591 1521,626 1506,661 C1491,693 1446,711 1401,706 C1359,701 1326,673 1319,639 C1314,616 1319,600 1331,591 Z"/>
+    <path class="cont" d="M1561,701 C1573,693 1583,701 1579,716 C1575,729 1563,739 1553,731 C1547,723 1553,709 1561,701 Z"/>
+    <!-- потоки между континентами -->
+    <path class="flow f1" d="M1040,240 Q900,130 757,190"/>
+    <path class="flow f2" d="M755,195 Q540,110 330,245"/>
+    <path class="flow f3" d="M330,245 Q220,170 120,235"/>
+    <path class="flow f4" d="M1040,240 Q1130,330 1140,460"/>
+    <path class="flow f5" d="M1140,460 Q1330,510 1480,670"/>
+    <!-- мягкие ветра -->
+    <path class="wind" d="M160,530 C300,500 420,548 560,518 C700,488 800,538 940,512"/>
+    <path class="wind" d="M950,640 C1090,610 1230,658 1370,628 C1440,614 1500,630 1545,618"/>
+    <path class="wind" d="M200,118 C340,94 480,140 620,112"/>
+    <path class="wind" d="M1230,180 C1310,164 1390,196 1470,182"/>
+    <!-- хабы -->
+    <circle class="hub tash" cx="1040" cy="240" r="3"/>
+    <circle class="hub" cx="755" cy="195" r="2.5"/>
+    <circle class="hub" cx="330" cy="245" r="2.5"/>
+    <circle class="hub" cx="120" cy="235" r="2.5"/>
+    <circle class="hub" cx="1140" cy="460" r="2.5"/>
+    <circle class="hub" cx="1480" cy="670" r="2.5"/>
+    <!-- водные течения -->
+    <path class="current c1" d="M335,292 C430,235 530,255 630,212"/>
+    <path class="current c2" d="M120,832 C400,800 700,852 1000,818 C1300,792 1450,832 1560,806"/>
+    <path class="current c3" d="M1418,262 C1468,320 1438,380 1482,432"/>
+    <path class="current c4" d="M388,478 C420,540 408,612 380,662"/>
+    <!-- роза ветров -->
+    <g transform="translate(280,800)">
+      <circle class="rose" r="46"/>
+      <circle class="rose" r="34" stroke-dasharray="3 7"/>
+      <g class="rose-fill">
+        <path d="M0,-46 L6,-7 0,0 -6,-7 Z"/>
+        <path transform="rotate(90)" d="M0,-46 L6,-7 0,0 -6,-7 Z"/>
+        <path transform="rotate(180)" d="M0,-46 L6,-7 0,0 -6,-7 Z"/>
+        <path transform="rotate(270)" d="M0,-46 L6,-7 0,0 -6,-7 Z"/>
+      </g>
+      <g class="rose" opacity=".8">
+        <g transform="rotate(45)"><path d="M0,-30 L4,-5 0,0 -4,-5 Z"/></g>
+        <g transform="rotate(135)"><path d="M0,-30 L4,-5 0,0 -4,-5 Z"/></g>
+        <g transform="rotate(225)"><path d="M0,-30 L4,-5 0,0 -4,-5 Z"/></g>
+        <g transform="rotate(315)"><path d="M0,-30 L4,-5 0,0 -4,-5 Z"/></g>
+      </g>
+      <g><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="240s" repeatCount="indefinite"/>
+        <circle r="53" class="rose" stroke-dasharray="2 10" opacity=".6"/></g>
+    </g>
+    <!-- морской змей -->
+    <g transform="translate(150,800)">
+      <path class="sea" d="M-58,0 C-44,-13 -30,13 -16,0 C-2,-13 12,13 26,0 C34,-8 42,-9 50,-14"/>
+      <circle class="sea" cx="54" cy="-16" r="4.5"/>
+      <circle cx="56" cy="-17.5" r="1" fill="rgba(148,163,184,.4)" stroke="none"/>
+      <path class="sea" d="M-30,-7 L-30,-16 M0,-8 L0,-17 M-50,6 L-50,13 M-20,9 L-20,16 M10,9 L10,16"/>
+    </g>
+    <!-- кракен -->
+    <g transform="translate(1240,762)">
+      <path class="sea" d="M-20,0 C-20,-16 20,-16 20,0"/>
+      <circle cx="-6" cy="-6" r="1.1" fill="rgba(148,163,184,.4)" stroke="none"/>
+      <circle cx="6" cy="-6" r="1.1" fill="rgba(148,163,184,.4)" stroke="none"/>
+      <path class="sea" d="M-18,0 C-24,10 -16,18 -22,26 M-10,0 C-12,12 -4,20 -8,28 M0,0 C2,12 -2,22 4,30 M10,0 C14,12 6,20 12,28 M18,0 C24,10 18,18 24,24"/>
+    </g>
+    <!-- острова-призраки (terra incognita) -->
+    <g class="incog"><path d="M660,795 C690,783 725,790 730,806 C733,820 705,830 678,824 C660,818 652,804 660,795 Z"/></g>
+    <g class="incog"><path d="M1500,168 C1525,158 1550,165 1553,180 C1555,193 1530,200 1508,194 C1494,188 1490,176 1500,168 Z"/></g>
+    <g class="incog"><path d="M1552,330 C1572,322 1590,330 1588,344 C1586,356 1568,362 1554,354 C1546,348 1546,338 1552,330 Z"/></g>
+    <!-- латынь старых карт -->
+    <text class="sealabel" x="1240" y="720" text-anchor="middle">HIC SVNT DRACONES</text>
+    <text class="sealabel" x="800" y="872" text-anchor="middle" style="letter-spacing:.5em">MARE INCOGNITVM</text>
+    <text class="sealabel" x="1490" y="300" text-anchor="middle" style="font-size:10px">TERRA INCOGNITA</text>
+    <!-- водоворот в южном океане -->
+    <g transform="translate(600,758)">
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="30s" repeatCount="indefinite"/>
+        <path class="vortex" d="M2,-40 A40,40 0 1,0 40,0 A33,31 0 1,1 -30,3 A24,24 0 1,0 21,20 A15,15 0 1,1 -13,-9 A8,8 0 1,0 6,7"/>
+      </g>
+    </g>
+  </svg>
+</div>
+<main>
+  <header>
+    <img class="core" src="assets/logo-core.png" alt="">
+    <div class="brand" id="brand" title="шрифтовой загашник">
+      <span class="b-main">eVo</span>
+    </div>
+    <div class="stamp" id="stamp" hidden></div>
+  </header>
+  <div class="fpanel" id="fpanel" hidden>
+    <div class="fp-title">шрифт знака · клик применяет</div>
+    <div id="flist"></div>
+  </div>
+
+  <div class="chartwrap"><div class="chart" id="chart">
+    <svg id="edges"></svg>
+    <div class="crow" id="rowA">
+      <div class="grp" id="grp-adv" data-lead="dmitri">
+        <div class="gl">Советники · прямая линия к CEO</div>
+        <div class="minis">
+          <div class="mini" data-id="solomon"><span class="emo">🧙</span><div><div class="nm">Соломон</div><div class="rr">CEO-1 · ценность</div></div><span class="dot st-wait"></span></div>
+          <div class="mini" data-id="rockefeller"><span class="emo">📊</span><div><div class="nm">Рокфеллер</div><div class="rr">CEO-2 · казна</div></div><span class="dot st-wait"></span></div>
+        </div>
+      </div>
+      <div class="node ceo" data-id="dmitri">
+        <span class="dot st-active"></span>
+        <div class="emo atom"><svg viewBox="0 0 58 58" aria-hidden="true">
+          <path class="tr" d="M29,3 L44,10 Q54,17 52,27 L46,41 Q40,51 30,54 L13,47 Q4,41 4,29 L11,10 Z"/>
+          <path class="tr" d="M29,7 L43,15 Q50,24 47,33 L37,46 Q27,52 17,45 L8,33 Q6,22 14,12 Z"/>
+          <path class="tr" d="M10,13 L30,4 Q42,6 52,15 L54,32 Q50,46 36,52 L15,47 Q4,38 5,25 Z"/>
+        </svg><i class="nucleus"></i><i class="sp sp1"></i><i class="sp sp2"></i><i class="sp sp3"></i></div>
+        <div class="nm">Дмитрий</div>
+        <div class="rg">CEO-0 · владелец</div>
+      </div>
+      <div class="grp" id="grp-auto" data-lead="dmitri">
+        <div class="gl">Внутренние сервисы · 5</div>
+        <div class="minis">
+          <div class="mini" data-id="steward"><span class="emo">🚨</span><div><div class="nm">Сторож</div><div class="rr">диагностика</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="devsecops"><span class="emo">📡</span><div><div class="nm">DevSecOps-радар</div><div class="rr">21:30</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="flradar"><span class="emo">🎣</span><div><div class="nm">FL-радар</div><div class="rr">пауза</div></div><span class="dot st-pause"></span></div>
+          <div class="mini" data-id="vitrinaping"><span class="emo">🏓</span><div><div class="nm">VitrinaPing</div><div class="rr">~15 мин</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="evofind"><span class="emo">🔍</span><div><div class="nm">evofind</div><div class="rr">по вызову</div></div><span class="dot st-sleep"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="crow" id="rowB">
+      <div class="node" data-id="barrymore">
+        <span class="dot st-active"></span>
+        <div class="emo">🎩</div>
+        <div class="nm">Бэрримор</div>
+        <div class="rg">CEO-1 · мажордом</div>
+      </div>
+    </div>
+    <div class="crow" id="rowC">
+      <div class="grp" id="grp-hq" data-lead="barrymore">
+        <div class="gl">Начальники служб · CEO-3</div>
+        <div class="minis">
+          <div class="mini" data-id="holmes"><span class="emo">🕵️</span><div><div class="nm">Холмс</div><div class="rr">сыск/ревизия</div></div><span class="dot st-wait"></span></div>
+          <div class="mini" data-id="watson"><span class="emo">🧪</span><div><div class="nm">Ватсон</div><div class="rr">память+Kali</div></div><span class="dot st-wait"></span></div>
+          <div class="mini" data-id="hunter"><span class="emo">🎯</span><div><div class="nm">Хантер</div><div class="rr">охота</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="bender"><span class="emo">🤖</span><div><div class="nm">Бендер</div><div class="rr">касса</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="riskscan"><span class="emo">🛡️</span><div><div class="nm">RiskScan</div><div class="rr">сканы</div></div><span class="dot st-sleep"></span></div>
+          <div class="mini" data-id="hephaestus"><span class="emo">⚒️</span><div><div class="nm">Гефест</div><div class="rr">AI Sandbox</div></div><span class="dot st-sleep"></span></div>
+        </div>
+      </div>
+      <div class="grp" id="grp-worlds" data-lead="barrymore">
+        <div class="gl">Капитаны миров · CEO-4</div>
+        <div class="minis">
+          <div class="mini" data-id="nemo"><span class="emo">⚓</span><div><div class="nm">Немо</div><div class="rr">Harbor</div></div><span class="dot st-sleep"></span></div>
+          <div class="mini" data-id="magellan"><span class="emo">🧭</span><div><div class="nm">Магеллан</div><div class="rr">Observatory</div></div><span class="dot st-sleep"></span></div>
+          <div class="mini" data-id="sindbad"><span class="emo">🌊</span><div><div class="nm">Синдбад</div><div class="rr">Market</div></div><span class="dot st-sleep"></span></div>
+          <div class="mini" data-id="paganel"><span class="emo">📚</span><div><div class="nm">Паганель</div><div class="rr">Archive</div></div><span class="dot st-sleep"></span></div>
+          <div class="mini" data-id="leonardo"><span class="emo">🎨</span><div><div class="nm">Леонардо</div><div class="rr">Study</div></div><span class="dot st-sleep"></span></div>
+          <div class="mini" data-id="melstorm"><span class="emo">🌪️</span><div><div class="nm">Мельсторм</div><div class="rr">3 острова</div></div><span class="dot st-sleep"></span></div>
+        </div>
+      </div>
+      <div class="grp" id="grp-l5" data-lead="barrymore">
+        <div class="gl">Специалисты · CEO-5</div>
+        <div class="minis">
+          <div class="mini" data-id="cyrus"><span class="emo">🔧</span><div><div class="nm">Сайрус Смит</div><div class="rr">Workshop</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="analyst"><span class="emo">📈</span><div><div class="nm">Аналитик</div><div class="rr">Analytics Cell</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="senku"><span class="emo">🥼</span><div><div class="nm">Сэнку</div><div class="rr">рецензент</div></div><span class="dot st-active"></span></div>
+          <div class="mini" data-id="cli"><span class="emo">🖥️</span><div><div class="nm">CLI-штат</div><div class="rr">5 агентов</div></div><span class="dot st-sleep"></span></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="det" id="det">
+    <div class="who" id="det-who">—</div>
+    <div class="busy" id="det-busy">Наведи курсор на ноду — линия её ветви подсветится. Клик — детали здесь и переход к строке табеля.</div>
+    <a class="jump" id="det-jump" hidden>открыть тему в меню →</a>
+  </div>
+
+  <div class="mwrap" id="mwrap"></div>
+  <div class="topic" id="topic"></div>
+  <footer>Штаб Эво · <a href="command-center.html">← в штаб</a> · <a href="standup.html">🎩 Зал заседаний</a></footer>
+</main>
+
+<script>
+/* ───── данные штата (источник: STAFF-TABLE.md) ───── */
+const STAFF = {
+  dmitri:{name:"Дмитрий", reg:"CEO-0 · CEO, владелец поместья", st:"active", lvl:"CEO-0", busy:"Стратегия и санкции: публикации, платежи, решения — всё через его руки."},
+  barrymore:{name:"Бэрримор", reg:"CEO-1 · мажордом, Chief of Staff", st:"active", lvl:"CEO-1", busy:"Вёл стендап 15.11; утренний доклад; сводит переписку агентов; протоколист Правления."},
+  solomon:{name:"Соломон", reg:"CEO-1 · верховный советник по ценности", st:"wait", lvl:"CEO-1", busy:"Вердикт С-1 «фокус-копьё»: все ресурсы на 4 денежных лейна до 04.12. Ждёт валидации CEO; модератор Правления."},
+  rockefeller:{name:"Рокфеллер", reg:"CEO-2 · советник направления, казна", st:"wait", lvl:"CEO-2", busy:"Дайджест казны 15.11: топливо 372,7/500 млн (75%), запас 31–47 дней; лейны собраны, ждут публикаций. Ждёт утверждения пилота."},
+  holmes:{name:"Холмс", reg:"CEO-3 · служба сыска и ревизии", st:"wait", lvl:"CEO-3", busy:"P0 auth-gate исправлен, но не закоммичен; 2 из 3 P1 открыты; журнал молчит 7 дней. Ждёт выбора Origin-фикса."},
+  watson:{name:"Ватсон", reg:"CEO-3 · служба памяти и полигона", st:"wait", lvl:"CEO-3", busy:"Полигоны П-2/П-3/П-7 здоровы; Kali VM чиста (0/100 портов). Ждёт слова на кампанию Juice Shop + старт Ф-1."},
+  hunter:{name:"Хантер", reg:"CEO-3 · внешний контур, охота за заказами", st:"active", lvl:"CEO-3", busy:"Волна 1 собрана: 3 кворка, OLX, Fiverr-гигы, база КП 30 — ждёт публикации. FL-радар на паузе."},
+  bender:{name:"Бендер", reg:"CEO-3 · внутренняя касса", st:"active", lvl:"CEO-3", busy:"Касса жива: 5 записей, первые реальные деньги 08.11 (20 000 сум). Хвосты: демо-чистка, ротация FINANCE_TOKEN."},
+  riskscan:{name:"RiskScan", reg:"CEO-3 · скан-служба", st:"sleep", lvl:"CEO-3", busy:"Прогон — по кнопке после содержательных правок; последний подтверждённый 04.11 (E-046)."},
+  hephaestus:{name:"Гефест", reg:"CEO-3 · мастерская AI Sandbox", st:"sleep", lvl:"CEO-3", busy:"Роль расписана, рантайма нет; контур фактически держит сервер Бэрримора."},
+  nemo:{name:"Немо", reg:"CEO-4 · капитан The Harbor", st:"sleep", lvl:"CEO-4", busy:"Гавань: входы/выходы наружу, корабли, allowlist. Паспорт и мир есть — ждёт первого слова CEO."},
+  magellan:{name:"Магеллан", reg:"CEO-4 · капитан Navigation Observatory", st:"sleep", lvl:"CEO-4", busy:"Разведка, карта целей, ранние предупреждения. Свод наблюдений пока тянет стендап, не он."},
+  sindbad:{name:"Синдбад", reg:"CEO-4 · капитан Sinbad Market", st:"sleep", lvl:"CEO-4", busy:"Рынок находок экспедиций; полевая разведка обсерватории. Экспедиций не назначалось."},
+  paganel:{name:"Паганель", reg:"CEO-4 · капитан Knowledge Archive", st:"sleep", lvl:"CEO-4", busy:"База знаний, каталогизация, навигационные документы. Каталог не ведётся."},
+  leonardo:{name:"Леонардо", reg:"CEO-4 · капитан Leonardo Study", st:"sleep", lvl:"CEO-4", busy:"Междисциплинарные исследования, изобретательство. Эксперимент «Карта Maelstorm» не начат."},
+  melstorm:{name:"Мельсторм", reg:"CEO-4 · капитан архипелага Maelstorm", st:"sleep", lvl:"CEO-4", busy:"Atlas Outpost + Life Tree Sanctuary + Maelstrom Observatory. Life Tree на консервации."},
+  cyrus:{name:"Сайрус Смит", reg:"CEO-5 · специалист Workshop", st:"active", lvl:"CEO-5", busy:"Первый рейс сдан 15.11: аудит git-гигиены — 5 пакетов коммитов с черновиками (хвост 19 путей)."},
+  analyst:{name:"Аналитик", reg:"CEO-5 · Analytics Cell", st:"active", lvl:"CEO-5", busy:"Паспорт написан; первый прогон «Пульс платформы 15.11» сдан: 10 цифр, 3 рекомендации CEO."},
+  senku:{name:"Сэнку", reg:"CEO-5 · гость-рецензент", st:"active", lvl:"CEO-5", busy:"Рецензия скрапер-контура сдана 15.11: вердикт «10 млрд % живо», топ-3 улучшений."},
+  cli:{name:"CLI-штат", reg:"CEO-5 · 5 приглашённых агентов", st:"sleep", lvl:"CEO-5", busy:"Пилот E-026 дал 2 находки P1. Держатся на подхвате по протоколу «задача → лейн → отчёт»."},
+  steward:{name:"Сторож", reg:"Внутренний сервис · автодиагностика дома", st:"active", lvl:"Автоматы", busy:"Обход 15.11: сервер 1/1, живых сессий 2. Куратор — Бэрримор."},
+  devsecops:{name:"DevSecOps-радар", reg:"Внутренний сервис · прочес вакансий", st:"active", lvl:"Автоматы", busy:"Ежедневный прочес вакансий в 21:30. Куратор — Хантер."},
+  flradar:{name:"FL-радар", reg:"Внутренний сервис · прочес заказов FL.ru", st:"pause", lvl:"Автоматы", busy:"ПАУЗА с 15.11 — ждёт включения руководителем проекта. ~23 заказа/день на последнем прогоне. Куратор — Хантер."},
+  vitrinaping:{name:"VitrinaPing", reg:"Внутренний сервис · сторожка витрины", st:"active", lvl:"Автоматы", busy:"Пинг лендинга/услуг каждые ~15 мин; 18:16–19:04 были промахи (code=000), к 19:16 восстановилась. Куратор — Бендер."},
+  evofind:{name:"evofind", reg:"Внутренний сервис · поиск по репо", st:"sleep", lvl:"Автоматы", busy:"Мгновенный поиск (HTTP :8973 + CLI), индекс 471 файл / 227 мс. По вызову. Куратор — Бэрримор."}
+};
+const EDGES = [
+  ["dmitri","barrymore"], ["dmitri","grp-adv"], ["dmitri","grp-auto"],
+  ["barrymore","grp-hq"], ["barrymore","grp-worlds"], ["barrymore","grp-l5"]
+];
+const ST_LABEL = {active:"активен", wait:"ждёт решения CEO", sleep:"спит", pause:"пауза"};
+
+/* ───── связи ───── */
+const svg = document.getElementById("edges");
+function center(el){
+  const c = document.getElementById("chart").getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  return {x: r.left - c.left + r.width/2, y: r.top - c.top, xb: r.left - c.left + r.width/2, yb: r.top - c.top + r.height,
+          l: r.left - c.left, rgt: r.left - c.left + r.width, yc: r.top - c.top + r.height/2};
+}
+function drawEdges(){
+  svg.innerHTML = "";
+  const box = document.getElementById("chart").getBoundingClientRect();
+  svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+  EDGES.forEach(([from,to])=>{
+    const f = center(document.querySelector(`[data-id="${from}"]`));
+    const t = center(document.querySelector(`[data-id="${to}"]`) || document.getElementById(to));
+    let d;
+    if (Math.abs(f.yc - t.yc) < 60){
+      // соседи по ряду: горизонтальная S-кривая от края к краю
+      if (f.rgt < t.l) d = `M${f.rgt},${f.yc} C${f.rgt+26},${f.yc} ${t.l-26},${t.yc} ${t.l},${t.yc}`;
+      else d = `M${f.l},${f.yc} C${f.l-26},${f.yc} ${t.rgt+26},${t.yc} ${t.rgt},${t.yc}`;
+    } else {
+      const my = (f.yb + t.y) / 2;
+      d = `M${f.xb},${f.yb} C${f.xb},${my} ${t.x},${my} ${t.x},${t.y}`;
+    }
+    const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+    p.setAttribute("d", d);
+    p.dataset.from = from; p.dataset.to = to;
+    svg.appendChild(p);
+  });
+}
+function hotBranch(id){
+  svg.querySelectorAll("path").forEach(p=>{
+    p.classList.toggle("hot", p.dataset.from===id || p.dataset.to===id);
+  });
+  document.querySelectorAll(".grp").forEach(g=>{
+    const lead = g.dataset.lead;
+    const inside = !!g.querySelector(`.mini[data-id="${id}"]`);
+    g.classList.toggle("hot", lead===id || inside || g.id===id);
+  });
+}
+function coolBranch(){
+  svg.querySelectorAll("path").forEach(p=>p.classList.remove("hot"));
+  document.querySelectorAll(".grp").forEach(g=>g.classList.remove("hot"));
+}
+
+/* ───── детали ───── */
+const det = document.getElementById("det"), detWho = document.getElementById("det-who"),
+      detBusy = document.getElementById("det-busy"), detJump = document.getElementById("det-jump");
+let curId = null, lastModStr = "";
+function showDetails(id){
+  const s = STAFF[id]; if (!s) return;
+  curId = id;
+  const emoEl = document.querySelector(`.mini[data-id="${id}"] .emo, .node[data-id="${id}"] .emo`);
+  const emo = emoEl ? emoEl.textContent.trim() : "";
+  detWho.innerHTML = `${emo ? `<span class="emo" style="font-size:17px">${emo}</span> ` : ""}${s.name}
+    <span class="chip" style="color:${s.st==="active"?"var(--mint)":s.st==="wait"||s.st==="pause"?"var(--amber)":"var(--dim)"}">${ST_LABEL[s.st]}</span>`;
+  detBusy.innerHTML = `<b style="color:var(--violet)">${s.reg}</b> · ${s.busy}`
+    + (id === "dmitri" && lastModStr ? `<div style="margin-top:8px;font-size:11px;color:var(--dim)">снимок обновлён: ${lastModStr}</div>` : "");
+  detJump.hidden = false;
+  det.classList.add("on");
+}
+const LVL2TOPIC = {"CEO-0":"core","CEO-1":"core","CEO-2":"core","CEO-3":"hq","CEO-4":"worlds","CEO-5":"l5","Автоматы":"svc"};
+detJump.addEventListener("click", ()=>{
+  if (!curId) return;
+  openTopic(LVL2TOPIC[STAFF[curId].lvl] || "core");
+  document.getElementById("mwrap").scrollIntoView({behavior:"smooth", block:"center"});
+});
+
+document.querySelectorAll("[data-id]").forEach(el=>{
+  const id = el.dataset.id;
+  el.addEventListener("mouseenter", ()=>hotBranch(id));
+  el.addEventListener("mouseleave", coolBranch);
+  el.addEventListener("click", ()=>showDetails(id));
+});
+
+/* каскадное появление */
+function reveal(){
+  const seq = [[".node.ceo",0],["#grp-adv",120],["#grp-auto",200],["#rowB .node",320],["#grp-hq",460],["#grp-worlds",540],["#grp-l5",620]];
+  seq.forEach(([sel,d])=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      setTimeout(()=>el.classList.add("on"), d);
+    });
+  });
+  document.querySelectorAll(".mini").forEach((m,i)=>setTimeout(()=>m.classList.add("on"), 700 + i*35));
+}
+
+/* ───── тематическое меню ───── */
+const TOPICS = [
+  {id:"core",   icon:"💠", t:"Ядро и советники",  s:"CEO-0 · CEO-1 · CEO-2",        ids:["dmitri","barrymore","solomon","rockefeller"]},
+  {id:"hq",     icon:"🕵️", t:"Начальники служб",  s:"CEO-3 · операционный контур",  ids:["holmes","watson","hunter","bender","riskscan","hephaestus"]},
+  {id:"worlds", icon:"⚓", t:"Капитаны миров",     s:"CEO-4 · шесть миров",          ids:["nemo","magellan","sindbad","paganel","leonardo","melstorm"]},
+  {id:"l5",     icon:"🔧", t:"Специалисты",        s:"CEO-5 · мастерская и аналитика", ids:["cyrus","analyst","senku","cli"]},
+  {id:"svc",    icon:"🛠️", t:"Внутренние сервисы", s:"автоматы дома · 5 служб",      ids:["steward","devsecops","flradar","vitrinaping","evofind"]},
+  {id:"brief",  icon:"🎩", t:"Брифинг на утро",    s:"«что там как?» — ответ Бэрримора"}
+];
+const BRIEF = [
+  {t:"Деньги", x:"Казна 20 000 из 5 млн сум (0,4%), приходов нет 7 дней. Топливо 372,7/500 млн (75%), до аренды 04.12 — 19 дней. Вся волна 1 собрана и не опубликована: кворки ×3, OLX, Fiverr-гигы (клиринг 14 дней тикает), 9 откликов FL.ru, база КП 30. Нужен «час публикаций» руками руководителя."},
+  {t:"Решения ждут CEO", x:"(а) валидировать вердикт С-1 «фокус-копьё» — Соломон; (б) выбрать вариант Origin-фикса auth-gate — Холмс; (в) слово на кампанию Juice Shop + старт Ф-1 — Ватсон; (г) включить FL-радар — Хантер; (д) ник TG для контактов витрины. Все пять — повесткой Правления (Memory/Council/meetings/2026-11-15-1.json)."},
+  {t:"Порядок в доме", x:"Журнал Engineering молчит 7 дней (E-060 нет) при хвосте 19 путей; P0 auth-gate исправлен, но не закоммичен — упаковать одним коммитом после Origin-решения."},
+  {t:"Касса — Бендер", x:"Демо-записи не вычищены, FINANCE_TOKEN не ротирован — оба хвоста в ideas-inbox; леджер без движения 7 дней."},
+  {t:"Внутренние сервисы", x:"Активны DevSecOps-радар 21:30, VitrinaPing (витрина «подмигивала» 18:16–19:04, к 19:16 восстановилась) и Сторож; FL-радар на паузе — ждёт слова; evofind — по вызову."},
+  {t:"Спят", x:"6 капитанов миров + Гефест — паспорта есть, рантаймов нет, ждут первого слова CEO. Мёртвых душ больше нет: Сайрус Смит, Сэнку и Аналитик оживлены 15.11, первые рейсы сданы; CLI-штат на подхвате."},
+  {t:"Кадры", x:"Рокфеллер и Соломон по штату ещё «кандидаты», но уже докладывают (15.11) — ждут утверждения; Бендер фактически на службе (касса), паспорт «на утверждении»."}
+];
+const ICON_FALLBACK = {dmitri:"⚛️"};
+const mwrap = document.getElementById("mwrap"), topicEl = document.getElementById("topic");
+
+TOPICS.forEach(T=>{
+  const b = document.createElement("button");
+  b.className = "mitem"; b.type = "button";
+  b.innerHTML = `<span class="mi">${T.icon}</span><span><div class="mt">${T.t}</div><div class="ms">${T.s}</div></span>${T.ids?`<span class="cnt">${T.ids.length}</span>`:""}`;
+  b.addEventListener("click", ()=>openTopic(T.id));
+  mwrap.appendChild(b);
+});
+
+function openTopic(id){
+  [...mwrap.children].forEach((el,i)=>el.classList.toggle("on", TOPICS[i].id===id));
+  const T = TOPICS.find(t=>t.id===id);
+  let body = "";
+  if (id === "brief"){
+    body = BRIEF.map((b,i)=>`<div class="bitem"><div class="bn">${i+1}</div><div class="bt"><b>${b.t}.</b> ${b.x}</div></div>`).join("");
+  } else {
+    body = `<div class="tgrid">` + T.ids.map((pid,i)=>{
+      const s = STAFF[pid];
+      const emoEl = document.querySelector(`.mini[data-id="${pid}"] .emo, .node[data-id="${pid}"] .emo`);
+      const emo = (emoEl && emoEl.textContent.trim()) || ICON_FALLBACK[pid] || "•";
+      const chipColor = s.st==="active" ? "var(--mint)" : (s.st==="wait"||s.st==="pause") ? "var(--amber)" : "var(--dim)";
+      return `<div class="tcard" style="animation:arrive .4s ${i*0.05}s backwards">
+        <div class="tc-top"><span class="tc-emo">${emo}</span><span class="tc-nm">${s.name}</span>
+        <span class="tc-chip" style="color:${chipColor}">${ST_LABEL[s.st]}</span></div>
+        <div class="tc-reg">${s.reg}</div><div class="tc-busy">${s.busy}</div></div>`;
+    }).join("") + `</div>`;
+    if (id === "l5") body += `<div class="tnote">справочно: Chief of Staff (generic) — списан 30.10, дублировал Бэрримора; правило «второго начальника не нанимать».</div>`;
+  }
+  topicEl.innerHTML = `<div class="th"><b>${T.icon} ${T.t}</b><span>${id==="brief" ? "фактура: стендап 15.11 · обновляется по итогам встреч" : T.s}</span></div>` + body;
+  topicEl.style.animation = "none"; void topicEl.offsetHeight; topicEl.style.animation = "";
+}
+openTopic("brief");
+
+fetch("staff-table.md?v=" + Date.now())
+  .then(r=>{
+    const lm = r.headers.get("last-modified");
+    if (lm) lastModStr = new Date(lm).toLocaleString("ru-RU", {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"});
+  })
+  .catch(()=>{});
+reveal();
+setTimeout(drawEdges, 1300); /* после reveal — линии по финальным позициям */
+window.addEventListener("resize", ()=>drawEdges());
+
+/* ───── шрифтовой загашник (24 шрифта, выбор кликом) ───── */
+const FONTS = ["Orbitron","Audiowide","Michroma","Exo 2","Rajdhani","Play","Russo One","Unica One",
+  "Oswald","Bebas Neue","Monoton","Righteous","Pacifico","Lobster","Cinzel","Cinzel Decorative",
+  "Cormorant Garamond","Playfair Display","Abril Fatface","Alfa Slab One","Bungee","Syncopate",
+  "Major Mono Display","Rubik Mono One","Jura"];
+const fbtn = document.getElementById("brand"), fpanel = document.getElementById("fpanel"), flist = document.getElementById("flist");
+let curFont = localStorage.getItem("evo_font_v1") || "Orbitron";
+
+FONTS.forEach(f=>{
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "fitem" + (f===curFont ? " on" : "");
+  b.style.fontFamily = `'${f}', "Segoe UI", sans-serif`;
+  b.innerHTML = `${f}<span class="fsub">${f}</span>`;
+  b.addEventListener("click", e=>{ applyFont(f); e.stopPropagation(); });
+  flist.appendChild(b);
+});
+function applyFont(f){
+  curFont = f;
+  localStorage.setItem("evo_font_v1", f);
+  document.querySelector(".b-main").style.fontFamily = `'${f}', "Segoe UI", sans-serif`;
+  [...flist.children].forEach((el,i)=>el.classList.toggle("on", FONTS[i]===f));
+}
+applyFont(curFont);
+fbtn.addEventListener("click", e=>{ e.stopPropagation(); fpanel.hidden = !fpanel.hidden; });
+document.addEventListener("click", e=>{
+  if (!fpanel.hidden && !fpanel.contains(e.target) && !fbtn.contains(e.target)) fpanel.hidden = true;
+});
+</script>
+</body>
+</html>

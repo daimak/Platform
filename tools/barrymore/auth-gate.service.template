@@ -1,0 +1,24 @@
+# auth-gate.service.template — systemd-юнит входной двери eVo (фаза 1).
+# Деплой на ВМ: scp в /etc/systemd/system/auth-gate.service (после подстановки путей),
+#   sudo systemctl daemon-reload && sudo systemctl enable --now auth-gate
+[Unit]
+Description=eVo Auth Gate (роли admin/agent/member/guest, сессии, инвайты)
+After=network.target
+
+[Service]
+Type=simple
+User=daimak
+Environment=AUTH_PORT=8767
+Environment=AUTH_HOST=127.0.0.1
+Environment=AUTH_DATA_DIR=/home/daimak/evo-auth
+Environment=AUTH_ENV_FILE=/home/daimak/Platform/Workspace/.env
+Environment=AUTH_LOGIN_HTML=/home/daimak/Platform/eVo/dashboard/login.html
+Environment=BACKEND_URL=http://127.0.0.1:8766
+Environment=BACKEND_HOST=127.0.0.1:8765
+Environment=FACE_URL=http://127.0.0.1:80
+ExecStart=/home/daimak/venv-platform/bin/python3 /home/daimak/Platform/tools/barrymore/auth_gate.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

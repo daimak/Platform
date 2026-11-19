@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тёмный радар — подробности</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#0c1116;--ink:#dbe7f0;--mut:#7b8a97;--line:#24303b;
+    --acc:#2dd4a7;--acc2:#4cc2ff;--warn:#f5b454;--hot:#ff7a6e;
+    --card:#141b22;--card2:#101820;
+  }
+  *{margin:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:60px}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+  header{padding:52px 0 26px;border-bottom:1px solid var(--line)}
+  h1{font-size:clamp(24px,4vw,34px);line-height:1.15}
+  h1 em{color:var(--acc);font-style:normal}
+  .sub{color:var(--mut);margin-top:10px;font-size:16px}
+  .stale{display:inline-block;margin-top:12px;padding:5px 12px;border-radius:8px;font-size:13px;
+    border:1px solid var(--line);color:var(--mut)}
+  .stale.old{border-color:var(--warn);color:var(--warn)}
+  .toplink{position:fixed;top:14px;right:14px;z-index:50;display:inline-flex;align-items:center;gap:6px;
+    padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(10,16,22,.72);
+    color:var(--mut);text-decoration:none;font-size:.8rem;backdrop-filter:blur(6px);
+    transition:color .15s ease,border-color .15s ease}
+  .toplink:hover{color:var(--acc);border-color:var(--acc)}
+  .counters{display:flex;flex-wrap:wrap;gap:14px 34px;margin:30px 0 6px}
+  .counter{display:flex;flex-direction:column;line-height:1.2}
+  .counter strong{font-size:1.7rem;color:var(--acc2)}
+  .counter strong.hot{color:var(--hot)}
+  .counter em{font-style:normal;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+  h2{font-size:19px;margin:40px 0 14px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+  tr:last-child td{border-bottom:none}
+  td.num{color:var(--acc2);font-weight:600;width:70px}
+  .bar{height:6px;background:rgba(76,194,255,.12);border-radius:3px;overflow:hidden;min-width:80px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 95%,transparent),color-mix(in srgb,var(--acc) 30%,transparent))}
+  .searchrow{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .searchrow input{flex:1;min-width:220px;padding:9px 14px;font:inherit;font-size:14px;color:var(--ink);
+    background:var(--card2);border:1px solid var(--line);border-radius:10px;outline:none}
+  .searchrow input:focus{border-color:var(--acc)}
+  .searchrow span{color:var(--mut);font-size:13px;align-self:center}
+  .names{display:flex;flex-wrap:wrap;gap:6px}
+  .names code{font-size:12.5px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+  .names code.hit{border-color:var(--acc);color:var(--acc)}
+  .note{color:var(--mut);font-size:13px;margin-top:12px}
+  footer{margin:46px 0 20px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
+  .err{margin-top:20px;padding:14px;border:1px solid var(--hot);border-radius:10px;color:var(--hot);font-size:14px}
+  @media(max-width:760px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Тёмный радар <em>· подробности</em></h1>
+    <p class="sub">Суточные срезы darkwatch: лента вымогателей и реестр групп-ботов. Публичные каналы, безличная агрегация.</p>
+    <span class="stale" id="stale">срез: …</span>
+    <a class="toplink" href="command-center.html">← Штаб</a>
+  </header>
+
+  <div class="counters">
+    <span class="counter"><strong class="hot" id="c-last24">—</strong><em>жертв за 24 ч</em></span>
+    <span class="counter"><strong id="c-feed">—</strong><em>записей в корме</em></span>
+    <span class="counter"><strong id="c-dls">—</strong><em>живых DLS</em></span>
+    <span class="counter"><strong id="c-groups">—</strong><em>групп в реестре</em></span>
+    <span class="counter"><strong id="c-oldest">—</strong><em>старейшая в корме</em></span>
+  </div>
+
+  <h2>Группы по числу жертв</h2>
+  <div class="cols">
+    <table id="t-groups"><thead><tr><th>Группа</th><th style="width:45%">Доля</th><th>Жертв</th></tr></thead>
+      <tbody><tr><td colspan="3">…</td></tr></tbody></table>
+    <table id="t-countries"><thead><tr><th>Страна</th><th style="width:45%">Доля</th><th>Жертв</th></tr></thead>
+      <tbody><tr><td colspan="3">…</td></tr></tbody></table>
+  </div>
+
+  <h2>Реестр групп (поиск по имени)</h2>
+  <div class="searchrow">
+    <input id="q" type="search" placeholder="Начни печатать имя группы…" autocomplete="off">
+    <span id="qcount"></span>
+  </div>
+  <div class="names" id="names"></div>
+  <p class="note">Реестр — группы-боты, чьи ленты отслеживаются суточным прогоном darkwatch (публичные каналы). Совпадения с личным watchlist на этой странице не показываются. Обновление среза — ручной прогон darkwatch.py.</p>
+
+  <footer>Интерьер штаба · доступ только с бэка 8765 (туннель/WG) · <a href="command-center.html" style="color:var(--acc2)">← назад в штаб</a></footer>
+</div>
+<script>
+function esc(s){return String(s===null||s===undefined?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmt(n){return (typeof n==='number'&&isFinite(n))?String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' '):'—';}
+function fillTable(id,rows){
+  var tb=document.querySelector(id+' tbody');
+  if(!rows||!rows.length){tb.innerHTML='<tr><td colspan="3">данных нет</td></tr>';return;}
+  var max=rows[0][1]||1;
+  tb.innerHTML=rows.map(function(r){
+    var share=Math.max(3,Math.round((r[1]/max)*100));
+    return '<tr><td>'+esc(r[0])+'</td><td><div class="bar"><i style="width:'+share+'%"></i></div></td><td class="num">'+fmt(r[1])+'</td></tr>';
+  }).join('');
+}
+function daysAgo(dateStr){
+  if(!dateStr)return null;
+  var d=new Date(dateStr+'T12:00:00Z');
+  if(isNaN(d))return null;
+  return Math.max(0,Math.round((Date.now()-d.getTime())/86400000));
+}
+fetch('/api/darkwatch/details').then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(d){
+  var feed=d.feed||{},groups=d.groups||{};
+  document.getElementById('c-last24').textContent=fmt(feed.last24);
+  document.getElementById('c-feed').textContent=fmt(feed.feed_size);
+  document.getElementById('c-dls').textContent=fmt(groups.live_dls);
+  document.getElementById('c-groups').textContent=fmt(groups.total);
+  document.getElementById('c-oldest').textContent=feed.oldest_in_feed?feed.oldest_in_feed.split('-').reverse().join('.'):'—';
+  var stale=document.getElementById('stale');
+  var age=daysAgo(d.date);
+  stale.textContent='срез: '+(d.date?d.date.split('-').reverse().join('.'):'—')
+    +(age!==null?' · '+age+' дн назад':'')+(feed.http===200&&feed.live?' · живой':'');
+  if(age!==null&&age>2)stale.classList.add('old');
+  fillTable('#t-groups',feed.top_groups);
+  fillTable('#t-countries',feed.top_countries);
+  var names=Array.isArray(groups.names)?groups.names:[];
+  var box=document.getElementById('names');
+  var q=document.getElementById('q');
+  var qcount=document.getElementById('qcount');
+  function render(qs){
+    var query=(qs||'').trim().toLowerCase();
+    var shown=0;
+    var html=names.map(function(n){
+      var hit=!query||n.toLowerCase().indexOf(query)>=0;
+      if(hit)shown++;
+      return '<code'+(hit&&query?' class="hit"':'')+' style="'+(hit?'':'display:none')+'">'+esc(n)+'</code>';
+    }).join('');
+    box.innerHTML=html||'<code>ничего не найдено</code>';
+    qcount.textContent='показано '+shown+' из '+names.length;
+  }
+  q.addEventListener('input',function(){render(q.value);});
+  render('');
+}).catch(function(e){
+  var el=document.createElement('div');
+  el.className='err';
+  el.textContent='Сводка недоступна: '+e.message+'. Страница живёт на бэке 8765 — открывай через туннель/WG.';
+  document.querySelector('.wrap').prepend(el);
+});
+</script>
+  <script src="nav-dock.js?v=7"></script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Правление · Estate</title>
+  <link rel="stylesheet" href="command-center.css?v=13">
+  <style>
+    /* ==========================================================================
+       ПРАВЛЕНИЕ — зал совета управляющих Estate. Своя дизайн-система (16.11,
+       решение Дмитрия: «не бункер времён холодной войны, а современно с
+       дизайн-решением»). Палитра — референс ядра Эво: циан/фиолет/мята,
+       стекло + свет. Три ревизии в одном файле (тумблер ◆ в шапке):
+         a — «Обсидиан»: глубокая тьма, ауры циан/фиолет, стекло
+         b — «Чертёж»: светлая инженерная бумага с сеткой, линии, маркеры
+         c — «Ателье»: тёплый крем, фиолет+мята, мягкие тени
+       Ревизия хранится в localStorage council_rev_v1. Данные: /api/council.
+       Текст выделяется.
+       ========================================================================== */
+    :root { --cw-r: 18px; }
+    body.cw-body[data-rev="a"] {
+      --cw-bg: #0A0E16; --cw-bg2: #121B2E;
+      --cw-aura: radial-gradient(1100px 520px at 12% -8%, rgba(77,227,255,.16), transparent 62%),
+                 radial-gradient(980px 540px at 96% 104%, rgba(167,139,250,.15), transparent 60%);
+      --cw-ink: #EAF2FF; --cw-dim: rgba(234,242,255,.6);
+      --cw-accent: #4DE3FF; --cw-accent2: #A78BFA; --cw-accentSoft: rgba(77,227,255,.4);
+      --cw-panel: rgba(19,28,44,.66); --cw-panelSoft: rgba(255,255,255,.045);
+      --cw-border: rgba(255,255,255,.1); --cw-shadow: 0 18px 50px rgba(0,0,0,.42);
+      --cw-shadowHover: 0 22px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(77,227,255,.18);
+      --cw-pos: #34D399; --cw-warn: #FBBF24; --cw-neg: #F87171; --cw-hold: #A78BFA; --cw-run: #FB923C;
+    }
+    body.cw-body[data-rev="b"] {
+      --cw-bg: #F2F6FB; --cw-bg2: #E8EFF7;
+      --cw-aura: linear-gradient(rgba(47,111,191,.05) 1px, transparent 1px) 0 0/32px 32px,
+                 linear-gradient(90deg, rgba(47,111,191,.05) 1px, transparent 1px) 0 0/32px 32px;
+      --cw-ink: #16283D; --cw-dim: #5A6F88;
+      --cw-accent: #2F6FBF; --cw-accent2: #F2762E; --cw-accentSoft: rgba(47,111,191,.35);
+      --cw-panel: rgba(255,255,255,.86); --cw-panelSoft: rgba(47,111,191,.05);
+      --cw-border: rgba(22,40,61,.14); --cw-shadow: 0 10px 28px rgba(22,40,61,.08);
+      --cw-shadowHover: 0 14px 34px rgba(22,40,61,.12), 0 0 0 1.5px rgba(47,111,191,.3);
+      --cw-pos: #1F9D6B; --cw-warn: #D97706; --cw-neg: #DC4A4A; --cw-hold: #7C5CFF; --cw-run: #F2762E;
+    }
+    body.cw-body[data-rev="c"] {
+      --cw-bg: #FBF8F3; --cw-bg2: #F4EFE7;
+      --cw-aura: radial-gradient(1000px 480px at 8% -6%, rgba(45,212,167,.14), transparent 60%),
+                 radial-gradient(900px 500px at 100% 108%, rgba(124,92,255,.12), transparent 58%);
+      --cw-ink: #221A33; --cw-dim: rgba(34,26,51,.6);
+      --cw-accent: #7C5CFF; --cw-accent2: #17BDA0; --cw-accentSoft: rgba(124,92,255,.4);
+      --cw-panel: rgba(255,255,255,.8); --cw-panelSoft: rgba(124,92,255,.05);
+      --cw-border: rgba(34,26,51,.12); --cw-shadow: 0 12px 32px rgba(124,92,255,.1);
+      --cw-shadowHover: 0 18px 40px rgba(124,92,255,.16), 0 0 0 1px rgba(124,92,255,.22);
+      --cw-pos: #17BDA0; --cw-warn: #E8A13C; --cw-neg: #E25555; --cw-hold: #9F7CFF; --cw-run: #E8A13C;
+    }
+    body.cw-body {
+      min-height: 100vh; margin: 0; color: var(--cw-ink);
+      background: linear-gradient(160deg, var(--cw-bg), var(--cw-bg2));
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    body.cw-body::before { content: ""; position: fixed; inset: 0; background: var(--cw-aura); pointer-events: none; z-index: 0; }
+    body.cw-body > * { position: relative; z-index: 1; }
+    .cw-grid { display: grid; grid-template-columns: 272px minmax(0, 1fr) 328px; gap: 16px; align-items: start; padding: 14px 16px 24px; }
+    @media (max-width: 1180px) { .cw-grid { grid-template-columns: 1fr; } }
+
+    .cw-panel {
+      border-radius: var(--cw-r); padding: 18px;
+      background: var(--cw-panel); border: 1px solid var(--cw-border);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--cw-shadow);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .cw-panel:hover { transform: translateY(-3px); border-color: var(--cw-accentSoft); box-shadow: var(--cw-shadowHover); }
+
+    .cw-label { font-size: .66rem; letter-spacing: .22em; text-transform: uppercase; font-weight: 800; color: var(--cw-accent); margin: 0; }
+    .cw-h2 { font-size: 1.12rem; font-weight: 800; margin: 3px 0 14px; letter-spacing: .01em; }
+    .cw-dim { color: var(--cw-dim); }
+
+    header.cw-head { display: flex; align-items: center; gap: 14px; padding: 18px 18px 4px; }
+    header.cw-head a.cw-brand { text-decoration: none; display: flex; align-items: center; gap: 14px; color: inherit; }
+    header.cw-head .hud-logo { width: 44px; height: 44px; }
+    .cw-title { font-size: 1.32rem; font-weight: 900; margin: 0; letter-spacing: .04em;
+      background: linear-gradient(92deg, var(--cw-accent), var(--cw-accent2));
+      -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .cw-sub { font-size: .74rem; color: var(--cw-dim); margin: 2px 0 0; }
+    .cw-head-btns { margin-left: auto; display: flex; gap: 8px; }
+
+    #cw-status { margin: 10px 18px 0; padding: 9px 14px; border-radius: 12px; font-size: .82rem;
+      background: var(--cw-panelSoft); border: 1px solid var(--cw-accentSoft); color: var(--cw-ink); }
+
+    /* --- Табель · этажи CEO --- */
+    .cw-floor { margin: 0 0 16px; }
+    .cw-floor:last-child { margin-bottom: 0; }
+    .cw-floor-label { font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--cw-dim); margin: 0 0 7px; font-weight: 800; }
+    .cw-seat {
+      display: flex; align-items: center; gap: 10px; padding: 8px 11px; border-radius: 13px; margin-bottom: 7px;
+      border: 1px solid var(--cw-border); background: var(--cw-panelSoft);
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+    .cw-seat:hover { transform: translateX(3px); border-color: var(--cw-accentSoft); }
+    .cw-seat .cw-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--cw-dim); opacity: .35; flex: 0 0 auto; transition: background .3s ease; }
+    .cw-seat.cw-in-meeting { border-color: var(--cw-accentSoft); }
+    .cw-seat.cw-in-meeting .cw-pulse { background: var(--cw-accent); opacity: 1; box-shadow: 0 0 9px var(--cw-accent); animation: cw-blink 1.6s ease-in-out infinite; }
+    .cw-seat.cw-dispatching { border-color: var(--cw-run); background: color-mix(in srgb, var(--cw-run) 12%, transparent); cursor: pointer; }
+    .cw-seat.cw-dispatching .cw-pulse { background: var(--cw-run); opacity: 1; box-shadow: 0 0 12px var(--cw-run); animation: cw-blink .7s ease-in-out infinite; }
+    .cw-seat strong { font-size: .86rem; }
+    .cw-seat em { font-size: .71rem; color: var(--cw-dim); font-style: normal; display: block; }
+    .cw-ceo-badge { margin-left: auto; font-size: .62rem; font-weight: 800; letter-spacing: .1em; padding: 3px 8px; border-radius: 999px; flex: 0 0 auto;
+      color: var(--cw-accent); border: 1px solid var(--cw-accentSoft); background: var(--cw-panelSoft); }
+    @keyframes cw-blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+    /* --- Собрание --- */
+    .cw-phase-bar { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 18px; }
+    .cw-phase { font-size: .72rem; font-weight: 800; letter-spacing: .05em; padding: 5px 12px; border-radius: 999px;
+      color: var(--cw-dim); border: 1px solid var(--cw-border); }
+    .cw-phase.cw-now { color: var(--cw-ink); border-color: var(--cw-accent); background: color-mix(in srgb, var(--cw-accent) 13%, transparent);
+      box-shadow: 0 0 14px color-mix(in srgb, var(--cw-accent) 30%, transparent); animation: cw-blink 2.4s ease-in-out infinite; }
+    .cw-phase.cw-done { opacity: .75; text-decoration: line-through; }
+    .cw-topic { font-size: 1.08rem; font-weight: 800; margin: 0; line-height: 1.4; }
+    .cw-meta { font-size: .74rem; color: var(--cw-dim); margin-top: 4px; }
+
+    .cw-point { border-radius: 15px; padding: 14px 15px; margin: 13px 0; position: relative;
+      border: 1px solid var(--cw-border); background: var(--cw-panelSoft);
+      border-left: 3px solid var(--cw-accent); }
+    .cw-point h4 { margin: 0 0 9px; font-size: .95rem; line-height: 1.4; }
+    .cw-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%;
+      font-size: .7rem; font-weight: 800; margin-right: 9px; vertical-align: -4px;
+      color: var(--cw-accent); border: 1.5px solid var(--cw-accentSoft); background: var(--cw-panelSoft); }
+    .cw-speech { border-left: 2px solid var(--cw-accentSoft); padding: 7px 11px; margin: 9px 0; animation: cw-in .35s ease; border-radius: 0 10px 10px 0; background: transparent; }
+    .cw-speech.cw-obj { border-left: 2px dashed var(--cw-accent2); }
+    .cw-speech .cw-who { font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--cw-accent); }
+    .cw-speech.cw-obj .cw-who { color: var(--cw-accent2); }
+    .cw-speech p { margin: 3px 0 0; font-size: .88rem; line-height: 1.55; white-space: pre-wrap; }
+    .cw-edit-plate { border: 1px solid var(--cw-accentSoft); border-radius: 12px; padding: 9px 12px; margin: 9px 0; background: color-mix(in srgb, var(--cw-accent) 8%, transparent); }
+    .cw-edit-plate .cw-who { font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--cw-accent); }
+    .cw-edit-plate p { margin: 3px 0 0; font-size: .88rem; white-space: pre-wrap; }
+    .cw-verdict-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; padding: 5px 13px; border-radius: 999px; font-size: .8rem; font-weight: 800; }
+    .cw-verdict-chip[data-v="принято"] { color: var(--cw-pos); border: 1px solid var(--cw-pos); background: color-mix(in srgb, var(--cw-pos) 13%, transparent); }
+    .cw-verdict-chip[data-v="доработка"] { color: var(--cw-warn); border: 1px solid var(--cw-warn); background: color-mix(in srgb, var(--cw-warn) 13%, transparent); }
+    .cw-verdict-chip[data-v="отклонено"] { color: var(--cw-neg); border: 1px solid var(--cw-neg); background: color-mix(in srgb, var(--cw-neg) 13%, transparent); }
+    .cw-verdict-chip[data-v="на моё решение"] { color: var(--cw-hold); border: 1px solid var(--cw-hold); background: color-mix(in srgb, var(--cw-hold) 13%, transparent); }
+    .cw-verdict-note { font-size: .8rem; color: var(--cw-dim); margin: 5px 0 0; white-space: pre-wrap; }
+    @keyframes cw-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+    .cw-summary-block { border-left: 3px solid var(--cw-hold); border-radius: 0 12px 12px 0; padding: 9px 12px; margin: 11px 0; background: color-mix(in srgb, var(--cw-hold) 7%, transparent); }
+    .cw-summary-block .cw-who { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--cw-hold); }
+    .cw-summary-block p { margin: 3px 0 0; font-size: .9rem; line-height: 1.6; white-space: pre-wrap; }
+
+    .cw-log { margin: 16px 0 0; font-size: .73rem; color: var(--cw-dim); line-height: 1.65; }
+    .cw-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .cw-btn {
+      cursor: pointer; font: inherit; font-size: .8rem; font-weight: 800; padding: 7px 14px; border-radius: 11px;
+      border: 1px solid var(--cw-border); background: var(--cw-panelSoft); color: var(--cw-ink);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+    }
+    .cw-btn:hover { border-color: var(--cw-accentSoft); box-shadow: 0 0 12px color-mix(in srgb, var(--cw-accent) 22%, transparent); transform: translateY(-1px); }
+    .cw-btn.cw-primary { border-color: var(--cw-accentSoft); background: color-mix(in srgb, var(--cw-accent) 13%, transparent); }
+    .cw-btn:disabled { opacity: .6; cursor: default; }
+
+    .cw-verdict-form, .cw-edit-form { margin-top: 10px; display: none; }
+    .cw-verdict-form.cw-open, .cw-edit-form.cw-open { display: block; animation: cw-in .3s ease; }
+    .cw-verdict-form .cw-btn, .cw-edit-form .cw-btn { margin: 4px 6px 0 0; }
+    .cw-note, .cw-ta, .cw-input {
+      width: 100%; box-sizing: border-box; font: inherit; font-size: .85rem;
+      padding: 9px 11px; border-radius: 11px; margin-top: 8px; color: var(--cw-ink);
+      border: 1px solid var(--cw-border); background: var(--cw-panelSoft);
+    }
+    .cw-ta { min-height: 84px; resize: vertical; }
+    .cw-note::placeholder, .cw-ta::placeholder, .cw-input::placeholder { color: var(--cw-dim); }
+
+    /* --- Панель CEO-0 --- */
+    .cw-convene-form { display: none; }
+    .cw-convene-form.cw-open { display: block; animation: cw-in .3s ease; }
+    .cw-attendee { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 10px; font-size: .82rem; cursor: pointer; user-select: none; }
+    .cw-attendee:hover { background: var(--cw-panelSoft); }
+    .cw-attendee input { accent-color: var(--cw-accent); }
+    .cw-attendee .cw-ceo-badge { margin-left: auto; }
+    .cw-meetings { margin: 0 0 8px; display: flex; flex-direction: column; gap: 6px; }
+    .cw-meeting-pick { cursor: pointer; font: inherit; text-align: left; color: var(--cw-ink); font-size: .78rem; padding: 7px 11px; border-radius: 11px;
+      border: 1px solid var(--cw-border); background: transparent; transition: border-color .2s ease, background .2s ease; }
+    .cw-meeting-pick:hover, .cw-meeting-pick.cw-active { border-color: var(--cw-accentSoft); background: var(--cw-panelSoft); }
+
+    @media (max-width: 1180px) { .cw-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="cw-body" data-rev="a">
+
+  <header class="cw-head">
+    <a class="cw-brand" href="index.html">
+      <img src="projects/marvel_v/assets/logo_sunrise.png" alt="eVo logo" class="hud-logo">
+      <div>
+        <h1 class="cw-title">ПРАВЛЕНИЕ · Совет управляющих</h1>
+        <p class="cw-sub">Estate · собрание руководителей всех отделов при CEO-0 · созыв, диспут и вердикты</p>
+      </div>
+    </a>
+    <div class="cw-head-btns">
+      <button class="cw-btn" id="cw-rev" type="button" title="Ревизия дизайна">◆ Обсидиан</button>
+      <button class="cw-btn" id="cw-refresh" type="button" title="Обновить">↻</button>
+    </div>
+  </header>
+
+  <p id="cw-status" hidden role="alert"></p>
+
+  <div class="cw-grid">
+
+    <aside class="cw-panel" id="cw-ranks" aria-label="Табель о рангах">
+      <p class="cw-label">Табель · CEO-0…CEO-5</p>
+      <h2 class="cw-h2">Состав</h2>
+      <div id="cw-floors"></div>
+    </aside>
+
+    <main class="cw-panel" id="cw-hall" aria-label="Собрание правления">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <div>
+          <p class="cw-label">Собрание · Протокол</p>
+          <h2 class="cw-h2">Зал диспута</h2>
+        </div>
+        <span class="cw-dim" id="cw-updated" style="margin-left:auto; font-size:.72rem;"></span>
+      </div>
+      <div class="cw-meetings" id="cw-meeting-picks"></div>
+      <div id="cw-meeting"></div>
+    </main>
+
+    <aside class="cw-panel" id="cw-ceo" aria-label="Панель CEO-0">
+      <p class="cw-label">CEO-0 · Руководитель проекта</p>
+      <h2 class="cw-h2">Панель начальника</h2>
+      <div class="cw-actions">
+        <button class="cw-btn cw-primary" id="cw-convene-toggle" type="button">🔔 Собрать собрание</button>
+        <button class="cw-btn" id="cw-dispatch" type="button">🫖 Диспут Бэрримова</button>
+      </div>
+      <form class="cw-convene-form" id="cw-convene" novalidate>
+        <input class="cw-input" id="cw-topic" type="text" maxlength="200" placeholder="Тема собрания">
+        <textarea class="cw-ta" id="cw-agenda" placeholder="Пункты повестки — по одному на строку"></textarea>
+        <div id="cw-attendees"></div>
+        <div class="cw-actions">
+          <button class="cw-btn cw-primary" type="submit">Созвать</button>
+          <button class="cw-btn" type="button" id="cw-convene-cancel">Отмена</button>
+        </div>
+      </form>
+    </aside>
+
+  </div>
+
+  <script src="council.js?v=3"></script>
+  <script src="nav-dock.js?v=7"></script>
+</body>
+</html>

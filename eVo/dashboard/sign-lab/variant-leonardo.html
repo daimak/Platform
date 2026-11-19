@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Знак «eVo» · лаборатория Леонардо · смена 15→16.11.2026</title>
+<link rel="icon" href="../assets/logo-core.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&family=Chakra+Petch:wght@600;700&family=Michroma&family=Oxanium:wght@600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ── Лаборатория знака eVo · Леонардо, ночная смена ─────────────────────
+   Подход: «типографика как инженерия».
+   База исследования (см. подвал): тренды LogoLounge 2026 (интегрированные
+   литеры, морф-марки, linework), психология регистра, оптическая посадка
+   знака к символу (X-метод), моно-миксы display+mono.
+   Палитра Эво: циан #22d3ee · фиолет #a78bfa · мята #34d399 · янтарь #fbbf24 */
+:root{
+  --bg:#0b0f1a; --panel:rgba(13,18,29,.94);
+  --line:rgba(148,163,184,.14); --grid:rgba(148,163,184,.05);
+  --cyan:#22d3ee; --violet:#a78bfa; --mint:#34d399; --amber:#fbbf24;
+  --dim:#7c8aa5; --text:#dbe6f5;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:'Space Grotesk','Segoe UI',system-ui,sans-serif;
+  background-image:radial-gradient(1100px 560px at 72% -12%,rgba(167,139,250,.08),transparent 60%),
+                   radial-gradient(900px 500px at 8% 110%,rgba(34,211,238,.06),transparent 60%)}
+.wrap{max-width:780px;margin:0 auto;padding:38px 20px 70px}
+
+/* шапка */
+.top h1{margin:0;font-size:21px;font-weight:700;letter-spacing:.02em}
+.top h1 b{color:var(--cyan);font-weight:700}
+.top .meta{margin-top:6px;font:10.5px/1.6 var(--mono);color:var(--dim);letter-spacing:.14em}
+.top p.intro{margin:14px 0 6px;font-size:13.5px;line-height:1.65;color:#b9c6dc;max-width:64ch}
+.top p.intro b{color:var(--mint);font-weight:600}
+.rule{height:1px;margin:22px 0 8px;background:linear-gradient(90deg,var(--line),transparent 70%)}
+
+/* карточка варианта */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:18px 0}
+.head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.idx{font:600 10px var(--mono);color:var(--violet);border:1px solid rgba(167,139,250,.35);
+  padding:3px 7px;border-radius:6px;letter-spacing:.12em;white-space:nowrap}
+.idx.ref{color:var(--cyan);border-color:rgba(34,211,238,.4)}
+.head h2{margin:0;font-size:15px;font-weight:700;letter-spacing:.05em}
+.reg{margin-left:auto;font:9px var(--mono);color:var(--dim);letter-spacing:.14em;
+  border:1px solid var(--line);padding:4px 9px;border-radius:6px;white-space:nowrap}
+.idea{margin:9px 0 0;font-size:12.5px;line-height:1.6;color:var(--dim)}
+.idea b{color:#9fb2cf;font-weight:600}
+
+/* стенд: сетка «миллиметровки» + ядро + знак */
+.stage{margin-top:16px;background-color:#0d1322;border:1px solid rgba(148,163,184,.1);border-radius:10px;
+  padding:22px 24px;display:flex;align-items:center;gap:16px;min-height:96px;
+  background-image:repeating-linear-gradient(0deg,var(--grid) 0 1px,transparent 1px 22px),
+                   repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 22px)}
+.core{box-shadow:0 0 18px rgba(34,211,238,.45);animation:corepulse 3.2s ease-in-out infinite}
+@keyframes corepulse{0%,100%{box-shadow:0 0 14px rgba(34,211,238,.35)}50%{box-shadow:0 0 26px rgba(34,211,238,.6)}}
+.hint{margin-left:auto;font:9px/1.7 var(--mono);color:rgba(124,138,165,.75);letter-spacing:.1em;text-align:right}
+
+/* ── Э-0 · эталон (текущий знак штаба, Orbitron + градиент) ── */
+.b-main{font-family:'Orbitron','Segoe UI',system-ui,sans-serif;font-size:33px;font-weight:800;letter-spacing:.08em;
+  background:linear-gradient(100deg,#7dd3fc 0%,#22d3ee 28%,#a78bfa 62%,#f0abfc 85%,#22d3ee 100%);
+  background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:brandslide 7s linear infinite,brandglow 4.5s ease-in-out infinite}
+@keyframes brandslide{to{background-position:200% 0}}
+@keyframes brandglow{0%,100%{filter:drop-shadow(0 0 6px rgba(34,211,238,.25))}50%{filter:drop-shadow(0 0 14px rgba(167,139,250,.45))}}
+
+/* ── V1 «Калибровка» — знак как чертёжная деталь ── */
+.cal{display:flex;flex-direction:column;gap:8px}
+.dim{position:relative;height:17px;font:8.5px var(--mono);letter-spacing:.12em}
+.dim .lbl{position:absolute;left:0;top:0;color:rgba(167,139,250,.8);animation:dimpulse 5s ease-in-out infinite}
+.dim::before{content:"";position:absolute;left:0;right:0;bottom:3px;height:1px;background:rgba(167,139,250,.38);
+  animation:dimpulse 5s ease-in-out infinite}
+.dim b{position:absolute;bottom:0;width:1px;height:7px;background:rgba(167,139,250,.5)}
+.dim b:first-of-type{left:0}
+.dim b:last-of-type{right:0}
+@keyframes dimpulse{0%,100%{opacity:.5}50%{opacity:1}}
+.calw{font:700 38px 'Chakra Petch',sans-serif;letter-spacing:.02em;
+  background:linear-gradient(180deg,#34d399 8%,#22d3ee 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:calglow 5s ease-in-out infinite}
+@keyframes calglow{0%,100%{filter:drop-shadow(0 0 4px rgba(52,211,153,.22))}50%{filter:drop-shadow(0 0 9px rgba(34,211,238,.4))}}
+
+/* ── V2 «Монолиния» — буквы как проводники платы ── */
+.pcbsign{width:106px;height:auto;filter:drop-shadow(0 0 7px rgba(52,211,153,.3))}
+.pcbsign .flow{stroke:rgba(34,211,238,.95);stroke-width:4;stroke-dasharray:8 120;
+  animation:flow 3.6s linear infinite}
+@keyframes flow{from{stroke-dashoffset:128}to{stroke-dashoffset:0}}
+
+/* ── V3 «Контрольная сумма» — капс + байты ── */
+.reg3{display:flex;flex-direction:column;gap:9px}
+.evo3{display:inline-flex;align-items:baseline;font:700 37px 'Oxanium',sans-serif;
+  background:linear-gradient(100deg,#22d3ee 10%,#a78bfa 50%,#22d3ee 90%);
+  background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:brandslide 9s linear infinite,v3glow 5s ease-in-out infinite}
+.evo3 span{margin-right:.34em}
+.evo3 span:last-child{margin-right:0}
+@keyframes v3glow{0%,100%{filter:drop-shadow(0 0 4px rgba(34,211,238,.2))}50%{filter:drop-shadow(0 0 10px rgba(167,139,250,.4))}}
+.bytes{font:9.5px var(--mono);letter-spacing:.12em;color:rgba(251,191,36,.68);animation:dimpulse 4s ease-in-out infinite}
+.bytes i{font-style:normal;color:rgba(251,191,36,.95)}
+
+/* ── V4 «Морф V» — V-разъём, дорожка от ядра ── */
+.mlock{position:relative;display:flex;align-items:center;gap:16px;padding:2px 4px 26px 2px}
+.mword{font:400 36px 'Michroma',sans-serif;letter-spacing:.05em}
+.mword .mo{color:transparent;-webkit-text-stroke:1px rgba(167,139,250,.55)}
+.mword .mv{background:linear-gradient(135deg,#a78bfa 20%,#22d3ee 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:vpulse 4.5s ease-in-out infinite}
+@keyframes vpulse{0%,100%{filter:drop-shadow(0 0 5px rgba(167,139,250,.3))}50%{filter:drop-shadow(0 0 13px rgba(167,139,250,.55))}}
+.trace{position:absolute;left:0;top:0;width:190px;height:72px;pointer-events:none}
+.trace .base{fill:none;stroke:rgba(167,139,250,.45);stroke-width:1.5}
+.trace .pulse{fill:none;stroke:rgba(34,211,238,.85);stroke-width:1.5;stroke-dasharray:4 16;
+  animation:traceflow 5s linear infinite}
+@keyframes traceflow{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+.trace .via{fill:none;stroke:#fbbf24;stroke-width:1.2}
+.trace .via-dot{fill:#fbbf24;animation:dimpulse 3s ease-in-out infinite}
+
+/* ── V5 «Прицел» — HUD-скобки ── */
+.retcol{display:flex;flex-direction:column;gap:7px}
+.ret{position:relative;display:inline-flex;align-items:center;padding:11px 20px}
+.ret i{position:absolute;width:12px;height:12px;border:1.5px solid rgba(251,191,36,.85);
+  animation:retpulse 5s ease-in-out infinite}
+.ret i:nth-child(1){top:0;left:0;border-right:none;border-bottom:none}
+.ret i:nth-child(2){top:0;right:0;border-left:none;border-bottom:none}
+.ret i:nth-child(3){bottom:0;left:0;border-right:none;border-top:none}
+.ret i:nth-child(4){bottom:0;right:0;border-left:none;border-top:none}
+@keyframes retpulse{0%,100%{border-color:rgba(251,191,36,.5)}50%{border-color:rgba(251,191,36,.95)}}
+.evo5{font:700 38px 'Space Grotesk',sans-serif;letter-spacing:.06em;color:var(--amber);
+  text-shadow:0 0 14px rgba(251,191,36,.32);animation:v5glow 4.2s ease-in-out infinite}
+@keyframes v5glow{0%,100%{text-shadow:0 0 8px rgba(251,191,36,.22)}50%{text-shadow:0 0 18px rgba(251,191,36,.42)}}
+.ret .st{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--amber);
+  animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.retcap{font:9px var(--mono);letter-spacing:.18em;color:rgba(251,191,36,.6)}
+
+/* подвал — исследовательская база */
+.srcs{margin-top:26px;border-top:1px solid var(--line);padding-top:16px}
+.srcs h3{margin:0 0 10px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.srcs li{font-size:11.5px;line-height:1.8;color:var(--dim);margin:0 0 4px}
+.srcs a{color:#8fb6d9;text-decoration:none;border-bottom:1px dotted rgba(143,182,217,.4)}
+.srcs a:hover{color:var(--cyan)}
+.srcs .note{margin-top:10px;font:9.5px/1.7 var(--mono);color:rgba(124,138,165,.8)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Знак <b>«eVo»</b> — лаборатория Леонардо</h1>
+    <div class="meta">ночная смена 15→16.11.2026 · заказ CEO: надпись не нравится, ядро-лого — свято · read-only, без коммитов</div>
+    <p class="intro">
+      Подход — <b>«типографика как инженерия»</b>: буква как деталь с допуском, посадка знака к ядру по
+      оптической оси, регистр как конструктивный выбор. По трендам 2026 (LogoLounge) выигрывают
+      <b>интегрированные литеры, морф-марки и linework</b>, а не «шрифт + свечение»; моно-акценты дают
+      технику без клише Orbitron. Каждый стенд: ядро 44&nbsp;px + знак крупно. Анимации — деликатные, ≤7&nbsp;s.
+    </p>
+    <div class="rule"></div>
+  </header>
+
+  <!-- ═══ Э-0 · ЭТАЛОН — текущий знак штаба для сравнения ═══ -->
+  <section class="card">
+    <div class="head">
+      <span class="idx ref">Э-0</span>
+      <h2>Эталон — текущий знак штаба</h2>
+      <span class="reg">eVo · Orbitron 800 · градиент</span>
+    </div>
+    <p class="idea">Точка отсчёта: <b>Orbitron 800</b>, бегущий градиент 100° (7 s) + свечение (4.5 s). Сравниваем все варианты с ним: широконосый геометрический капс-шрифт, «геймерское» клише, градиент тянет на себя весь контраст.</p>
+    <div class="stage">
+      <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="ядро eVo">
+      <span class="b-main">eVo</span>
+      <span class="hint">текущий вид<br>staff-table.html</span>
+    </div>
+  </section>
+
+  <!-- ═══ V1 · КАЛИБРОВКА ═══ -->
+  <section class="card">
+    <div class="head">
+      <span class="idx">V1</span>
+      <h2>Калибровка — знак как чертёжная деталь</h2>
+      <span class="reg">eVo · Chakra Petch 700</span>
+    </div>
+    <p class="idea">Шрифт с фасками 45° (Chakra Petch — «инженерные» скосы граней), вертикальный градиент мята→циан <b>вместо радужного свечения</b>; над знаком — выносная размерная линия с рисками и допуском: буква, у которой указан калибр.</p>
+    <div class="stage">
+      <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="ядро eVo">
+      <span class="cal">
+        <span class="dim"><span class="lbl">фаска 45° · шаг 0.02em · 38px</span><b></b><b></b></span>
+        <span class="calw">eVo</span>
+      </span>
+      <span class="hint">мотив: техчертёж<br>регистр: e + V-опора + o</span>
+    </div>
+  </section>
+
+  <!-- ═══ V2 · МОНОЛИНИЯ ═══ -->
+  <section class="card">
+    <div class="head">
+      <span class="idx">V2</span>
+      <h2>Монолиния — буквы как проводники платы</h2>
+      <span class="reg">evo · SVG · штрих 4px</span>
+    </div>
+    <p class="idea">Литералы построены штрихами, не шрифтом: единая монолиния 4&nbsp;px, радиус 15, круглые «пины»; по V бежит циановый импульс, вершина V — янтарная точка пайки. Нижний регистр — самый дружелюбный знак стенда.</p>
+    <div class="stage">
+      <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="ядро eVo">
+      <svg class="pcbsign" viewBox="0 0 118 54" aria-label="evo монолинией">
+        <defs>
+          <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/>
+          </linearGradient>
+        </defs>
+        <g fill="none" stroke="url(#mg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <!-- e: перекладина + дуга с вырезом снизу справа -->
+          <path d="M6 27 H36"/>
+          <path d="M36 27 A15 15 0 1 0 32.5 36.6"/>
+          <!-- v: два проводника, стык в точке пайки -->
+          <path d="M46 13 L60 41 L74 13"/>
+          <path class="flow" d="M46 13 L60 41 L74 13"/>
+          <!-- o: обкладка -->
+          <circle cx="94" cy="27" r="15"/>
+        </g>
+        <circle cx="60" cy="41" r="2.6" fill="#fbbf24"/>
+      </svg>
+      <span class="hint">мотив: печатная плата<br>r 15 · штрих 4px · импульс</span>
+    </div>
+  </section>
+
+  <!-- ═══ V3 · КОНТРОЛЬНАЯ СУММА ═══ -->
+  <section class="card">
+    <div class="head">
+      <span class="idx">V3</span>
+      <h2>Контрольная сумма — капс + байты</h2>
+      <span class="reg">EVO · Oxanium 700 · моно</span>
+    </div>
+    <p class="idea">Капс с инженерным воздухом (шаг 0.34em, Oxanium — гранёный HUD) — по исследованиям капс читается как <b>+52% «компетентности»</b>; под знаком двоичная подпись байтов e/V/o: знак, который можно проверить до бита.</p>
+    <div class="stage">
+      <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="ядро eVo">
+      <span class="reg3">
+        <span class="evo3"><span>E</span><span>V</span><span>O</span></span>
+        <span class="bytes"><i>e</i> 01100101 · <i>V</i> 01010110 · <i>o</i> 01101111</span>
+      </span>
+      <span class="hint">мотив: регистр CPU<br>шаг 0.34em · байты 0x65/56/6F</span>
+    </div>
+  </section>
+
+  <!-- ═══ V4 · МОРФ V ═══ -->
+  <section class="card">
+    <div class="head">
+      <span class="idx">V4</span>
+      <h2>Морф V — буква врастает в ядро</h2>
+      <span class="reg">eVo · Michroma · дорожка</span>
+    </div>
+    <p class="idea">Тренд «морф-марк» 2026: V — <b>разъём между ядром и надписью</b>: e и o — тонкая фиолетовая обводка, V — заливка градиентом, а от ядра к V ведёт дорожка платы с виа-точками. Надпись перестаёт быть наклейкой — она подключена.</p>
+    <div class="stage">
+      <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="ядро eVo">
+      <span class="mlock">
+        <svg class="trace" viewBox="0 0 190 72" aria-hidden="true">
+          <path class="base"  d="M22 58 H92 L109 40"/>
+          <path class="pulse" d="M22 58 H92 L109 40"/>
+          <circle class="via" cx="22" cy="58" r="3"/>
+          <circle class="via-dot" cx="109" cy="40" r="2.4"/>
+        </svg>
+        <span class="mword"><span class="mo">e</span><span class="mv">V</span><span class="mo">o</span></span>
+      </span>
+      <span class="hint">мотив: разъём/виа<br>морф-тренд LogoLounge 2026</span>
+    </div>
+  </section>
+
+  <!-- ═══ V5 · ПРИЦЕЛ ═══ -->
+  <section class="card">
+    <div class="head">
+      <span class="idx">V5</span>
+      <h2>Прицел — знак как индикатор системы</h2>
+      <span class="reg">evO · Space Grotesk 700</span>
+    </div>
+    <p class="idea">HUD-скобки (угловые риски с мягким дыханием) вокруг «evO», янтарный статус-огонёк и моно-подпись: знак ведёт себя как <b>живой элемент интерфейса</b> — «цель захвачена, синхронизация с ядром идёт».</p>
+    <div class="stage">
+      <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="ядро eVo">
+      <span class="retcol">
+        <span class="ret"><i></i><i></i><i></i><i></i><span class="st"></span><span class="evo5">evO</span></span>
+        <span class="retcap">target: core-44 · sync ok</span>
+      </span>
+      <span class="hint">мотив: HUD-прицел<br>регистр: ev + O-финал</span>
+    </div>
+  </section>
+
+  <!-- исследовательская база -->
+  <footer class="srcs">
+    <h3>База исследования (6 запросов, веб)</h3>
+    <ul>
+      <li>Тренды wordmark 2026: интегрированные литеры, морф-марки, linework, motion-first — <a href="https://www.logolounge.com/trend/2026-logo-trend-report" target="_blank" rel="noopener">LogoLounge 2026 Trend Report</a>, <a href="https://panze.co/blog/logo-design-trends" target="_blank" rel="noopener">Panze</a></li>
+      <li>Психология регистра: строчные +69% «дружелюбия», капс +52% «компетентности» — <a href="https://www.looka.com/blog/lowercase-logo-design/" target="_blank" rel="noopener">Looka: lowercase trend</a>, <a href="https://www.researchgate.net/publication/313316135_The_effects_of_uppercase_and_lowercase_wordmarks_on_brand_perceptions" target="_blank" rel="noopener">ResearchGate</a></li>
+      <li>Посадка знака к символу: оптическое выравнивание, X-метод, зазор как доля высоты — <a href="https://brenlify.com/growth-lab/insights/why-does-your-logo-feel-off-how-to-balance-a-logo" target="_blank" rel="noopener">Brenlify</a>, <a href="https://www.kareemstudio.me/articles/logo-lockups-construction" target="_blank" rel="noopener">KareemStudio</a></li>
+      <li>Техно-типографика: замены Orbitron (Michroma/Oxanium/Chakra Petch), моно-миксы display+mono — <a href="https://fonts.google.com/knowledge/choosing_type/pairing_typefaces" target="_blank" rel="noopener">Google Fonts Knowledge</a></li>
+    </ul>
+    <p class="note">ограничения смены: палитра Эво · фон #0b0f1a · анимации деликатные (шмер 5–9 s, prefers-reduced-motion уважен) · файл самодостаточен, кроме Google Fonts и logo-core.png</p>
+  </footer>
+
+</div>
+</body>
+</html>

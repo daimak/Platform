@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-11-15 08:48",
+  "generatedAt": "2026-11-18 14:18",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -14,11 +14,11 @@ window.EVO_BRIEF = {
     "nextStep": "По санкциям Sovereign: пилот Рокфеллера и/или выбор мира из drafts; при следующей смене — зафиксировать сессию 08–09.11 записью в `LOG.md`. Текущий пул работ — task-лиджер `Memory/Engineering/Tasks/Active/` (27 карточек)."
   },
   "changes": [
-    "2026-11-07 | templating protocol (Docs/TEMPLATING.md): Jinja2 templates in templates/ as source of truth, private per-host vars in Workspace/private/vars (untracked), renderer tools/render_templates.py with placeholder-safe repo mode, runbook converted to template | infra coordinates out of session memory and out of the public repo | —",
     "2026-11-07 | cloud VM security lab: docker + compose, apt toolkit, practice targets from cloud kit bound to loopback only (fixes: compose 0.0.0.0 bindings and missing empty .env for secretless services) | docker bypasses ufw; lab targets must never face the internet; inventory kept in private zone | —",
     "2026-11-07 | agent peer notes (\"Заметка соседу\"): agents may append one short note-to-a-neighbor line to routine LLM reports (run_agent.py -> Workspace/agents/peer-notes.jsonl, untracked); Barrymore plaque shows unread counter, digest panel in steward modal, GET/POST /api/peer-notes; Morning Brief gains one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1 | agents occasionally show initiative and cross-talk at near-zero cost; launch stays manual (leash mode) | —",
     "2026-11-09 | release 1.8.8: COMMAND CENTER штаб (топливо/конвейер/артефакты/ждёт-слова/деньги/сигналы + /api/tokens/usage), обсерватория Maelstorm (воронка/корабли/шлюпки), 14 драфт-миров + 13 превью (worlds-draft, выбор за Sovereign), принцип P12 нейтральность инструмента, план Dark Watch, intel-картотека выведена из git (visibility rule) | consolidation of 08-09.11 sessions | —",
-    "2026-11-14 | release 1.8.81: штаб v2 — живое топливо (кольцо запаса в днях на оценке 440M + бюджет-полоса «в наличии/израсходовано»), 4 темы с кнопкой-циклом (Рассвет/Орхидея/Альянс/Бункер), меню-компас (одна иконка вместо шести), оживление (светлячки/дыхание фона/блеск заголовка/подъём панелей), многослойный фон с авророй-дрейфом, виньеткой и зерном; фикс «полос в Магадан» (minmax(0,1fr)+wrap); лейн «Витрина продаж»: стенд-витрина (/board/ демо-дашборд, /demo/ Excel, /uslugi.html), пинг-сторожка 15 мин, кворки ×3, OLX-объявление, Fiverr/Upwork-пакет, каналы+КП | consolidation of 13-14.11 sales-lane sessions | —"
+    "2026-11-14 | release 1.8.81: штаб v2 — живое топливо (кольцо запаса в днях на оценке 440M + бюджет-полоса «в наличии/израсходовано»), 4 темы с кнопкой-циклом (Рассвет/Орхидея/Альянс/Бункер), меню-компас (одна иконка вместо шести), оживление (светлячки/дыхание фона/блеск заголовка/подъём панелей), многослойный фон с авророй-дрейфом, виньеткой и зерном; фикс «полос в Магадан» (minmax(0,1fr)+wrap); лейн «Витрина продаж»: стенд-витрина (/board/ демо-дашборд, /demo/ Excel, /uslugi.html), пинг-сторожка 15 мин, кворки ×3, OLX-объявление, Fiverr/Upwork-пакет, каналы+КП | consolidation of 13-14.11 sales-lane sessions | —",
+    "2026-11-15 | release 1.8.9: nav-dock v6 — ядро Эво в шапке слева сверху на ВСЕХ экранах (assets/logo-core.png, панель дверей раскрывается по диагонали вправо-вниз, плашка Бэрримора не накрывается, док справа-снизу снят); агенты: «тихая карта» v=6 (подписи по щелчку, тумблер 🗺/🏷) + канбан-приёмка рейсов (POST /api/voyages/verdict → voyage-verdicts.jsonl вне git, кнопки «всё норм»/«доработка») + Соломон-экскурсовод; money-map.html в штабе (дверь «🗺 Карта денег», 4 ревизии C1–C4 ждут вайб-выбор); витрина: STATUS, uslugi, outreach-база 30 адресатов (A:17), ташкентские каналы (platforms-tashkent, tashkent-channels, yandex-uslugi-uz), board/landing, скрипты пинг-сторожки; чистка Vision: 13 устаревших доков сняты (восстановимы из истории) | consolidation of 14-15.11 sessions | —"
   ],
   "tasks": {
     "urgent": [
@@ -2035,13 +2035,13 @@ window.EVO_BRIEF = {
   },
   "git": {
     "branch": "main",
-    "lastCommit": "f92815b Release 1.8.81: version bump + changelog; актуализация Memory/Docs и лейнов (радар, job-search, блоклист)",
-    "dirtyFiles": 81
+    "lastCommit": "4395fe1 Release 1.8.9: nav-dock v6 (ядро Эво в шапке на всех экранах), тихая карта агентов + канбан-приёмка рейсов, money-map, витрина-хвосты; version bump + changelog",
+    "dirtyFiles": 43
   },
   "agent": {
-    "model": "codestral-2508",
-    "summary": "Дата: 2026-08-05. В работе: 27 задач (12 urgent, 15 regular). Ургентные: Kali Linux лаборатория (VMware Workstation Pro + белый пентест), ротация ключей LangSmith/FreeLLMAPI, контур безопасности (выжимка дня и ToDo), hh-вакансии не доходят до дашборда, копии ключей в артефактах ZCode-сессии → ротация, Радар денег: всесторонний разбор заказов и перспективных направлений заработка, Утро 05.11 — контур безопасности: выжимка дня и ToDo (ZCode), мастер-пароль KeePassXC + бэкап хранилища, шум авто-коммитов агент-хоста в истории, незакоммиченные правки в рабочем дереве. Регулярные: «Флот в море» — дашборд запущенных агентов, чистка пустых заглушек (locales, Carrier, Timeline), фундамент данных: конверт артефактов + events.jsonl + реестр джобов + мастер-профиль, Higgsfield AI: пилотный тест «товар → ролик» (05.11.2026), личный штат +2: DevOps Automator и Technical Writer — разбор для Sovereign, типы сущностей на канбане: Таска / ЗНИ / Эпик (ITIL-минимум), денежные лейны 05.11: выбор направления и MVP, утро: ознакомиться с диагностикой параллельных агентов (04.11), ритуал релиза: VERSION и AI-ONBOARDING тем же коммитом, единый тест-раннер + requirements.txt, портфолио-одностраничник из master-profile.json + кейсов, коллизия двойного исполнения: найти профиль «Резюме-конвейера», AI Sandbox: вкладка «Экскурсия» — граф рейсов агентов, тех-долг реестра джобов: stale-running и типы полей (P2 ревизора), заполнить 6 пробелов фактуры master-profile.json (конвейер откликов), тех-долг task_lock: валидация task_id, докстринг журнала, кран тестов (P2 ревизора), актуализация Memory/Context/CURRENT.md, изучение агентов: декомпозиция, лаборатории, запуск в работу. Доска: 125 перспективных + 32 основных (снимок 2026-11-09); находок с вилкой: 0; OLX-находки: 253 (2026-10-31); очередь поручений: 0. Ветка: main; последний коммит: f92815b Release 1.8.81: version bump + changelog; актуализация Memory/Docs и лейнов (радар, job-search, блоклист); грязных файлов: 81.",
-    "nextStep": "Актуализировать контекст Barrymore: сверить CURRENT.md с STATE.md, LOG.md и CHANGELOG.md; устранить устаревшие указания на создание Morning Brief; проверить качество доклада после обновления контекста; отдельно разобраться с неотслеживаемым tools/barrymore/logger.py. Не выполнять merge, commit или удаление файлов без отдельного решения Sovereign."
+    "model": "dots-studio/dots-3-note-preview:free",
+    "summary": "Контекст устарел: дата в CURRENT.md — 2026-08-05, снимок сгенерирован 18.11.2026. Активные задачи: Kali-лаборатория (шаг 7 — спец-учётка, тесты), ротация ключей LangSmith/FreeLLMAPI, radар денег, чистка master-profile. Релизы: 1.8.8, 1.8.81, 1.8.9 на main; последний коммит 4395fe1. В дереве 43 грязных файла, включая 17 новых и ~1301 строку diff без коммита. Хантер: 125 перспективных + 32 основные вакансии (снимок 09.11), находок с вилкой 0. Переписка: 0 заметок за сутки.",
+    "nextStep": "Сверить CURRENT.md с STATE.md и CHANGELOG.md, устранить устаревшие указания на создание Morning Brief, затем проверить качество доклада после обновления контекста."
   },
-  "_sourceFingerprint": "3a416839c16be0ceb4ea38cfcb1f44fcd75cca1052fd16ee791f2752c934c063"
+  "_sourceFingerprint": "1c657de161b0dc4f01bcc17537d23f1892476fc20abd6b8eaa2f108aae82a6d3"
 };

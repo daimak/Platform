@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Lab · eVo — картографический антик (Паганель)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Tabula fontium: Cinzel (римская капитель I в.), Marcellus SC, Cormorant Unicase,
+     IM Fell English (цифровизация шрифтов XVII в., фонд д-ра Джона Фелла), EB Garamond -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@1,600&family=Cormorant+Unicase:wght@600&family=EB+Garamond:ital,wght@0,500;1,500&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Marcellus+SC&family=Orbitron:wght@800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f1a;
+  --cyan:#22d3ee; --violet:#a78bfa; --mint:#34d399; --amber:#fbbf24;
+  --brass:#b08d57; --brass-2:#d9b96c; --parch:#e6dcc0; --parch-2:#f3ecd7;
+  --txt:#e8ecf4; --dim:#8b93a7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:"Segoe UI",system-ui,sans-serif;
+  min-height:100vh; overflow-x:hidden;
+}
+/* ════════ ФОН: стилизованная карта мира XV века ════════ */
+.map-bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.map-bg::after{ /* виньетка, как пожелтевшая по краям гравюра */
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 42%, transparent 52%, rgba(4,6,12,.72) 100%);
+}
+.content{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:34px 26px 60px}
+
+/* ════════ Шапка лаборатории ════════ */
+.lab-head{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:18px 22px;margin-bottom:26px;
+  border:1px solid rgba(217,185,108,.35);border-radius:6px;
+  background:linear-gradient(180deg,rgba(217,185,108,.06),rgba(217,185,108,.015));
+  animation:fadeUp .7s ease both;
+}
+.lab-title{font-family:'Cinzel',serif;font-weight:700;font-size:21px;letter-spacing:.22em;color:var(--parch-2)}
+.lab-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:14px;color:rgba(230,220,192,.68);margin-top:4px;letter-spacing:.04em}
+.lab-note{margin-left:auto;max-width:330px;font-size:12px;line-height:1.5;color:var(--dim);border-left:1px solid rgba(217,185,108,.35);padding-left:14px}
+.lab-note b{color:var(--parch);font-weight:600}
+
+/* ════════ Таблички-карточки ════════ */
+.plates{display:grid;grid-template-columns:repeat(auto-fit,minmax(560px,1fr));gap:22px}
+.plate{
+  position:relative;border-radius:8px;padding:18px 20px 20px;
+  border:1px solid rgba(217,185,108,.32);
+  background:
+    radial-gradient(circle 2.5px at 12px 12px, rgba(217,185,108,.6) 97%, transparent),
+    radial-gradient(circle 2.5px at calc(100% - 12px) 12px, rgba(217,185,108,.6) 97%, transparent),
+    radial-gradient(circle 2.5px at 12px calc(100% - 12px), rgba(217,185,108,.6) 97%, transparent),
+    radial-gradient(circle 2.5px at calc(100% - 12px) calc(100% - 12px), rgba(217,185,108,.6) 97%, transparent),
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  animation:fadeUp .8s ease both;
+}
+.plate::before{content:"";position:absolute;inset:7px;border:1px solid rgba(217,185,108,.14);border-radius:5px;pointer-events:none}
+.plate:nth-child(1){animation-delay:.05s}.plate:nth-child(2){animation-delay:.12s}
+.plate:nth-child(3){animation-delay:.19s}.plate:nth-child(4){animation-delay:.26s}
+.plate:nth-child(5){animation-delay:.33s}.plate:nth-child(6){animation-delay:.40s}
+.plate.ref{grid-column:1/-1;border-color:rgba(34,211,238,.35);
+  background:
+    radial-gradient(circle 2.5px at 12px 12px, rgba(34,211,238,.55) 97%, transparent),
+    radial-gradient(circle 2.5px at calc(100% - 12px) 12px, rgba(34,211,238,.55) 97%, transparent),
+    radial-gradient(circle 2.5px at 12px calc(100% - 12px), rgba(34,211,238,.55) 97%, transparent),
+    radial-gradient(circle 2.5px at calc(100% - 12px) calc(100% - 12px), rgba(34,211,238,.55) 97%, transparent),
+    linear-gradient(180deg,rgba(34,211,238,.045),rgba(255,255,255,.01));
+}
+.plate-head{margin-bottom:14px}
+.tab-no{font-family:'EB Garamond',serif;font-size:11px;letter-spacing:.4em;color:rgba(217,185,108,.85)}
+.tab-no::after{content:"";display:inline-block;width:46px;height:1px;background:linear-gradient(90deg,rgba(217,185,108,.5),transparent);vertical-align:middle;margin-left:12px}
+.plate-head h2{font-family:'Cinzel',serif;font-weight:600;font-size:17px;letter-spacing:.14em;color:var(--parch);margin-top:6px}
+.plate-head h2 .tag{font-family:'Segoe UI',system-ui;font-weight:400;font-size:11px;letter-spacing:.05em;color:var(--dim);margin-left:10px}
+.plate-head .idea{font-size:13px;color:var(--dim);margin-top:6px;line-height:1.5;max-width:640px}
+.plate.ref .tab-no{color:rgba(34,211,238,.9)}
+.plate.ref .tab-no::after{background:linear-gradient(90deg,rgba(34,211,238,.5),transparent)}
+.plate.ref h2{color:#dbeafe}
+
+/* ════════ Сцена знака ════════ */
+.stage{
+  display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  min-height:132px;padding:16px 22px;border-radius:6px;
+  border:1px solid rgba(255,255,255,.07);
+  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.005));
+}
+.core{width:44px;height:44px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 16px rgba(34,211,238,.14)}
+.sign-block{display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+.latin{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:'EB Garamond',serif;font-size:10.5px;letter-spacing:.34em;
+  color:rgba(217,185,108,.8);white-space:nowrap;
+}
+.latin::before,.latin::after{content:"";width:34px;height:1px;flex:0 0 auto}
+.latin::before{background:linear-gradient(90deg,transparent,rgba(217,185,108,.55))}
+.latin::after{background:linear-gradient(90deg,rgba(217,185,108,.55),transparent)}
+.sign{display:inline-flex;align-items:baseline;line-height:1;user-select:text}
+.stage:hover .sign{filter:brightness(1.1)}
+.stage .sign{transition:filter .5s ease}
+
+/* ── ЭТАЛОН: Orbitron + неоновый градиент (как в staff-table, точка отсчёта) ── */
+.sign-orbitron{
+  font-family:'Orbitron','Segoe UI',system-ui,sans-serif;
+  font-size:44px;font-weight:800;letter-spacing:.08em;
+  background:linear-gradient(100deg,#7dd3fc 0%,#22d3ee 28%,#a78bfa 62%,#f0abfc 85%,#22d3ee 100%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:brandslide 7s linear infinite,brandglow 4.5s ease-in-out infinite;
+}
+
+/* ── TAB. I · Капитель (Cinzel — римская резьба по камню) ── */
+.sign-capitel{
+  font-family:'Cinzel',serif;font-weight:700;font-size:32px;letter-spacing:.16em;
+  color:var(--parch);
+  text-shadow:0 1px 1px rgba(0,0,0,.85),0 0 20px rgba(230,220,192,.10);
+  animation:capitelBreath 8s ease-in-out infinite;
+}
+.sign-capitel .big{font-size:48px;letter-spacing:.02em;color:var(--parch-2);text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 26px rgba(251,191,36,.16)}
+
+/* ── TAB. II · Картуш (Marcellus SC, латунная фольга в раме) ── */
+.cart-frame{
+  position:relative;display:inline-flex;align-items:center;
+  padding:14px 30px;border-radius:3px;
+  border:1px solid rgba(217,185,108,.5);
+  background:linear-gradient(180deg,rgba(217,185,108,.08),rgba(217,185,108,.02));
+}
+.cart-frame::before{content:"";position:absolute;inset:4px;border:1px solid rgba(217,185,108,.22);border-radius:2px;pointer-events:none}
+.cart-frame i{position:absolute;width:10px;height:10px;border:0 solid rgba(217,185,108,.85)}
+.cart-frame i.tl{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px}
+.cart-frame i.tr{top:-1px;right:-1px;border-top-width:2px;border-right-width:2px}
+.cart-frame i.bl{bottom:-1px;left:-1px;border-bottom-width:2px;border-left-width:2px}
+.cart-frame i.br{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px}
+.sign-cartouche{
+  font-family:'Marcellus SC','Cinzel',serif;font-size:40px;letter-spacing:.10em;
+  background:linear-gradient(102deg,#8a6d3b 0%,#e3c377 30%,#f6e7b8 48%,#c9a45c 66%,#8a6d3b 95%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:foilSlide 14s linear infinite,brassGlow 9s ease-in-out infinite;
+}
+
+/* ── TAB. III · Гравировка на меди (Cormorant Unicase, штриховка) ── */
+.sign-engrave{
+  font-family:'Cormorant Unicase','Cinzel',serif;font-weight:600;font-size:46px;letter-spacing:.12em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(34,211,238,.75);
+  background:repeating-linear-gradient(55deg,rgba(34,211,238,.5) 0 1px,rgba(34,211,238,.06) 1px 4px);
+  -webkit-background-clip:text;background-clip:text;
+  animation:etchBreath 6.5s ease-in-out infinite;
+}
+.sign-engrave .o{
+  -webkit-text-stroke:1px rgba(52,211,153,.8);
+  background:repeating-linear-gradient(55deg,rgba(52,211,153,.5) 0 1px,rgba(52,211,153,.06) 1px 4px);
+  -webkit-background-clip:text;background-clip:text;
+}
+
+/* ── TAB. IV · Морская роза (IM Fell English, янтарный маяк) ── */
+.rose-row{position:relative;display:inline-flex;align-items:center;gap:18px}
+.rose-row::before{content:"";position:absolute;left:-26px;right:-26px;top:50%;border-top:1px dashed rgba(34,211,238,.28)}
+.mini-rose,.mini-needle{flex:0 0 auto;opacity:.9}
+.sign-fell{font-family:'IM Fell English',serif;font-size:48px;color:#f0d9a8;letter-spacing:.06em;animation:beacon 7s ease-in-out infinite;text-shadow:0 0 10px rgba(251,191,36,.2)}
+.sign-fell em{font-style:italic;font-size:54px;color:var(--amber);padding-right:2px}
+.sign-fell .sc{font-family:'IM Fell English SC','IM Fell English',serif}
+
+/* ── TAB. V · Инициал-миниатюра (медальон + Cormorant italic) ── */
+.initial-row{display:inline-flex;align-items:center;gap:16px}
+.medallion{
+  position:relative;width:66px;height:66px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid rgba(167,139,250,.55);
+  box-shadow:0 0 18px rgba(167,139,250,.16),inset 0 0 12px rgba(167,139,250,.12);
+  animation:medallionBreath 9s ease-in-out infinite;
+}
+.medallion::after{content:"";position:absolute;inset:4px;border:1px solid rgba(34,211,238,.35);border-radius:50%}
+.big-e{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:44px;line-height:1;
+  background:linear-gradient(120deg,#a78bfa 20%,#22d3ee 80%);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:foilSlide 11s linear infinite;
+  transform:translateY(-2px);
+}
+.vo-cinzel{font-family:'Cinzel',serif;font-weight:700;font-size:27px;letter-spacing:.3em;color:var(--parch)}
+.flourish{display:block;margin-top:2px;opacity:.75}
+
+/* ════════ Примечание и источники (правило двух языков) ════════ */
+.foot{
+  margin-top:26px;padding:16px 20px;border-radius:6px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.02);
+  font-size:12px;line-height:1.7;color:var(--dim);
+}
+.foot b{color:var(--parch);font-weight:600}
+.foot .src{color:rgba(139,147,167,.85)}
+
+/* ════════ Анимации ════════ */
+@keyframes brandslide{to{background-position:200% 0}}
+@keyframes brandglow{0%,100%{filter:drop-shadow(0 0 6px rgba(34,211,238,.25))}50%{filter:drop-shadow(0 0 14px rgba(167,139,250,.45))}}
+@keyframes foilSlide{to{background-position:220% 0}}
+@keyframes brassGlow{0%,100%{filter:drop-shadow(0 0 5px rgba(251,191,36,.18))}50%{filter:drop-shadow(0 0 13px rgba(217,185,108,.42))}}
+@keyframes capitelBreath{0%,100%{filter:drop-shadow(0 0 2px rgba(230,220,192,.08))}50%{filter:drop-shadow(0 0 9px rgba(251,191,36,.22))}}
+@keyframes etchBreath{0%,100%{filter:drop-shadow(0 0 3px rgba(34,211,238,.12))}50%{filter:drop-shadow(0 0 10px rgba(34,211,238,.3))}}
+@keyframes beacon{0%,100%{text-shadow:0 0 8px rgba(251,191,36,.18)}50%{text-shadow:0 0 22px rgba(251,191,36,.45)}}
+@keyframes medallionBreath{0%,100%{box-shadow:0 0 12px rgba(167,139,250,.12),inset 0 0 10px rgba(167,139,250,.08)}50%{box-shadow:0 0 24px rgba(167,139,250,.28),inset 0 0 14px rgba(34,211,238,.14)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .plate,.lab-head{animation:none}
+  .sign-orbitron,.sign-cartouche,.sign-capitel,.sign-engrave,.sign-fell,.medallion,.big-e{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ ФОН-КАРТА: роза ветров, румбы, латунь, чудовища ══════════════ -->
+<svg class="map-bg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <!-- градусная сетка -->
+  <g stroke="rgba(148,163,184,.055)" fill="none">
+    <ellipse cx="800" cy="520" rx="920" ry="400"/>
+    <ellipse cx="800" cy="520" rx="700" ry="300"/>
+    <path d="M-100 700 Q 500 620 900 700 T 1700 660"/>
+    <path d="M-100 260 Q 600 180 1100 280 T 1700 220"/>
+    <path d="M300 -50 C 340 300 300 700 360 1050"/>
+    <path d="M1180 -50 C 1140 320 1200 680 1140 1050"/>
+  </g>
+  <!-- румб-линии, расходящиеся от розы -->
+  <g stroke="rgba(34,211,238,.07)" stroke-dasharray="1 7">
+    <line x1="1280" y1="760" x2="1600" y2="180"/>
+    <line x1="1280" y1="760" x2="1600" y2="980"/>
+    <line x1="1280" y1="760" x2="760" y2="1000"/>
+    <line x1="1280" y1="760" x2="900" y2="0"/>
+    <line x1="1280" y1="760" x2="0" y2="480"/>
+    <line x1="1280" y1="760" x2="0" y2="1000"/>
+  </g>
+  <!-- маршрут экспедиции (пунктир, плывёт медленно) -->
+  <path d="M80 120 C 300 260, 470 170, 640 250 S 980 430, 1230 700"
+        fill="none" stroke="rgba(230,220,192,.16)" stroke-dasharray="2 8" stroke-linecap="round">
+    <animate attributeName="stroke-dashoffset" from="300" to="0" dur="90s" repeatCount="indefinite"/>
+  </path>
+  <text x="640" y="232" font-family="'IM Fell English',serif" font-size="19" fill="rgba(230,220,192,.28)">&#10016;</text>
+  <!-- роза ветров -->
+  <g transform="translate(1280,760)">
+    <circle r="98" fill="none" stroke="rgba(217,185,108,.32)"/>
+    <circle r="74" fill="none" stroke="rgba(34,211,238,.22)"/>
+    <circle r="15" fill="rgba(217,185,108,.16)"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="240s" repeatCount="indefinite"/>
+      <path d="M0 -96 L9 -22 L0 -8 L-9 -22 Z" fill="rgba(217,185,108,.30)"/>
+      <path d="M0 -96 L9 -22 L0 -8 L-9 -22 Z" fill="rgba(217,185,108,.30)" transform="rotate(90)"/>
+      <path d="M0 -96 L9 -22 L0 -8 L-9 -22 Z" fill="rgba(217,185,108,.30)" transform="rotate(180)"/>
+      <path d="M0 -96 L9 -22 L0 -8 L-9 -22 Z" fill="rgba(217,185,108,.30)" transform="rotate(270)"/>
+      <path d="M0 -66 L7 -20 L0 -8 L-7 -20 Z" fill="rgba(34,211,238,.24)" transform="rotate(45)"/>
+      <path d="M0 -66 L7 -20 L0 -8 L-7 -20 Z" fill="rgba(34,211,238,.24)" transform="rotate(135)"/>
+      <path d="M0 -66 L7 -20 L0 -8 L-7 -20 Z" fill="rgba(34,211,238,.24)" transform="rotate(225)"/>
+      <path d="M0 -66 L7 -20 L0 -8 L-7 -20 Z" fill="rgba(34,211,238,.24)" transform="rotate(315)"/>
+      <path d="M0 -42 L4 -14 L0 -6 L-4 -14 Z" fill="rgba(230,220,192,.16)" transform="rotate(22.5)"/>
+      <path d="M0 -42 L4 -14 L0 -6 L-4 -14 Z" fill="rgba(230,220,192,.16)" transform="rotate(112.5)"/>
+      <path d="M0 -42 L4 -14 L0 -6 L-4 -14 Z" fill="rgba(230,220,192,.16)" transform="rotate(202.5)"/>
+      <path d="M0 -42 L4 -14 L0 -6 L-4 -14 Z" fill="rgba(230,220,192,.16)" transform="rotate(292.5)"/>
+    </g>
+    <text y="-106" text-anchor="middle" font-family="'IM Fell English',serif" font-size="16" fill="rgba(217,185,108,.5)">N</text>
+  </g>
+  <!-- морское чудовище (стилизованный змей) -->
+  <g fill="none" stroke="rgba(52,211,153,.17)" stroke-width="3.5" stroke-linecap="round">
+    <path d="M110 900 C 150 830, 205 830, 250 895 C 295 960, 350 960, 395 895 C 440 830, 495 830, 540 895 c 28 -20, 52 -12, 60 12"/>
+    <path d="M610 905 l 24 9 M610 905 l 22 -7"/>
+    <circle cx="588" cy="897" r="3.2" fill="rgba(52,211,153,.25)" stroke="none"/>
+    <circle cx="646" cy="866" r="3" stroke-width="1.5"/>
+    <circle cx="662" cy="846" r="4.5" stroke-width="1.5"/>
+  </g>
+  <!-- морские надписи -->
+  <text x="86" y="106" font-family="'IM Fell English',serif" font-style="italic" font-size="30" letter-spacing="10" fill="rgba(230,220,192,.11)">HIC SVNT DRACONES</text>
+  <text x="1060" y="130" font-family="'IM Fell English',serif" font-style="italic" font-size="22" letter-spacing="7" fill="rgba(230,220,192,.10)">MARE INCOGNITVM</text>
+  <text x="1180" y="906" font-family="'IM Fell English',serif" font-size="17" letter-spacing="6" fill="rgba(217,185,108,.30)">TERRA EVO</text>
+  <text x="1150" y="636" font-family="'EB Garamond',serif" font-style="italic" font-size="13" letter-spacing="3" fill="rgba(139,147,167,.4)">52&#176; 24&#8242; N &#183; 21&#176; 01&#8242; E</text>
+  <text x="90" y="952" font-family="'EB Garamond',serif" font-size="14" letter-spacing="5" fill="rgba(217,185,108,.28)">ANNO MMXXVI &#183; SIGNVM EVO</text>
+</svg>
+
+<div class="content">
+
+  <!-- Шапка -->
+  <header class="lab-head">
+    <img src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="лого-ядро eVo">
+    <div>
+      <div class="lab-title">SIGN LAB &#183; CARTOGRAPHICA</div>
+      <div class="lab-sub">De signo &#171;eVo&#187; &#8212; стилистика карты XV века &#183; ночная смена Паганеля &#183; 15&#8594;16.XI.2026</div>
+    </div>
+    <div class="lab-note"><b>Задача CEO:</b> Orbitron в шапке — мимо, лого-ядро — свято (не трогаем). Фон — карта мира XV&nbsp;в. Подход: <b>картографический антик</b> — капитель, картеши, латынь-подписи, гравировка.</div>
+  </header>
+
+  <div class="plates">
+
+    <!-- ЭТАЛОН -->
+    <section class="plate ref">
+      <div class="plate-head">
+        <span class="tab-no">TAB. 0 &#183; ETALON</span>
+        <h2>Эталон — как сейчас <span class="tag">Orbitron 800 · неоновый градиент · точка отсчёта</span></h2>
+        <p class="idea">Текущий знак из staff-table: техно-футуризм, холодный неон. CEO просит теплее и музейнее — этот блок оставлен без изменений для честного сравнения.</p>
+      </div>
+      <div class="stage">
+        <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="лого-ядро eVo">
+        <div class="sign-block">
+          <span class="sign sign-orbitron">eVo</span>
+          <span class="latin" style="color:rgba(34,211,238,.7)">SYSTEMA NAVIGATIONIS &#183; MMXXVI</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB. I -->
+    <section class="plate">
+      <div class="plate-head">
+        <span class="tab-no">TAB. I</span>
+        <h2>Капитель <span class="tag">Cinzel · римская резьба по камню</span></h2>
+        <p class="idea">Знак как высеченная надпись на фронтоне: увеличенная начальная буква (римская эпиграфика), свет-тень снизу даёт эффект резца, буквы дышат тёплым янтарным свечением.</p>
+      </div>
+      <div class="stage">
+        <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="лого-ядро eVo">
+        <div class="sign-block">
+          <span class="sign sign-capitel"><span class="big">E</span><span>VO</span></span>
+          <span class="latin">NAVIGATIO ET LITTERAE</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB. II -->
+    <section class="plate">
+      <div class="plate-head">
+        <span class="tab-no">TAB. II</span>
+        <h2>Картуш <span class="tag">Marcellus SC · латунная фольга в раме</span></h2>
+        <p class="idea">Знак в картушной раме, как титул старинной карты: двойная латунная рамка с уголками-завитками, перелив латунной фольги по буквам, регистр «eVo» в малых капителях — разная высота, как на гравюрах.</p>
+      </div>
+      <div class="stage">
+        <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="лого-ядро eVo">
+        <div class="sign-block">
+          <span class="cart-frame"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i>
+            <span class="sign sign-cartouche">eVo</span>
+          </span>
+          <span class="latin">EVO &#183; TERRA NOVA &#183; ANNO MMXXVI</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB. III -->
+    <section class="plate">
+      <div class="plate-head">
+        <span class="tab-no">TAB. III</span>
+        <h2>Гравировка на меди <span class="tag">Cormorant Unicase · штриховка резцом</span></h2>
+        <p class="idea">Знак как рисунок на медной пластине: без заливки, тонкий контур + диагональная штриховка внутри букв — приём гравёров; финальная «O» мятная, как вторая краска оттиска; регистр «evO».</p>
+      </div>
+      <div class="stage">
+        <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="лого-ядро eVo">
+        <div class="sign-block">
+          <span class="sign sign-engrave">ev<span class="o">O</span></span>
+          <span class="latin">SCULPSIT IN AES &#183; EVO</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB. IV -->
+    <section class="plate">
+      <div class="plate-head">
+        <span class="tab-no">TAB. IV</span>
+        <h2>Морская роза <span class="tag">IM Fell English · янтарный маяк</span></h2>
+        <p class="idea">Знак между розой ветров и компасной стрелкой на румб-линии: шрифт Фелла XVII века, рукописная «e» курсивом, янтарное свечение маяка пульсирует медленно — «здесь есть драконы, здесь есть eVo».</p>
+      </div>
+      <div class="stage">
+        <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="лого-ядро eVo">
+        <div class="sign-block">
+          <span class="rose-row">
+            <svg class="mini-rose" width="36" height="36" viewBox="-20 -20 40 40" aria-hidden="true">
+              <g>
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="48s" repeatCount="indefinite"/>
+                <path d="M0 -18 L2.5 -5 L0 -2 L-2.5 -5 Z" fill="rgba(217,185,108,.75)"/>
+                <path d="M0 -18 L2.5 -5 L0 -2 L-2.5 -5 Z" fill="rgba(217,185,108,.75)" transform="rotate(90)"/>
+                <path d="M0 -18 L2.5 -5 L0 -2 L-2.5 -5 Z" fill="rgba(217,185,108,.75)" transform="rotate(180)"/>
+                <path d="M0 -18 L2.5 -5 L0 -2 L-2.5 -5 Z" fill="rgba(217,185,108,.75)" transform="rotate(270)"/>
+                <path d="M0 -12 L2 -4.5 L0 -2 L-2 -4.5 Z" fill="rgba(34,211,238,.6)" transform="rotate(45)"/>
+                <path d="M0 -12 L2 -4.5 L0 -2 L-2 -4.5 Z" fill="rgba(34,211,238,.6)" transform="rotate(135)"/>
+                <path d="M0 -12 L2 -4.5 L0 -2 L-2 -4.5 Z" fill="rgba(34,211,238,.6)" transform="rotate(225)"/>
+                <path d="M0 -12 L2 -4.5 L0 -2 L-2 -4.5 Z" fill="rgba(34,211,238,.6)" transform="rotate(315)"/>
+              </g>
+              <circle r="17" fill="none" stroke="rgba(217,185,108,.35)"/>
+              <circle r="2.4" fill="rgba(217,185,108,.6)"/>
+            </svg>
+            <span class="sign sign-fell"><em>e</em>V<span class="sc">o</span></span>
+            <svg class="mini-needle" width="26" height="40" viewBox="-13 -20 26 40" aria-hidden="true">
+              <g>
+                <animateTransform attributeName="transform" type="rotate" values="-7;7;-7" dur="7s" repeatCount="indefinite"/>
+                <path d="M0 -17 L4.5 0 L0 4 L-4.5 0 Z" fill="rgba(251,191,36,.75)"/>
+                <path d="M0 17 L4.5 0 L0 -4 L-4.5 0 Z" fill="rgba(34,211,238,.5)" transform="rotate(180)"/>
+              </g>
+              <circle r="2" fill="rgba(230,220,192,.7)"/>
+            </svg>
+          </span>
+          <span class="latin">STELLA MARIS &#183; HIC SVNT DRACONES</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB. V -->
+    <section class="plate">
+      <div class="plate-head">
+        <span class="tab-no">TAB. V</span>
+        <h2>Инициал-миниатюра <span class="tag">Cormorant italic + Cinzel · книжный инициал</span></h2>
+        <p class="idea">Книжный инициал из рукописной традиции: рукописная «e» в медальоне-минiatюре — медальон рифмуется с круглым лого-ядом, «VO» капителью с широким трекингом; перелив фиолет&#8594;циан как смена минеральных красок.</p>
+      </div>
+      <div class="stage">
+        <img class="core" src="../assets/logo-core.png" style="width:44px;height:44px;border-radius:50%" alt="лого-ядро eVo">
+        <div class="sign-block">
+          <span class="initial-row">
+            <span class="medallion"><span class="big-e">e</span></span>
+            <span class="sign vo-cinzel">VO</span>
+          </span>
+          <svg class="flourish" width="150" height="14" viewBox="0 0 150 14" aria-hidden="true">
+            <path d="M2 10 C 40 0, 110 0, 148 10" fill="none" stroke="rgba(217,185,108,.5)" stroke-width="1"/>
+            <circle cx="148" cy="10" r="1.8" fill="rgba(217,185,108,.6)"/>
+            <circle cx="2" cy="10" r="1.8" fill="rgba(217,185,108,.6)"/>
+          </svg>
+          <span class="latin">INITIVM SAPIENTIAE &#183; EVO</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Источники и замечания (правило двух языков: каждый факт — с источником) -->
+  <footer class="foot">
+    <b>Tabula fontium &amp; fontes:</b>
+    Cinzel (римская капитель I в., Natanael Gama) и IM Fell (цифровизация шрифтов XVII в. фонда д-ра Фелла) — Google Fonts;
+    картушные рамки старинных карт — коллекция David Rumsey (блог «Cartouches, or Decorative Map Titles»);
+    история декоративных инициалов — I Love Typography («Make the Letter Bigger»);
+    возврат serif-вордмарков в 2026 — Vistaprint / LogoLounge trend reports;
+    техника гравировки/letterpress в CSS — engraved: тень светлее фона, embossed: темнее (webdesign.tutsplus).
+    <br><b>Правило двух языков учтено:</b> латынь сверена — NAVIGATIO (плавание), SCULPSIT (вырезал), INITIVM (начало), HIC SVNT DRACONES (здесь водятся драконы).
+    <br><b>Красные линии:</b> staff-table.html и чужие файлы не тронуты, коммитов нет — только этот variant-файл.
+  </footer>
+
+</div>
+</body>
+</html>

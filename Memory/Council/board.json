@@ -1,0 +1,36 @@
+{
+  "name": "Правление Estate",
+  "canonical": "Estate Management Board",
+  "updated": "2026-11-15",
+  "moderator": "solomon",
+  "secretary": "barrymore",
+  "comment": "Правление — собрание руководителей всех отделов при CEO-0 по движению Estate в будущее (решил Дмитрий 15.11). Модератор ведёт диспут и сводит совместные выводы, спорное оставляет CEO-0. Протоколист ведёт протокол. Право рассуждения (оценки «правильно / слабо / доработай») — только у CEO-1; остальные докладывают и возражают по существу. Зал: eVo/dashboard/council.html, протоколы: Memory/Council/meetings/.",
+  "levels": {
+    "CEO-0": "руководитель проекта: повестка, правки, вердикты, роспуск",
+    "CEO-1": "правая рука: модератор и протоколист, право рассуждения",
+    "CEO-2": "советник направления",
+    "CEO-3": "начальник службы",
+    "CEO-4": "капитан мира",
+    "CEO-5": "специалист"
+  },
+  "members": [
+    { "id": "dmitry", "name": "Дмитрий", "ceo": 0, "role": "руководитель проекта", "critic": true, "callable": false },
+    { "id": "barrymore", "name": "Бэрримор", "ceo": 1, "role": "мажордом · протоколист", "critic": true, "callable": true, "passport": "Memory/Agents/Barrymore.md" },
+    { "id": "solomon", "name": "Соломон", "ceo": 1, "role": "верховный советник · модератор", "critic": true, "callable": true, "passport": "Memory/Agents/Solomon.md" },
+    { "id": "rockefeller", "name": "Рокфеллер", "ceo": 2, "role": "советник по казне", "critic": false, "callable": true, "passport": "Memory/Agents/Rockefeller.md" },
+    { "id": "holmes", "name": "Холмс", "ceo": 3, "role": "сыск и ревизия", "critic": false, "callable": true, "passport": "Memory/Agents/Holmes.md" },
+    { "id": "watson", "name": "Ватсон", "ceo": 3, "role": "память и полигон", "critic": false, "callable": true, "passport": "Memory/Agents/Watson.md" },
+    { "id": "hunter", "name": "Хантер", "ceo": 3, "role": "охота за заказами", "critic": false, "callable": true, "passport": "Memory/Agents/Hunter.md" },
+    { "id": "bender", "name": "Бендер", "ceo": 3, "role": "внутренняя касса", "critic": false, "callable": true, "passport": "Memory/Agents/Bender.md" },
+    { "id": "riskscan", "name": "RiskScan", "ceo": 3, "role": "скан рисков", "critic": false, "callable": true, "passport": "Memory/Agents/RiskScan.md" },
+    { "id": "hephaestus", "name": "Гефест", "ceo": 3, "role": "AI Sandbox", "critic": false, "callable": true, "passport": "Memory/Agents/Hephaestus.md" },
+    { "id": "nemo", "name": "Немо", "ceo": 4, "role": "капитан Harbor", "critic": false, "callable": true, "passport": "Memory/Agents/Nemo.md" },
+    { "id": "magellan", "name": "Магеллан", "ceo": 4, "role": "капитан Navigation Observatory", "critic": false, "callable": true, "passport": "Memory/Agents/Magellan.md" },
+    { "id": "sindbad", "name": "Синдбад", "ceo": 4, "role": "капитан Sinbad Market", "critic": false, "callable": true, "passport": "Memory/Agents/Sindbad.md" },
+    { "id": "paganel", "name": "Паганель", "ceo": 4, "role": "капитан Knowledge Archive", "critic": false, "callable": true, "passport": "Memory/Agents/Paganel.md" },
+    { "id": "leonardo", "name": "Леонардо", "ceo": 4, "role": "капитан Leonardo Study", "critic": false, "callable": true, "passport": "Memory/Agents/Leonardo.md" },
+    { "id": "maelstorm", "name": "Мельсторм", "ceo": 4, "role": "капитан архипелага Maelstorm", "critic": false, "callable": true, "passport": "Memory/Agents/Maelstorm.md" },
+    { "id": "cyrus", "name": "Сайрус Смит", "ceo": 5, "role": "Workshop: код и сборка", "critic": false, "callable": true, "passport": "Memory/Agents/CyrusSmith.md" },
+    { "id": "senku", "name": "Сэнку", "ceo": 5, "role": "гость-рецензент", "critic": false, "callable": true, "passport": "Memory/Agents/Senku.md" }
+  ]
+}
