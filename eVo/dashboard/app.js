@@ -2064,60 +2064,118 @@ function buildIslandContentHTML(islandKey, data, lang) {
   switch (islandKey) {
     case "mainEstate":
       return `
-        <div class="me-hall" id="me-hall" data-rev="candle">
-          <div class="me-hall-bg"></div>
-          <div class="me-archwin aw1"></div>
-          <div class="me-archwin aw2"></div>
-          <div class="me-balcony"></div>
-          <div class="me-gallery"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="me-stairs">
-            <svg viewBox="0 0 300 210" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-              <defs>
-                <linearGradient id="meStepG" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#6b5540"/><stop offset="1" stop-color="#241a12"/>
-                </linearGradient>
-                <linearGradient id="meGlowG" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0" stop-color="rgba(255,205,110,0)" stop-opacity="0"/>
-                  <stop offset="1" stop-color="rgba(255,205,110,.85)"/>
-                </linearGradient>
-              </defs>
-              <g fill="url(#meStepG)" stroke="rgba(0,0,0,.55)" stroke-width="1">
-                <rect x="60" y="196" width="96" height="14"/><rect x="72" y="182" width="96" height="14"/>
-                <rect x="84" y="168" width="96" height="14"/><rect x="96" y="154" width="96" height="14"/>
-                <rect x="108" y="140" width="96" height="14"/><rect x="120" y="126" width="96" height="14"/>
-                <rect x="132" y="112" width="96" height="14"/><rect x="144" y="98" width="96" height="14"/>
-                <rect x="156" y="84" width="96" height="14"/><rect x="168" y="70" width="96" height="14"/>
-                <rect x="180" y="56" width="96" height="14"/><rect x="192" y="42" width="96" height="14"/>
-              </g>
-              <polyline points="60,194 292,40" fill="none" stroke="rgba(212,175,106,.55)" stroke-width="4" stroke-linecap="round"/>
-              <g stroke="rgba(212,175,106,.4)" stroke-width="1.6">
-                <line x1="76" y1="192" x2="76" y2="178"/><line x1="100" y1="180" x2="100" y2="166"/>
-                <line x1="124" y1="167" x2="124" y2="153"/><line x1="148" y1="154" x2="148" y2="140"/>
-                <line x1="172" y1="140" x2="172" y2="126"/><line x1="196" y1="126" x2="196" y2="112"/>
-                <line x1="220" y1="112" x2="220" y2="98"/><line x1="244" y1="98" x2="244" y2="84"/>
-                <line x1="268" y1="84" x2="268" y2="70"/>
-              </g>
-              <rect id="me-stepglow" x="40" y="20" width="280" height="190" fill="url(#meGlowG)" opacity=".18"/>
-            </svg>
-          </div>
-          <div class="me-chandelier"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></div>
+        <div class="me-hall" id="me-hall">
+          <svg class="me-scene" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <linearGradient id="meSky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#070d22"/><stop offset=".55" stop-color="#111c38"/><stop offset="1" stop-color="#26304a"/>
+              </linearGradient>
+              <linearGradient id="meStone" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#241f1a"/><stop offset="1" stop-color="#12100d"/>
+              </linearGradient>
+              <linearGradient id="meRoof" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#1b2438"/><stop offset="1" stop-color="#101624"/>
+              </linearGradient>
+              <linearGradient id="meWin" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffd98e"/><stop offset="1" stop-color="#ff9d3c"/>
+              </linearGradient>
+              <linearGradient id="mePond" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0f4a55"/><stop offset="1" stop-color="#08222b"/>
+              </linearGradient>
+              <linearGradient id="mePath" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="rgba(255,190,110,.32)"/><stop offset="1" stop-color="rgba(255,190,110,.05)"/>
+              </linearGradient>
+              <filter id="meBlur6"><feGaussianBlur stdDeviation="6"/></filter>
+              <filter id="meBlur3"><feGaussianBlur stdDeviation="3"/></filter>
+            </defs>
+            <rect width="1440" height="520" fill="url(#meSky)"/>
+            <g fill="#dfe8ff">
+              <circle cx="150" cy="60" r="1.6" opacity=".8"/><circle cx="330" cy="40" r="1.2" opacity=".6"/>
+              <circle cx="520" cy="76" r="1.4" opacity=".7"/><circle cx="760" cy="34" r="1.3" opacity=".55"/>
+              <circle cx="980" cy="62" r="1.6" opacity=".8"/><circle cx="1180" cy="46" r="1.2" opacity=".6"/>
+              <circle cx="1320" cy="80" r="1.5" opacity=".75"/><circle cx="640" cy="90" r="1.1" opacity=".5"/>
+            </g>
+            <ellipse cx="420" cy="120" rx="260" ry="26" fill="#1a2440" opacity=".55" filter="url(#meBlur6)"/>
+            <ellipse cx="1080" cy="90" rx="300" ry="30" fill="#1a2440" opacity=".5" filter="url(#meBlur6)"/>
+            <ellipse cx="180" cy="470" rx="150" ry="60" fill="#0b120c" opacity=".9"/>
+            <ellipse cx="1290" cy="465" rx="170" ry="64" fill="#0b120c" opacity=".9"/>
+            <ellipse cx="330" cy="430" rx="90" ry="40" fill="#0d1410"/>
+            <ellipse cx="1140" cy="425" rx="95" ry="42" fill="#0d1410"/>
+            <g>
+              <rect x="470" y="170" width="90" height="230" fill="url(#meStone)"/>
+              <rect x="880" y="170" width="90" height="230" fill="url(#meStone)"/>
+              <path d="M455 170 L515 78 L575 170 Z" fill="url(#meRoof)"/>
+              <path d="M865 170 L925 78 L985 170 Z" fill="url(#meRoof)"/>
+              <rect x="560" y="205" width="320" height="195" fill="url(#meStone)"/>
+              <path d="M548 205 L720 118 L892 205 Z" fill="url(#meRoof)"/>
+              <rect x="690" y="238" width="60" height="34" fill="url(#meRoof)" opacity=".9"/>
+              <rect x="470" y="150" width="90" height="6" fill="rgba(212,175,106,.4)"/>
+              <rect x="880" y="150" width="90" height="6" fill="rgba(212,175,106,.4)"/>
+              <rect x="560" y="186" width="320" height="4" fill="rgba(212,175,106,.35)"/>
+            </g>
+            <g filter="url(#meBlur6)" opacity=".55">
+              <rect x="492" y="196" width="18" height="30" fill="url(#meWin)"/><rect x="522" y="196" width="18" height="30" fill="url(#meWin)"/>
+              <rect x="902" y="196" width="18" height="30" fill="url(#meWin)"/><rect x="932" y="196" width="18" height="30" fill="url(#meWin)"/>
+              <rect x="578" y="222" width="20" height="32" fill="url(#meWin)"/><rect x="612" y="222" width="20" height="32" fill="url(#meWin)"/>
+              <rect x="806" y="222" width="20" height="32" fill="url(#meWin)"/><rect x="840" y="222" width="20" height="32" fill="url(#meWin)"/>
+              <rect x="578" y="286" width="20" height="32" fill="url(#meWin)"/><rect x="612" y="286" width="20" height="32" fill="url(#meWin)"/>
+              <rect x="660" y="286" width="20" height="32" fill="url(#meWin)"/><rect x="806" y="286" width="20" height="32" fill="url(#meWin)"/>
+              <rect x="840" y="286" width="20" height="32" fill="url(#meWin)"/>
+            </g>
+            <g>
+              <rect x="492" y="196" width="16" height="28" fill="url(#meWin)"/><rect x="522" y="196" width="16" height="28" fill="url(#meWin)"/>
+              <rect x="902" y="196" width="16" height="28" fill="url(#meWin)"/><rect x="932" y="196" width="16" height="28" fill="url(#meWin)"/>
+              <rect x="578" y="222" width="18" height="30" fill="url(#meWin)"/><rect x="612" y="222" width="18" height="30" fill="url(#meWin)"/>
+              <rect x="648" y="222" width="24" height="42" fill="url(#meWin)"/>
+              <rect x="766" y="222" width="24" height="42" fill="url(#meWin)"/>
+              <rect x="806" y="222" width="18" height="30" fill="url(#meWin)"/><rect x="840" y="222" width="18" height="30" fill="url(#meWin)"/>
+              <rect x="578" y="286" width="18" height="30" fill="url(#meWin)"/><rect x="612" y="286" width="18" height="30" fill="url(#meWin)"/>
+              <rect x="660" y="286" width="18" height="30" fill="url(#meWin)"/><rect x="806" y="286" width="18" height="30" fill="url(#meWin)"/>
+              <rect x="840" y="286" width="18" height="30" fill="url(#meWin)"/>
+              <rect x="688" y="306" width="64" height="72" rx="30" fill="url(#meWin)"/>
+              <rect x="700" y="316" width="40" height="52" fill="#1a1408" opacity=".35"/>
+            </g>
+            <g stroke="rgba(212,175,106,.5)" stroke-width="2">
+              <line x1="560" y1="400" x2="880" y2="400"/>
+              <line x1="568" y1="396" x2="568" y2="382"/><line x1="600" y1="396" x2="600" y2="382"/>
+              <line x1="632" y1="396" x2="632" y2="382"/><line x1="664" y1="396" x2="664" y2="382"/>
+              <line x1="776" y1="396" x2="776" y2="382"/><line x1="808" y1="396" x2="808" y2="382"/>
+              <line x1="840" y1="396" x2="840" y2="382"/><line x1="872" y1="396" x2="872" y2="382"/>
+            </g>
+            <path d="M600 520 L660 400 L780 400 L840 520 Z" fill="#221d17"/>
+            <path d="M668 520 L700 400 L740 400 L772 520 Z" fill="url(#mePath)"/>
+            <g stroke="rgba(212,175,106,.45)" stroke-width="1.6">
+              <line x1="648" y1="488" x2="648" y2="470"/><line x1="672" y1="456" x2="672" y2="440"/>
+              <line x1="696" y1="424" x2="696" y2="410"/><line x1="744" y1="424" x2="744" y2="410"/>
+              <line x1="768" y1="456" x2="768" y2="440"/><line x1="792" y1="488" x2="792" y2="470"/>
+            </g>
+            <ellipse cx="720" cy="500" rx="400" ry="26" fill="url(#mePond)"/>
+            <g filter="url(#meBlur3)" opacity=".5">
+              <rect x="492" y="472" width="14" height="40" fill="#ffb75e"/>
+              <rect x="522" y="474" width="14" height="36" fill="#ff9d3c"/>
+              <rect x="902" y="472" width="14" height="40" fill="#ffb75e"/>
+              <rect x="932" y="474" width="14" height="36" fill="#ff9d3c"/>
+              <rect x="688" y="468" width="56" height="46" fill="#ffcf8a" opacity=".6"/>
+              <rect x="578" y="478" width="16" height="34" fill="#ff9d3c" opacity=".7"/>
+              <rect x="806" y="478" width="16" height="34" fill="#ff9d3c" opacity=".7"/>
+            </g>
+            <ellipse cx="720" cy="500" rx="400" ry="26" fill="rgba(10,30,38,.35)"/>
+          </svg>
+          <div class="me-shade"></div>
           <div class="me-bear" id="me-bear" title="Хранитель поместья">
             <svg viewBox="0 0 170 160" aria-hidden="true">
-              <ellipse cx="86" cy="104" rx="56" ry="44" fill="#241710"/>
-              <circle cx="102" cy="50" r="27" fill="#241710"/>
-              <circle cx="84" cy="30" r="10" fill="#241710"/>
-              <circle cx="120" cy="30" r="10" fill="#241710"/>
-              <ellipse cx="112" cy="60" rx="13" ry="9" fill="#3d2c1c"/>
-              <ellipse cx="55" cy="132" rx="20" ry="12" fill="#1c120c"/>
-              <ellipse cx="118" cy="134" rx="20" ry="12" fill="#1c120c"/>
+              <ellipse cx="86" cy="104" rx="56" ry="44" fill="#161009"/>
+              <circle cx="102" cy="50" r="27" fill="#161009"/>
+              <circle cx="84" cy="30" r="10" fill="#161009"/>
+              <circle cx="120" cy="30" r="10" fill="#161009"/>
+              <ellipse cx="112" cy="60" rx="13" ry="9" fill="#2a1e13"/>
+              <ellipse cx="55" cy="132" rx="20" ry="12" fill="#100b07"/>
+              <ellipse cx="118" cy="134" rx="20" ry="12" fill="#100b07"/>
               <circle class="eye" cx="95" cy="46" r="3.4" fill="#ffc35e"/>
               <circle class="eye" cx="112" cy="46" r="3.4" fill="#ffc35e"/>
               <path d="M52 118 Q86 100 122 116" stroke="rgba(212,175,106,.28)" stroke-width="2" fill="none"/>
             </svg>
           </div>
-          <div class="me-rug"></div>
-          <canvas id="me-dust"></canvas>
-          <button class="me-rev" id="me-rev">◆ Свечи</button>
           <div class="me-front">
             <div class="me-greet" id="me-greet">Добрый вечер, Дмитрий. <span>Поместье в порядке.</span></div>
             <div class="me-medals" id="me-medals"><span class="me-medal"><b>…</b><span>дворецкий сверяет</span></span></div>
@@ -2639,13 +2697,12 @@ function mePost(path, payload) {
 }
 
 function initMainEstateLive() {
-  const hall = document.getElementById("me-hall");
   const medalsEl = document.getElementById("me-medals");
   const greetEl = document.getElementById("me-greet");
   const tasksBody = document.getElementById("me-tasks-body");
   const countEl = document.getElementById("me-tasks-count");
   const wordEl = document.getElementById("me-word");
-  if (!hall || !medalsEl || !tasksBody) return;
+  if (!medalsEl || !tasksBody) return;
 
   if (!document.getElementById("me-style")) {
     const st = document.createElement("style");
@@ -2664,74 +2721,13 @@ function initMainEstateLive() {
       .me-btn{padding:4px 12px;margin:0 6px 6px 0;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#e2e8f0;font-size:.8rem;cursor:pointer;}
       .me-btn:hover{border-color:rgba(212,175,106,.6);}
       .me-btn.done{border-color:rgba(52,211,153,.6);color:#5eead4;}
-      .me-hall{position:relative;min-height:430px;border-radius:12px;overflow:hidden;isolation:isolate;border:1px solid rgba(212,175,106,.28);box-shadow:inset 0 0 90px rgba(0,0,0,.6);background:var(--hbg);transition:background 1s ease;}
-      .me-hall-bg{position:absolute;inset:-10px;will-change:transform;
-        background:
-          repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 3px, transparent 3px 150px),
-          repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 2px, transparent 2px 56px),
-          radial-gradient(55% 45% at 50% 34%, rgba(255,196,110,.12), transparent 72%),
-          linear-gradient(180deg, rgba(0,0,0,.3), rgba(0,0,0,.66));}
-      .me-archwin{position:absolute;top:96px;width:120px;height:170px;border-radius:60px 60px 4px 4px;will-change:transform;
-        background:
-          repeating-linear-gradient(90deg, rgba(0,0,0,.55) 0 2px, transparent 2px 22px),
-          radial-gradient(75% 62% at 50% 45%, var(--hwin), transparent 74%),
-          linear-gradient(180deg, rgba(10,14,20,.92), rgba(5,8,12,.96));
-        border:4px solid rgba(30,22,12,.95);box-shadow:0 0 38px var(--hglow), inset 0 0 22px rgba(0,0,0,.6);}
-      .me-archwin.aw1{left:4%;} .me-archwin.aw2{right:4%;top:118px;height:148px;}
-      .me-balcony{position:absolute;top:44px;left:0;right:0;height:54px;will-change:transform;
-        background:
-          repeating-linear-gradient(90deg, rgba(212,175,106,.5) 0 3px, transparent 3px 24px),
-          linear-gradient(180deg, rgba(20,14,8,.1), rgba(0,0,0,.5));
-        border-top:3px solid rgba(212,175,106,.6);border-bottom:2px solid rgba(0,0,0,.55);
-        mask-image:linear-gradient(180deg,#000 0 38px, transparent 54px);
-        -webkit-mask-image:linear-gradient(180deg,#000 0 38px, transparent 54px);
-        box-shadow:0 10px 26px rgba(0,0,0,.45);}
-      .me-gallery{position:absolute;top:64px;left:31%;right:24%;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;will-change:transform;}
-      .me-gallery i{display:block;border:3px solid rgba(212,175,106,.65);border-radius:2px;box-shadow:0 8px 20px rgba(0,0,0,.55), 0 0 14px rgba(255,196,110,.08);animation:meArtGlow 7s ease-in-out infinite;}
-      .me-gallery i:nth-child(1){width:44px;height:34px;background:linear-gradient(135deg,#3a4a3a,#141c14);}
-      .me-gallery i:nth-child(2){width:58px;height:74px;background:linear-gradient(160deg,#4a3a28,#181008);}
-      .me-gallery i:nth-child(3){width:70px;height:52px;background:linear-gradient(120deg,#2c3a44,#101820);}
-      .me-gallery i:nth-child(4){width:52px;height:64px;background:linear-gradient(140deg,#4a2820,#160c08);animation-delay:1.4s;}
-      .me-gallery i:nth-child(5){width:64px;height:46px;background:linear-gradient(150deg,#3a3226,#12100a);animation-delay:2.8s;}
-      .me-gallery i:nth-child(6){width:46px;height:56px;background:linear-gradient(130deg,#28322a,#0c120c);animation-delay:4.2s;}
-      .me-gallery i:nth-child(7){width:38px;height:30px;background:linear-gradient(135deg,#44362a,#14100a);animation-delay:5.6s;}
-      @keyframes meArtGlow{0%,100%{box-shadow:0 8px 20px rgba(0,0,0,.55), 0 0 10px rgba(255,196,110,.06);}50%{box-shadow:0 8px 20px rgba(0,0,0,.55), 0 0 22px rgba(255,196,110,.2);}}
-      .me-stairs{position:absolute;bottom:0;left:50%;transform:translateX(-58%);width:min(420px,56%);will-change:transform;z-index:2;}
-      .me-stairs svg{width:100%;height:auto;display:block;}
-      #me-stepglow{animation:meStep 8s ease-in-out infinite;}
-      @keyframes meStep{0%{transform:translateY(30px);opacity:.1;}55%{opacity:.42;}100%{transform:translateY(-42px);opacity:.08;}}
-      .me-chandelier{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:210px;height:130px;z-index:3;}
-      .me-chandelier:before{content:"";position:absolute;top:0;left:50%;width:1px;height:34px;background:rgba(212,175,106,.5);}
-      .me-chandelier b{position:absolute;top:30px;left:50%;transform:translateX(-50%);width:130px;height:12px;border-radius:0 0 60px 60px;
-        background:linear-gradient(180deg, rgba(212,175,106,.75), rgba(120,90,40,.4));box-shadow:0 4px 16px rgba(255,200,110,.3);}
-      .me-chandelier i{position:absolute;top:26px;width:5px;height:16px;border-radius:3px;
-        background:linear-gradient(180deg,#ffe9b0,#ff9d3c 70%,transparent);box-shadow:0 0 12px rgba(255,190,90,.9);
-        animation:meCandle 3.6s ease-in-out infinite alternate;}
-      .me-chandelier i:nth-child(1){left:18%;animation-delay:.3s;}
-      .me-chandelier i:nth-child(2){left:32%;animation-delay:1.1s;height:20px;}
-      .me-chandelier i:nth-child(3){left:46%;animation-delay:.6s;height:22px;}
-      .me-chandelier i:nth-child(4){left:60%;animation-delay:1.7s;height:19px;}
-      .me-chandelier i:nth-child(5){left:74%;animation-delay:.9s;}
-      .me-chandelier i:nth-child(6){left:86%;animation-delay:1.4s;height:18px;}
-      @keyframes meCandle{0%,100%{opacity:.75;box-shadow:0 0 10px rgba(255,190,90,.7);}50%{opacity:1;box-shadow:0 0 18px rgba(255,205,110,1);}}
-      .me-bear{position:absolute;right:6%;bottom:0;width:150px;z-index:3;cursor:pointer;filter:drop-shadow(0 0 22px rgba(255,180,90,.14));}
-      .me-bear svg{display:block;width:100%;height:auto;transform-origin:50% 100%;animation:meBreath 3.6s ease-in-out infinite;}
-      .me-bear .eye{animation:meBlink 6s ease-in-out infinite;}
-      @keyframes meBreath{0%,100%{transform:scaleY(1);}50%{transform:scaleY(1.025);}}
-      @keyframes meBlink{0%,86%,100%{opacity:1;filter:drop-shadow(0 0 3px rgba(255,195,94,.8));}90%{opacity:.25;filter:none;}}
-      .me-bear.roar svg{animation:meRoarUp .5s ease;}
-      .me-bear.roar .eye{animation:meRoarEye .55s ease 2;}
-      @keyframes meRoarUp{0%,100%{transform:translateY(0);}40%{transform:translateY(-7px);}}
-      @keyframes meRoarEye{0%,100%{opacity:1;}50%{opacity:1;filter:drop-shadow(0 0 10px rgba(255,215,120,1)) brightness(1.6);}}
-      .me-rug{position:absolute;bottom:10px;left:50%;transform:translateX(-50%) perspective(300px) rotateX(48deg);width:46%;height:110px;border-radius:6px;
-        background:
-          repeating-linear-gradient(45deg, rgba(120,40,32,.5) 0 14px, rgba(150,102,28,.35) 14px 28px),
-          radial-gradient(60% 60% at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,.15));
-        border:3px solid rgba(212,175,106,.35);box-shadow:0 16px 30px rgba(0,0,0,.5);opacity:.8;}
-      #me-dust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;}
-      .me-rev{position:absolute;top:8px;right:10px;z-index:7;padding:3px 10px;border-radius:6px;border:1px solid rgba(212,175,106,.4);background:rgba(8,6,3,.6);color:#d4af6a;font-family:var(--font-mono);font-size:.68rem;cursor:pointer;user-select:none;}
-      .me-rev:hover{border-color:rgba(212,175,106,.8);}
-      .me-front{position:absolute;left:22px;right:22px;bottom:14px;z-index:7;will-change:transform;}
+      .me-hall{position:relative;min-height:430px;border-radius:12px;overflow:hidden;isolation:isolate;border:1px solid rgba(212,175,106,.3);background:#0a0f1c;}
+      .me-scene{position:absolute;inset:0;width:100%;height:100%;display:block;}
+      .me-shade{position:absolute;inset:0;background:linear-gradient(180deg, rgba(4,7,14,.28) 0%, rgba(4,7,14,.06) 40%, rgba(4,7,14,.7) 82%, rgba(4,7,14,.9) 100%);}
+      .me-bear{position:absolute;right:3%;bottom:0;width:132px;z-index:3;filter:drop-shadow(0 0 18px rgba(255,180,90,.12));}
+      .me-bear svg{display:block;width:100%;height:auto;}
+      .me-bear .eye{filter:drop-shadow(0 0 4px rgba(255,195,94,.85));}
+      .me-front{position:absolute;left:22px;right:22px;bottom:16px;z-index:5;}
       .me-greet{font-family:Georgia,'Times New Roman',serif;font-size:1.32rem;color:#e9d9b8;text-shadow:0 2px 12px rgba(0,0,0,.9);user-select:text;}
       .me-greet span{color:#d4af6a;font-size:1.02rem;}
       .me-medals{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
@@ -2740,11 +2736,6 @@ function initMainEstateLive() {
       .me-medal>span{font-size:.6rem;letter-spacing:.09em;color:#a08c64;text-transform:uppercase;margin-top:2px;}
       .me-medal .me-mini{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:6px;display:block;}
       .me-medal .me-mini>div{height:100%;width:0;background:linear-gradient(90deg,#d4af6a,#e9d9b8);transition:width 1s ease;}
-      .me-hall[data-rev="candle"]{--hbg:linear-gradient(180deg,#191009,#0e0a06);--hwin:rgba(255,178,88,.2);--hglow:rgba(255,160,60,.1);}
-      .me-hall[data-rev="moon"]{--hbg:linear-gradient(180deg,#0a1120,#070b12);--hwin:rgba(160,200,255,.32);--hglow:rgba(140,190,255,.16);}
-      .me-hall[data-rev="moon"] .me-chandelier i{background:linear-gradient(180deg,#eef4ff,#9db8e8 70%,transparent);box-shadow:0 0 12px rgba(160,200,255,.85);}
-      .me-hall[data-rev="moon"] .me-bear .eye{fill:#cfe2ff;}
-      .me-hall[data-rev="feast"]{--hbg:linear-gradient(180deg,#170d10,#0e080a);--hwin:rgba(255,110,110,.25);--hglow:rgba(255,105,85,.13);}
     `;
     document.head.appendChild(st);
   }
@@ -2753,8 +2744,6 @@ function initMainEstateLive() {
   const h = new Date().getHours();
   const hi = h < 5 ? "Доброй ночи" : h < 12 ? "Доброе утро" : h < 18 ? "Добрый день" : "Добрый вечер";
   greetEl.innerHTML = `${hi}, Дмитрий. <span>Поместье в порядке.</span>`;
-
-  meHallFx(hall);
 
   const tgl = document.getElementById("me-tasks-toggle");
   tgl.addEventListener("click", () => {
@@ -2864,84 +2853,6 @@ function meRenderTasks(tasksBody, tasks) {
   const loose = rest.filter((t) => !ME_STAGES.includes(t.stage || "todo"));
   if (loose.length) html += `<div class="me-stage-head">ПРОЧЕЕ</div>` + loose.map(card).join("");
   tasksBody.innerHTML = html || `<div style="color:var(--text-muted);font-size:.8rem;">открытых дел нет — дом спокоен</div>`;
-}
-
-function meHallFx(hall) {
-  const cv = document.getElementById("me-dust");
-  if (!cv || cv._meRun) return;
-  cv._meRun = true;
-  const ctx = cv.getContext("2d");
-  let W = cv.width = cv.offsetWidth;
-  let H = cv.height = cv.offsetHeight;
-  const parts = [];
-  for (let i = 0; i < 34; i++) {
-    parts.push({
-      x: Math.random() * W, y: Math.random() * H,
-      r: 0.6 + Math.random() * 1.6,
-      vx: (0.08 + Math.random() * 0.22) * (Math.random() < 0.5 ? -1 : 1),
-      vy: -(0.04 + Math.random() * 0.18),
-      a: 0.1 + Math.random() * 0.42, ph: Math.random() * 6.28,
-    });
-  }
-  let px = 0, py = 0, tx = 0, ty = 0;
-  hall.addEventListener("mousemove", (e) => {
-    const r = hall.getBoundingClientRect();
-    tx = ((e.clientX - r.left) / r.width - 0.5) * 9;
-    ty = ((e.clientY - r.top) / r.height - 0.5) * 5;
-  });
-  (function loop() {
-    if (!cv.isConnected) { cv._meRun = false; return; }
-    px += (tx - px) * 0.06; py += (ty - py) * 0.06;
-    const q = (sel, kx, ky, extra) => {
-      const el = hall.querySelector(sel);
-      if (el) el.style.transform = `${extra || ""} translate(${(px * kx).toFixed(2)}px, ${(py * ky).toFixed(2)}px)`;
-    };
-    q(".me-hall-bg", 0.55, 0.35, "scale(1.04)");
-    q(".me-archwin.aw1", -1.0, -0.6);
-    q(".me-archwin.aw2", -1.0, -0.6);
-    q(".me-balcony", 0.3, 0.2);
-    q(".me-gallery", -0.5, -0.3);
-    q(".me-stairs", -0.85, -0.4, "translateX(-58%)");
-    q(".me-bear", 0.5, 0.25);
-    q(".me-rug", 0.4, 0.2, "translateX(-50%) perspective(300px) rotateX(48deg)");
-    q(".me-front", 0.3, 0.2);
-    ctx.clearRect(0, 0, W, H);
-    for (const p of parts) {
-      p.x += p.vx; p.y += p.vy; p.ph += 0.02;
-      if (p.y < -4) { p.y = H + 4; p.x = Math.random() * W; }
-      if (p.x < -4) p.x = W + 4;
-      if (p.x > W + 4) p.x = -4;
-      ctx.globalAlpha = p.a * (0.55 + 0.45 * Math.sin(p.ph));
-      ctx.fillStyle = "#ffd27a";
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(loop);
-  })();
-
-  // — Хранитель: клик = рык —
-  const bear = document.getElementById("me-bear");
-  if (bear && !bear._meRoarBound) {
-    bear._meRoarBound = true;
-    bear.addEventListener("click", () => {
-      bear.classList.add("roar");
-      setTimeout(() => bear.classList.remove("roar"), 1200);
-    });
-  }
-
-  // — Ревизии зала —
-  const revBtn = document.getElementById("me-rev");
-  const REV = { candle: "◆ Свечи", moon: "◆ Луна", feast: "◆ Пир" };
-  const order = ["candle", "moon", "feast"];
-  const saved = localStorage.getItem("me_hall_rev_v1");
-  hall.setAttribute("data-rev", saved && REV[saved] ? saved : "candle");
-  revBtn.textContent = REV[hall.getAttribute("data-rev")] || REV.candle;
-  revBtn.addEventListener("click", () => {
-    const next = order[(order.indexOf(hall.getAttribute("data-rev") || "candle") + 1) % order.length];
-    hall.setAttribute("data-rev", next);
-    revBtn.textContent = REV[next];
-    localStorage.setItem("me_hall_rev_v1", next);
-  });
 }
 
 function meOpenTask(task) {
