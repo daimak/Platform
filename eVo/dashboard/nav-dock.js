@@ -60,7 +60,15 @@
     '.nav-list .dnum{font-size:10px;color:rgba(127,150,170,.65);width:18px;flex:none;text-align:right}' +
     '.nav-list .dico{font-size:16px;flex:none;width:22px;text-align:center;filter:saturate(.9)}' +
     '.nav-list a.here .dnum{color:rgba(196,76,255,.95)}' +
-    '@media(max-width:700px){.nav-dock{width:min(86vw,300px)}}';
+    '@media(max-width:700px){.nav-dock{width:min(86vw,300px)}}' +
+    /* плитки гаммы */
+    '.theme-row{display:flex;flex-wrap:wrap;gap:6px;padding:4px 10px 6px}' +
+    '.theme-dot{display:flex;align-items:center;gap:6px;padding:4px 9px;border-radius:8px;' +
+    'border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#8fa2b0;' +
+    'font:500 11px "JetBrains Mono",Consolas,monospace;cursor:pointer;transition:border-color .13s,color .13s}' +
+    '.theme-dot:hover{border-color:rgba(63,224,255,.5);color:#eaf6ff}' +
+    '.theme-dot.act{border-color:rgba(160,107,255,.7);color:#eaf6ff;background:rgba(160,107,255,.12)}' +
+    '.theme-dot i{width:11px;height:11px;border-radius:50%;flex:none;box-shadow:0 0 6px rgba(255,255,255,.25)}';
   document.head.appendChild(style);
 
   /* обёртка вокруг лого */
@@ -103,6 +111,44 @@
     if (d[2].split('?')[0] === here) a.className = 'here';
     list.appendChild(a);
   });
+
+  /* — Гамма: глобальная смена палитры (слово Дмитрия 20.11: «весь проект в
+     одном шаблоне — бесит») — 6 тем поверх текущей + «Ядро Эво» как дефолт */
+  var sep = document.createElement('div');
+  sep.className = 'nav-head';
+  sep.style.marginTop = '6px';
+  sep.textContent = 'Цветовая гамма';
+  list.appendChild(sep);
+  var THEMES = [
+    ['', 'Ядро Эво', '#38bdf8'],
+    ['aurum', 'Старое золото', '#d4af6a'],
+    ['emerald', 'Библиотека', '#34d399'],
+    ['alliance', 'Альянс', '#4aa3ff'],
+    ['orchid', 'Орхидея', '#e879a6'],
+    ['nord', 'Норд', '#8fb8d8'],
+    ['ink', 'Терминал', '#ffb000'],
+  ];
+  var curTheme = '';
+  try { curTheme = localStorage.getItem('evo_theme_v1') || ''; } catch (e) {}
+  var trow = document.createElement('div');
+  trow.className = 'theme-row';
+  THEMES.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'theme-dot' + (curTheme === t[0] ? ' act' : '');
+    b.title = t[1];
+    b.innerHTML = '<i style="background:' + t[2] + '"></i><span>' + t[1] + '</span>';
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (t[0]) document.documentElement.setAttribute('data-theme', t[0]);
+      else document.documentElement.removeAttribute('data-theme');
+      try { localStorage.setItem('evo_theme_v1', t[0]); } catch (err) {}
+      trow.querySelectorAll('.theme-dot').forEach(function (d) { d.classList.remove('act'); });
+      b.classList.add('act');
+    });
+    trow.appendChild(b);
+  });
+  list.appendChild(trow);
   dock.appendChild(list);
   wrap.appendChild(dock);
 

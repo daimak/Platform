@@ -1,0 +1,105 @@
+/* ==========================================================================
+   themes.css v1 — ГЛОБАЛЬНАЯ ЦВЕТОВАЯ ГАММА (решение Дмитрия 20.11:
+   «весь проект в одном шаблоне — бесит; кнопка смены гаммы + разные
+   интересные дизайны»).
+   Механика: data-theme на <html> перекрашивает ВСЕ семейства переменных
+   платформы (специфичность html[data-theme] выше :root):
+   A — style.css (:root): --accent-*, --bg-*, --border-*, --text-*
+   B1 — darkwatch/money-map: --bg/--ink/--mut/--line/--acc/--acc2/--warn/--hot
+   B2 — login: --panel/--txt/--dim/--acc/--acc2/--bad/--ok
+   E — standup/staff-table: --cyan/--violet/--mint/--amber/--red/--txt
+   C — command-center.css: --cc-*  (перекрывается локальными темами штаба)
+   D — council: --cw-*               (ревизии council могут перекрывать)
+   Выбор: кнопка в шлюзе (nav-dock) → localStorage evo_theme_v1.
+   Без data-theme = «Ядро Эво» (нынешняя палитра, ничего не переопределяется).
+   ========================================================================== */
+
+/* ————— Старое золото: тёплый чёрный камень, латунь, свечи ————— */
+html[data-theme="aurum"]{
+  --accent-cyan:#d4af6a;--accent-teal:#c9a25e;--accent-emerald:#a8b06a;
+  --accent-amber:#e2b465;--accent-gold:#f0d18a;--accent-rose:#e07a6a;--accent-purple:#b99a5e;
+  --bg-space:#12100b;--bg-glass:rgba(26,21,12,.9);--bg-glass-card:rgba(34,27,16,.86);
+  --border-glass:rgba(212,175,106,.32);--border-gold:rgba(240,209,138,.45);
+  --text-main:#f2e9d8;--text-secondary:#d6c8ac;--text-muted:#9c8f76;
+  --bg:#12100b;--ink:#f2e9d8;--mut:#9c8f76;--line:rgba(212,175,106,.22);
+  --acc:#d4af6a;--acc2:#e8c97a;--warn:#e2b465;--hot:#e07a6a;
+  --panel:rgba(26,21,12,.9);--line-dim:rgba(212,175,106,.16);--txt:#f2e9d8;--dim:#9c8f76;--bad:#e07a6a;--ok:#9ecf9a;
+  --panel2:rgba(34,27,16,.86);--cyan:#d4af6a;--violet:#b99a5e;--mint:#9ecf9a;--amber:#e2b465;--red:#e07a6a;
+  --cc-accent:#d4af6a;--cc-accent2:#e8c97a;--cc-muted:#9c8f76;--cc-head-text:#f2e9d8;--cc-danger:#e07a6a;
+  --cw-accent:#d4af6a;--cw-accent2:#e8c97a;--cw-accentSoft:rgba(212,175,106,.4);
+}
+
+/* ————— Зелёная библиотека: изумруд, медь, кожаные тома ————— */
+html[data-theme="emerald"]{
+  --accent-cyan:#34d399;--accent-teal:#2fbf8f;--accent-emerald:#34d399;
+  --accent-amber:#ecc94b;--accent-gold:#d9c06a;--accent-rose:#ff8a65;--accent-purple:#8fd14f;
+  --bg-space:#08130e;--bg-glass:rgba(10,26,18,.9);--bg-glass-card:rgba(14,34,22,.86);
+  --border-glass:rgba(52,211,153,.3);--border-gold:rgba(217,192,106,.4);
+  --text-main:#e2f2e8;--text-secondary:#b7cdbf;--text-muted:#7e9a8b;
+  --bg:#08130e;--ink:#e2f2e8;--mut:#7e9a8b;--line:rgba(52,211,153,.2);
+  --acc:#34d399;--acc2:#8fd14f;--warn:#ecc94b;--hot:#ff8a65;
+  --panel:rgba(10,26,18,.9);--line-dim:rgba(52,211,153,.16);--txt:#e2f2e8;--dim:#7e9a8b;--bad:#ff8a65;--ok:#86efac;
+  --panel2:rgba(14,34,22,.86);--cyan:#34d399;--violet:#8fd14f;--mint:#86efac;--amber:#ecc94b;--red:#ff8a65;
+  --cc-accent:#34d399;--cc-accent2:#8fd14f;--cc-muted:#7e9a8b;--cc-head-text:#e2f2e8;--cc-danger:#ff8a65;
+  --cw-accent:#34d399;--cw-accent2:#8fd14f;--cw-accentSoft:rgba(52,211,153,.4);
+}
+
+/* ————— Альянс: сталь, синь, золото печати ————— */
+html[data-theme="alliance"]{
+  --accent-cyan:#4aa3ff;--accent-teal:#3f8fe0;--accent-emerald:#5ec4d8;
+  --accent-amber:#ffb84d;--accent-gold:#ffc35e;--accent-rose:#ff6b81;--accent-purple:#7a9ce8;
+  --bg-space:#0a1322;--bg-glass:rgba(12,22,40,.9);--bg-glass-card:rgba(16,28,50,.86);
+  --border-glass:rgba(74,163,255,.3);--border-gold:rgba(255,195,94,.45);
+  --text-main:#e8f0fb;--text-secondary:#c2d4e8;--text-muted:#8fa2b8;
+  --bg:#0a1322;--ink:#e8f0fb;--mut:#8fa2b8;--line:rgba(74,163,255,.22);
+  --acc:#4aa3ff;--acc2:#ffc35e;--warn:#ffb84d;--hot:#ff6b81;
+  --panel:rgba(12,22,40,.9);--line-dim:rgba(74,163,255,.16);--txt:#e8f0fb;--dim:#8fa2b8;--bad:#ff6b81;--ok:#7dd3fc;
+  --panel2:rgba(16,28,50,.86);--cyan:#4aa3ff;--violet:#7a9ce8;--mint:#7dd3fc;--amber:#ffc35e;--red:#ff6b81;
+  --cc-accent:#4aa3ff;--cc-accent2:#ffc35e;--cc-muted:#8fa2b8;--cc-head-text:#e8f0fb;--cc-danger:#ff6b81;
+  --cw-accent:#4aa3ff;--cw-accent2:#ffc35e;--cw-accentSoft:rgba(74,163,255,.4);
+}
+
+/* ————— Орхидея: фиолетовый полумрак, маджента, стёкла ————— */
+html[data-theme="orchid"]{
+  --accent-cyan:#e879a6;--accent-teal:#d866b8;--accent-emerald:#c084fc;
+  --accent-amber:#f5a862;--accent-gold:#f0b0d0;--accent-rose:#ff8a9e;--accent-purple:#c084fc;
+  --bg-space:#140a1c;--bg-glass:rgba(28,12,36,.9);--bg-glass-card:rgba(36,16,44,.86);
+  --border-glass:rgba(232,121,166,.3);--border-gold:rgba(240,176,208,.42);
+  --text-main:#f5e9f4;--text-secondary:#d6c2dc;--text-muted:#9c8aa8;
+  --bg:#140a1c;--ink:#f5e9f4;--mut:#9c8aa8;--line:rgba(232,121,166,.22);
+  --acc:#e879a6;--acc2:#c084fc;--warn:#f5a862;--hot:#ff8a9e;
+  --panel:rgba(28,12,36,.9);--line-dim:rgba(232,121,166,.16);--txt:#f5e9f4;--dim:#9c8aa8;--bad:#ff8a9e;--ok:#a7f3d0;
+  --panel2:rgba(36,16,44,.86);--cyan:#e879a6;--violet:#c084fc;--mint:#a7f3d0;--amber:#f5a862;--red:#ff8a9e;
+  --cc-accent:#e879a6;--cc-accent2:#c084fc;--cc-muted:#9c8aa8;--cc-head-text:#f5e9f4;--cc-danger:#ff8a9e;
+  --cw-accent:#e879a6;--cw-accent2:#c084fc;--cw-accentSoft:rgba(232,121,166,.4);
+}
+
+/* ————— Норд: ледяная сталь, тихая вода, влажное утро ————— */
+html[data-theme="nord"]{
+  --accent-cyan:#8fb8d8;--accent-teal:#6ec2b8;--accent-emerald:#8fd1a8;
+  --accent-amber:#d8b26e;--accent-gold:#c9d6e4;--accent-rose:#e08a8a;--accent-purple:#a3aed8;
+  --bg-space:#0b1218;--bg-glass:rgba(14,22,30,.9);--bg-glass-card:rgba(18,28,38,.86);
+  --border-glass:rgba(143,184,216,.3);--border-gold:rgba(201,214,228,.4);
+  --text-main:#e6edf3;--text-secondary:#c2cfdb;--text-muted:#8a99a8;
+  --bg:#0b1218;--ink:#e6edf3;--mut:#8a99a8;--line:rgba(143,184,216,.2);
+  --acc:#8fb8d8;--acc2:#6ec2b8;--warn:#d8b26e;--hot:#e08a8a;
+  --panel:rgba(14,22,30,.9);--line-dim:rgba(143,184,216,.15);--txt:#e6edf3;--dim:#8a99a8;--bad:#e08a8a;--ok:#8fd1a8;
+  --panel2:rgba(18,28,38,.86);--cyan:#8fb8d8;--violet:#a3aed8;--mint:#8fd1a8;--amber:#d8b26e;--red:#e08a8a;
+  --cc-accent:#8fb8d8;--cc-accent2:#6ec2b8;--cc-muted:#8a99a8;--cc-head-text:#e6edf3;--cc-danger:#e08a8a;
+  --cw-accent:#8fb8d8;--cw-accent2:#6ec2b8;--cw-accentSoft:rgba(143,184,216,.4);
+}
+
+/* ————— Терминал: янтарная вахта, фосфор, оливковый мрак ————— */
+html[data-theme="ink"]{
+  --accent-cyan:#ffb000;--accent-teal:#e09d0c;--accent-emerald:#7fbf5f;
+  --accent-amber:#ffb000;--accent-gold:#ffd24d;--accent-rose:#ff5c47;--accent-purple:#a8b06a;
+  --bg-space:#0c0e08;--bg-glass:rgba(16,18,10,.9);--bg-glass-card:rgba(20,23,12,.86);
+  --border-glass:rgba(255,176,0,.3);--border-gold:rgba(255,210,77,.42);
+  --text-main:#f0ead8;--text-secondary:#c8c4a8;--text-muted:#94906e;
+  --bg:#0c0e08;--ink:#f0ead8;--mut:#94906e;--line:rgba(255,176,0,.2);
+  --acc:#ffb000;--acc2:#7fbf5f;--warn:#ffb000;--hot:#ff5c47;
+  --panel:rgba(16,18,10,.9);--line-dim:rgba(255,176,0,.15);--txt:#f0ead8;--dim:#94906e;--bad:#ff5c47;--ok:#7fbf5f;
+  --panel2:rgba(20,23,12,.86);--cyan:#ffb000;--violet:#a8b06a;--mint:#7fbf5f;--amber:#ffb000;--red:#ff5c47;
+  --cc-accent:#ffb000;--cc-accent2:#7fbf5f;--cc-muted:#94906e;--cc-head-text:#f0ead8;--cc-danger:#ff5c47;
+  --cw-accent:#ffb000;--cw-accent2:#7fbf5f;--cw-accentSoft:rgba(255,176,0,.4);
+}
