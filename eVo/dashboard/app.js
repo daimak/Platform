@@ -2065,117 +2065,11 @@ function buildIslandContentHTML(islandKey, data, lang) {
     case "mainEstate":
       return `
         <div class="me-hall" id="me-hall">
-          <svg class="me-scene" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <defs>
-              <linearGradient id="meSky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#070d22"/><stop offset=".55" stop-color="#111c38"/><stop offset="1" stop-color="#26304a"/>
-              </linearGradient>
-              <linearGradient id="meStone" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#241f1a"/><stop offset="1" stop-color="#12100d"/>
-              </linearGradient>
-              <linearGradient id="meRoof" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#1b2438"/><stop offset="1" stop-color="#101624"/>
-              </linearGradient>
-              <linearGradient id="meWin" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#ffd98e"/><stop offset="1" stop-color="#ff9d3c"/>
-              </linearGradient>
-              <linearGradient id="mePond" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#0f4a55"/><stop offset="1" stop-color="#08222b"/>
-              </linearGradient>
-              <linearGradient id="mePath" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="rgba(255,190,110,.32)"/><stop offset="1" stop-color="rgba(255,190,110,.05)"/>
-              </linearGradient>
-              <filter id="meBlur6"><feGaussianBlur stdDeviation="6"/></filter>
-              <filter id="meBlur3"><feGaussianBlur stdDeviation="3"/></filter>
-            </defs>
-            <rect width="1440" height="520" fill="url(#meSky)"/>
-            <g fill="#dfe8ff">
-              <circle cx="150" cy="60" r="1.6" opacity=".8"/><circle cx="330" cy="40" r="1.2" opacity=".6"/>
-              <circle cx="520" cy="76" r="1.4" opacity=".7"/><circle cx="760" cy="34" r="1.3" opacity=".55"/>
-              <circle cx="980" cy="62" r="1.6" opacity=".8"/><circle cx="1180" cy="46" r="1.2" opacity=".6"/>
-              <circle cx="1320" cy="80" r="1.5" opacity=".75"/><circle cx="640" cy="90" r="1.1" opacity=".5"/>
-            </g>
-            <ellipse cx="420" cy="120" rx="260" ry="26" fill="#1a2440" opacity=".55" filter="url(#meBlur6)"/>
-            <ellipse cx="1080" cy="90" rx="300" ry="30" fill="#1a2440" opacity=".5" filter="url(#meBlur6)"/>
-            <ellipse cx="180" cy="470" rx="150" ry="60" fill="#0b120c" opacity=".9"/>
-            <ellipse cx="1290" cy="465" rx="170" ry="64" fill="#0b120c" opacity=".9"/>
-            <ellipse cx="330" cy="430" rx="90" ry="40" fill="#0d1410"/>
-            <ellipse cx="1140" cy="425" rx="95" ry="42" fill="#0d1410"/>
-            <g>
-              <rect x="470" y="170" width="90" height="230" fill="url(#meStone)"/>
-              <rect x="880" y="170" width="90" height="230" fill="url(#meStone)"/>
-              <path d="M455 170 L515 78 L575 170 Z" fill="url(#meRoof)"/>
-              <path d="M865 170 L925 78 L985 170 Z" fill="url(#meRoof)"/>
-              <rect x="560" y="205" width="320" height="195" fill="url(#meStone)"/>
-              <path d="M548 205 L720 118 L892 205 Z" fill="url(#meRoof)"/>
-              <rect x="690" y="238" width="60" height="34" fill="url(#meRoof)" opacity=".9"/>
-              <rect x="470" y="150" width="90" height="6" fill="rgba(212,175,106,.4)"/>
-              <rect x="880" y="150" width="90" height="6" fill="rgba(212,175,106,.4)"/>
-              <rect x="560" y="186" width="320" height="4" fill="rgba(212,175,106,.35)"/>
-            </g>
-            <g filter="url(#meBlur6)" opacity=".55">
-              <rect x="492" y="196" width="18" height="30" fill="url(#meWin)"/><rect x="522" y="196" width="18" height="30" fill="url(#meWin)"/>
-              <rect x="902" y="196" width="18" height="30" fill="url(#meWin)"/><rect x="932" y="196" width="18" height="30" fill="url(#meWin)"/>
-              <rect x="578" y="222" width="20" height="32" fill="url(#meWin)"/><rect x="612" y="222" width="20" height="32" fill="url(#meWin)"/>
-              <rect x="806" y="222" width="20" height="32" fill="url(#meWin)"/><rect x="840" y="222" width="20" height="32" fill="url(#meWin)"/>
-              <rect x="578" y="286" width="20" height="32" fill="url(#meWin)"/><rect x="612" y="286" width="20" height="32" fill="url(#meWin)"/>
-              <rect x="660" y="286" width="20" height="32" fill="url(#meWin)"/><rect x="806" y="286" width="20" height="32" fill="url(#meWin)"/>
-              <rect x="840" y="286" width="20" height="32" fill="url(#meWin)"/>
-            </g>
-            <g>
-              <rect x="492" y="196" width="16" height="28" fill="url(#meWin)"/><rect x="522" y="196" width="16" height="28" fill="url(#meWin)"/>
-              <rect x="902" y="196" width="16" height="28" fill="url(#meWin)"/><rect x="932" y="196" width="16" height="28" fill="url(#meWin)"/>
-              <rect x="578" y="222" width="18" height="30" fill="url(#meWin)"/><rect x="612" y="222" width="18" height="30" fill="url(#meWin)"/>
-              <rect x="648" y="222" width="24" height="42" fill="url(#meWin)"/>
-              <rect x="766" y="222" width="24" height="42" fill="url(#meWin)"/>
-              <rect x="806" y="222" width="18" height="30" fill="url(#meWin)"/><rect x="840" y="222" width="18" height="30" fill="url(#meWin)"/>
-              <rect x="578" y="286" width="18" height="30" fill="url(#meWin)"/><rect x="612" y="286" width="18" height="30" fill="url(#meWin)"/>
-              <rect x="660" y="286" width="18" height="30" fill="url(#meWin)"/><rect x="806" y="286" width="18" height="30" fill="url(#meWin)"/>
-              <rect x="840" y="286" width="18" height="30" fill="url(#meWin)"/>
-              <rect x="688" y="306" width="64" height="72" rx="30" fill="url(#meWin)"/>
-              <rect x="700" y="316" width="40" height="52" fill="#1a1408" opacity=".35"/>
-            </g>
-            <g stroke="rgba(212,175,106,.5)" stroke-width="2">
-              <line x1="560" y1="400" x2="880" y2="400"/>
-              <line x1="568" y1="396" x2="568" y2="382"/><line x1="600" y1="396" x2="600" y2="382"/>
-              <line x1="632" y1="396" x2="632" y2="382"/><line x1="664" y1="396" x2="664" y2="382"/>
-              <line x1="776" y1="396" x2="776" y2="382"/><line x1="808" y1="396" x2="808" y2="382"/>
-              <line x1="840" y1="396" x2="840" y2="382"/><line x1="872" y1="396" x2="872" y2="382"/>
-            </g>
-            <path d="M600 520 L660 400 L780 400 L840 520 Z" fill="#221d17"/>
-            <path d="M668 520 L700 400 L740 400 L772 520 Z" fill="url(#mePath)"/>
-            <g stroke="rgba(212,175,106,.45)" stroke-width="1.6">
-              <line x1="648" y1="488" x2="648" y2="470"/><line x1="672" y1="456" x2="672" y2="440"/>
-              <line x1="696" y1="424" x2="696" y2="410"/><line x1="744" y1="424" x2="744" y2="410"/>
-              <line x1="768" y1="456" x2="768" y2="440"/><line x1="792" y1="488" x2="792" y2="470"/>
-            </g>
-            <ellipse cx="720" cy="500" rx="400" ry="26" fill="url(#mePond)"/>
-            <g filter="url(#meBlur3)" opacity=".5">
-              <rect x="492" y="472" width="14" height="40" fill="#ffb75e"/>
-              <rect x="522" y="474" width="14" height="36" fill="#ff9d3c"/>
-              <rect x="902" y="472" width="14" height="40" fill="#ffb75e"/>
-              <rect x="932" y="474" width="14" height="36" fill="#ff9d3c"/>
-              <rect x="688" y="468" width="56" height="46" fill="#ffcf8a" opacity=".6"/>
-              <rect x="578" y="478" width="16" height="34" fill="#ff9d3c" opacity=".7"/>
-              <rect x="806" y="478" width="16" height="34" fill="#ff9d3c" opacity=".7"/>
-            </g>
-            <ellipse cx="720" cy="500" rx="400" ry="26" fill="rgba(10,30,38,.35)"/>
-          </svg>
+          <img class="me-photo" src="assets/hall-castle.jpg" alt="Холл поместья">
+          <div class="me-fog"></div>
+          <div class="me-winlight w1"></div>
+          <div class="me-winlight w2"></div>
           <div class="me-shade"></div>
-          <div class="me-bear" id="me-bear" title="Хранитель поместья">
-            <svg viewBox="0 0 170 160" aria-hidden="true">
-              <ellipse cx="86" cy="104" rx="56" ry="44" fill="#161009"/>
-              <circle cx="102" cy="50" r="27" fill="#161009"/>
-              <circle cx="84" cy="30" r="10" fill="#161009"/>
-              <circle cx="120" cy="30" r="10" fill="#161009"/>
-              <ellipse cx="112" cy="60" rx="13" ry="9" fill="#2a1e13"/>
-              <ellipse cx="55" cy="132" rx="20" ry="12" fill="#100b07"/>
-              <ellipse cx="118" cy="134" rx="20" ry="12" fill="#100b07"/>
-              <circle class="eye" cx="95" cy="46" r="3.4" fill="#ffc35e"/>
-              <circle class="eye" cx="112" cy="46" r="3.4" fill="#ffc35e"/>
-              <path d="M52 118 Q86 100 122 116" stroke="rgba(212,175,106,.28)" stroke-width="2" fill="none"/>
-            </svg>
-          </div>
           <div class="me-front">
             <div class="me-greet" id="me-greet">Добрый вечер, Дмитрий. <span>Поместье в порядке.</span></div>
             <div class="me-medals" id="me-medals"><span class="me-medal"><b>…</b><span>дворецкий сверяет</span></span></div>
@@ -2722,12 +2616,19 @@ function initMainEstateLive() {
       .me-btn:hover{border-color:rgba(212,175,106,.6);}
       .me-btn.done{border-color:rgba(52,211,153,.6);color:#5eead4;}
       .me-hall{position:relative;min-height:430px;border-radius:12px;overflow:hidden;isolation:isolate;border:1px solid rgba(212,175,106,.3);background:#0a0f1c;}
-      .me-scene{position:absolute;inset:0;width:100%;height:100%;display:block;}
+      .me-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;}
+      .me-fog{position:absolute;left:41%;top:4%;width:56px;height:130px;pointer-events:none;filter:blur(14px);
+        background:radial-gradient(45% 60% at 50% 85%, rgba(205,214,235,.2), rgba(205,214,235,.05) 60%, transparent 80%);
+        animation:meFog 52s linear infinite;}
+      @keyframes meFog{0%{transform:translateY(14px) scale(.9);opacity:0;}18%{opacity:.75;}55%{transform:translateY(-34px) scale(1.08);opacity:.4;}100%{transform:translateY(-70px) scale(1.25);opacity:0;}}
+      .me-winlight{position:absolute;border-radius:50%;pointer-events:none;filter:blur(7px);
+        background:radial-gradient(closest-side, rgba(255,195,115,.4), rgba(255,160,70,.14) 62%, transparent 78%);
+        animation:meWinPulse 11s ease-in-out infinite alternate;}
+      .me-winlight.w1{left:44%;top:46%;width:6.5%;height:9%;}
+      .me-winlight.w2{left:58%;top:55%;width:5%;height:7%;animation-duration:13s;animation-delay:3s;}
+      @keyframes meWinPulse{from{opacity:.5;}to{opacity:.95;}}
       .me-shade{position:absolute;inset:0;background:linear-gradient(180deg, rgba(4,7,14,.28) 0%, rgba(4,7,14,.06) 40%, rgba(4,7,14,.7) 82%, rgba(4,7,14,.9) 100%);}
-      .me-bear{position:absolute;right:3%;bottom:0;width:132px;z-index:3;filter:drop-shadow(0 0 18px rgba(255,180,90,.12));}
-      .me-bear svg{display:block;width:100%;height:auto;}
-      .me-bear .eye{filter:drop-shadow(0 0 4px rgba(255,195,94,.85));}
-      .me-front{position:absolute;left:22px;right:22px;bottom:16px;z-index:5;}
+                        .me-front{position:absolute;left:22px;right:22px;bottom:16px;z-index:5;}
       .me-greet{font-family:Georgia,'Times New Roman',serif;font-size:1.32rem;color:#e9d9b8;text-shadow:0 2px 12px rgba(0,0,0,.9);user-select:text;}
       .me-greet span{color:#d4af6a;font-size:1.02rem;}
       .me-medals{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
@@ -2744,6 +2645,27 @@ function initMainEstateLive() {
   const h = new Date().getHours();
   const hi = h < 5 ? "Доброй ночи" : h < 12 ? "Доброе утро" : h < 18 ? "Добрый день" : "Добрый вечер";
   greetEl.innerHTML = `${hi}, Дмитрий. <span>Поместье в порядке.</span>`;
+
+  // — Параллакс 5%: фото и свет чуть расходятся от мыши —
+  const hall = document.getElementById("me-hall");
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  hall.addEventListener("mousemove", (e) => {
+    const r = hall.getBoundingClientRect();
+    mx = ((e.clientX - r.left) / r.width - 0.5) * 10;
+    my = ((e.clientY - r.top) / r.height - 0.5) * 6;
+  });
+  hall.addEventListener("mouseleave", () => { mx = 0; my = 0; });
+  (function drift() {
+    if (!hall.isConnected) return;
+    cx += (mx - cx) * 0.05; cy += (my - cy) * 0.05;
+    const ph = hall.querySelector(".me-photo");
+    const lights = hall.querySelectorAll(".me-winlight");
+    if (ph) ph.style.transform = `translate(${cx.toFixed(2)}px, ${cy.toFixed(2)}px) scale(1.03)`;
+    lights.forEach((el, i) => {
+      el.style.transform = `translate(${(cx * (1.7 + i * 0.5)).toFixed(2)}px, ${(cy * (1.4 + i * 0.4)).toFixed(2)}px)`;
+    });
+    requestAnimationFrame(drift);
+  })();
 
   const tgl = document.getElementById("me-tasks-toggle");
   tgl.addEventListener("click", () => {
