@@ -726,6 +726,9 @@ function openIslandModal(islandKey) {
     initHolmesReports();
     initHolmesContext();
   }
+  if (islandKey === "mainEstate") {
+    initMainEstateLive();
+  }
   if (islandKey === "memoryLibrary") {
     initAgentRunButton("watson", "watson-run-btn", "watson-run-status", "watson-report-box");
   }
@@ -2062,19 +2065,26 @@ function buildIslandContentHTML(islandKey, data, lang) {
     case "mainEstate":
       return `
         <div class="glass-panel">
-          <div class="panel-label">${data.stateTitle || "СОСТОЯНИЕ СИСТЕМЫ"}</div>
-          <h4 style="font-size: 1.4rem; color: #5eead4;">${data.stateHeading || "Foundation → Interface"}</h4>
-          <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6; margin-bottom: 14px;">
-            ${data.stateDesc || ""}
-          </p>
-          <div style="font-family: var(--font-mono); font-size: 0.84rem; color: var(--accent-gold); padding: 8px 12px; background: rgba(0,0,0,0.3); border-radius: 6px;">
-            ${data.activeProject || ""}
+          <div class="panel-label">ДЕНЬГИ ПОМЕСТЬЯ</div>
+          <div id="me-money-body" style="min-height:70px;">
+            <div style="color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;">казна и касса грузятся…</div>
           </div>
         </div>
         <div class="glass-panel">
-          <div class="panel-label">АРХИТЕКТУРНЫЙ СТАТУС</div>
-          <p style="color: #cbd5e1; font-size: 0.92rem;">
-            Управление всей системой eVo, координация агентов и переходы в рабочие кабинеты.
+          <div class="panel-label" style="display:flex;justify-content:space-between;align-items:baseline;">
+            <span>ЗАДАЧИ ПОМЕСТЬЯ</span>
+            <span id="me-tasks-count" style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);"></span>
+          </div>
+          <div id="me-tasks-body">
+            <div style="color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;">лиджер грузится…</div>
+          </div>
+        </div>
+        <div class="glass-panel" style="border-left:3px solid #a78bfa;">
+          <div class="panel-label">ВЕРДИКТ С-2 — НОВЫЙ ЛЕЙН (Соломон, 20.11)</div>
+          <p style="color:#cbd5e1;font-size:.86rem;line-height:1.5;margin:6px 0;">
+            Прямая продажа радара цен: OLX + 10 КП/день + 8 TG-каналов →
+            <b style="color:#5eead4;">3.6–5.4 млн сум</b> — цель аренды 5M закрыта, деньги за 1–4 дня без клирингов.
+            Старт — понедельник 23.11. Кворки и Fiverr — добор первого часа.
           </p>
         </div>
       `;
@@ -2555,6 +2565,180 @@ function buildHunterObservatoryHTML() {
       </p>
     </div>
   `;
+}
+
+/* === MAIN ESTATE: живые данные поместья — задачи + деньги (20.11, «единый дашборд») === */
+const ME_STAGE_LABEL = { analysis: "АНАЛИЗ", todo: "СДЕЛАТЬ", "in-progress": "В РАБОТЕ", test: "ПРОВЕРКА" };
+const ME_STAGES = ["analysis", "todo", "in-progress", "test"];
+
+function mePost(path, payload) {
+  return fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload || {}),
+  }).then((r) => r.json().then((j) => ({ ok: r.ok, status: r.status, body: j })));
+}
+
+function initMainEstateLive() {
+  const moneyBody = document.getElementById("me-money-body");
+  const tasksBody = document.getElementById("me-tasks-body");
+  const countEl = document.getElementById("me-tasks-count");
+  if (!moneyBody || !tasksBody) return;
+
+  if (!document.getElementById("me-style")) {
+    const st = document.createElement("style");
+    st.id = "me-style";
+    st.textContent = `
+      .me-chip{display:inline-block;padding:3px 10px;margin:0 6px 6px 0;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);border-radius:5px;font-family:var(--font-mono);font-size:.74rem;color:#cbd5e1;}
+      .me-chip b{color:#5eead4;}
+      .me-bar{height:10px;border-radius:5px;background:rgba(0,0,0,.35);overflow:hidden;margin-top:8px;}
+      .me-bar>div{height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#a78bfa);transition:width .9s ease;}
+      .me-task{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 10px;margin:0 0 6px;border:1px solid rgba(255,255,255,.07);border-radius:7px;background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .15s ease,background .15s ease;user-select:text;}
+      .me-task:hover{border-color:rgba(34,211,238,.5);background:rgba(34,211,238,.06);}
+      .me-task.urgent{border-color:rgba(248,113,113,.55);}
+      .me-task .t{color:#e2e8f0;font-size:.86rem;line-height:1.35;}
+      .me-task .m{font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);white-space:nowrap;}
+      .me-stage-head{font-family:var(--font-mono);font-size:.66rem;color:#94a3b8;letter-spacing:.08em;margin:10px 0 6px;}
+      .me-ov{position:fixed;inset:0;z-index:1002;background:rgba(4,10,20,.72);display:flex;align-items:center;justify-content:center;padding:24px;}
+      .me-ov-card{width:min(720px,94vw);max-height:86vh;overflow:auto;background:rgba(10,18,32,.97);border:1px solid rgba(34,211,238,.4);border-radius:12px;padding:18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+      .me-btn{padding:4px 12px;margin:0 6px 6px 0;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#e2e8f0;font-size:.8rem;cursor:pointer;}
+      .me-btn:hover{border-color:rgba(34,211,238,.6);}
+      .me-btn.done{border-color:rgba(52,211,153,.6);color:#5eead4;}
+    `;
+    document.head.appendChild(st);
+  }
+
+  // — Казна (СТОР бюджета — показания Дмитрия) —
+  fetch("/api/tokens/budget")
+    .then((r) => r.json())
+    .then((b) => {
+      const bal = (typeof b.balance_m === "number") ? b.balance_m : null;
+      const cap = (typeof b.cap_m === "number" && b.cap_m > 0) ? b.cap_m : 500;
+      const pct = bal === null ? 0 : Math.max(0, Math.min(100, (bal / cap) * 100));
+      const days = bal === null ? "—" : Math.round((bal / 10) * 10) / 10;
+      moneyBody.innerHTML = `
+        <div class="me-bar"><div style="width:${pct}%"></div></div>
+        <div style="margin-top:8px;">
+          <span class="me-chip">казна <b>${bal === null ? "—" : bal.toFixed(1)}</b> / ${cap} млн (75%)</span>
+          <span class="me-chip">запас <b>~${days}</b> дн при 10 млн/день</span>
+          <span class="me-chip">аренда 04.12 · <b>14 дней</b></span>
+        </div>
+        <div id="me-cassa-row" style="margin-top:4px;">
+          <span class="me-chip">касса: <span style="color:var(--text-muted)">проверяю замок…</span></span>
+        </div>`;
+      const cassaRow = document.getElementById("me-cassa-row");
+      const tok = localStorage.getItem("evo_finance_token") || "";
+      fetch("/api/internal/summary", { headers: tok ? { "X-Finance-Token": tok } : {} })
+        .then((r) => { if (r.status === 403) throw new Error("locked"); if (!r.ok) throw new Error("err"); return r.json(); })
+        .then((s) => {
+          cassaRow.innerHTML = `
+            <span class="me-chip">касса: приход <b>${s.income_sum || 0}</b> сум</span>
+            <span class="me-chip">записей <b>${s.entries_total || 0}</b></span>
+            <span class="me-chip">налоговая база <b>${s.tax_base_sum || 0}</b> сум</span>`;
+        })
+        .catch((e) => {
+          cassaRow.innerHTML = e.message === "locked"
+            ? `<span class="me-chip">касса: 🔒 замок — токен во вкладке Trading Quarter</span>`
+            : `<span class="me-chip">касса: недоступна</span>`;
+        });
+    })
+    .catch(() => {
+      moneyBody.innerHTML = `<span class="me-chip">казна: стор недоступен</span>`;
+    });
+
+  // — Задачи (канбан-поток) —
+  fetch("/api/tasks")
+    .then((r) => r.json())
+    .then((d) => {
+      const tasks = d.tasks || [];
+      if (countEl) countEl.textContent = tasks.filter((t) => t.status !== "done").length + " в работе · " + tasks.filter((t) => t.status === "done").length + " готово";
+      window._ME_TASKS = {};
+      tasks.forEach((t) => { window._ME_TASKS[t.id] = t; });
+      const open = tasks.filter((t) => t.status !== "done");
+      const urgent = open.filter((t) => t.priority === "urgent");
+      const rest = open.filter((t) => t.priority !== "urgent");
+      const card = (t) => `
+        <div class="me-task${t.priority === "urgent" ? " urgent" : ""}" data-id="${escapeHtml(t.id)}">
+          <span class="t">${escapeHtml(t.title || t.id)}</span>
+          <span class="m">${escapeHtml(ME_STAGE_LABEL[t.stage] || t.stage || "")}${t.owner ? " · " + escapeHtml(t.owner) : ""}</span>
+        </div>`;
+      let html = "";
+      if (urgent.length) html += `<div class="me-stage-head" style="color:#f87171;">URGENT — ГОРИТ</div>` + urgent.map(card).join("");
+      ME_STAGES.forEach((st) => {
+        const group = rest.filter((t) => (t.stage || "todo") === st);
+        if (group.length) html += `<div class="me-stage-head">${ME_STAGE_LABEL[st]}</div>` + group.map(card).join("");
+      });
+      const loose = rest.filter((t) => !ME_STAGES.includes(t.stage || "todo"));
+      if (loose.length) html += `<div class="me-stage-head">ПРОЧЕЕ</div>` + loose.map(card).join("");
+      tasksBody.innerHTML = html || `<div style="color:var(--text-muted);font-size:.8rem;">открытых задач нет</div>`;
+    })
+    .catch(() => {
+      tasksBody.innerHTML = `<span class="me-chip">лиджер недоступен (сервер 8765?)</span>`;
+    });
+
+  // — Делегирование клика по карточке (один слушатель на документ) —
+  if (!document._meClickBound) {
+    document._meClickBound = true;
+    document.addEventListener("click", (ev) => {
+      const el = ev.target.closest ? ev.target.closest(".me-task") : null;
+      if (!el || !window._ME_TASKS) return;
+      const t = window._ME_TASKS[el.getAttribute("data-id")];
+      if (t) meOpenTask(t);
+    });
+  }
+}
+
+function meOpenTask(task) {
+  const esc = (s) => escapeHtml(s == null ? "" : String(s));
+  const ov = document.createElement("div");
+  ov.className = "me-ov";
+  const history = (task.history || []).slice(-6).reverse().map((h) =>
+    `<div style="font-size:.76rem;color:#94a3b8;padding:3px 0;border-top:1px solid rgba(255,255,255,.05);">${esc(h.ts || "")} — ${esc(h.event || JSON.stringify(h))}</div>`
+  ).join("");
+  const comments = (task.comments || []).map((c) =>
+    `<div style="font-size:.8rem;color:#cbd5e1;padding:4px 0;"><b style="color:#5eead4;">${esc(c.by)}:</b> ${esc(c.text)}</div>`
+  ).join("");
+  const steps = (task.steps || []).map((s) =>
+    `<div style="font-size:.8rem;color:#cbd5e1;padding:4px 0;border-top:1px solid rgba(255,255,255,.05);">
+       <b>${s.n}.</b> ${esc(s.do || "")}${s.dod ? `<div style="color:#94a3b8;font-size:.74rem;margin-top:2px;">DoD: ${esc(s.dod)}</div>` : ""}
+     </div>`
+  ).join("");
+  ov.innerHTML = `
+    <div class="me-ov-card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
+        <h4 style="color:#5eead4;font-size:1.05rem;margin:0;user-select:text;">${esc(task.title || task.id)}</h4>
+        <span class="me-btn" data-act="close" style="flex:none;">✕</span>
+      </div>
+      <div style="margin:8px 0 10px;">
+        <span class="me-chip">стадия: <b>${esc(ME_STAGE_LABEL[task.stage] || task.stage || "—")}</b></span>
+        <span class="me-chip">приоритет: <b>${esc(task.priority || "regular")}</b></span>
+        ${task.owner ? `<span class="me-chip">ответственный: <b>${esc(task.owner)}</b></span>` : ""}
+        ${task.due ? `<span class="me-chip">срок: <b>${esc(task.due)}</b></span>` : ""}
+        <span class="me-chip">создана: <b>${esc((task.createdAt || "").slice(0, 10))}</b></span>
+      </div>
+      ${task.description ? `<p style="color:#cbd5e1;font-size:.85rem;line-height:1.5;user-select:text;">${esc(task.description)}</p>` : ""}
+      ${steps ? `<div class="me-stage-head">ШАГИ</div>${steps}` : ""}
+      <div class="me-stage-head">ПЕРЕВОД СТАДИИ</div>
+      <div>${ME_STAGES.map((st) => `<span class="me-btn" data-act="stage" data-stage="${st}">${ME_STAGE_LABEL[st]}</span>`).join("")}
+        <span class="me-btn done" data-act="done">✓ Готово</span></div>
+      <div id="me-ov-msg" style="font-size:.76rem;color:#f87171;min-height:16px;"></div>
+      ${comments ? `<div class="me-stage-head">КОММЕНТАРИИ</div>${comments}` : ""}
+      ${history ? `<div class="me-stage-head">ИСТОРИЯ (последние)</div>${history}` : ""}
+    </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener("click", (ev) => {
+    const act = ev.target.getAttribute && ev.target.getAttribute("data-act");
+    if (act === "close" || ev.target === ov) { ov.remove(); return; }
+    if (!act) return;
+    const msg = ov.querySelector("#me-ov-msg");
+    const call = act === "done"
+      ? mePost("/api/tasks/" + task.id + "/done")
+      : mePost("/api/tasks/" + task.id + "/stage/" + ev.target.getAttribute("data-stage"));
+    call.then((res) => {
+      if (res.ok) { ov.remove(); initMainEstateLive(); }
+      else msg.textContent = (res.body && res.body.error) ? res.body.error : "не прошло (код " + res.status + ")";
+    }).catch(() => { msg.textContent = "сервер недоступен"; });
+  });
 }
 
 function buildMorningBriefHTML(brief, lang) {
