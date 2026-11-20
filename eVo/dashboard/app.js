@@ -2064,20 +2064,35 @@ function buildIslandContentHTML(islandKey, data, lang) {
   switch (islandKey) {
     case "mainEstate":
       return `
-        <div class="glass-panel">
-          <div class="panel-label">ДЕНЬГИ ПОМЕСТЬЯ</div>
-          <div id="me-money-body" style="min-height:70px;">
-            <div style="color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;">казна и касса грузятся…</div>
+        <div class="me-hall" id="me-hall" data-rev="torch">
+          <div class="me-hall-bg"></div>
+          <div class="me-beams"></div>
+          <div class="me-tapestry"></div>
+          <div class="me-window"></div>
+          <canvas id="me-dust"></canvas>
+          <div class="me-torch t1"><i></i></div>
+          <div class="me-torch t2"><i></i></div>
+          <div class="me-hearth"><div class="me-flame"></div><div class="me-heart"></div></div>
+          <button class="me-rev" id="me-rev">◆ Факелы</button>
+          <div class="me-front">
+            <div class="me-greet" id="me-greet">Добрый вечер, Дмитрий. <span>Поместье в порядке.</span></div>
+            <div class="me-medals" id="me-medals"><span class="me-medal"><b>…</b><span>дворецкий сверяет</span></span></div>
+            <div id="me-live-row" style="margin-top:6px;"></div>
           </div>
+        </div>
+        <div class="glass-panel" style="border-left:3px solid #d4af6a;">
+          <div class="panel-label">ЖДЁТ ВАШЕГО СЛОВА</div>
+          <div id="me-word" style="color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;">дворецкий сверяет список…</div>
         </div>
         <div class="glass-panel">
           <div class="panel-label" style="display:flex;justify-content:space-between;align-items:baseline;">
-            <span>ЗАДАЧИ ПОМЕСТЬЯ</span>
+            <span>ПЕРЕЧЕНЬ ДЕЛ ПОМЕСТЬЯ</span>
             <span id="me-tasks-count" style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);"></span>
           </div>
-          <div id="me-tasks-body">
+          <div id="me-tasks-body" style="display:none;">
             <div style="color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;">лиджер грузится…</div>
           </div>
+          <div style="margin-top:6px;"><span class="me-btn" id="me-tasks-toggle">развернуть перечень</span></div>
         </div>
         <div class="glass-panel" style="border-left:3px solid #a78bfa;">
           <div class="panel-label">ВЕРДИКТ С-2 — НОВЫЙ ЛЕЙН (Соломон, 20.11)</div>
@@ -2580,100 +2595,174 @@ function mePost(path, payload) {
 }
 
 function initMainEstateLive() {
-  const moneyBody = document.getElementById("me-money-body");
+  const hall = document.getElementById("me-hall");
+  const medalsEl = document.getElementById("me-medals");
+  const greetEl = document.getElementById("me-greet");
   const tasksBody = document.getElementById("me-tasks-body");
   const countEl = document.getElementById("me-tasks-count");
-  if (!moneyBody || !tasksBody) return;
+  const wordEl = document.getElementById("me-word");
+  if (!hall || !medalsEl || !tasksBody) return;
 
   if (!document.getElementById("me-style")) {
     const st = document.createElement("style");
     st.id = "me-style";
     st.textContent = `
-      .me-chip{display:inline-block;padding:3px 10px;margin:0 6px 6px 0;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);border-radius:5px;font-family:var(--font-mono);font-size:.74rem;color:#cbd5e1;}
+      .me-chip{display:inline-block;padding:3px 10px;margin:0 6px 6px 0;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.08);border-radius:5px;font-family:var(--font-mono);font-size:.74rem;color:#cbd5e1;}
       .me-chip b{color:#5eead4;}
-      .me-bar{height:10px;border-radius:5px;background:rgba(0,0,0,.35);overflow:hidden;margin-top:8px;}
-      .me-bar>div{height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#a78bfa);transition:width .9s ease;}
       .me-task{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 10px;margin:0 0 6px;border:1px solid rgba(255,255,255,.07);border-radius:7px;background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .15s ease,background .15s ease;user-select:text;}
-      .me-task:hover{border-color:rgba(34,211,238,.5);background:rgba(34,211,238,.06);}
+      .me-task:hover{border-color:rgba(212,175,106,.55);background:rgba(212,175,106,.06);}
       .me-task.urgent{border-color:rgba(248,113,113,.55);}
       .me-task .t{color:#e2e8f0;font-size:.86rem;line-height:1.35;}
       .me-task .m{font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);white-space:nowrap;}
       .me-stage-head{font-family:var(--font-mono);font-size:.66rem;color:#94a3b8;letter-spacing:.08em;margin:10px 0 6px;}
-      .me-ov{position:fixed;inset:0;z-index:1002;background:rgba(4,10,20,.72);display:flex;align-items:center;justify-content:center;padding:24px;}
-      .me-ov-card{width:min(720px,94vw);max-height:86vh;overflow:auto;background:rgba(10,18,32,.97);border:1px solid rgba(34,211,238,.4);border-radius:12px;padding:18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+      .me-ov{position:fixed;inset:0;z-index:1002;background:rgba(6,8,12,.74);display:flex;align-items:center;justify-content:center;padding:24px;}
+      .me-ov-card{width:min(720px,94vw);max-height:86vh;overflow:auto;background:rgba(14,12,8,.97);border:1px solid rgba(212,175,106,.45);border-radius:12px;padding:18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
       .me-btn{padding:4px 12px;margin:0 6px 6px 0;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#e2e8f0;font-size:.8rem;cursor:pointer;}
-      .me-btn:hover{border-color:rgba(34,211,238,.6);}
+      .me-btn:hover{border-color:rgba(212,175,106,.6);}
       .me-btn.done{border-color:rgba(52,211,153,.6);color:#5eead4;}
+      .me-hall{position:relative;min-height:400px;border-radius:12px;overflow:hidden;isolation:isolate;border:1px solid rgba(212,175,106,.25);box-shadow:inset 0 0 80px rgba(0,0,0,.55);background:var(--hbg);transition:background 1s ease;}
+      .me-hall-bg{position:absolute;inset:-8px;will-change:transform;
+        background:
+          repeating-linear-gradient(90deg, rgba(0,0,0,.16) 0 2px, transparent 2px 118px),
+          repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 2px, transparent 2px 44px),
+          radial-gradient(60% 55% at 50% 30%, rgba(255,178,88,.09), transparent 70%),
+          linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.6));}
+      .me-beams{position:absolute;top:0;left:0;right:0;height:74px;will-change:transform;
+        background:repeating-linear-gradient(90deg, rgba(24,15,7,.95) 0 26px, rgba(52,34,16,.95) 26px 34px, rgba(24,15,7,.95) 34px 118px);
+        border-bottom:3px solid rgba(0,0,0,.55);box-shadow:0 8px 22px rgba(0,0,0,.5);}
+      .me-tapestry{position:absolute;top:64px;left:5%;width:112px;height:212px;border-radius:0 0 10px 10px;will-change:transform;
+        background:repeating-linear-gradient(45deg, rgba(122,28,24,.55) 0 12px, rgba(150,102,28,.42) 12px 24px);
+        border:3px solid rgba(212,175,106,.4);border-top:none;box-shadow:0 14px 30px rgba(0,0,0,.55);}
+      .me-window{position:absolute;top:56px;right:7%;width:196px;height:232px;border-radius:98px 98px 6px 6px;will-change:transform;
+        background:
+          repeating-linear-gradient(45deg, rgba(0,0,0,.5) 0 2px, transparent 2px 26px),
+          repeating-linear-gradient(-45deg, rgba(0,0,0,.5) 0 2px, transparent 2px 26px),
+          radial-gradient(70% 60% at 50% 42%, var(--hwin), transparent 72%),
+          linear-gradient(180deg, rgba(10,16,24,.9), rgba(6,10,14,.95));
+        border:4px solid rgba(22,15,8,.95);box-shadow:0 0 44px var(--hglow), inset 0 0 26px rgba(0,0,0,.6);}
+      .me-torch{position:absolute;top:112px;width:26px;height:72px;}
+      .me-torch.t1{left:24%;} .me-torch.t2{right:32%;}
+      .me-torch:before{content:"";position:absolute;bottom:0;left:11px;width:6px;height:36px;background:linear-gradient(180deg,#3a2a16,#1a120a);border-radius:3px;}
+      .me-torch i{position:absolute;top:-8px;left:2px;width:22px;height:30px;border-radius:50% 50% 40% 40%;
+        background:radial-gradient(60% 70% at 50% 78%, #ffd27a, #ff9d3c 55%, rgba(255,120,40,.25) 80%, transparent);
+        filter:blur(1.5px);animation:meFlicker 2.6s ease-in-out infinite alternate;}
+      .me-torch.t2 i{animation-duration:3.3s;}
+      @keyframes meFlicker{0%{opacity:.85;transform:scaleY(1);}45%{opacity:1;transform:scaleY(1.12) translateY(-2px);}100%{opacity:.72;transform:scaleY(.94);}}
+      .me-hearth{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:176px;height:120px;
+        background:linear-gradient(180deg, rgba(18,12,6,.96), rgba(9,6,3,.98));
+        border:3px solid rgba(48,34,18,.95);border-bottom:none;border-radius:88px 88px 0 0;
+        box-shadow:0 -8px 34px rgba(255,150,60,.13);}
+      .me-flame{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:78px;height:46px;border-radius:50% 50% 42% 42%;
+        background:radial-gradient(55% 65% at 50% 80%, #ffd27a 0%, #ff9d3c 45%, rgba(220,80,30,.35) 72%, transparent 85%);
+        filter:blur(3px);animation:meFire 5s ease-in-out infinite alternate;}
+      @keyframes meFire{0%{transform:translateX(-50%) scale(1);}50%{transform:translateX(-50%) scale(1.08,1.14);opacity:.95;}100%{transform:translateX(-50%) scale(.94,.9);opacity:.82;}}
+      .me-heart{position:absolute;top:16px;left:50%;transform:translateX(-50%) rotate(45deg);width:13px;height:13px;
+        background:linear-gradient(135deg,#ffd27a,#ff9d3c);box-shadow:0 0 14px rgba(255,190,90,.75);animation:mePulse 4.2s ease-in-out infinite;}
+      @keyframes mePulse{0%,100%{opacity:.75;box-shadow:0 0 10px rgba(255,190,90,.5);}50%{opacity:1;box-shadow:0 0 22px rgba(255,205,110,.95);}}
+      #me-dust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+      .me-rev{position:absolute;top:8px;right:10px;z-index:5;padding:3px 10px;border-radius:6px;border:1px solid rgba(212,175,106,.4);background:rgba(8,6,3,.6);color:#d4af6a;font-family:var(--font-mono);font-size:.68rem;cursor:pointer;user-select:none;}
+      .me-rev:hover{border-color:rgba(212,175,106,.8);}
+      .me-front{position:absolute;left:22px;right:22px;bottom:14px;z-index:4;will-change:transform;}
+      .me-greet{font-family:Georgia,'Times New Roman',serif;font-size:1.32rem;color:#e9d9b8;text-shadow:0 2px 10px rgba(0,0,0,.85);user-select:text;}
+      .me-greet span{color:#d4af6a;font-size:1.02rem;}
+      .me-medals{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+      .me-medal{display:inline-flex;flex-direction:column;min-width:128px;padding:8px 14px;background:rgba(7,5,3,.8);border:1px solid rgba(212,175,106,.45);border-radius:9px;}
+      .me-medal b{font-size:1.1rem;color:#e9d9b8;font-family:var(--font-mono);user-select:text;}
+      .me-medal>span{font-size:.6rem;letter-spacing:.09em;color:#a08c64;text-transform:uppercase;margin-top:2px;}
+      .me-medal .me-mini{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:6px;display:block;}
+      .me-medal .me-mini>div{height:100%;width:0;background:linear-gradient(90deg,#d4af6a,#e9d9b8);transition:width 1s ease;}
+      .me-hall[data-rev="torch"]{--hbg:linear-gradient(180deg,#1b120a,#120c07);--hwin:rgba(255,178,88,.22);--hglow:rgba(255,160,60,.1);}
+      .me-hall[data-rev="moon"]{--hbg:linear-gradient(180deg,#0a1120,#070b12);--hwin:rgba(160,200,255,.3);--hglow:rgba(140,190,255,.15);}
+      .me-hall[data-rev="moon"] .me-torch i{background:radial-gradient(60% 70% at 50% 78%, #dfe9ff, #9db8e8 55%, rgba(120,160,255,.2) 80%, transparent);opacity:.7;}
+      .me-hall[data-rev="moon"] .me-flame,.me-hall[data-rev="moon"] .me-heart{background:linear-gradient(135deg,#dfe9ff,#9db8e8);box-shadow:0 0 14px rgba(160,200,255,.6);}
+      .me-hall[data-rev="feast"]{--hbg:linear-gradient(180deg,#180d10,#0f080a);--hwin:rgba(255,120,120,.25);--hglow:rgba(255,110,90,.13);}
     `;
     document.head.appendChild(st);
   }
 
-  // — Казна (СТОР бюджета — показания Дмитрия) —
-  fetch("/api/tokens/budget")
-    .then((r) => r.json())
-    .then((b) => {
-      const bal = (typeof b.balance_m === "number") ? b.balance_m : null;
-      const cap = (typeof b.cap_m === "number" && b.cap_m > 0) ? b.cap_m : 500;
-      const pct = bal === null ? 0 : Math.max(0, Math.min(100, (bal / cap) * 100));
-      const days = bal === null ? "—" : Math.round((bal / 10) * 10) / 10;
-      moneyBody.innerHTML = `
-        <div class="me-bar"><div style="width:${pct}%"></div></div>
-        <div style="margin-top:8px;">
-          <span class="me-chip">казна <b>${bal === null ? "—" : bal.toFixed(1)}</b> / ${cap} млн (75%)</span>
-          <span class="me-chip">запас <b>~${days}</b> дн при 10 млн/день</span>
-          <span class="me-chip">аренда 04.12 · <b>14 дней</b></span>
-        </div>
-        <div id="me-cassa-row" style="margin-top:4px;">
-          <span class="me-chip">касса: <span style="color:var(--text-muted)">проверяю замок…</span></span>
-        </div>`;
-      const cassaRow = document.getElementById("me-cassa-row");
-      const tok = localStorage.getItem("evo_finance_token") || "";
-      fetch("/api/internal/summary", { headers: tok ? { "X-Finance-Token": tok } : {} })
-        .then((r) => { if (r.status === 403) throw new Error("locked"); if (!r.ok) throw new Error("err"); return r.json(); })
-        .then((s) => {
-          cassaRow.innerHTML = `
-            <span class="me-chip">касса: приход <b>${s.income_sum || 0}</b> сум</span>
-            <span class="me-chip">записей <b>${s.entries_total || 0}</b></span>
-            <span class="me-chip">налоговая база <b>${s.tax_base_sum || 0}</b> сум</span>`;
-        })
-        .catch((e) => {
-          cassaRow.innerHTML = e.message === "locked"
-            ? `<span class="me-chip">касса: 🔒 замок — токен во вкладке Trading Quarter</span>`
-            : `<span class="me-chip">касса: недоступна</span>`;
-        });
+  // — Приветствие по времени суток —
+  const h = new Date().getHours();
+  const hi = h < 5 ? "Доброй ночи" : h < 12 ? "Доброе утро" : h < 18 ? "Добрый день" : "Добрый вечер";
+  greetEl.innerHTML = `${hi}, Дмитрий. <span>Поместье в порядке.</span>`;
+
+  meHallFx(hall);
+
+  const tgl = document.getElementById("me-tasks-toggle");
+  tgl.addEventListener("click", () => {
+    const shown = tasksBody.style.display !== "none";
+    tasksBody.style.display = shown ? "none" : "block";
+    tgl.textContent = shown ? "развернуть перечень" : "свернуть перечень";
+  });
+
+  // — Медальоны: слуги, дела, казна —
+  Promise.all([
+    fetch("/api/agents/live").then((r) => r.json()).catch(() => null),
+    fetch("/api/agents/history?limit=20").then((r) => r.json()).catch(() => null),
+    fetch("/api/tasks").then((r) => r.json()).catch(() => null),
+    fetch("/api/tokens/budget").then((r) => r.json()).catch(() => null),
+  ]).then(([live, hist, td, b]) => {
+    const ships = (live && live.ships) || [];
+    const voy = (hist && hist.voyages) || [];
+    const now = Date.now();
+    const done24 = voy.filter((v) => now - new Date(v.finished_at || v.started_at || 0).getTime() < 864e5).length;
+    const tasks = (td && td.tasks) || [];
+    const openN = tasks.filter((t) => t.status !== "done").length;
+    const bal = (b && typeof b.balance_m === "number") ? b.balance_m : null;
+    const cap = (b && typeof b.cap_m === "number" && b.cap_m > 0) ? b.cap_m : 500;
+    const pct = bal === null ? 0 : Math.max(0, Math.min(100, (bal / cap) * 100));
+    const dLeft = Math.max(0, Math.round((new Date("2026-12-04T00:00:00+05:00") - Date.now()) / 864e5));
+    medalsEl.innerHTML = `
+      <span class="me-medal"><b>${ships.length}</b><span>слуг в море</span></span>
+      <span class="me-medal"><b>${done24}</b><span>дел закрыто за сутки</span></span>
+      <span class="me-medal"><b>${openN}</b><span>дел в работе</span></span>
+      <span class="me-medal"><b>${bal === null ? "—" : bal.toFixed(1) + "M"}</b><span>казна из ${cap}M</span><span class="me-mini"><div style="width:${pct}%"></div></span></span>
+      <span class="me-medal"><b>${dLeft}</b><span>дней до аренды</span></span>
+      <span class="me-medal" id="me-cassa-medal"><b>…</b><span>касса</span></span>`;
+    window._ME_TASKS = {};
+    tasks.forEach((t) => { window._ME_TASKS[t.id] = t; });
+    if (countEl) countEl.textContent = openN + " в работе · " + (tasks.length - openN) + " готово";
+    meRenderTasks(tasksBody, tasks);
+    // — Live-фактура (token_watcher) —
+    fetch("/api/tokens/live")
+      .then((r) => r.json())
+      .then((lv) => {
+        const row = document.getElementById("me-live-row");
+        if (!row) return;
+        if (typeof lv.grand_today_m !== "number") throw new Error("empty");
+        const inter = (lv.by_kind && lv.by_kind.interactive) || 0;
+        const sub = (lv.by_kind && lv.by_kind.subagent) || 0;
+        const calls = (lv.sessions || []).reduce((a, s) => a + (s.requests || 0), 0);
+        row.innerHTML = `
+          <span class="me-chip">фактура сегодня: <b>${lv.grand_today_m.toFixed(2)}</b> млн</span>
+          <span class="me-chip">чаты <b>${(inter / 1e6).toFixed(2)}</b> · агенты <b>${(sub / 1e6).toFixed(2)}</b></span>
+          <span class="me-chip">вызовов <b>${calls}</b></span>`;
+      })
+      .catch(() => {});
+  });
+
+  // — Касса Бендера (медальон) —
+  const tok = localStorage.getItem("evo_finance_token") || "";
+  fetch("/api/internal/summary", { headers: tok ? { "X-Finance-Token": tok } : {} })
+    .then((r) => { if (r.status === 403) throw new Error("locked"); if (!r.ok) throw new Error("err"); return r.json(); })
+    .then((s) => {
+      const el = document.getElementById("me-cassa-medal");
+      if (el) el.innerHTML = `<b>${s.income_sum || 0}</b><span>сум в кассе · записей ${s.entries_total || 0}</span>`;
     })
-    .catch(() => {
-      moneyBody.innerHTML = `<span class="me-chip">казна: стор недоступен</span>`;
+    .catch((e) => {
+      const el = document.getElementById("me-cassa-medal");
+      if (el) el.innerHTML = e.message === "locked" ? "<b>🔒</b><span>касса под замком</span>" : "<b>—</b><span>касса недоступна</span>";
     });
 
-  // — Задачи (канбан-поток) —
-  fetch("/api/tasks")
+  // — Ждёт вашего слова —
+  fetch("/api/council/2026-11-20-1")
     .then((r) => r.json())
-    .then((d) => {
-      const tasks = d.tasks || [];
-      if (countEl) countEl.textContent = tasks.filter((t) => t.status !== "done").length + " в работе · " + tasks.filter((t) => t.status === "done").length + " готово";
-      window._ME_TASKS = {};
-      tasks.forEach((t) => { window._ME_TASKS[t.id] = t; });
-      const open = tasks.filter((t) => t.status !== "done");
-      const urgent = open.filter((t) => t.priority === "urgent");
-      const rest = open.filter((t) => t.priority !== "urgent");
-      const card = (t) => `
-        <div class="me-task${t.priority === "urgent" ? " urgent" : ""}" data-id="${escapeHtml(t.id)}">
-          <span class="t">${escapeHtml(t.title || t.id)}</span>
-          <span class="m">${escapeHtml(ME_STAGE_LABEL[t.stage] || t.stage || "")}${t.owner ? " · " + escapeHtml(t.owner) : ""}</span>
-        </div>`;
-      let html = "";
-      if (urgent.length) html += `<div class="me-stage-head" style="color:#f87171;">URGENT — ГОРИТ</div>` + urgent.map(card).join("");
-      ME_STAGES.forEach((st) => {
-        const group = rest.filter((t) => (t.stage || "todo") === st);
-        if (group.length) html += `<div class="me-stage-head">${ME_STAGE_LABEL[st]}</div>` + group.map(card).join("");
-      });
-      const loose = rest.filter((t) => !ME_STAGES.includes(t.stage || "todo"));
-      if (loose.length) html += `<div class="me-stage-head">ПРОЧЕЕ</div>` + loose.map(card).join("");
-      tasksBody.innerHTML = html || `<div style="color:var(--text-muted);font-size:.8rem;">открытых задач нет</div>`;
+    .then((m) => {
+      const wait = (m.agenda || []).filter((a) => a.verdict && a.verdict.verdict === "на моё решение");
+      const rows = wait.map((a) => `🕯 ${escapeHtml(String(a.title).slice(0, 78))}…`).join("<br>");
+      wordEl.innerHTML = rows + "<br>✉ три «да» — пуш фикс-хвоста (aa6893e…88e78b3) на origin";
     })
     .catch(() => {
-      tasksBody.innerHTML = `<span class="me-chip">лиджер недоступен (сервер 8765?)</span>`;
+      wordEl.innerHTML = "🕯 имя TG-ника — 7 файлов ждут<br>🕯 санкция лейна С-2 — старт в понедельник<br>✉ три «да» — пуш фикс-хвоста на origin";
     });
 
   // — Делегирование клика по карточке (один слушатель на документ) —
@@ -2686,6 +2775,89 @@ function initMainEstateLive() {
       if (t) meOpenTask(t);
     });
   }
+}
+
+function meRenderTasks(tasksBody, tasks) {
+  const open = tasks.filter((t) => t.status !== "done");
+  const urgent = open.filter((t) => t.priority === "urgent");
+  const rest = open.filter((t) => t.priority !== "urgent");
+  const card = (t) => `
+    <div class="me-task${t.priority === "urgent" ? " urgent" : ""}" data-id="${escapeHtml(t.id)}">
+      <span class="t">${escapeHtml(t.title || t.id)}</span>
+      <span class="m">${escapeHtml(ME_STAGE_LABEL[t.stage] || t.stage || "")}${t.owner ? " · " + escapeHtml(t.owner) : ""}</span>
+    </div>`;
+  let html = "";
+  if (urgent.length) html += `<div class="me-stage-head" style="color:#f87171;">URGENT (${urgent.length})</div>` + urgent.map(card).join("");
+  ME_STAGES.forEach((st) => {
+    const g = rest.filter((t) => (t.stage || "todo") === st);
+    if (g.length) html += `<div class="me-stage-head">${ME_STAGE_LABEL[st]} (${g.length})</div>` + g.map(card).join("");
+  });
+  const loose = rest.filter((t) => !ME_STAGES.includes(t.stage || "todo"));
+  if (loose.length) html += `<div class="me-stage-head">ПРОЧЕЕ</div>` + loose.map(card).join("");
+  tasksBody.innerHTML = html || `<div style="color:var(--text-muted);font-size:.8rem;">открытых дел нет — дом спокоен</div>`;
+}
+
+function meHallFx(hall) {
+  const cv = document.getElementById("me-dust");
+  if (!cv || cv._meRun) return;
+  cv._meRun = true;
+  const ctx = cv.getContext("2d");
+  let W = cv.width = cv.offsetWidth;
+  let H = cv.height = cv.offsetHeight;
+  const parts = [];
+  for (let i = 0; i < 30; i++) {
+    parts.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: 0.6 + Math.random() * 1.6,
+      vx: (0.1 + Math.random() * 0.25) * (Math.random() < 0.5 ? -1 : 1),
+      vy: -(0.05 + Math.random() * 0.2),
+      a: 0.12 + Math.random() * 0.45, ph: Math.random() * 6.28,
+    });
+  }
+  let px = 0, py = 0, tx = 0, ty = 0;
+  hall.addEventListener("mousemove", (e) => {
+    const r = hall.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - 0.5) * 8;
+    ty = ((e.clientY - r.top) / r.height - 0.5) * 5;
+  });
+  (function loop() {
+    if (!cv.isConnected) { cv._meRun = false; return; }
+    px += (tx - px) * 0.06; py += (ty - py) * 0.06;
+    const q = (sel, kx, ky) => {
+      const el = hall.querySelector(sel);
+      if (el) el.style.transform = `translate(${(px * kx).toFixed(2)}px, ${(py * ky).toFixed(2)}px)`;
+    };
+    q(".me-hall-bg", 0.6, 0.4);
+    q(".me-window", -1.1, -0.7);
+    q(".me-tapestry", -0.6, -0.4);
+    q(".me-front", 0.35, 0.25);
+    ctx.clearRect(0, 0, W, H);
+    for (const p of parts) {
+      p.x += p.vx; p.y += p.vy; p.ph += 0.02;
+      if (p.y < -4) { p.y = H + 4; p.x = Math.random() * W; }
+      if (p.x < -4) p.x = W + 4;
+      if (p.x > W + 4) p.x = -4;
+      ctx.globalAlpha = p.a * (0.55 + 0.45 * Math.sin(p.ph));
+      ctx.fillStyle = "#ffd27a";
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  })();
+
+  // — Ревизии зала —
+  const revBtn = document.getElementById("me-rev");
+  const REV = { torch: "◆ Факелы", moon: "◆ Луна", feast: "◆ Пир" };
+  const order = ["torch", "moon", "feast"];
+  const saved = localStorage.getItem("me_hall_rev_v1");
+  if (saved && REV[saved]) hall.setAttribute("data-rev", saved);
+  revBtn.textContent = REV[hall.getAttribute("data-rev")] || REV.torch;
+  revBtn.addEventListener("click", () => {
+    const next = order[(order.indexOf(hall.getAttribute("data-rev") || "torch") + 1) % order.length];
+    hall.setAttribute("data-rev", next);
+    revBtn.textContent = REV[next];
+    localStorage.setItem("me_hall_rev_v1", next);
+  });
 }
 
 function meOpenTask(task) {
