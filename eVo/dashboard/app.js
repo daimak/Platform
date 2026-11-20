@@ -2530,6 +2530,7 @@ function buildHunterObservatoryHTML() {
   const salaries = (o.salaries || []).map((i) => linkRow(i, [i.source, i.salary].filter(Boolean).join(", "))).join("");
   const persp = (o.perspective || []).map((i) => linkRow(i, [i.category, i.source, i.date].filter(Boolean).join(", "))).join("");
   const olx = (o.olx || []).map((i) => linkRow(i, [i.price, i.city].filter(Boolean).join(", "))).join("");
+  const hh = (o.hh_forks || []).map((i) => linkRow(i, [i.company, i.salary].filter(Boolean).join(", "))).join("");
   const queue = (o.queue || []).map((i) => `
     <div style="padding:4px 0; font-size:0.83rem; line-height:1.45; border-top:1px solid rgba(255,255,255,0.05); color:#cbd5e1;">· ${esc(i.title)} <span style="color:var(--text-muted); font-size:0.75rem;"> — ${esc(i.category)}</span></div>`).join("");
   return `
@@ -2541,11 +2542,13 @@ function buildHunterObservatoryHTML() {
         ${chip("основные", c.main || 0)}
         ${chip("с вилкой", c.jobsWithSalary || 0)}
         ${chip("OLX", c.olxItems || 0)}
+        ${chip("вилки вакансий", c.hhForks || 0)}
         ${chip("поручения", c.queue || 0)}
       </div>
       ${salaries ? subHead("С ВИЛКОЙ — БЫСТРЕЕ К ДЕНЬГАМ") + salaries : ""}
       ${persp ? subHead("ПЕРСПЕКТИВНЫЕ") + persp : ""}
       ${olx ? subHead("OLX — ПОДРАБОТКИ") + olx : ""}
+      ${hh ? subHead("ВАКАНСИИ С ВИЛКОЙ (34 hh + прочие)") + hh : ""}
       ${queue ? subHead("ОЧЕРЕДЬ ПОРУЧЕНИЙ") + queue : ""}
       <p style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted); margin-top:12px;">
         Доклад: ${esc(r.generatedAt)} • снимок ${esc(r.snapshot || "—")} • полная часть: Workspace/analytics/hunter/digest.json

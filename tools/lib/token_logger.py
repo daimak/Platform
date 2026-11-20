@@ -16,7 +16,7 @@ def _get_utc_now():
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 def _acquire_lock():
-    \"\"\"Атомарный захват блокировки с защитой от 'зависания'.\"\"\"
+    """Атомарный захват блокировки с защитой от 'зависания'."""
     my_info = json.dumps({"pid": os.getpid(), "ts": time.time()})
     
     for _ in range(50):  # 5 секунд суммарно
@@ -56,7 +56,7 @@ def _release_lock():
         pass
 
 def log_usage(agent_id, session_id, task_id, provider, requested_model, actual_model, attempt, usage_data, source="PlatformAgent"):
-    \"\"\"Логирует факт запроса в ledger.jsonl.\"\"\"
+    """Логирует факт запроса в ledger.jsonl."""
     try:
         raw = usage_data if usage_data else {}
         

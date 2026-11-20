@@ -31,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[2]
 BOARD_PATH = ROOT / "Workspace" / "analytics" / "orders_board.json"
 SNAP_ROOT = ROOT / "Workspace" / "analytics"
 OLX_PATH = ROOT / "tools" / "olx_production_data.json"
+HH_FORKS_PATH = ROOT / "tools" / "job_search_results_salary.json"
 QUEUE_PATH = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Platform" / "Hunter" / "assignments.json"
 DIGEST_PATH = ROOT / "Workspace" / "analytics" / "hunter" / "digest.json"
 JS_PATH = ROOT / "eVo" / "dashboard" / "hunter-report.js"
@@ -142,6 +143,30 @@ def load_olx() -> tuple[int, str, list[dict]]:
     return len(items), generated, top
 
 
+def load_hh_forks() -> tuple[int, str, list[dict]]:
+    """HH-вакансии с вилкой из tools/job_search_results_salary.json (сборка job_search.py,
+    rss-источник). Лечение «0 вилок» 20.11: report.py раньше не читал этот файл,
+    а снапшотный salary_extracted для hh пуст (salary-поля в hh выдаче)."""
+    if not HH_FORKS_PATH.exists():
+        return 0, "", []
+    data = json.loads(HH_FORKS_PATH.read_text(encoding="utf-8"))
+    items = data if isinstance(data, list) else data.get("items", [])
+    forked = [i for i in items if isinstance(i, dict) and (i.get("salary_from") or i.get("salary_to"))]
+    forked.sort(key=lambda i: i.get("date") or "", reverse=True)
+    latest = str(forked[0].get("date") or "")[:10] if forked else ""
+    top = [
+        {
+            "title": (i.get("title") or "").strip()[:100],
+            "company": (i.get("company") or "").strip()[:60],
+            "salary": (i.get("salary") or "").strip()[:60],
+            "url": i.get("url") or "",
+            "date": str(i.get("date") or "")[:10],
+        }
+        for i in forked[:TOP_PANEL]
+    ]
+    return len(forked), latest, top
+
+
 def load_queue() -> list[dict]:
     if not QUEUE_PATH.exists():
         return []
@@ -167,15 +192,17 @@ def build_digest() -> dict:
         1 for rec in records if salaries.get(str(rec.get("idx", "")), {}).get("has_salary") == "yes"
     )
     olx_count, olx_generated, olx_top = load_olx()
+    hh_total, hh_latest, hh_top = load_hh_forks()
     queue = load_queue()
     snapshot = snap_dir.name if snap_dir else ""
 
     headline = (
         "Доска: %d перспективных + %d основных (снимок %s); находок с вилкой: %d; "
-        "OLX-находки: %d (%s); очередь поручений: %d."
+        "OLX-находки: %d (%s); вилки из вакансий: %d (%s); очередь поручений: %d."
         % (
             status_counts["perspective"], status_counts["main"], snapshot or "нет",
-            salaries_count, olx_count, olx_generated or "—", len(queue),
+            salaries_count, olx_count, olx_generated or "—", hh_total, hh_latest or "—",
+            len(queue),
         )
     )
 
@@ -192,6 +219,7 @@ def build_digest() -> dict:
             if rec.get("status") == "perspective"
         ][:TOP_PANEL],
         "olx": olx_top,
+        "hh_forks": hh_top,
         "queue": queue[:TOP_PANEL],
     }
     return {
@@ -204,6 +232,7 @@ def build_digest() -> dict:
             "jobsTotal": len(records),
             "jobsWithSalary": salaries_count,
             "olxItems": olx_count,
+            "hhForks": hh_total,
             "queue": len(queue),
         },
         "top": collect_top(records, salaries),
@@ -212,6 +241,7 @@ def build_digest() -> dict:
             "board": "Workspace/analytics/orders_board.json",
             "snapshot": "Workspace/analytics/%s/jobs.csv" % snapshot if snapshot else "",
             "olx": "tools/olx_production_data.json",
+            "hh_forks": "tools/job_search_results_salary.json",
             "queue": "%LOCALAPPDATA%/Platform/Hunter/assignments.json",
         },
     }

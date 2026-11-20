@@ -38,6 +38,8 @@ REGULATION = (
 
 def _load_run_agent():
     """run_agent.py — дефис в имени, обычный import не проходит."""
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))  # run_agent:36 импортирует tools.lib.token_logger — корень нужен в sys.path (python -I его убирает)
     spec = importlib.util.spec_from_file_location("run_agent_mod", RUN_AGENT_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
