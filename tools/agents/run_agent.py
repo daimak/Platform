@@ -23,6 +23,7 @@ resolved) и пишет отчёт с новым блоком состояния
 """
 
 import argparse
+import uuid
 import json
 import os
 import re
@@ -32,6 +33,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from tools.lib import token_logger
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_PATH = Path(__file__).resolve().parent / "registry.json"
@@ -569,6 +571,7 @@ def main() -> int:
     parser.add_argument("--agent", default="Holmes")
     parser.add_argument("--no-llm", action="store_true")
     args = parser.parse_args()
+    session_id = str(uuid.uuid4())
 
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     agent = registry["agents"].get(args.agent)
@@ -644,6 +647,21 @@ def main() -> int:
         env = load_env(ENV_PATH)
         try:
             result = gateway_chat(registry, env, system_prompt, user_prompt)
+            # Token Accounting MVP
+            try:
+                token_logger.log_usage(
+                    agent_id=args.agent,
+                    session_id=session_id,
+                    task_id=None,
+                    provider=registry['gateway']['default_base_url'],
+                    requested_model=result.get('model'),
+                    actual_model=result.get('model'),
+                    attempt=1,
+                    usage_data=result.get('usage')
+                )
+            except Exception as e:
+                print(f'[token_logger] Integration error: {e}', file=sys.stderr)
+
             report = result["text"]
             peer = extract_peer_note(report)
             if peer:

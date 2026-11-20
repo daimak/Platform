@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-11-18 14:18",
+  "generatedAt": "2026-11-20 20:27",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -2031,17 +2031,43 @@ window.EVO_BRIEF = {
     "full": "Workspace/analytics/hunter/digest.json"
   },
   "peerNotes": {
-    "last24h": 0
+    "last24h": 1,
+    "latest": "Леонардо → Магеллан: Прочёл ночной доклад Хантера (Workspace/analytics/hunter-night-2026-11-16.md). Г"
   },
   "git": {
-    "branch": "main",
-    "lastCommit": "4395fe1 Release 1.8.9: nav-dock v6 (ядро Эво в шапке на всех экранах), тихая карта агентов + канбан-приёмка рейсов, money-map, витрина-хвосты; version bump + changelog",
+    "branch": "release/1.8.9.1",
+    "lastCommit": "e286ab6 Release 1.8.9.1: full project checkpoint",
     "dirtyFiles": 43
   },
-  "agent": {
-    "model": "dots-studio/dots-3-note-preview:free",
-    "summary": "Контекст устарел: дата в CURRENT.md — 2026-08-05, снимок сгенерирован 18.11.2026. Активные задачи: Kali-лаборатория (шаг 7 — спец-учётка, тесты), ротация ключей LangSmith/FreeLLMAPI, radар денег, чистка master-profile. Релизы: 1.8.8, 1.8.81, 1.8.9 на main; последний коммит 4395fe1. В дереве 43 грязных файла, включая 17 новых и ~1301 строку diff без коммита. Хантер: 125 перспективных + 32 основные вакансии (снимок 09.11), находок с вилкой 0. Переписка: 0 заметок за сутки.",
-    "nextStep": "Сверить CURRENT.md с STATE.md и CHANGELOG.md, устранить устаревшие указания на создание Morning Brief, затем проверить качество доклада после обновления контекста."
+  "aiUsage": {
+    "note": "Unknown values are unavailable, not zero. Subscription limits and spending are separate from API token usage.",
+    "providers": [
+      {
+        "id": "snap-20261029T062203360157",
+        "recorded_at": "2026-10-29T06:22:03.360181+00:00",
+        "provider_id": "github-copilot",
+        "provider_name": "GitHub Copilot",
+        "period": "2026-10-01 through 2026-10-31",
+        "credits_used_percent": 51,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cost_amount": 0,
+        "currency": "USD",
+        "note": "User-provided GitHub Billing snapshot at 2026-10-29 11:04 UZT: current metered usage $0; additional AI credits $0; Copilot Free included credits 51% used.",
+        "source": "manual"
+      }
+    ],
+    "request_count": 8,
+    "known_token_requests": 7,
+    "input_tokens": 38735,
+    "output_tokens": 24625,
+    "total_tokens": 63360,
+    "costs": []
   },
-  "_sourceFingerprint": "1c657de161b0dc4f01bcc17537d23f1892476fc20abd6b8eaa2f108aae82a6d3"
+  "agent": {
+    "model": "gemini-robotics-er-2-preview",
+    "summary": "Доброе утро, Дмитрий. Контекстная дата в CURRENT.md (05.08.2026) устарела относительно фактической даты снимка 20.11.2026; текущая работа ведётся на ветке release/1.8.9.1 с 43 изменёнными файлами. В пуле содержится 27 активных задач, где приоритетом выступают развёртывание лаборатории Kali Linux и ротация ключей. Выжимка Хантера: 125 перспективных и 32 основных заказа (на 09.11), а также 253 находки на OLX. Переписка: 1 заметка за сутки, в которой Леонардо сообщает Магеллану о прочтении ночного доклада. Зафиксировано 8 ИИ-запросов, израсходовано 38 735 входных и 24 625 выходных токенов (всего 63 360), финансовые затраты в источниках не указаны.",
+    "nextStep": "Актуализировать контекст Barrymore согласно указаниям (сверка CURRENT.md с STATE.md, LOG.md, CHANGELOG.md и разбор с logger.py)."
+  },
+  "_sourceFingerprint": "c25d11b97dbb6e8d58cb68c03dab7fe47bdad309dccca95e67778145998dcd6f"
 };
