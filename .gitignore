@@ -47,6 +47,10 @@ Workspace/reports/
 Workspace/analytics/
 # Machine events journal & job run states (regenerable, Л-2/Л-3 data foundation)
 Workspace/logs/
+# Ping-сторожка витрины: растущий лог вне git (полка перед 1.9.0)
+Workspace/sales-lane/ping-vitrina.log
+# Scratch — локальные рабочие файлы/crash-recovery, в git не место
+scratch/
 # Peer notes — interior chatter between estate agents (visibility rule, Sovereign 31.10)
 Workspace/agents/
 # Dark Watch intel cardfile — interior (visibility rule, Sovereign 31.10)
