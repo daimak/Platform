@@ -1,15 +1,16 @@
 window.EVO_HUNTER_REPORT = {
- "generatedAt": "2026-11-09T05:24:04+05:00",
+ "generatedAt": "2026-11-20T21:25:57+05:00",
  "snapshot": "2026-11-09",
  "boardUpdated": "2026-11-09T05:23:55+05:00",
- "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-09); находок с вилкой: 0; OLX-находки: 253 (2026-10-31); очередь поручений: 0.",
+ "headline": "Доска: 125 перспективных + 32 основных (снимок 2026-11-09); находок с вилкой: 0; OLX-находки: 252 (2026-11-09); вилки из вакансий: 43 (2026-11-08); очередь поручений: 0.",
  "counts": {
   "perspective": 125,
   "main": 32,
   "outset": 0,
   "jobsTotal": 157,
   "jobsWithSalary": 0,
-  "olxItems": 253,
+  "olxItems": 252,
+  "hhForks": 43,
   "queue": 0
  },
  "top": [
@@ -132,34 +133,92 @@ window.EVO_HUNTER_REPORT = {
   ],
   "olx": [
    {
-    "title": "Продам срочно!  База 19 соток  в Бектемирском районе | Промзона",
-    "url": "https://www.olx.uz/d/obyavlenie/prodam-srochno-baza-19-sotok-v-bektemirskom-rayone-promzona-ID4nGql.html",
-    "price": "4 072 962 000 сум",
+    "title": "Продается Автосервис",
+    "url": "https://www.olx.uz/d/obyavlenie/prodaetsya-avtoservis-ID4u2bJ.html",
+    "price": "1 794 750 000 сум",
+    "city": "Янгибазар"
+   },
+   {
+    "title": "Срочно сдается в вренду сдание 24 сотки 1 400м2 Мирзо-Улугбек",
+    "url": "https://www.olx.uz/d/obyavlenie/srochno-sdaetsya-v-vrendu-sdanie-24-sotki-1-400m2-mirzo-ulugbek-ID4wTjG.html",
+    "price": "179 475 000 сум",
     "city": "Ташкент"
    },
    {
-    "title": "Qurilishi tugallangan bino",
-    "url": "https://www.olx.uz/d/obyavlenie/qurilishi-tugallangan-bino-ID4qF65.html",
-    "price": "3 234 411 000 сум",
-    "city": "Караул"
-   },
-   {
-    "title": "Бино арендага берилади, 1200 кв биринчи линия",
-    "url": "https://www.olx.uz/d/obyavlenie/bino-arendaga-beriladi-1200-kv-birinchi-liniya-ID4uKbu.html",
-    "price": "95 834 400 сум",
+    "title": "сдается здание в аренду 3 эт",
+    "url": "https://www.olx.uz/d/obyavlenie/sdaetsya-zdanie-v-arendu-3-et-ID4wNoD.html",
+    "price": "143 580 000 сум",
     "city": "Ташкент"
    },
    {
-    "title": "707 кв.м возле метро Х. Алимджан (Дархан)",
-    "url": "https://www.olx.uz/d/obyavlenie/707-kv-m-vozle-metro-h-alimdzhan-darhan-ID4wa9C.html",
-    "price": "89 844 750 сум",
+    "title": "Аренда помещения ЖК Ozbegim, 300кв  (собственник)",
+    "url": "https://www.olx.uz/d/obyavlenie/arenda-pomescheniya-zhk-ozbegim-300kv-sobstvennik-ID4uGZu.html",
+    "price": "78 969 000 сум",
     "city": "Ташкент"
    },
    {
-    "title": "Клиника учун таёр бино ижарага берилади",
-    "url": "https://www.olx.uz/d/obyavlenie/klinika-uchun-taer-bino-izharaga-beriladi-ID4uuxk.html",
-    "price": "71 875 800 сум",
-    "city": "Карши"
+    "title": "Yashnobod tumanida ijaraga 3 qavvatli bino beriladi",
+    "url": "https://www.olx.uz/d/obyavlenie/yashnobod-tumanida-ijaraga-3-qavvatli-bino-beriladi-ID4wTdQ.html",
+    "price": "59 825 000 сум",
+    "city": "Ташкент"
+   }
+  ],
+  "hh_forks": [
+   {
+    "title": "Системный администратор",
+    "company": "Альянс",
+    "salary": "от 100 000 до 100 000 ₽",
+    "url": "https://hh.uz/vacancy/138531695",
+    "date": "2026-11-08"
+   },
+   {
+    "title": "Системный администратор",
+    "company": "EventyOn",
+    "salary": "от 120 000 до 120 000 ₽",
+    "url": "https://hh.uz/vacancy/139179871",
+    "date": "2026-11-08"
+   },
+   {
+    "title": "Системный администратор",
+    "company": "ЭЛХОСТ",
+    "salary": "от 70 000 ₽",
+    "url": "https://hh.uz/vacancy/138397606",
+    "date": "2026-11-08"
+   },
+   {
+    "title": "Системный администратор",
+    "company": "Кема Клаб",
+    "salary": "от 130 000 до 180 000 ₽",
+    "url": "https://hh.uz/vacancy/138721960",
+    "date": "2026-11-08"
+   },
+   {
+    "title": "SRE/DevOps инженер",
+    "company": "Americor Funding Inc",
+    "salary": "от 5 000 $",
+    "url": "https://hh.uz/vacancy/139011384",
+    "date": "2026-11-08"
+   },
+   {
+    "title": "Системный администратор/Middle System Administrator",
+    "company": "Стальпрокат",
+    "salary": "от 200 000 ₽",
+    "url": "https://hh.ru/vacancy/139070786",
+    "date": "2026-11-08"
+   },
+   {
+    "title": "Системный администратор",
+    "company": "АПЕКС СЕКЬЮРИТИ",
+    "salary": "от 200 000 ₽",
+    "url": "https://hh.ru/vacancy/139066164",
+    "date": "2026-11-08"
+   },
+   {
+    "title": "Системный администратор Linux",
+    "company": "Калкулэйт",
+    "salary": "от 120 000 до 150 000 ₽",
+    "url": "https://hh.uz/vacancy/138490813",
+    "date": "2026-11-07"
    }
   ],
   "queue": []
@@ -168,6 +227,7 @@ window.EVO_HUNTER_REPORT = {
   "board": "Workspace/analytics/orders_board.json",
   "snapshot": "Workspace/analytics/2026-11-09/jobs.csv",
   "olx": "tools/olx_production_data.json",
+  "hh_forks": "tools/job_search_results_salary.json",
   "queue": "%LOCALAPPDATA%/Platform/Hunter/assignments.json"
  }
 };

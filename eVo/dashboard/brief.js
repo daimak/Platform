@@ -1,5 +1,5 @@
 window.EVO_BRIEF = {
-  "generatedAt": "2026-11-20 20:27",
+  "generatedAt": "2026-11-20 20:32",
   "sources": [
     "Memory/Context/CURRENT.md",
     "Memory/Engineering/STATE.md",
@@ -14,11 +14,11 @@ window.EVO_BRIEF = {
     "nextStep": "По санкциям Sovereign: пилот Рокфеллера и/или выбор мира из drafts; при следующей смене — зафиксировать сессию 08–09.11 записью в `LOG.md`. Текущий пул работ — task-лиджер `Memory/Engineering/Tasks/Active/` (27 карточек)."
   },
   "changes": [
-    "2026-11-07 | cloud VM security lab: docker + compose, apt toolkit, practice targets from cloud kit bound to loopback only (fixes: compose 0.0.0.0 bindings and missing empty .env for secretless services) | docker bypasses ufw; lab targets must never face the internet; inventory kept in private zone | —",
     "2026-11-07 | agent peer notes (\"Заметка соседу\"): agents may append one short note-to-a-neighbor line to routine LLM reports (run_agent.py -> Workspace/agents/peer-notes.jsonl, untracked); Barrymore plaque shows unread counter, digest panel in steward modal, GET/POST /api/peer-notes; Morning Brief gains one-line digest; ops: one-command dashboard restart script tools/ops/restart-dashboard.ps1 | agents occasionally show initiative and cross-talk at near-zero cost; launch stays manual (leash mode) | —",
     "2026-11-09 | release 1.8.8: COMMAND CENTER штаб (топливо/конвейер/артефакты/ждёт-слова/деньги/сигналы + /api/tokens/usage), обсерватория Maelstorm (воронка/корабли/шлюпки), 14 драфт-миров + 13 превью (worlds-draft, выбор за Sovereign), принцип P12 нейтральность инструмента, план Dark Watch, intel-картотека выведена из git (visibility rule) | consolidation of 08-09.11 sessions | —",
     "2026-11-14 | release 1.8.81: штаб v2 — живое топливо (кольцо запаса в днях на оценке 440M + бюджет-полоса «в наличии/израсходовано»), 4 темы с кнопкой-циклом (Рассвет/Орхидея/Альянс/Бункер), меню-компас (одна иконка вместо шести), оживление (светлячки/дыхание фона/блеск заголовка/подъём панелей), многослойный фон с авророй-дрейфом, виньеткой и зерном; фикс «полос в Магадан» (minmax(0,1fr)+wrap); лейн «Витрина продаж»: стенд-витрина (/board/ демо-дашборд, /demo/ Excel, /uslugi.html), пинг-сторожка 15 мин, кворки ×3, OLX-объявление, Fiverr/Upwork-пакет, каналы+КП | consolidation of 13-14.11 sales-lane sessions | —",
-    "2026-11-15 | release 1.8.9: nav-dock v6 — ядро Эво в шапке слева сверху на ВСЕХ экранах (assets/logo-core.png, панель дверей раскрывается по диагонали вправо-вниз, плашка Бэрримора не накрывается, док справа-снизу снят); агенты: «тихая карта» v=6 (подписи по щелчку, тумблер 🗺/🏷) + канбан-приёмка рейсов (POST /api/voyages/verdict → voyage-verdicts.jsonl вне git, кнопки «всё норм»/«доработка») + Соломон-экскурсовод; money-map.html в штабе (дверь «🗺 Карта денег», 4 ревизии C1–C4 ждут вайб-выбор); витрина: STATUS, uslugi, outreach-база 30 адресатов (A:17), ташкентские каналы (platforms-tashkent, tashkent-channels, yandex-uslugi-uz), board/landing, скрипты пинг-сторожки; чистка Vision: 13 устаревших доков сняты (восстановимы из истории) | consolidation of 14-15.11 sessions | —"
+    "2026-11-15 | release 1.8.9: nav-dock v6 — ядро Эво в шапке слева сверху на ВСЕХ экранах (assets/logo-core.png, панель дверей раскрывается по диагонали вправо-вниз, плашка Бэрримора не накрывается, док справа-снизу снят); агенты: «тихая карта» v=6 (подписи по щелчку, тумблер 🗺/🏷) + канбан-приёмка рейсов (POST /api/voyages/verdict → voyage-verdicts.jsonl вне git, кнопки «всё норм»/«доработка») + Соломон-экскурсовод; money-map.html в штабе (дверь «🗺 Карта денег», 4 ревизии C1–C4 ждут вайб-выбор); витрина: STATUS, uslugi, outreach-база 30 адресатов (A:17), ташкентские каналы (platforms-tashkent, tashkent-channels, yandex-uslugi-uz), board/landing, скрипты пинг-сторожки; чистка Vision: 13 устаревших доков сняты (восстановимы из истории) | consolidation of 14-15.11 sessions | —",
+    "2026-11-20 | release 1.9.0: поколение «Институты» — Зал правления (council.html + council.js + /api/council/*, council_dispatch.py, диспуты через шлюз :31415, шкала CEO-0..5, Соломон модератор CEO-1, собрание #1 «Деньги к 04.12»), Зал стендапа (standup.html, доклады в standup-data.json), Команда eVo (staff-table.html — живая SVG-оргсхема: CEO-атом с ломаными орбитами, фон = карта мира с потоками); auth-gate на ВМ (443→8767, роли admin/agent/member/guest, инвайты-ссылки, rate-limit, P0 traversal fixed, auth_gate.py + dashboard-server.py); sign-lab (варианты Леонардо/Паганель); job_search_results_salary.json; favicon-32x32 на всех экранах, BOM вычищен с 37 файлов, пинг-лог витрины и scratch/ вне git | generation bump: платформа получила институты управления | —"
   ],
   "tasks": {
     "urgent": [
@@ -2035,9 +2035,9 @@ window.EVO_BRIEF = {
     "latest": "Леонардо → Магеллан: Прочёл ночной доклад Хантера (Workspace/analytics/hunter-night-2026-11-16.md). Г"
   },
   "git": {
-    "branch": "release/1.8.9.1",
-    "lastCommit": "e286ab6 Release 1.8.9.1: full project checkpoint",
-    "dirtyFiles": 43
+    "branch": "release/1.9.0",
+    "lastCommit": "abe0e70 Release 1.9.0: version bump + changelog (поколение «Институты»: залы правления/стендапа, Команда eVo, auth-gate)",
+    "dirtyFiles": 1
   },
   "aiUsage": {
     "note": "Unknown values are unavailable, not zero. Subscription limits and spending are separate from API token usage.",
@@ -2066,8 +2066,8 @@ window.EVO_BRIEF = {
   },
   "agent": {
     "model": "gemini-robotics-er-2-preview",
-    "summary": "Доброе утро, Дмитрий. Контекстная дата в CURRENT.md (05.08.2026) устарела относительно фактической даты снимка 20.11.2026; текущая работа ведётся на ветке release/1.8.9.1 с 43 изменёнными файлами. В пуле содержится 27 активных задач, где приоритетом выступают развёртывание лаборатории Kali Linux и ротация ключей. Выжимка Хантера: 125 перспективных и 32 основных заказа (на 09.11), а также 253 находки на OLX. Переписка: 1 заметка за сутки, в которой Леонардо сообщает Магеллану о прочтении ночного доклада. Зафиксировано 8 ИИ-запросов, израсходовано 38 735 входных и 24 625 выходных токенов (всего 63 360), финансовые затраты в источниках не указаны.",
-    "nextStep": "Актуализировать контекст Barrymore согласно указаниям (сверка CURRENT.md с STATE.md, LOG.md, CHANGELOG.md и разбор с logger.py)."
+    "summary": "Доброе утро, Дмитрий. Текущая дата в контексте (05.08.2026) устарела по сравнению с логом изменений от ноября 2026 года и требует обновления. Мы находимся на ветке release/1.9.0 с одним изменённым файлом в репозитории. Доска Хантера содержит 125 перспективных и 32 основных вакансии по снимку от 09.11, а также 253 OLX-находки. Переписка: 1 заметка за сутки, суть — прочтение доклада. По AI-метрикам зафиксировано 8 запросов с расходом 63 360 токенов (38 735 входных и 24 625 выходных), финансовые затраты за сессию неизвестны, а лимит Copilot по состоянию на 29.10 использован на 51%.",
+    "nextStep": "Актуализировать контекст Barrymore: сверить CURRENT.md с STATE.md, LOG.md, CHANGELOG.md и устранить устаревшие указания."
   },
-  "_sourceFingerprint": "c25d11b97dbb6e8d58cb68c03dab7fe47bdad309dccca95e67778145998dcd6f"
+  "_sourceFingerprint": "d75be6b84314084f14c5f5297375902d78189ba46c1ddd95b505237a38f5edab"
 };
